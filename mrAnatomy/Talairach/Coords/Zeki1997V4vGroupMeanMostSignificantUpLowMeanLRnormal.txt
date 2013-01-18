@@ -1,0 +1,8 @@
+-24 -76 -14 lV4vUpperZeki1997 g
+-32 -76 -12 lV4vLowerZeki1997 r
+-26 -80 -14 lV4vCenterZeki1997 y
+28 -72 -12 rV4vUpperZeki1997 g
+38 -74 -20 rV4vLowerZeki1997 r
+30 -78 -18 rV4vCenterZeki1997 y
+2 -76 2 CalcarInfZeki1997 g
+-8 -98 12 CalcarSupZeki1997 r

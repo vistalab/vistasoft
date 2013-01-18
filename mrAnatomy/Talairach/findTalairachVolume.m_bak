@@ -1,0 +1,47 @@
+function view = talairach2view(view)
+
+global mrSESSION;
+
+talairach = loadTalairachXform(mrSESSION.subject);
+
+tc = inputdlg('Enter Talairach coords (eg. [0,0,0]):', 'Find Talairach');
+tc = str2num(tc{1});
+if(~all(size(tc)==[1,3]))
+    error([mfilename,': Requires 3 coordinates.']);
+end
+
+coords = talairachToVol(tc, talairach.vol2Tal);
+c = round(coords);
+msgbox(['Volume coordinate for Talairach (',num2str(tc(1)),',',num2str(tc(2)),',',num2str(tc(3)),...
+        '): ',num2str(c(1)),',',num2str(c(2)),',',num2str(c(3)),...
+        ' (Sagittal,Coronal,Axial)'], 'Talairach');
+
+roi.name = ['Talairach (',num2str(tc(1)),',',num2str(tc(2)),',',num2str(tc(3)),')'];
+roi.coords = c';
+roi.color = 'b';
+
+% We try to be compatible with any view. All analyses are performed on
+% gray view ROIs, so the code here simply translates the current view's
+% ROIs to the gray view, and grabs a gray view if one doesn't already exist.
+%
+switch(view.viewType)
+case {'Inplane'}
+    error([mfilename,' doesn''t work for ',view.viewType,'.']);
+case 'Flat'
+    disp('Tranforming coordinates from volume to flat...');
+    roi.viewType = 'Volume';
+    gray = getSelectedGray;
+    if isempty(gray)
+        gray = initHiddenGray;
+    end
+    roi = vol2flatROI(roi, gray, view);
+case {'Volume','Gray'}
+    % this one requires no special preprocessing
+    roi.viewType = view.viewType;
+otherwise
+    error([view.viewType,' is unknown!']);
+end
+
+view = addROI(view,roi);
+
+return;

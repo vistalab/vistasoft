@@ -1,0 +1,144 @@
+\documentclass[twoside]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{apalike}
+\usepackage{graphicx}
+
+\def\stackbot#1#2{\mathrel{\mathop{#1}\limits_{#2}}}
+\renewcommand{\vec}[1]{\mbox{\boldmath ${#1}$}}
+\newcommand{\Matrix}[1]{\mbox{\boldmath ${#1}$}} 
+
+\begin{document}
+
+\title{\textbf{An Object-Oriented Support Vector Machine Toolbox for Matlab}}
+
+\author
+{
+   Gavin C. Cawley
+   \thanks{
+   G. C. Cawley is with the School of Information Systems, University of East
+   Anglia, Norwich, Norfolk, U.K. \mbox{NR4 7TJ}.  E-mail:
+   \texttt{gcc@sys.uea.ac.uk} .}
+}
+
+\maketitle     
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Support Vector Classification}
+\label{sec:svm}
+
+The support vector machine \cite{Boser1992,Cortes1995}, given labelled
+training data
+%
+\begin{displaymath}
+   \mathcal{D} = \left\{ (\vec{x}_i, y_i) \right\}_{i = 1}^{\ell}, \quad \vec{x}_i \in \vec{X} \subset {\mathbb R}^d, \quad y_i \in \vec{Y} = \{-1, +1\},
+\end{displaymath}
+%
+constructs a maximal margin linear classifier in a high dimensional feature
+space, $\Phi(\vec{x})$, defined by a positive definite kernel function,
+$k(\vec{x},\vec{x}')$, specifying an inner product in the feature space,
+%
+\begin{displaymath}
+   \Phi(\vec{x}).\Phi(\vec{x}') = k(\vec{x}, \vec{x}').
+\end{displaymath}
+%
+A common kernel is the Gaussian radial basis function (RBF),
+%
+\begin{displaymath}
+   k(\vec{x}, \vec{x}') = e^{-||\vec{x} - \vec{x}'||^2/2\sigma^2}.
+\end{displaymath}
+%
+The function implemented by a support vector machine is given by
+%
+\begin{equation}
+   f(\vec{x}) = \left\{ \sum_{i=1}^{\ell}\alpha_iy_ik(\vec{x}_i,\vec{x}) \right\} - b.
+   \label{eqn:expansion}
+\end{equation}
+%
+To find the optimal coefficients, $\vec{\alpha}$, of this expansion it is
+sufficient to maximise the functional,
+%
+\begin{equation}
+   W(\vec{\alpha}) = \sum_{i=1}^{\ell}\alpha_i - \frac{1}{2}\sum_{i,j=1}^{\ell}y_iy_j\alpha_i\alpha_jk(\vec{x}_i, \vec{x}_j),
+   \label{eqn:objective}
+\end{equation}
+%
+in the non-negative quadrant,
+%
+\begin{equation}
+   0 \leq \alpha_i \leq C, \qquad i = 1, \ldots, \ell,
+   \label{eqn:non_negatvity_constraint}
+\end{equation}
+%
+subject to the constraint,
+%
+\begin{equation}
+   \sum_{i=1}^{\ell}\alpha_iy_i = 0.
+   \label{eqn:linear_equality_constraint}
+\end{equation}
+%
+$C$ is a regularisation parameter, controlling a compromise between maximising
+the margin and minimising the number of training set errors.  The
+Karush-Kuhn-Tucker (KKT) conditions can be stated as follows:
+%
+\begin{eqnarray}
+   \alpha_i     = 0 & \implies & y_if(\vec{x}_i) \geq 1,\\
+   0 < \alpha_i < C & \implies & y_if(\vec{x}_i) =    1, \label{eqn:kkt2} \\
+   \alpha_i     = C & \implies & y_if(\vec{x}_i) \leq 1.
+\end{eqnarray}
+%
+These conditions are satisfied for the set of feasible Lagrange multipliers,
+$\vec{\alpha}^0 = \{\alpha_1^0, \alpha_2^0, \ldots, \alpha_\ell^0\}$,
+maximising the objective function given by equation~\ref{eqn:objective}.  The
+bias parameter, $b$, is selected to ensure that the second KKT condition is
+satisfied for all input patterns corresponding to non-bound Lagrange
+multipliers.  Note that in general only a limited number of Lagrange
+multipliers, $\vec{\alpha}$, will have non-zero values; the corresponding
+input patterns are known as support vectors.  Let ${\cal I}$ be the set
+of indices of patterns corresponding to non-bound Lagrange multipliers,
+%
+\begin{displaymath}
+   {\cal I} = \{i~:~0 < \alpha_i^0 < C \}, 
+\end{displaymath} 
+%
+and similarly, let ${\cal J}$ be the set of indices of patterns with Lagrange
+multipliers at the upper bound $C$,  
+%
+\begin{displaymath}
+   {\cal J} = \{i~:~\alpha_i^0 = C \}.
+\end{displaymath} 
+%
+Equation~\ref{eqn:expansion} can then be written as an expansion over support
+vectors,
+%
+\begin{equation}
+   f(\vec{x}) = \left\{ \sum_{i \in \{{\cal I, J}\}}\alpha_i^0y_ik(\vec{x}_i,\vec{x}) \right\} - b.
+   \label{eqn:sv_expansion}
+\end{equation}
+%
+For a full exposition of the support vector method, see the any of the
+excellent books \cite{Vapnik1995,Vapnik1998,Cristianini2000} or tutorial
+articles \cite{} available. 
+
+\section{Training Algorithms}
+\label{sec:training_algorithms}
+
+\section{Model Selection}
+\label{sec:model_selection}
+
+\section{Summary}
+\label{sec:summary}
+
+\section{Acknowledgements}
+
+\bibliographystyle{apalike}
+\bibliography{manual}
+
+\end{document}
+

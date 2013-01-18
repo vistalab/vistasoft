@@ -1,0 +1,2 @@
+-26 -67 -9 lAvgColorAreaCenterTootell98 m
+26 -67 -9 rAvgColorAreaCenterTootell98 m

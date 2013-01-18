@@ -1,0 +1,133 @@
+function flag=spatialBlurTSeries(view, scanList, kernelSize_mm, newTypeName)
+% flag=spatialBlurTSeries(view, scanList, kernelSize_mm, newTypeName)
+%
+% Performs spatial filtering on the time series data
+% Useful only in the inplane view.
+%
+% Essentially an evil function that should be used only for fun. It's
+% main use is for standardizing the sampling resolution across different
+% sessions where the true voxel size changed for some reason.
+% 
+% INPUTS:
+% view : view  : default selectedInplane
+% scanList : scans to filter : default all
+% kernelSize_mm : FWHM of the kernel in mm : default 3mm. If a 3 element
+% vector then sizes should be [x,y,z]: NOTE! Z (down the slices) is first 
+% newTypeName: default 'Blurred'
+% ARW: 051804: Wrote it.
+% example: spatialBlurTSeries(INPLANE{1},[1:2],3,'Blurred3mmAverages');
+% .. then recompute the coranal in the new data type "Blurred3mmAverages"
+% ras: 2005: added a dialog to get params. Don't think it's completely eve
+
+mrGlobals;
+
+if (~exist('scanList','var') | isempty(scanList)), scanList = selectScans(view); end
+if (~exist('kernelSize_mm','var') | isempty(kernelSize_mm)), kernelSize_mm = 5; end
+if (~exist('newTypeName','var') | isempty(newTypeName)), newTypeName='Blurred'; end
+
+if iseqal(scanList, 'dialog')
+    % pop 
+
+if ~existDataType(newTypeName), addDataType(newTypeName); end
+
+if (~strcmp(view.viewType,'Inplane'))
+    error('This function only operates on inplane data');
+end
+
+% Work out the size of the kernel we need in voxels
+% First find the effective voxel size:
+effectiveVoxSize_mm=mrSESSION.functionals(1).effectiveResolution(:);
+kernelSize_mm=kernelSize_mm(:);
+
+origDataType=view.curDataType;
+
+if (length(kernelSize_mm)~=3)
+    kernelSize_mm=ones(3,1)*kernelSize_mm(1);
+end
+
+kernelRatio=kernelSize_mm./effectiveVoxSize_mm;
+support=kernelRatio*2;
+% Because we are going to have 'z' as the first dimension, rotate both
+% these vectors 
+kernelRatio=kernelRatio([3 1 2]);
+support=support([3 1 2]);
+fprintf('\nKernel ratio=%d %d %d\n',kernelRatio(1),kernelRatio(2),kernelRatio(3));
+
+spatialFilter=gauss3d(support,kernelRatio);
+spatialFilter=spatialFilter./sum(spatialFilter(:));
+
+
+hiddenView = initHiddenInplane;
+hiddenView = selectDataType(hiddenView,existDataType(newTypeName));
+
+% Pre-define a large matrix to hold all the data for a single scan
+% This will be nVoxels*nVoxels*nSlices*nTRs
+scanParams= dataTYPES(origDataType).scanParams(1);
+nx=scanParams.cropSize(1);
+ny=scanParams.cropSize(2);
+nTR=scanParams.nFrames;
+nSlices=length(scanParams.slices);
+
+disp('Allocating large matrix');
+dataArray=zeros(nTR,nx,ny,nSlices);
+
+for thisScan=1:length(scanList)
+    
+    % Set dataTYPES.scanParams so that new blurred scan has the same params as
+    % the 1st scan on scanList.
+    newScanNum = numScans(hiddenView)+1;
+    ndataType = hiddenView.curDataType;
+    dataTYPES(ndataType).scanParams(newScanNum) = dataTYPES(view.curDataType).scanParams(scanList(thisScan));
+    dataTYPES(ndataType).blockedAnalysisParams(newScanNum) = dataTYPES(view.curDataType).blockedAnalysisParams(scanList(thisScan));
+    dataTYPES(ndataType).eventAnalysisParams(newScanNum) = dataTYPES(view.curDataType).eventAnalysisParams(scanList(thisScan));
+    dataTYPES(ndataType).scanParams(newScanNum).annotation = ['Blurred version of ',getDataTypeName(view),', scan: ',num2str(scanList(thisScan))];
+    saveSession;
+    
+    % Get the tSeries directory for this dataType 
+    % (make the directory if it doesn't already exist).
+    tseriesdir = tSeriesDir(hiddenView);
+    
+    % Make the Scan subdirectory for the new tSeries (if it doesn't exist)
+    scandir = fullfile(tseriesdir,['Scan',num2str(newScanNum)]);
+    if ~exist(scandir,'dir')
+        mkdir(tseriesdir,['Scan',num2str(newScanNum)]);
+    end
+    
+    
+    % Load in the full data set for each scan
+    % (nVoxelsx*nVoxelsy*nSlices*nTR)
+    % Then loop through the TRs performing a spatial blur (convn) on the volume
+    % at each time point.
+    disp('Loading');
+    for thisSlice=1:nSlices
+        thisSliceData=loadtSeries(view,scanList(thisScan),thisSlice); % Data come in as nTR*nVoxels
+        dataArray(:,:,:,thisSlice)=reshape(thisSliceData,nTR,nx,ny);
+    end
+    
+    % Now loop over TRs doing the convolution
+    disp('Convolving');
+    for thisTR=1:nTR
+        dataArray(thisTR,:,:,:)=convn(dataArray(thisTR,:,:,:),spatialFilter,'same');
+    end
+    
+    % Now loop over slices again, saving out the data
+    disp('Saving');
+    for thisSlice=1:nSlices
+        thisSliceData=squeeze(dataArray(:,:,:,thisSlice));
+        
+        savetSeries(reshape(thisSliceData,nTR,nx*ny),hiddenView,thisScan,thisSlice);
+    end
+    
+
+ fprintf('\nDone scan %d\n',thisScan);
+ 
+end % next scan
+
+
+% Loop through the open views, switch their curDataType appropriately, 
+% and update the dataType popups
+INPLANE = resetDataTypes(INPLANE,ndataType);
+VOLUME  = resetDataTypes(VOLUME,ndataType);
+FLAT    = resetDataTypes(FLAT,ndataType);
+
+return;

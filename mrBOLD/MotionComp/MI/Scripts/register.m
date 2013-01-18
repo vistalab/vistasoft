@@ -1,0 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% a script that runs the motion compensation algorithm and% computes the MSE and the MI error for all the dataSets in the workDir% directory (can be manually changed).%gb 05/15/05%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% temp file storage is on biac2 - change this below too!!!
+% if isunix%     networkPath = '/biac2/wandell';% else%     networkPath = '\\White\biac2-wandell\';% end% workDir = fullfile(networkPath,'data','reading_longitudinal_study','To_correct');
+%%%% temp file storage is on teal - change this below too!!!if isunix    networkPath = '/teal/scr1';else    networkPath = '\\teal\scr1\';endworkDir = fullfile(networkPath,'fmri','mcToCorrect');cd(workDir);[fileNum dirName] = countDirs(pwd);for count = 3:fileNum    currentDir = dirName{count};    cd(fullfile(workDir,currentDir));    transformAll;	close all	clear all	mrVista	vw = getSelectedInplane;	computeError        % Redefining variables because they are cleared in transform    if isunix        networkPath = '/teal/scr1';    else        networkPath = '\\teal\scr1\';    end    workDir = fullfile(networkPath,'fmri','mcToCorrect');
+    cd(workDir);    [fileNum dirName] = countDirs(pwd);    pause(0.001);end
+    
+    
+    

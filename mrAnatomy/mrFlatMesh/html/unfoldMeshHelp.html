@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>mrFlatMesh - A cortical unfolding program.</title>
+</head>
+
+<body>
+<h2>mrFlatMesh - A cortical unfolding program.<br></h2>
+<h3>ARW 02.2001</h3><br>
+<p>This the help system for mrFlatMesh.
+<p>mrFlatMesh flattens meshes produced by the mrGray 3D visualisation module. It does this extremely
+quickly using a system based on the solution of large, sparse, linear equations. As a rough guide, 
+it will flatten a mesh containing about 100000 nodes in under a minute on a 400MHz Pentium. 
+<p>However, a flat mesh on its own is no use to anyone. mrFlatMesh also maps a grey segmentation
+file onto the unfolded mesh, and produces a 'flat.mat' file that gives a 2D location for every grey node
+in the 3D grey segmentation. This can be used to generate 2D maps of 3D cortical activation patterns.
+<p>This grey->mesh mapping is the slowest part of the program. However, mrFlatMesh is still relatively fast: 
+it will unfold and map a region of cortex 50mm in radius in around 5 minutes. 100mm unfolds take about 
+1/2 hour.<br>
+<p><img src="helpImages/unfoldMeshImage.jpg">
+
+<p>This is what mrFlatMesh looks like when it runs. It wants the following pieces of information before
+you can begin an unfold.
+<p>1) A gray matter file. This is produced by the program <a href="http://white.stanford.edu/~heeger/labmanual/mrGrayTips.html">mrGray</a>
+Once you have produced a white matter segmentation in mrGray you grow gray matter onto it.<p><b>Important:</b> mrFlatMesh 
+requires a gray file with <b>3</b> layers of gray matter. No more, no less. mrFlatMesh expects the gray file
+to have the suffix '.gray'
+<br>
+<p>2) A mrGray mesh file. This is different from previous unfolding programs used in our lab. The mesh file
+is produced by mrGray when you run the 3D visualisation module. It is useful because it is guaranteed to be
+triangulated and well-behaved: none of the connections between nodes will cross each other. This means that
+it can be unfolded using the sparse matrix method described below. Follow <a href="mrGrayMeshHelp.html">this link</a> to learn
+how to make a mesh. mrFlatMesh expects the mesh file to have the suffix '.mrm'.
+<p>3) Unfold parameters: Specifically, the radius of theunfold perimeter from the start point, the 
+coordinates of the start point and some flags telling mrFlatMesh whether to display images of the
+various stages of the mesh unfold, whether to save out extra information in the output file (recommended)
+and how exactly to define the perimeter. If you're unsure about any of these options, leave them checked. They are 
+described in more detail <a href="flagDetails.html">here</a>.
+<p>4) An output file name. This is none other than the 'flat.mat' file that mrLoadRet looks for
+when you ask it to open up a new flat window. A good naming convention for the flat file is<br>
+<b>flat_<i>radius</i>_<i>hemisphere</i>.mat</b>. <p>So, for example, a left hemisphere unfold of
+60mm would be flat_60_left.mat.<p>
+<p>Then hit "GO". Everything should happen automatically, and the final flat.mat file should be dumped into the place you specified in 4). 
+<p>You will see status messages popping up in the status window and during some 'quit' periods, the status bar will display a moving green bar to tell you that something is going on. <b>Beware though</b> there are two points where the program will seem to hang (solving the position equation and mapping layer 1 gray nodes to the mesh). You can use the windows task manager to make sure that the processor is still working during these periods - large unfolds (>80mm) take a long time in these routines - sometimes up to half an hour or more. If you interrupt Matlab at this point, you will lose all your work.
+<p>When something goes wrong, check the Matlab command window and note the error message and what you did. Then send it to <a href="mailto:alexwade@stanford.edu"></a>
+
+</body>
+</html>

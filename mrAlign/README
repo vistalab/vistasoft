@@ -1,0 +1,90 @@
+
+MrAlign, a new version of mrLoadVol
+-----------------------------------
+ABP,SPG 7.25.97
+
+NEW BEHAVIOR
+
+ MrAlign allows for a much more accurate match between the
+ inplane anatomy and the interpolated volume anatomy by permitting
+ rotation in 3 dimensions. It is also cleansed of a lot of obsolete
+ baggage and a lot of unsightly bugs in mrLoadVol.
+
+Inplane Grid
+------------
+
+ The inplane grid imposed upon the sagittal interpolated image is now
+ colored blue. When an inplane is selected, the line turns red. Rotation
+ controls in 'Align' menu have been moved to Rotation Control Window
+
+Rotation Control Window
+-----------------------
+
+  Window contains buttons for rotating both the sagittal and oblique
+  displays in 3 dimensions. Note that the oblique always remains
+  orthogonal to the sagittal image, intersecting it through the red
+  inplane grid line.
+
+   Joystick
+
+   The joystick-like configuration of buttons on left side of the panel
+  rotates the sagittal image (and the oblique if an inplane has been
+  selected already) about a pivot centered in the middle of the image.
+  'Up' and 'Down' rotate about the axial axis (horizontal axis of
+  sagittal image) . Left and Right about the coronal axis. the '0,0'
+  button in the center of the 'joystick' returns both interpolated images
+  to null rotation. Slider up and to the left of the joystick changes the
+  degree of rotation taken with each button press. Leftwards is finer,
+  rightwards is coarser.
+
+   Save/Reload Align Params
+
+  mrLoadVol saved its parameters in a file called VolParams. mrAlign reads
+  VolParams and saves its own parameter file called AlignParams. The
+  'Save' button is the only control which allows the user to save the
+  current state of AlignParams, such as the current rotation in 3
+  dimensions, the inplane grid clip, the current interpolated inplane,
+  etc. 'Reload' restores all the parameters to their most recent saved
+  state.
+
+   Inplane grid/Sagittal axis rotation control.
+
+  The buttons to the right side of the panel rotate the interpolated
+  images about the sagittal axis running through the middle of the inplane
+  grid. The buttons 'Gross' and 'Fine' control the degree of rotation with
+  each button press. These controls replace Allen's menu items under the
+  Sagittal Window's 'Align' menu. 
+
+Saving: VolParams to AlignParams
+--------------------------------
+
+  mrAlign saves its parameters in a file called AlignParams. When you
+  start using mrAlign, it will attempt to read a VolParams and copy it to
+  AlignParams, so you risk nothing by using mrAlign. 
+
+New Error Message
+-----------------
+
+  'Out of range oblique points. Re-Clip Inplanes' This message typically
+  means that the bounds for the inplane being selected go out of range of
+  the interpolated volume anatomy. This may happen if the inplane grid is
+  translated or rotated too far, so that a portion goes out of range.
+  Simply reclip the grid until the warnings go away or reconsider your
+  rotation.
+
+
+PRUNED CODE:
+
+list of functions we cleaned out because we thought them obsolete. 
+	
+mrSaveSagVol
+mrSaveOblVol
+mrLoadSagVol
+mrLoadOblVol
+mrExtractOblOld
+
+
+
+
+
+

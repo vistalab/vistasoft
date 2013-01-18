@@ -1,0 +1,55 @@
+=======================================================
+Notes on Automatic Registration Code, by Oscar Nestares
+=======================================================
+
+Naming convention
+-----------------
+
+To facilitate the localization of the programs that perform the
+automatic registration of the inplanes with the volume, the name of
+all matlab and C functions involved starts with reg...
+
+Main Scripts
+------------
+
+The main scripts, that have been incorporated as Callbacks in the
+corresponding menu items in mrAlign2, are:
+
+regEstRot.m - estimates the rotation and translation and returns it on
+the main workspace variables rot and trans (the same used by the
+manual procedure).
+
+regCheckRotAll - interpolates the inplanes corresponding to the
+estimated rotation (rot) and translation (trans) and displays slice by
+slice the original inplanes, the interpolated inplanes and a mosaic of
+both.
+
+Requirements
+------------
+
+The automatic registration methods needs a rough starting rotation and
+translation. To obtain this initial transformation, you should proceed
+as in the first step of the manual procedure (i.e., seting up
+inplanes, and rotating them so that they match approximately the
+inplanes shown in the screen save). In most cases this will be enough
+for the initial rotation (i.e., in most cases there is no need to
+perform sagittal rotations on the volume). To fix the initial
+translation, one (approximate) corresponding point have to be marked,
+using the same procedure than in the manual case ('Select Points'
+button).
+
+The computation of the initial transformation requires that the
+inplane in the 'LoadRet Oblique Anatomy' window is the same than the
+interpolated inplane in the 'Interpolated Oblique Anatomy' window, and
+that the flip R/L and U/D are properly set. This is needed to know if
+there is a reflection in the Z axis. (NOTE: rigth now, the code is
+assuming that the number of inplanes is EVEN. If the number of
+inplanes is ODD and the current inplane is the middle inplane, the
+initial transformation can be wrong.)
+
+The inplanes taken with a surface coil have a strong intensity
+gradient that is corrected automatically by the registration
+method. This correction needs that there are not mean intensity
+differences between EVEN and ODD slices (as occurs if the anatomy is
+taken with INTERLEAVE off). To avoid this problem, the inplane
+anatomies have to be taken with the INTERLAVE ON.

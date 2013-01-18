@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>How to make a mesh</title>
+</head>
+
+<body>
+<h3>This document describes how to make a mesh suitable for plugging into mrFlatMesh.</h3>
+<p>1) Bring up mrGray. Load in your project, segment your white matter as usual and make sure
+that the topology analysis tells you that you have no handles. 
+<p>2) Now grow gray matter onto the white. Grow exactly 3 layers of gray matter, no more, no less. Save out the gray matter somewhere.<br>
+<p><img src="helpImages/mrGray1.jpg" border="0" alt="mrGrayImage1">
+<p>Now build a 3D visualisation. In the 3D visualisation tab box you want to make the following settings...
+<p><img src="helpImages/mrGray2.jpg" width="506" height="403" border="0" alt="">
+<p>mrGray will automatically use the current gray file. 
+<P><b>Make a note</b> of the voxel dimensions here - you will need to feed them into mrMeshUnfold later.
+<p>The other tabs should look like this.....
+<p><img src="helpImages/mrGray3.jpg" width="506" height="403" border="0" alt="">
+<p><img src="helpImages/mrGray4.jpg" width="506" height="403" border="0" alt="">
+<p><img src="helpImages/mrGray5.jpg" width="506" height="403" border="0" alt="">
+<p><img src="helpImages/mrGray6.jpg" width="506" height="403" border="0" alt="">
+<P>... and finally....
+<p><img src="helpImages/mrGray7.jpg" width="506" height="403" border="0" alt="">
+<p>This final option tells mrGray where to save the mesh file. Make sure you save it somewhere
+sensible and use the .MrM format. 
+<p>Now go ahead and build the mesh. The .MrM file should automatically get saved out and you'll be presented
+with a 3D view of the brain. 
+<p>Finally, you can pick a start point for the unfold. Position the red, green and blue lines on the 3D volume
+<p><img src="helpImages/mrGray8.jpg" width="963" height="642" border="0" alt="">
+<p>and make a note of the X,Y and Z values listed in the toolbar.
+<p><img src="helpImages/mrGray9.jpg" width="189" height="422" border="0" alt="">
+<p><b>and be careful!</b> Note that they're listed in reverse order here (Z,Y,X).
+<p>You can also get these valuse by moving around in the 2D segmentation editing window.
+<h3>Congratulations!</h3> You are now ready to <a href="unfoldMeshHelp.html">run mrUnfoldMesh</a>.

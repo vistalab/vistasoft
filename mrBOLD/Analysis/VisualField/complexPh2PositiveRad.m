@@ -1,0 +1,1 @@
+function rad = complexPh2PositiveRad(complexPh);%% rad = complexPh2PositiveRad(complexPh);%% AUTHOR:  Wandell% PURPOSE:%   Convert the complex values values into radians that% run from [0,2pi].  The Matlab angle function does the% conversion into the range [-pi to pi].%rad = angle(complexPh);l = find(rad < 0);rad(l) = rad(l) + 2*pi;return;

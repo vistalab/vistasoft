@@ -1,0 +1,54 @@
+function stimFormatDescription;
+% Description of stimulus 'objects' for mrVista 2.0.
+% started by ras, 10/2005.
+% 
+% Stimulus 'objects' are matlab structs intended to contain
+% information specifiying the design of an experiment. This
+% includes the onset times of different event types, both in 
+% seconds from the onset of a scan and in MR frames, numbers
+% indicating the stimulus type, names, and colors associated with
+% each.
+% 
+% Fields in a stim struct include:
+% 
+% stimFiles: cell-of-strings specifying full path to each stimulus (.par)
+% file loaded.
+% 
+% stimFileNames: cell-of-strings specifying stimulus file names only.
+% 
+% conds: vector of integers, specifying the condition (event type) 
+% number for each event. Conds less than or equal to 0 are considered
+% as null conditions. Non-zero conds should be continuous integers
+% (e.g., [1 2 3 4], but not [1 2 4 5]).
+% 
+% onsetSecs: onset times in seconds of each event. Vector of same size as
+% conds.
+% 
+% onsetFrames: onset times in MR frames of each event.
+% 
+% framePeriod: duration of each MR frame, in seconds. (Like TR, but b/c
+% of fancy scanner things like multi-shot recordings, where each frame
+% technically consists of multiple TRs, we use framePeriod).
+% 
+% nConds: number of non-null conditions specified.
+% 
+% condNames: 1xnConds cell-of-strings specifying the name of each condition
+%  
+% condColors: 1xnConds cell-of-strings specifying colors associated with
+% each condition. Can be [R G B] color designations, or single characters,
+% as allowed by the PLOT command.
+% 
+% labels: 1xnTrials cell-of-strings containing the label specified in 
+% the stimulus (.par) files.
+% 
+% images: 1xnTrials cell array containing images, or paths to image files,
+% associated with each event.
+% 
+% user1 and user2: each is a 1xnTrials cell array containing user-defined
+% values (like response times or comments).
+
+% if someone called this as a function, just give them the info:
+p = fileparts(mfilename);
+web(fullfile(p,'stimFormatDescription.txt'));
+
+return

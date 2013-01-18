@@ -1,0 +1,4 @@
+32 -87 -16 rV4vFoveaCenter_Tootell98 g
+-32 -87 -16 lV4vFoveaCenter_Tootell98 g
+33 -65 -14 rV8FoveaCenter_Tootell98 r
+-33 -65 -14 lV8FoveaCenter_Tootell98 r

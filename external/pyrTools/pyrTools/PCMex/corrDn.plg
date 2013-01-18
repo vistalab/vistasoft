@@ -1,0 +1,65 @@
+--------------------Configuration: corrDn - Win32 Debug--------------------
+Begining build with project "D:\MATLAB\MEX\corrDn.dsp", at root.
+Active configuration is Win32 (x86) Console Application (based on Win32 (x86) Console Application)
+
+Project's tools are:
+			"32-bit C/C++ Compiler for 80x86" with flags "/nologo /MLd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/corrDn.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /c "
+			"Win32 Resource Compiler" with flags "/l 0x409 /d "_DEBUG" "
+			"Browser Database Maker" with flags "/nologo /o"Debug/corrDn.bsc" "
+			"COFF Linker for 80x86" with flags "kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/corrDn.pdb" /debug /machine:I386 /out:"Debug/corrDn.exe" /pdbtype:sept "
+			"Custom Build" with flags ""
+			"<Component 0xa>" with flags ""
+
+Creating temp file "C:\TEMP\RSP6F.tmp" with contents </nologo /MLd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/corrDn.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /c 
+"D:\MATLAB\MEX\corrDn.c"
+>
+Creating command line "cl.exe @C:\TEMP\RSP6F.tmp" 
+Creating temp file "C:\TEMP\RSP70.tmp" with contents <kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/corrDn.pdb" /debug /machine:I386 /out:"Debug/corrDn.exe" /pdbtype:sept 
+.\Debug\corrDn.obj>
+Creating command line "link.exe @C:\TEMP\RSP70.tmp" 
+Compiling...
+corrDn.c
+D:\MATLAB\MEX\corrDn.c(43) : warning C4090: '=' : different 'const' qualifiers
+D:\MATLAB\MEX\corrDn.c(50) : warning C4090: '=' : different 'const' qualifiers
+D:\MATLAB\MEX\corrDn.c(73) : warning C4090: '=' : different 'const' qualifiers
+D:\MATLAB\MEX\corrDn.c(87) : warning C4047: 'initializing' : 'const int ' differs in levels of indirection from 'const struct mxArray_tag *'
+D:\MATLAB\MEX\corrDn.c(88) : warning C4047: 'function' : 'const struct mxArray_tag *' differs in levels of indirection from 'const int '
+D:\MATLAB\MEX\corrDn.c(88) : warning C4024: 'mxIsNumeric' : different types for formal and actual parameter 1
+D:\MATLAB\MEX\corrDn.c(88) : warning C4047: 'function' : 'const struct mxArray_tag *' differs in levels of indirection from 'const int '
+D:\MATLAB\MEX\corrDn.c(88) : warning C4024: 'mxIsDouble' : different types for formal and actual parameter 1
+D:\MATLAB\MEX\corrDn.c(88) : warning C4047: 'function' : 'const struct mxArray_tag *' differs in levels of indirection from 'const int '
+D:\MATLAB\MEX\corrDn.c(88) : warning C4024: 'mxIsSparse' : different types for formal and actual parameter 1
+D:\MATLAB\MEX\corrDn.c(88) : warning C4047: 'function' : 'const struct mxArray_tag *' differs in levels of indirection from 'const int '
+D:\MATLAB\MEX\corrDn.c(88) : warning C4024: 'mxIsComplex' : different types for formal and actual parameter 1
+D:\MATLAB\MEX\corrDn.c(89) : warning C4047: 'function' : 'const struct mxArray_tag *' differs in levels of indirection from 'const int '
+D:\MATLAB\MEX\corrDn.c(89) : warning C4024: 'mxGetM' : different types for formal and actual parameter 1
+D:\MATLAB\MEX\corrDn.c(89) : warning C4047: 'function' : 'const struct mxArray_tag *' differs in levels of indirection from 'const int '
+D:\MATLAB\MEX\corrDn.c(89) : warning C4024: 'mxGetN' : different types for formal and actual parameter 1
+D:\MATLAB\MEX\corrDn.c(91) : warning C4047: 'function' : 'const struct mxArray_tag *' differs in levels of indirection from 'const int '
+D:\MATLAB\MEX\corrDn.c(91) : warning C4024: 'mxGetPr' : different types for formal and actual parameter 1
+D:\MATLAB\MEX\corrDn.c(124) : warning C4013: 'mxCreateDoublemxArray' undefined; assuming extern returning int
+D:\MATLAB\MEX\corrDn.c(138) : warning C4013: 'strcmp' undefined; assuming extern returning int
+Linking...
+corrDn.obj : error LNK2001: unresolved external symbol _mxFree
+corrDn.obj : error LNK2001: unresolved external symbol _internal_reduce
+corrDn.obj : error LNK2001: unresolved external symbol _internal_wrap_reduce
+corrDn.obj : error LNK2001: unresolved external symbol _mxCalloc
+corrDn.obj : error LNK2001: unresolved external symbol _mxCreateDoublemxArray
+corrDn.obj : error LNK2001: unresolved external symbol _mxGetString
+corrDn.obj : error LNK2001: unresolved external symbol _mxIsChar
+corrDn.obj : error LNK2001: unresolved external symbol _mexPrintf
+corrDn.obj : error LNK2001: unresolved external symbol _mxGetN
+corrDn.obj : error LNK2001: unresolved external symbol _mxGetM
+corrDn.obj : error LNK2001: unresolved external symbol _mxGetPr
+corrDn.obj : error LNK2001: unresolved external symbol _mxIsComplex
+corrDn.obj : error LNK2001: unresolved external symbol _mxIsSparse
+corrDn.obj : error LNK2001: unresolved external symbol _mxIsDouble
+corrDn.obj : error LNK2001: unresolved external symbol _mxIsNumeric
+corrDn.obj : error LNK2001: unresolved external symbol _mexErrMsgTxt
+LIBCD.lib(crt0.obj) : error LNK2001: unresolved external symbol _main
+Debug/corrDn.exe : fatal error LNK1120: 17 unresolved externals
+Error executing link.exe.
+
+
+
+corrDn.exe - 18 error(s), 20 warning(s)

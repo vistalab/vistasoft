@@ -1,0 +1,3 @@
+function nDataVals = numDataVals(view)% nDataVals = numDataVals(view)% Return the number of distinct dataVal sets available in the current% combination of dataTYPES, scan and domain (time/frequency)% ARW 030606
+global dataTYPES;curDomain=getCurAnalysisDomain(view);curScan=getCurScan(view);if (strcmp(curDomain,'time'))    nDataVals=length(dataTYPES(view.curDataType).generalAnalysisParams(curScan).temporalAnalysis);else    nDataVals=length(dataTYPES(view.curDataType).generalAnalysisParams(curScan).frequencyAnalysis);
+end

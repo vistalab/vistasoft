@@ -1,0 +1,94 @@
+#! /bin/sh
+
+# Program to run and quit matlab-program rmMain. It will only work on
+# unix/linux/macosx machines.  You should put this program in your
+# path, link it (ln -s) or  give the whole path at the command line.
+# If you send it to 'batch' do not put the command line on the same
+# line as the batch command.  
+#
+# 2006/02 SOD: wrote it.
+
+# input check and help message
+if [ $# -lt 1 ] ; then
+    echo ""
+    echo "Usage: $0 dataset [sigmaRatio] [roiFile] [dataset-path]"
+    echo ""
+    echo "Program to run and quit matlab and run retinotopic model"
+    echo " dataset    : first number : 0='Inplane'"
+    echo "                             1= 'Gray'"
+    echo "              second number: datatype"
+    echo " sigmaRatio : ratios of second sigma to be tested"
+    echo "              example '[2 4 6 8 10]', note the ''s [default = []]"
+    echo " roiFile    : ROI file name to process only [default = 0]"
+    echo " dataset-path: defaults to current directory (pwd)"
+    echo ""
+    echo "Example call:"
+    echo "   $0 '[1 2]' '[3 4 5]' 0  /mydatadir &;"
+    echo "This runs:"
+    echo " matlab -nodisplay -nojvm"
+    echo " >> cd(mydatadir);"
+    echo " >> rmMain([1 2],[3 4 5],'0');"
+    echo " >> quit;" 
+    echo "in the background emailing the resulting log file to your (${USER}) email account."
+    echo ""
+    exit 1
+elif [ $# -eq 1 ] ; then
+    data=$1
+    sr=[]
+    roi=0
+    path=`pwd`
+elif [ $# -eq 2 ] ; then
+    data=$1
+    sr=$2
+    roi=0
+    path=`pwd`
+elif [ $# -eq 3 ] ; then
+    data=$1
+    sr=$2
+    roi=$3
+    path=`pwd`
+elif [ $# -eq 4 ] ; then
+    data=$1
+    sr=$2
+    roi=$3
+    path=$4
+else
+    echo "Error: To many input arguments"
+    exit 1
+fi
+
+# create log file with current date and time
+date=`date +"%Y%m%d-%H%M%S"`
+fname=${path}'/rmMain-'${date}'.log'
+touch $fname
+
+# repeat command
+echo $0 $data $sr $roi $path $fname >> $fname
+
+# open matlab and run program
+matlab -nodisplay -nojvm >> $fname <<EOF
+    fprintf(1,'starting at: ');system('date');
+
+    disp(sprintf('cd %s','$path'));
+    cd $path;
+    data_type = $data
+    ratio_of_second_gaussian = $sr
+    roiFile = '$roi'
+    if ~isempty($sr),
+      disp('rmMain($data,''$roi'',[],''sigmaRatio'',$sr)');
+      rmMain($data,'$roi',[],'sigmaRatio',$sr);
+    else
+      disp('rmMain($data,''$roi'')');
+      rmMain($data,'$roi');     
+    end
+
+    fprintf(1,'finishing at: ');system('date');
+    exit;
+EOF
+# done
+
+# email results
+mail -s "$0 `date`" $USER@$HOST < $fname
+
+# remove file
+#rm -f $fname

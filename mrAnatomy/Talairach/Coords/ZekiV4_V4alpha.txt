@@ -1,0 +1,4 @@
+-22 -72 -12 lv4v_Zeki99 g
+20 -72 -10 rv4v_Zeki99 g
+-34 -54 -14 lv4alpha_Zeki99 r
+30 -50 -20 rv4alpha_Zeki99 r

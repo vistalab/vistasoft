@@ -1,0 +1,84 @@
+Notes on projecting ROI's in flattened cortex into inplane anatomies
+
+1/28/96	gmb wrote it after sae showed him how to do it.
+
+******** projecting functional data onto the flattened cortex. **********
+
+**** note: this process could use some housework.  see notes below
+
+1. 	run mrLoadRet from matlab directory.
+	pull in SS image, select subimage, and load anat back in
+
+2. 	run mrLoadVol from matlab directory.
+	load mrUnFold from the 'init' menu
+	enter location of output of Gigi's unfolding code. i.e.
+	 	/gusr2/mri/volumeAnatomy/geoff/022196/geoffanat.dat
+        next, mrLoadVol asks for location of grey matter pixels.
+	we never use this, so you can enter
+		 /gusr2/mri/volumeAnatomy/geoff/022196/geoffanat.dat 
+	again (don't ask, just do it)
+	sometimes there's a third prompt.  Ignore it and hit <return>
+
+3. 	choose 'Align';'Start'
+	enter [256/240,256/240,1/4] (for 24x24 fov w/ 4mm thicknes)
+	enter [256/240,256/240,1] for geoff's volume anatomy.
+
+	*** note: this crap should be saved in a file local to the volume
+	anatomy directory, and should work like ExpParams.
+
+4. 	choose 'Plane';'Saggital'
+	flip (or slide) through saggital slices and find the one mose like the SS image
+	choose 'Plane';'Save Sag'.  Steve uses name 'mockss'
+
+5. 	choose 'Plane';'Oblique'
+		select start and end values for an inplane (plane 8 first?)
+		or load in copy of mockpl8 from previous night
+		choose 'Align':'Thicken' to emulate inplane anatomies
+
+6  	choose 'Align';'Get a point'.  Choose a pixel in MrLoadRet
+	Then choose the corresponding pixel in mrLoadVol (second fig).
+	Watch out for mirror-reversals.  Steve picks twelve points per slice,
+	and three slices (8,6,4)
+
+	*** note: mirror reversal is totally lame.  there should be
+	a flag which corrects the images.
+
+	*** note: previous points should remain on screen, could even use
+	different colors or numbers to mark them.
+
+	If you mess up, you have to go back to 'Align':'start' again.
+
+	*** note: there should be a 'remove last point' option
+
+7. 	choose 'Align':'Compute Rotation'
+		you can also check the rotation by changing anatomies
+	in mrLoadRet, and choose align:Check Rotation.
+
+8. 	If your're satisfied with the map, choose
+	'Align':'Save Rotation' 
+	Steve uses 'bestrot' as a name.  Whatever
+	You are now finished with mrLoadVol.
+
+********   Choosing regions of interest in the flattened cortex. **********
+
+	run markAreas.m  (sitting in /home/boynton/matlab/unfold directory)
+
+	directory structure is hard-coded by subject name.  Create ROI's with
+	names such as 'V1','V2',...
+	markAreas.m will save files such as 'V1_left.mat','V2_right.mat' ... in directory
+	/musr1/mri/retinotopy/ROI/<subject>
+	These files hold the Pixels for each ROI in the flattened cortex.
+
+*********  Projecting pixels from flattened cortex to inplanes.
+
+	1. run the mrLoadVol steps above for each functional scan directory
+	to create a  'bestrotvol.mat' file.  This file determines the
+	map between the local inplanes and the volume anatomy.  
+	
+	2. run the script projectAreas.m (in /home/boynton/matlab/unfold)
+	this will create files such as 'V1ROI.mat','V2ROI.mat' in the appropriate
+	functional scan directory.  These ROI files are compatible with mrLoadRet.
+	(they contain the variable 'selpts')
+
+	There it is.	piece of cake.  
+

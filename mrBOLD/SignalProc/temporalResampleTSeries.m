@@ -1,0 +1,99 @@
+function view = temporalResampleTSeries(view, scan, newFramePeriod, dt);
+% Temporally resample time series.
+%
+%   view = temporalResampleTSeries([view], [scan], [newFramePeriod=1.5], [dataType]);
+%
+% Written for combining pRF data acros sessions which had used different
+% temporal sampling periods. This code adds the resampled time series as a
+% new scan in the specified data type.
+%
+% INPUTS:
+%	view: mrVista view. [default: cur view]
+%	scan: scan(s) to resample. [default: cur scan]
+%	newFramePeriod: frame period at which to resample the data. [default:
+%					1.5 sec/frame]
+%	dataType: name or index of data type in which to save the scan.
+%			  [default: cur data type]
+%
+%
+%
+% ras, 09/2009.
+if notDefined('view'),				view = getCurView;			end
+if notDefined('scan'),				scan = view.curScan;		end
+if notDefined('newFramePeriod'),	newFramePeriod = 1.5;		end
+if notDefined('dt'),				dt = view.curDataType;		end
+
+if length(scan) > 1
+	% iteratively resample each scan
+	for s = scan
+		view = temporalResampleTSeries(view, s, newFramePeriod, dt);
+	end
+	return
+end
+
+%% compute the temporal sample points for the source and new time series
+framePeriod  = viewGet(view, 'FramePeriod', scan);
+nFrames      = viewGet(view, 'NumFrames', scan);
+newNumFrames = nFrames * framePeriod / newFramePeriod;
+
+t = [0:nFrames-1] .* framePeriod;
+ti = [0:newNumFrames-1] .* newFramePeriod;
+
+%% get ready
+verbose = prefsVerboseCheck;
+
+if verbose >= 1
+	h_wait = waitbar(0, ['Resampling time series for scan ' num2str(scan)]);
+end
+
+nSlices = numSlices(view);
+
+%% main resampling stage
+for slice = 1:nSlices
+	src = loadtSeries(view, scan, slice);
+	
+	nVoxels = size(src, 2);
+	tSeries = single( NaN(newNumFrames, nVoxels) );
+
+	for v = 1:nVoxels
+		if any( isnan(src(:,v)) | isinf(src(:,v)) )
+			continue;
+		end
+		
+		tSeries(:,v) = interp1(t, src(:,v), ti);
+		
+		% interp1 introduces boundary errors: the last time point will be
+		% NaNs. We will make it equal to the previous time point, so that
+		% averaging this time series with other time series works.
+		tSeries(end,v) = tSeries(end-1,v);
+		
+		if verbose >= 1
+			waitbar((slice-1)/nSlices + v/(nSlices*nVoxels), h_wait);
+		end
+	end
+	
+	% save the time series
+	[tgtView tgtScan tgtDt] = initScan(view, dt, [], {view.curDataType scan});
+	savetSeries(tSeries, tgtView, tgtScan, slice);
+	
+	% update the data type params -- including retinotopy model params if
+	% they exist:
+	mrGlobals;
+	dataTYPES(tgtDt).scanParams(tgtScan).framePeriod = newFramePeriod;
+	dataTYPES(tgtDt).scanParams(tgtScan).nFrames = newNumFrames;
+	dataTYPES(tgtDt).scanParams(tgtScan).annotation = ...
+		[dataTYPES(tgtDt).scanParams(tgtScan).annotation ' Resampled at '...
+		 num2str(newFramePeriod) ' secs/frame'];
+	 if checkfields( dataTYPES(tgtDt), 'retinotopyModelParams', 'framePeriod')
+		 dataTYPES(tgtDt).retinotopyModelParams(tgtScan).framePeriod = newFramePeriod;
+		 dataTYPES(tgtDt).retinotopyModelParams(tgtScan).nFrames = newNumFrames;
+	 end
+	saveSession;
+end
+
+if verbose >= 1
+	close(h_wait);
+end
+
+
+return

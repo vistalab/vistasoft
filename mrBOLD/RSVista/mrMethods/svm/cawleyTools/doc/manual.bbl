@@ -1,0 +1,31 @@
+\begin{thebibliography}{}
+
+\bibitem[Boser et~al., 1992]{Boser1992}
+Boser, B., Guyon, I., and Vapnik, V.~N. (1992).
+\newblock A training algorithm for optimal margin classifiers.
+\newblock In {\em Proceedings of the fifth annual workshop on computational
+  learning theory}, pages 144--152, Pittsburgh. ACM.
+
+\bibitem[Cortes and Vapnik, 1995]{Cortes1995}
+Cortes, C. and Vapnik, V. (1995).
+\newblock Support vector networks.
+\newblock {\em Machine Learning}, 20:1--25.
+
+\bibitem[Cristianini and Shawe-Taylor, 2000]{Cristianini2000}
+Cristianini, N. and Shawe-Taylor, J. (2000).
+\newblock {\em An Introduction to Support Vector Machines (and other
+  kernel-based learning methods)}.
+\newblock Cambridge University Press, Cambridge, U.K.
+
+\bibitem[Vapnik, 1995]{Vapnik1995}
+Vapnik, V.~N. (1995).
+\newblock {\em The Nature of Statistical Learning Theory}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Vapnik, 1998]{Vapnik1998}
+Vapnik, V.~N. (1998).
+\newblock {\em Statistical Learning Theory}.
+\newblock Wiley Series on Adaptive and Learning Systems for Signal Processing,
+  Communications and Control. Wiley, New York.
+
+\end{thebibliography}

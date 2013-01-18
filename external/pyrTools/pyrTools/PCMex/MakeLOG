@@ -1,0 +1,18 @@
+	/opt/matlab/bin/cmex  corrDn.o wrap.o convolve.o edges.o
+
+    Warning: No source files in argument list.
+
+      Assuming C source code. To override this assumption, use
+      -fortran.
+
+      Assuming fully MATLAB 5 compliant MEX-file.  To override
+      this assumption, use -V4.
+
+ld: DP relative code in file edges.o - shared library must be position
+    independent.  Use +z or +Z to recompile.
+
+    mex: link of 'corrDn.mexhp7' failed.
+
+*** Error exit code 1
+
+Stop.

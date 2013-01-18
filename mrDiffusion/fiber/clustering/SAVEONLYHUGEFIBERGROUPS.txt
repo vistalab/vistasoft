@@ -1,0 +1,14 @@
+1. LOAD TOP LEVEL SOLUTION
+2. 
+ fibergroupsvector=[]
+ sizefgvector=[]
+for clust=1:max(clusterlabelsAll)
+ if size(find(clusterlabelsAll==clust), 1)>20
+ fibergroupsvector=[fibergroupsvector clust]
+ sizefgvector=[ sizefgvector size(find(clusterlabelsAll==clust), 1)] 
+ end
+ end
+
+3. load THE CORRECT FG!
+4. cd into fiberrs resampled
+dtiSaveFiberClusters(clusterlabelsAll, fibergroupsvector, fg, versionNum, coordinateSpace)

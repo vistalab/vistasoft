@@ -1,0 +1,296 @@
+function [view, mapvol, covol] = polarAngleMap(view, dt, scans, params);
+%
+% [view, map, co] = polarAngleMap(view, <dt, scans, params>);
+%
+% AUTHOR: rory
+% PURPOSE:
+% Given corAnal data for a polar angle ("meridian")-mapping experiment
+% (single scan or set of scans), produce a parameter map of preferred
+% polar angle in units of degrees of visual field.
+%
+% If a single scan is provided as input, this function saves the
+% parameter map in the scan's data type, assigning it only for that
+% scan.
+%
+% However, if multiple input scans are provided (see below),
+% the code saves the results in a new data type 'Meta_Analysis'.
+% corAnal data from each scan are first converted into real-world
+% units, then overlapping data are averaged together in a weighted
+% average, based on each scan's coherence. (I.e., if one scan's
+% co values for a given voxel are much higher than other scans,
+% it will dominate the determination of what angle is represented.)
+%
+% I wrote this code to use in conjunction with my across-session
+% tools (createCombinedSession, importTSeries) to run meta-analyses
+% on retinotopy data.
+%
+% ARGUMENTS:
+%   INPUT:
+%   view: mrVista view. <Defaults to selected gray view>
+%   dt: for a single scan, name or number of the data type
+%       from which the input data come. If analyzing multiple
+%       scans, a cell of length nScans of data type names/numbers.
+%       <default: cur data type>
+%
+%   scans: scan or scans to use as input. <default: cur scan>
+%
+%   params: struct (or nScans-long struct array) specifying how
+%       the stimulus mapped polar angle during each scan. Needs 
+%       the following fields:
+%       params.startAngle: angle of center of wedge stimulus, measured
+%           in degrees clockwise from 12-o-clock, at the start of each
+%           cycle;
+%       params.width: width of wedge stimulus in degrees.
+%       params.direction: 'cw' or 'ccw', direction in which the stimulus
+%       proceeded. (cw=clockwise or ccw=counterclockwise).
+%       params.visualField: number of degrees the stimulus traversed
+%       each cycle (e.g., 360 if it went all the way around).
+%       <default: get these params using retinoGetParams>
+%       
+%
+%   OUTPUT:
+%   view: mrVista view, set to the relevant data type / scan and with
+%         the map loaded and set to map mode.
+%
+%   map: the map volume produced (but not the cell-of-scans set in the
+%        view, the numeric matrix).
+%
+%   co: the maximum coherence at each voxel, across all the input scans.
+%       (It may be more sensible to make this the mean, but I'm trying
+%       max for now.) Same format as map.
+%
+%
+% ras, 01/10/06.
+if notDefined('view'),  view = getSelectedGray;                 end
+if notDefined('dt'),    dt = viewGet(view, 'curDataType');      end
+if notDefined('scans'), scans = viewGet(view, 'curScan');       end
+if notDefined('rng')
+    % put up a dialog 
+    if length(scans)==1
+        prompt = {['Angle of leading edge (degrees CW from 12-o-clock)' ...
+                   ' at the START of each cycle'] ...
+                   'Direction (''cw'' or ''ccw'')' ...
+                   'Polar angle traversed every cycle (degrees)'};
+        ttl = 'Polar Angle Map From CorAnal';
+        defaults = {'0' 'cw' '360'};
+        resp = inputdlg(prompt, ttl, 1, defaults);
+        if isempty(resp), return; end
+        rng = [str2num(resp{1}) str2num(resp{2})];
+    else
+        % we'll have to get it below
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Deal with single input scan instances separately %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if length(scans)==1
+    % this should be easy: just convert the corAnal values into
+    % degrees of polar angle
+    view = selectDataType(view, dt);
+    corAnalPath = fullfile(dataDir(view), 'corAnal.mat');
+    if ~exist(corAnalPath, 'file')
+        error('corAnal not found. Run computeCorAnal first.');
+    end
+    load(corAnalPath, 'ph', 'co');
+    srcPh = ph{scans}; srcCo = co{scans}; clear ph co;
+
+    % scale from the corAnal range(0:2*pi) to the polar angle range
+    mapvol = rescale(srcPh, [0 2*pi], rng);
+
+    % make and set the parameter map
+    mapPath = fullfile(dataDir(view), 'Polar_Angle_Map.mat');
+    if exist(mapPath, 'file')
+        load(mapPath, 'map', 'mapName', 'co');
+    else
+        map = cell(1, numScans(view));
+        mapName = 'Polar Angle (degrees CW from 12-o-clock)';
+    end
+
+    map{scans} = mapvol;
+    
+    % let's set the map colormap to be the same as the phase mode
+    % colormap, and save this with the map
+    if checkfields(view, 'ui', 'phMode')
+        view.ui.mapMode.cmap = view.ui.phMode.cmap;
+    end
+
+    view = setParameterMap(view, map, mapName);
+    saveParameterMap(view, mapPath, 1, 1);
+
+    % that should be it!
+    if nargout>=3, covol = co{scans}; end
+    view = refreshScreen(view);
+    return
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% if we get here, we have multiple scans: parse the arguments to    %
+% be cell arrays, and get set up:                                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+nScans = length(scans);
+
+if ~iscell(dt)
+    mrGlobals;
+    % assume a single dt is specified, and all the scans are
+    % coming from that data type
+    for i = 1:nScans
+        if isnumeric(dt), tmp{i} = dataTYPES(dt).name;
+        else,             tmp{i} = dt;
+        end
+    end
+    dt = tmp; clear tmp;
+else
+    for i = 1:nScans
+        if isnumeric(dt{i}), dt{i} = dataTYPES(dt{i}).name; end
+    end
+end
+
+if notDefined('rng')
+    [rng, quitFlag] = polarAngleMap_dialog(dt, scans);
+    if quitFlag==1, return; end
+elseif isnumeric(rng)
+    for i = 1:size(rng,1), tmp{i} = rng(i,:); end
+    rng = tmp; clear tmp;
+end
+
+%%%%%Get corAnal volumes for each input scan
+srcCo = cell(1, nScans); srcPh = cell(1, nScans);
+uniqueDts = unique(dt);
+for i = 1:length(uniqueDts)
+    corAnalPath = fullfile(viewDir(view), uniqueDts{i}, 'corAnal.mat');
+    if ~exist(corAnalPath, 'file')
+        error('corAnal not found. Run computeCorAnal first.');
+    end
+    load(corAnalPath, 'co', 'ph')
+    
+    I = cellfind(dt, uniqueDts{i});
+    srcCo(I) = co(scans(I));
+    srcPh(I) = ph(scans(I));
+end
+
+%%%%%Set up the target data type for the multi-scan meta-analysis
+view = initScan(view, 'Meta_Analysis', [], {dt{1} scans(1)});
+view = selectDataType(view, 'Meta_Analysis');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Calculate the Eccentricity Map %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%Convert each phase map into real-word units
+for i = 1:nScans
+    srcPh{i} = rescale(srcPh{i}, [0 2*pi], rng{i});
+end
+
+%%%%%Set up the weighted average
+% we'll need a volume representing the sum of the coherence
+% for each voxel, across input scans. This will serve as the
+% denominator of the weight formula for each input scan.
+coSum = zeros(size(srcCo{1}));
+for i = 1:nScans, coSum = coSum + srcCo{i}; end
+
+%%%%%initialize the map and co volumes
+mapvol = zeros(size(srcCo{1}));
+covol = zeros(size(srcCo{1}));
+
+%%%%%compute co volume as the max across all input co volumes
+for i = 1:nScans, covol = max(covol, srcCo{i}); end
+
+%%%%%Compute the weighted average, iteratively across input scans
+for i = 1:nScans
+%     mapvol = mapvol + (srcPh{i} .* srcCo{i} ./ coSum);
+
+    % alternate attempt: use winner-take-all: scan with the
+    % highest co value for a given voxel determines the map
+    % value at that voxel.
+    Imax = find(srcCo{i}==covol);
+    mapvol(Imax) = srcPh{i}(Imax);    
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Output the parameter map %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% initialize the output map and co data fields, loading it if it 
+% already exists:
+mapPath = fullfile(dataDir(view), 'Polar_Angle_Map.mat');
+if exist(mapPath, 'file')
+    load(mapPath, 'map', 'mapName', 'co');
+else
+    map = cell(1, numScans(view));
+    co = cell(1, numScans(view));
+    mapName = 'Polar Angle (degrees CW from 12-o-clock)';
+end
+
+% append the map volume for the new scans
+map{numScans(view)} = mapvol;
+co{numScans(view)} = covol;
+
+% before saving the map, copy the view's phase mode color map
+% to the map mode, which will also be saved:
+if checkfields(view, 'ui', 'phMode')
+    view.ui.mapMode.cmap = view.ui.phMode.cmap;
+end
+
+% set the map in the view, and save it
+% set the map in the view, and save it
+view = setParameterMap(view, map, mapName);
+saveParameterMap(view, mapPath, 1, 1);
+view = refreshView(view);
+
+% ok, think that's it!
+
+return
+% /-------------------------------------------------------------------/ %
+
+
+
+
+
+% /-------------------------------------------------------------------/ %
+function [rng, quitFlag] = polarAngleMap_dialog(dt, scans);
+%    [rng, quitFlag] = polarAngleMap_dialog(dt, scans);
+% for polar angle meta-analyses, across multiple scans,
+% make and parse a dialog that allows the user to input 
+% polar angle ranges for many scans (which may each cover different
+% ranges).
+mrGlobals;
+
+% set up fields for the dialog:
+for i = 1:length(scans)
+    dtNum = existDataType(dt{i});
+    
+    dlg(i).fieldName = sprintf('params%i',i);
+    dlg(i).style = 'edit';
+    dlg(i).string = sprintf('%s scan %i (%s)', dt{i}, scans(i), ...
+                        dataTYPES(dtNum).scanParams(scans(i)).annotation);
+    dlg(i).value = '';
+end
+
+% put up a message with instructions:
+msg = ['Enter [startAngle endAngle] for each scan. ' ...
+       'startAngle is the polar angle of the leading edge of the ' ...
+       'stimulus, in degrees clockwise from the ' ...
+       'upper vertical meridian (12-o-clock), at the beginning ' ...
+       'of each cycle, and endAngle is the polar angle at the end ' ...
+       'of each cycle. '];
+hmsg = mrMessage(msg, 'left', [.4 .6 .2 .15], 9);
+
+% put up the dialog, get user response
+height = 0.1 + 0.03*length(scans);
+pos = [.4 .6-height .45 height];
+resp = generalDialog(dlg, 'Polar Angle Ranges for Each Scan', pos);
+
+close(hmsg);
+
+% if user canceled, try to exit gracefully
+if isempty(resp), quitFlag = 1; return; end
+
+% parse the response
+for i = 1:length(scans)
+    field = sprintf('params%i',i);
+    rng{i} = str2num(resp.(field));
+end
+
+return
+
+
+

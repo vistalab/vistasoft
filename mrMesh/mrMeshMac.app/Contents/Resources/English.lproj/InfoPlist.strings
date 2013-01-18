@@ -1,0 +1,4 @@
+CFBundleName = "mrMeshMac";
+CFBundleShortVersionString = "1.0";
+CFBundleGetInfoString = "mrMeshMac Copyright VISTA Lab";
+NSHumanReadableCopyright = "mrMeshMAC Copyright VISTA Lab";

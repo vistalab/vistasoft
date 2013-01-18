@@ -1,0 +1,20 @@
+# makefile for Sagittal rotation - HP 
+
+CC = gcc
+CFLAGS = -D_HPUX_SOURCE -ansi -O -c -fpic
+
+INC  = -I/usr/local/matlab/5.2/extern/include
+LIB  = -L/usr/local/lib
+CMEX = /usr/local/matlab/5.2/bin/cmex
+
+
+all: SagittalRot.mexhp7
+
+SagittalRot.mexhp7: SagittalRot.c
+	$(CC) $(CFLAGS) $(LIB) $(INC) SagittalRot.c
+	$(CMEX) SagittalRot.o
+ 
+
+
+
+

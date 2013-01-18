@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99c (Web2C 7.3.1)
+The top-level auxiliary file: manual.aux
+The style file: apalike.bst
+Database file #1: manual.bib
+Warning--I didn't find a database entry for ""
+Warning--can't use both author and editor fields in Vapnik1998
+You've used 5 entries,
+            1935 wiz_defined-function locations,
+            506 strings with 4412 characters,
+and the built_in function-call counts, 1857 in all, are:
+= -- 186
+> -- 58
+< -- 5
++ -- 24
+- -- 18
+* -- 136
+:= -- 321
+add.period$ -- 17
+call.type$ -- 5
+change.case$ -- 31
+chr.to.int$ -- 5
+cite$ -- 6
+duplicate$ -- 83
+empty$ -- 138
+format.name$ -- 27
+if$ -- 374
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 8
+newline$ -- 28
+num.names$ -- 15
+pop$ -- 33
+preamble$ -- 1
+purify$ -- 34
+quote$ -- 0
+skip$ -- 63
+stack$ -- 0
+substring$ -- 114
+swap$ -- 15
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 24
+warning$ -- 1
+while$ -- 15
+width$ -- 0
+write$ -- 70
+(There were 2 warnings)

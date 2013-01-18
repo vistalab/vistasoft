@@ -1,0 +1,51 @@
+This package contains some of my MatLab tools for multi-scale image
+processing.  Briefly, the tools include:
+  - Recursive multi-scale image decompositions (pyramids), including
+    Laplacian pyramids, QMFs, Wavelets, and steerable pyramids.  These
+    operate on 1D or 2D signals of arbitrary dimension.  Data
+    structures are compatible with the MatLab wavelet toolbox.
+  - Fast 2D convolution routines, with subsampling and boundary-handling.
+  - Fast point-operations, histograms, histogram-matching.
+  - Fast synthetic image generation: sine gratings, zone plates, fractals, etc.
+  - Display routines for images and pyramids.  These include several
+    auto-scaling options, rounding to integer zoom factors to avoid 
+    resampling artifacts, and useful labeling (dimensions and gray-range).
+
+The package is available as a gnu-zipped UNIX "tar" file, via
+anonymous ftp from ftp.cis.upenn.edu (IP number 158.130.12.3) in the
+file pub/eero/matlabPyrTools.tar.gz.  You may also access it from my
+Home page http://www.cis.upenn.edu/~eero.  
+
+The code works in Matlab versions 4.2 and higher, and has been tested
+on Sun and Macintosh platforms (it should, however, port easily to
+others).  To use the code (these lines are for a UNIX workstation):
+  1) gunzip matlabPyrTools.tar.gz  	# unpack g'zipped file
+  2) tar tvf matlabPyrTools.tar       	# view contents
+  3) tar xvf matlabPyrTools.tar       	# extract contents
+  4) rm matlabPyrTools.tar 		# delete tarfile
+  5) Run matlab, and execute:
+      path(<pathname-of-matlabPyrTools>, path);
+      help matlabPyrTools
+
+A few functions are actually MEX interfaces to C code.  These are
+contained in the subdirectory called MEX.  You may need to recompile
+these (by running "make" in the <dir>/MEX directory), and copy or
+link the resulting mex files into the main directory.  The MEX files
+have been tested on Sun's Solaris and SunOS-4.X operating systems,
+LinuX on a Pentium platform, and on a PPC macintosh, but should not be
+difficult to compile on most other platforms.
+
+Some example script files showing usage of the code are in the
+directory <dir>/TUTORIALS.  There is a README file in that directory
+describing the contents.
+
+Incremental changes to the code are documented in the ChangeLog file.
+
+Comments/Suggestions/Bugs to:
+  Eero P. Simoncelli
+  Assistant Professor,
+  Center for Neural Science, and
+  Courant Institute for Mathematical Sciences
+  New York University
+  eero.simoncelli@nyu.edu
+  http://www.cis.upenn.edu/~eero

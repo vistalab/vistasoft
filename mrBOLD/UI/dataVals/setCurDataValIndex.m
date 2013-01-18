@@ -1,0 +1,1 @@
+function view = setCurDataValIndex(view,dataValIndex)% view = setCurDataValIndex(view,dataValIndex)% %%% Set the sliderif checkfields(view,'ui','dataValIndex'),     setSlider(view,view.ui.datavals,dataValIndex,0); end% what the hell, let's go ahead and add a 'curScan' field% to the view:view.dataValIndex = dataValIndex;return;

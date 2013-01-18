@@ -1,0 +1,25 @@
+The gradient direction files in here are specific to the 
+Hedehus/Bammer DTI sequence used at the Stanford Lucas Center.
+
+Random notes about specific grads files: 
+
+* dwepi.65.grads is derived from the FSL bvec file. 
+I just reformatted it to Roland's format and rounded to 
+four decimal places. It has 60 directions + 5 b=0.
+
+* dwepi.25.grads is from Roland. I think he got these 
+directions from Derek Jones. It has 23 dirs + 2 b=0.
+
+* dwepi.44.grads is a old file that I made using a crude
+hack. Note that the directions might not be optimally
+distributed.
+
+
+HARDI notes
+
+White and Dale (HBM 2009) suggest that the optimal b-values
+for spherical deconvolution analysis of GE 1.5T Signa Hdx
+scanner data are b=2200 for L=4, b=3600 for L=6, and b=5200
+for L=8.
+
+

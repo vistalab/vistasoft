@@ -1,0 +1,20 @@
+# makefile for Oblique rotation - HP 
+
+CC = /usr/pubsw/bin/gcc
+CFLAGS = -D_HPUX_SOURCE -ansi -O -c -fpic
+
+INC  = -I/usr/local/matlab/5.2/extern/include
+LIB  = -L/usr/local/lib
+CMEX = /usr/local/matlab/5.2/bin/cmex
+
+all: ObliqueRot.mexhp7 yprime.mexhp7
+
+ObliqueRot.mexhp7: ObliqueRot.c
+	$(CC) $(CFLAGS) $(LIB) $(INC) ObliqueRot.c
+	$(CMEX) ObliqueRot.o
+ 
+yprime.mexhp7: yprime.o
+	$(CMEX) yprime.o
+
+yprime.o: yprime.c
+	$(CC) $(CFLAGS) $(INC) yprime.c
