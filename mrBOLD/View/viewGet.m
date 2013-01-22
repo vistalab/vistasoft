@@ -259,6 +259,9 @@ if notDefined('param'), error('No parameter defined'); end
 mrGlobals;
 val = [];
 
+%Format the parameter as lowercase and without spaces
+param = mrvParamFormat(param);
+
 % Standardize the name of the parameter field with name-mapping function
 param = viewMapParameterField(param);
 

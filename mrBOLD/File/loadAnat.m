@@ -13,21 +13,24 @@ function vw=loadAnat(vw,pathStr)
 %
 % 2.26.99 - Get anatomy path from getAnatomyPath - WAP
 
-global mrSESSION;
+global mrSESSION; %TODO: Remove the global variable calls here that are not used
 global HOMEDIR;
 global vANATOMYPATH;
 
-switch vw.viewType
+switch viewGet(vw,'View type')
     
 case 'Inplane',
     if ~exist('pathStr','var')
-        pathStr=fullfile(viewDir(vw),'anat.mat');
+        pathStr=fullfile(viewDir(vw),'anat.mat'); %Expects an anat.mat to be saved there
+                                                  %Change this to point to
+                                                  %a nifti file
     end
     if ~exist(pathStr,'file')
         myErrorDlg(['No ',pathStr,' file']);
     else
 %         fprintf('Loading anatomies from %s ...',pathStr);
         load(pathStr);
+        %TODO: Change this to ReadNifti or the real version of it
         vw.anat = anat;
 %         fprintf('done.\n');
     end

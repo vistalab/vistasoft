@@ -9,11 +9,18 @@ function s = sessionSet(s,param,val,varargin)
 %   mrSESSION = sessionSet(mrSESSION,'sliceOrder',[ 3 1 5 4 2],scan);
 %
 
+%TODO: Add a sessionSet variable for each of the variables previously
+%discussed: inplane.strPath, functionals.strPath, vAnatomy.strPath
+
 if notDefined('s'), error('mrSESSION variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
 if ~exist('val','var'), error('Val required'); end
 
-switch lower(param)
+%TODO: add param scrubbing code
+
+param = mrvParamFormat(param);
+
+switch param
 
     case 'title'
         s.title = val;
@@ -22,7 +29,7 @@ switch lower(param)
     case 'examnum'
         s.examNum = val;
 
-    case 'screenSaveSize'
+    case 'screensavesize'
         s.screenSaveSize = val;
     case 'alignment'
         s.alignment =val;
@@ -31,6 +38,11 @@ switch lower(param)
         s.sessionCode = val;
     case 'description'
         s.description = val;
+    case 'comments'
+        s.comments = val;
+    case 'inplanepath'
+        s.inplanes.path = val;
+        
 
     % Information about the functional scans
     case 'functionals'

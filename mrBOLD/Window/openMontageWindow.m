@@ -127,7 +127,10 @@ INPLANE{s} = eventMenu(INPLANE{s});
 INPLANE{s} = helpMenu(INPLANE{s}, 'Inplane');
 
 % go ahead and load the anatomicals
-INPLANE{s} = loadAnat(INPLANE{s});
+inplanePath = sessionGet(mrSESSION,'Inplane Path');
+INPLANE{s} = loadAnat(INPLANE{s}, inplanePath); 
+%TODO: Change this function to use the pre-loaded data from mrSESSION rather than an external file
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Add Annotation String %
@@ -145,7 +148,9 @@ INPLANE{s}.ui.cbarRange = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Label L/R on Inplanes %
 %%%%%%%%%%%%%%%%%%%%%%%%%
-INPLANE{s} = labelInplaneLR(INPLANE{s});
+INPLANE{s} = labelInplaneLR(INPLANE{s}); %This assumes that the LR data is saved in mrSESSION
+%TODO: Change this so it can pull it up from mrSESSION directly
+
 
 %%%%%%%%%%%%%%%%%%%
 % Add popup menus %
