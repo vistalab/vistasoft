@@ -48,7 +48,7 @@ function [vw, s] = mrVista(windowType, varargin)
 if notDefined('windowType'), windowType = 'inplane'; end
 
 % Define global variables and structures.
-mrGlobals;
+mrGlobals; %Defines mrSESSION and dataTYPES
 evalin('base','mrGlobals');
 
 % Check Matlab version number
@@ -74,7 +74,9 @@ javaFigs = mrvJavaFeature;
 HOMEDIR = pwd; %#ok<NASGU>
 
 % Load mrSESSION structure
-loadSession;
+loadSession; %Requires a mrSESSION.mat file in the current directory called
+%TODO: Make a decision about whether to change this to a pure in-memory
+%variable exchange without saving down to the mrSESSION file
 
 % allow the user to set the volume anatomy, for volume/gray views
 if ismember(windowType, {'v' 'volume' 'g' 'gray' '3' '3view'}) && ...

@@ -41,6 +41,8 @@ if notDefined('param'), error('Parameter field required.'); end
 % make lower case and remove spaces
 param = mrvParamFormat(param);
 
+param = sessionMapParameterField(param);
+
 val = [];
 switch param
     case 'title'
@@ -58,7 +60,7 @@ switch param
     case 'description'
         if isfield(s,'description'),val = s.description; end
         % Information about the functional scans
-    case {'functionals','functionalparameters'}
+    case {'functionals'}
         % sessionGet(s,'functionals',3);  % Third scan parameters
         % sessionGet(s,'functionals');    % All
         if isfield(s, 'functionals')
@@ -66,7 +68,7 @@ switch param
             else val = s.functionals(varargin{1});
             end
         end
-    case {'pfilenames','pfilenamecellarray'}
+    case {'pfilenames'}
         nScans = length(s.functionals);
         val = cell(1, nScans);
         for ii=1:nScans
@@ -87,28 +89,17 @@ switch param
         % pth = sessionGet(s, 'inplane path');
         % Return the path to the raw files (e.g., dicoms or nifti) for the
         % inplane anatomy (underlay for the functional data)
+        % This can now be found in the mrSESSION.inplanes.inplanePath
+        % location
         
-        % if the session was initialized with mrInit2, then the path to the
-        % inplane should be stored in a file called mrInit2_params.mat,
-        % created at initializion.
-        if exist('mrInit2_params.mat', 'file') 
-            p = load('mrInit2_params.mat');
-            val = p.params.inplane;
-        else 
-            % if mrInit2_params.mat doesn't exist, try to guess the
-            % location of the inplane files
-           val = getIfileNames(fullfile(HOMEDIR,'Raw','Anatomy','Inplane','I'));
-           if isempty(val), % perhaps the dicoms do not begin with 'I'
-               val = getIfileNames(fullfile(HOMEDIR,'Raw','Anatomy','Inplane','*.dcm'));
-           end           
-        end
+        val = s.inplanes.inplanePath;
         
         if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>
         
         % if it is a char str (and not a cell array), convert to cell
         if ~isempty(val) && ~iscell(val), val = {val}; end                
         
-    case {'sliceorder','sliceordering'}
+    case {'sliceorder'}
         if isempty(varargin), scan = 1;
         else scan = varargin{1};
         end
@@ -117,7 +108,7 @@ switch param
         else
             val = [];
         end
-    case {'nslices','numberslices'}
+    case {'nslices'}
         % I don't understand slquant and slices.  Older mrSESSION files
         % don't have slquant.  Newer ones appear to use it to get the
         % number of slices.  Ask for an explanation, then put it here.
@@ -133,7 +124,7 @@ switch param
             % not the other.  Which one?
             val = length(s.functionals(scan).slices);
         end
-    case {'refslice','referenceslice','timingreferenceslice'}
+    case {'refslice'}
         % sessionGet(mrSESSION,'refslice',2)
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
@@ -150,7 +141,7 @@ switch param
         else
             val = 1;
         end
-    case {'interframetiming','interframedelta','timebetweenframes','framedt'}
+    case {'interframetiming'}
         % This is the proportion of a TR that separates each frame
         % acquisition. This is NOT a real number in seconds.
         % sessionGet(mrSESSION,'interframedelta',2)
@@ -162,13 +153,13 @@ switch param
         % So the effective spacing between the acquisition times for slice
         % 1 and 2 is reduced by the number of shots.
         val = 1 / sessionGet(s,'nslices',scan) / sessionGet(s,'nShots',scan);
-    case  {'nsamples','nframes'}
+    case  {'nsamples'}
         % sessionGet(mrSESSION,'nframes',2)
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end
         val = s.functionals(scan).nFrames;
-    case {'tr','frameperiod'}
+    case {'tr'}
         % sessionGet(mrSESSION,'TR',2)
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
