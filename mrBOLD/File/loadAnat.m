@@ -1,4 +1,4 @@
-function vw=loadAnat(vw,pathStr)
+function vw=loadAnat(vw,inplanePath)
 %
 % vw=loadAnat(vw,[pathStr])
 %
@@ -17,43 +17,39 @@ global mrSESSION; %TODO: Remove the global variable calls here that are not used
 global HOMEDIR;
 global vANATOMYPATH;
 
-switch viewGet(vw,'View type')
+switch viewGet(vw,'View Type')
     
 case 'Inplane',
-    if ~exist('pathStr','var')
-        pathStr=fullfile(viewDir(vw),'anat.mat'); %Expects an anat.mat to be saved there
-                                                  %Change this to point to
-                                                  %a nifti file
+    if ~exist('inplanePath','var')
+        myErrorDlg(['No path specified. Please specify the path.']);
     end
-    if ~exist(pathStr,'file')
-        myErrorDlg(['No ',pathStr,' file']);
+    if ~exist(inplanePath,'file')
+        myErrorDlg(['No ',inplanePath,' file']);
     else
-%         fprintf('Loading anatomies from %s ...',pathStr);
-        load(pathStr);
-        %TODO: Change this to ReadNifti or the real version of it
-        vw.anat = anat;
-%         fprintf('done.\n');
+        %fprintf('Loading anatomies from %s ...',pathStr);
+        vw.anat = niftiRead(inplanePath); 
+        %fprintf('done.\n');
     end
     
 case {'Volume','Gray','generalGray'}
-    if ~exist('pathStr','var'), pathStr = vANATOMYPATH;   end
-    if ~exist(pathStr,'file'), pathStr = getVAnatomyPath; end
-    [vw.anat vw.mmPerVox] = readVolAnat(pathStr); 
+    if ~exist('pathStr','var'), inplanePath = vANATOMYPATH;   end
+    if ~exist(inplanePath,'file'), inplanePath = getVAnatomyPath; end
+    [vw.anat vw.mmPerVox] = readVolAnat(inplanePath); 
 	vw.anat = uint8(vw.anat); % if not uint8...
     
 case 'SS',
     if ~exist('pathStr','var')
         if ~exist(fullfile(HOMEDIR,'RawDicom','Anatomy','SS'))
-            pathStr = fullfile(HOMEDIR,'Raw','Anatomy','SS');
-        else pathStr = fullfile(HOMEDIR,'RawDicom','Anatomy','SS');
+            inplanePath = fullfile(HOMEDIR,'Raw','Anatomy','SS');
+        else inplanePath = fullfile(HOMEDIR,'RawDicom','Anatomy','SS');
         end
     end
-    disp(['loading anatomies matrices from ',pathStr]);
+    disp(['loading anatomies matrices from ',inplanePath]);
     % vw.anat = ReadMRImage(fullfile(pathStr,'I.001'));
     % Instead of I.001, now read whatever comes up as the first I* file
-    SSfile = dir(fullfile(pathStr,'I*'));
+    SSfile = dir(fullfile(inplanePath,'I*'));
     if ~isempty(SSfile);
-        vw.anat = double(ReadMRImage(fullfile(pathStr,SSfile(1).name)));
+        vw.anat = double(ReadMRImage(fullfile(inplanePath,SSfile(1).name)));
     else % if no SS file exists, still create a fake vw.anat
         disp('Did not find valid SS files. Ignore...');
         vw.anat = zeros(64);
@@ -61,13 +57,13 @@ case 'SS',
     
 case 'Flat'
     if ~exist('pathStr','var')
-        pathStr=fullfile(viewDir(vw),'anat.mat');
+        inplanePath=fullfile(viewDir(vw),'anat.mat');
     end
-    if exist(pathStr,'file')
-        load(pathStr);
+    if exist(inplanePath,'file')
+        load(inplanePath);
     else
         anat = makeFlatAnat(vw);
-        save(pathStr,'anat'); 
+        save(inplanePath,'anat'); 
     end
     vw.anat = anat;
    

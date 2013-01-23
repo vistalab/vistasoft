@@ -25,6 +25,8 @@ disp('Initializing Inplane view')
 % s is the index of the new inplane structure.
 s = getNewViewIndex(INPLANE);
 
+%TODO: Replace all of the rest with viewSet?
+
 % Set name, viewType, & subdir
 INPLANE{s}.name=['INPLANE{',num2str(s),'}'];
 INPLANE{s}.viewType='Inplane';
@@ -39,8 +41,8 @@ end
 % Refresh function, gets called by refreshScreen
 INPLANE{s}.refreshFn = 'refreshMontageView';
 
-% Initialize slot for anat
-INPLANE{s}.anat = [];
+% Initialize slot for anat from a nifti
+INPLANE{s}.anat = niftiCreate;
 
 % Initialize slots for co, amp, and ph
 INPLANE{s}.co = [];
@@ -128,6 +130,7 @@ INPLANE{s} = helpMenu(INPLANE{s}, 'Inplane');
 
 % go ahead and load the anatomicals
 inplanePath = sessionGet(mrSESSION,'Inplane Path');
+inplanePath = inplanePath{1}; %Since this is returned as a cell!
 INPLANE{s} = loadAnat(INPLANE{s}, inplanePath); 
 %TODO: Change this function to use the pre-loaded data from mrSESSION rather than an external file
 

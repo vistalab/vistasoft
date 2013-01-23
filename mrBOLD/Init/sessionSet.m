@@ -15,10 +15,12 @@ function s = sessionSet(s,param,val,varargin)
 if notDefined('s'), error('mrSESSION variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
 if ~exist('val','var'), error('Val required'); end
-
+ps -ef | grep parcel
 %TODO: add param scrubbing code
 
 param = mrvParamFormat(param);
+
+param = sessionMapParameterField(param);
 
 switch param
 
