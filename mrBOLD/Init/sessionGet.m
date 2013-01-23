@@ -92,7 +92,7 @@ switch param
         % This can now be found in the mrSESSION.inplanes.inplanePath
         % location
         
-        val = s.inplanes.inplanePath;
+        val = s.inplanes.path;
         
         if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>
         

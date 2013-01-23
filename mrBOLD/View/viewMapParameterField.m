@@ -17,6 +17,8 @@ function res = viewMapParameterField(fieldName)
 
 fieldName = mrvParamFormat(fieldName);
 
+%TODO: Replace the below with a hash map, as in sessionMapParameterField
+
 switch fieldName
     
     %%%%% Session-related properties; selected scan, slice, data type

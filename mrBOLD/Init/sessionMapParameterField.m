@@ -19,25 +19,25 @@ function res = sessionMapParameterField(fieldName)
 fieldName = mrvParamFormat(fieldName);
 
 %Now, let's create our hard-coded hash, then look it up
+% A hash works like an array, only it maps non-integer keys to values
 
-sPM = containers.Map;
+sessionParameterMap = containers.Map;
 
-sPM('functionals') = 'functional';
-sPM('functionalparameters') = 'functional';
-sPM('pfilenames') = 'pfilenamecellarray';
-sPM('sliceordering') = 'sliceorder';
-sPM('numberslices') = 'nslices';
-sPM('referenceslice') = 'refslice';
-sPM('timingreferenceslice') = 'refslice';
-sPM('interframedelta') = 'interframetiming';
-sPM('timebetweenframes') = 'interframetiming';
-sPM('framedt') = 'interframetiming';
-sPM('nframes') = 'nsamples';
-sPM('frameperiod') = 'tr';
+sessionParameterMap('functionalparameters') = 'functionals';
+sessionParameterMap('pfilenames') = 'pfilenamecellarray';
+sessionParameterMap('sliceordering') = 'sliceorder';
+sessionParameterMap('numberslices') = 'nslices';
+sessionParameterMap('referenceslice') = 'refslice';
+sessionParameterMap('timingreferenceslice') = 'refslice';
+sessionParameterMap('interframedelta') = 'interframetiming';
+sessionParameterMap('timebetweenframes') = 'interframetiming';
+sessionParameterMap('framedt') = 'interframetiming';
+sessionParameterMap('nframes') = 'nsamples';
+sessionParameterMap('frameperiod') = 'tr';
 
 
-if sPM.iskey(fieldname)
-    res = sPM(fieldname); %This means that it is an alias, look it up
+if sessionParameterMap.isKey(fieldName)
+    res = sessionParameterMap(fieldName); %This means that it is an alias, look it up
 else
     res = fieldName; %Assume it was typed in correct and not an alias
 end
