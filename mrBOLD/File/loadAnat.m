@@ -27,7 +27,8 @@ case 'Inplane',
         myErrorDlg(['No ',inplanePath,' file']);
     else
         %fprintf('Loading anatomies from %s ...',pathStr);
-        vw.anat = niftiRead(inplanePath); 
+        vw.anat = niftiRead(inplanePath);
+        vw = viewSet(vw,'inplane Path',inplanePath);
         %fprintf('done.\n');
     end
     
