@@ -13,9 +13,9 @@ function dims = viewSize(vw)
 global mrSESSION;
 % global vANATOMYPATH; - 
 
-switch vw.viewType
+switch viewGet(vw,'viewType')
     case 'Inplane'
-    dims = [mrSESSION.inplanes.cropSize, mrSESSION.inplanes.nSlices];
+    dims = viewGet(vw,'dim');
 case {'Volume','Gray','generalGray'}
     if isfield(vw, 'anat')
         if ~isempty(vw.anat), dims = size(vw.anat); end

@@ -380,7 +380,8 @@ switch param
         %   nslices = viewGet(vw, 'Number of Slices');
         switch vw.viewType
             case 'Inplane'
-                val = mrSESSION.inplanes.nSlices;
+                val = viewGet(vw,'dim');
+                val = val(3); %We are always assuming that the 3rd dimension is slices
             case {'Volume' 'Gray'}
                 val = 1;
             case 'Flat'
@@ -585,7 +586,7 @@ switch param
     case 'anatomy'
         % Return the anatomical underlay image.
         %   anat = viewGet(vw, 'anatomy');
-        val = vw.anat;
+        val = vw.anat.data;
     case 'anatomymap'
         % Return the colormap for the anatomical underlay image.
         %   anataomyMap = viewGet(vw, 'Anatomy Map');
@@ -597,12 +598,19 @@ switch param
     case 'anatsize'
         % Return the size (in voxels) of the anatomical underlay image.
         %   anataomySize = viewGet(vw, 'Anatomy Size');
-        if checkfields(vw, 'anat')
-            val = size(vw.anat);
-        else
+        if ~checkfields(vw, 'anat')
             vw = loadAnat(vw);
-            val = size(vw.anat);
         end
+        val = vw.anat.dim;
+
+	case 'anatomycurrentslice'
+        % Return the anatomical underlay image for only one slice
+        %   anat = viewGet(vw, 'Anatomy Current Slice', curSlice);
+        if length(varargin) < 1
+            error('Current slice not defined. Use: viewGet(vw,''anatomy'') instead');
+        end
+        val = vw.anat.data;
+        val = val(:,:,varargin{1});        
     case 'anatsizexyz'
         % The class data store the planes in a different order from the
         % vw.anat.  If you want sizes that work for the class data, call
@@ -957,7 +965,7 @@ switch param
         end
         switch vw.viewType
             case 'Inplane'
-                val = [dataTYPES(vw.curDataType).scanParams(scan).cropSize];
+                val = vw.anat.dim;
             case {'Volume','Gray'}
                 val = [1,size(vw.coords,2)];
             case 'Flat'
