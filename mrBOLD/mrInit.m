@@ -223,7 +223,7 @@ end
 if ~isempty(params.crop)
 	inplane = mrCrop(inplane, params.crop);
 end
-mrSave(inplane, params.sessionDir, '1.0anat');
+%mrSave(inplane, params.sessionDir, '1.0anat');
 %TODO: Remove this line that saves the inplane data as a separate file
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

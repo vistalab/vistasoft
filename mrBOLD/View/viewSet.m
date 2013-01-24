@@ -333,11 +333,13 @@ switch param
        
            %%%%% Anatomy / Underlay-related properties
     case 'anatomy'
-        vw.anat = val;
+        vw.anat.data = val;
     case 'brightness'
         vw = setSlider(vw, vw.ui.brightness, val);
     case 'contrast'
         setSlider(vw, vw.ui.contrast, val);
+    case 'inplanepath'
+        vw.anat.inplanepath = val;
         
         %%%%% ROI-related properties
     case 'roi'
