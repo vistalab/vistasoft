@@ -13,7 +13,7 @@ function vw=loadAnat(vw,inplanePath)
 %
 % 2.26.99 - Get anatomy path from getAnatomyPath - WAP
 
-global mrSESSION; %TODO: Remove the global variable calls here that are not used
+%global mrSESSION; %TODO: Remove the global variable calls here that are not used
 global HOMEDIR;
 global vANATOMYPATH;
 
@@ -28,7 +28,6 @@ case 'Inplane',
     else
         %fprintf('Loading anatomies from %s ...',pathStr);
         vw.anat = niftiRead(inplanePath);
-        vw = viewSet(vw,'inplane Path',inplanePath);
         %fprintf('done.\n');
     end
     
