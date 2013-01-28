@@ -18,6 +18,8 @@ And in addition:
 - tutorials 
 - external: functions written by others that we use as dependencies.
 
-For documentation, please visit the [lab wiki](http://white.stanford.edu/newlm/index.php/Main_Page)
+For documentation, please visit the [lab wiki](http://vistalab.stanford.edu/wiki)
+
+
 
 (c) Vista lab, Stanford University, 2013. 
