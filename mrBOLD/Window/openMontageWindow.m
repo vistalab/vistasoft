@@ -132,7 +132,6 @@ INPLANE{s} = helpMenu(INPLANE{s}, 'Inplane');
 inplanePath = sessionGet(mrSESSION,'Inplane Path');
 inplanePath = inplanePath{1}; %Since this is returned as a cell!
 INPLANE{s} = loadAnat(INPLANE{s}, inplanePath); 
-%TODO: Change this function to use the pre-loaded data from mrSESSION rather than an external file
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
