@@ -1,13 +1,13 @@
 function dt6FileName = dtiRawFitTensorRobust(dwRaw, bvecs, bvals, ... 
                        outBaseName, brainMask, adcUnits, xformToAcPc, ... 
-                       nstep, clobber)
+                       nstep, clobber, noiseCalcMethod)
 % Fits a tensor to the raw DW data using the restore algorithm
 %
 % dt6FileName = dtiRawFitTensorRobust([dwRaw=uigetfile], ...
 %               [bvecsFile=uigetfile], [bvalsFile=uigetfile], ...
 %               [outBaseDir=uigetdir], [brainMask=''], ...
 %               [adcUnits=dtiGuessAdcUnits], [xformToAcPc=dwRaw.qto_xyz],
-%               ... [nstep=50]);
+%               ... [nstep=50], [noiseCalcMethod = 'corner']);
 %
 % The tensors are returned in [Dxx Dyy Dzz Dxy Dxz Dyz] format and are
 % saved in a dt6 file outBaseName 'dt6.mat'.
@@ -155,6 +155,9 @@ if(~exist('xformToAcPc','var') || isempty(xformToAcPc))
     xformToAcPc = dwRaw.qto_xyz;
 end
 
+if ~exist('noiseCalcMethod','var') || isempty(noiseCalcMethod)
+    noiseCalcMethod = 'corner';
+end
 
 %% Load the bvecs & bvals
 % 
@@ -227,24 +230,47 @@ b0 = int16(round(b0));
 %
 numVols   = size(dwRaw.data,4);
 brainInds = find(liberalBrainMask);
+% preallocate a 2d array (with a 2nd dimension that is a singleton). The
+% first dimension is the number of volumes and the 3rd is each voxel
+% (within the brain mask).
 data      = zeros(numVols,1,length(brainInds));
+
+% Loop over the volumes and assign the voxels within the brain mask to data
 for ii=1:numVols
     tmp = double(dwRaw.data(:,:,:,ii));
     data(ii,1,:) = tmp(brainInds);
 end
 
 %% Compute signal noise estimate
-%
-% According to Henkelman (1985), the expected signal variance (sigma) can
-% be computed as 1.5267 * SD of the background (thermal) noise.
-sz = size(dwRaw.data);
-x  = 10;
-y  = 10;
-z  = round(sz(3)/2);
 
-[x,y,z,s] = ndgrid(x-5:x+5, y-5:y:5, z-5:z+5, 1:sz(4));
-noiseInds = sub2ind(sz, x(:), y(:), z(:), s(:));
-sigma     = 1.5267 * std(double(dwRaw.data(noiseInds)));
+% The default method is to calculate noise from the corner of the image.
+% However GE scanners pad the corner of the image with zeros so we need to
+% calculate noise from the variance of the b=0 images
+
+if strcmp('corner', noiseCalcMethod)
+    
+    % According to Henkelman (1985), the expected signal variance (sigma) can
+    % be computed as 1.5267 * SD of the background (thermal) noise.
+    sz = size(dwRaw.data);
+    x  = 10;
+    y  = 10;
+    z  = round(sz(3)/2);
+    
+    [x,y,z,s] = ndgrid(x-5:x+5, y-5:y:5, z-5:z+5, 1:sz(4));
+    noiseInds = sub2ind(sz, x(:), y(:), z(:), s(:));
+    sigma     = 1.5267 * std(double(dwRaw.data(noiseInds)));
+    
+elseif strcmp('b0', noiseCalcMethod)
+    
+    % Find which volumes ar b=0
+    b0inds = find(bvals ==  0);
+    % Pull out the b=0 volumes
+    dataB0 = squeeze(data(b0inds,1,:));
+    % Calculate the median of the standard deviation. We do not think that
+    % this needs to be rescaled. Henkelman et al. (1985) suggest that this
+    % aproaches the true noise as the signal increases.
+    sigma = median(std(dataB0,0,1));
+end
 
 % Memory usage is tight- if we loaded the raw data, clear it now since
 % we've made the reorganized copy that we'll use for all subsequent ops.
@@ -307,6 +333,7 @@ data(data==0) = minVal;
 
 
 %% Fit the tensors using the RESTORE Algorithm
+
 % 
 nvox = size(data,3);
 q    = (bvecs.*sqrt(repmat(bvals,3,1)))';
