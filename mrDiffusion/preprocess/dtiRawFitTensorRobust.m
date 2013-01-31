@@ -10,11 +10,20 @@ function dt6FileName = dtiRawFitTensorRobust(dwRaw, bvecs, bvals, ...
 %               ... [nstep=50], [noiseCalcMethod = 'corner']);
 %
 % The tensors are returned in [Dxx Dyy Dzz Dxy Dxz Dyz] format and are
-% saved in a dt6 file outBaseName 'dt6.mat'.
+% saved in a dt6 file outBaseName 'dt6.mat'. This method works by first
+% calculating the noise in the image and then rejecting fits that are worse
+% than would be expected given the noise. There are 2 ways to calculate the
+% noise. The first is based on the standard deviation of the signal in the
+% corner of the image (noiseCalcMethod = 'corner'). This method works well
+% as long as the corner of the image has not been padded with zeros.
+% Currently GE zeros out the pixel intensity outside of the brain. So for
+% new GE data we calculate the noise by taking the standard deviation of
+% the b=0 images (noiseCalcMethod = 'b0') which means that we need a number
+% of b0 acquisitions.
 %
 % Comments about the tensor formula and estimation are embedded in the
 % code, below.
-
+%
 % If adcUnits is not provided, we try to guess based on the magnitude
 % of the mean diffusivity. This guess is based on typical values for
 % in-vivo human brain tissue. Our preferred units are 'micron^2/msec',
@@ -241,7 +250,7 @@ for ii=1:numVols
     data(ii,1,:) = tmp(brainInds);
 end
 
-%% Compute signal noise estimate
+%% Compute signal to noise estimate
 
 % The default method is to calculate noise from the corner of the image.
 % However GE scanners pad the corner of the image with zeros so we need to
@@ -393,11 +402,17 @@ for jj=1:nstep
     s = (jj-1)*voxPerStep+1;
     e = min(s+voxPerStep,nvox); 
         for ii=s:e 
+            
+            % Use a nonlinear search to compute the tensor fit to the data.
+            % dtiRawTensorErr computes the difference between the tensor
+            % and the data
             [x, resnorm] = fminsearch(@(x) dtiRawTensorErr(x, data(:,ii), ...
                 X, sigmaSq, false), A(:,ii), options);
             
             residuals = data(:,ii)-exp(X*x);
             
+            % If any residuals are more than 3 standard deviations from the
+            % model prediction then redo the search downweigting that point
             if(any(residuals>=sigma*3))
                 x = fminsearch(@(x) dtiRawTensorErr(x, data(:,ii), X, ...
                     sigmaSq, true), A(:,ii), options);
