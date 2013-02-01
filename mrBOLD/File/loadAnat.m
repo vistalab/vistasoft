@@ -28,7 +28,8 @@ case 'Inplane',
     else
         %fprintf('Loading anatomies from %s ...',pathStr);
         vw.anat = niftiRead(inplanePath);
-        %fprintf('done.\n');
+        %Let us also calculate Voxel Size
+        vw.anat = niftiSet(vw.anat,'Voxel Size',prod(niftiGet(vw.anat,'pixdim')));
     end
     
 case {'Volume','Gray','generalGray'}

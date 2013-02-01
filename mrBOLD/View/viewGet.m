@@ -380,8 +380,7 @@ switch param
         %   nslices = viewGet(vw, 'Number of Slices');
         switch vw.viewType
             case 'Inplane'
-                val = viewGet(vw,'dim');
-                val = val(3); %We are always assuming that the 3rd dimension is slices
+                val = niftiGet(vw.anat,'num slices');
             case {'Volume' 'Gray'}
                 val = 1;
             case 'Flat'
@@ -585,8 +584,7 @@ switch param
         %%%%% Anatomy / Underlay-related properties
     case 'anatomy'
         % Return the anatomical underlay image.
-        %   anat = viewGet(vw, 'anatomy');
-        val = vw.anat.data;
+        val = niftiGet(vw.anat,'Data');
     case 'anatomymap'
         % Return the colormap for the anatomical underlay image.
         %   anataomyMap = viewGet(vw, 'Anatomy Map');
@@ -598,10 +596,10 @@ switch param
     case 'anatsize'
         % Return the size (in voxels) of the anatomical underlay image.
         %   anataomySize = viewGet(vw, 'Anatomy Size');
-        if ~checkfields(vw, 'anat')
-            vw = loadAnat(vw);
-        end
-        val = vw.anat.dim;
+        %if ~checkfields(vw, 'anat')
+        %    vw = loadAnat(vw);
+        %end
+        val = niftiGet(vw.anat,'Dim');
 
 	case 'anatomycurrentslice'
         % Return the anatomical underlay image for only one slice
@@ -638,7 +636,7 @@ switch param
         %   mmPerVox = viewGet(vw, 'mm per voxel');
         switch vw.viewType
             case 'Inplane' 
-                val = mrSESSION.inplanes.voxelSize;                                               
+                val = niftiGet(vw.anat,'Voxel Size');                                               
             case {'Volume' 'Gray' 'generalGray'}
                 if isfield(vw, 'mmPerVox'), 
                     val =  vw.mmPerVox;
@@ -965,7 +963,19 @@ switch param
         end
         switch vw.viewType
             case 'Inplane'
-                val = vw.anat.dim;
+                val = niftiGet(vw.anat,'Dim');
+            case {'Volume','Gray'}
+                val = [1,size(vw.coords,2)];
+            case 'Flat'
+                val = [vw.ui.imSize];
+        end
+    case 'slicedim'
+        % Return the dimension of data in current slice or specificed slice
+        %   dim = viewGet(vw, 'Slice Dimension')
+        %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)        
+        switch vw.viewType
+            case 'Inplane'
+                val = niftiGet(vw.anat,'slice dims');
             case {'Volume','Gray'}
                 val = [1,size(vw.coords,2)];
             case 'Flat'
