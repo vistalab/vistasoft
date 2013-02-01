@@ -17,7 +17,7 @@ if notDefined('scan'),  scan = viewGet(vw, 'curScan');  end
 
 switch vw.viewType
     case 'Inplane'
-        dims = [viewGet(vw, 'sliceDims', scan) viewGet(vw, 'numSlices')];
+        dims = [viewGet(vw, 'sliceDims', scan) viewGet(vw, 'number of slices')];
     case {'Volume','Gray'}
         dims = [1 size(vw.coords,2)];
     case 'Flat'

@@ -170,8 +170,10 @@ switch fieldName
         res = 'tseriesscan';
     case {'datasize' 'mapsize' 'functionalsize' 'funcsize'}
         res = 'datasize';
-    case {'dim' 'dims' 'slicedim' 'slicedims' 'slicedimension' 'slicedimensions'}
+    case {'dim' 'dims'}
         res = 'dim';
+    case {'slicedim' 'slicedims' 'slicedimension' 'slicedimensions'}
+        res = 'slicedim';
     case {'tr' 'frameperiod' 'framerate' 'repeattime' 'timetorepeat'}
         res = 'tr';
     case {'nframes' 'numframes' 'numberoftimeframes'}
