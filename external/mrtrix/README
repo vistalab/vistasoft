@@ -1,0 +1,2 @@
+Scripts to convert mrDiffusion data to the mrtrix file-format, to perform
+mrtrix analysis and to convert back to mrDiffusion format.
