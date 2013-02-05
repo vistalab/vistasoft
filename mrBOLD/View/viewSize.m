@@ -9,6 +9,8 @@ function dims = viewSize(vw)
 % For VOLUME/GRAY, returns [volSize] (loaded from vAnatomy header)
 % For FLAT, returns        [imageSize,2]
 %
+%TODO: Deprecate this function and roll it up into viewGet(vw,'size')
+
 
 global mrSESSION;
 % global vANATOMYPATH; - 
