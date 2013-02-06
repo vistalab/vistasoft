@@ -34,14 +34,14 @@ if notDefined('lmax'),    lmax = 6;end
 
 % This generates a mask of voxels with high FA. These are assumed to be
 % voxels that contain a single fiber: 
-cmd_str = sprintf('erode %s - | erode - - | mrmult %s - - | threshold - -abs 0.7 %s',...
+cmd_str = sprintf('/usr/lib/mrtrix/bin/erode %s - | erode - - | mrmult %s - - | threshold - -abs 0.7 %s',...
     mask_file, fa_file, sf_file);
 
 [status, results] = mrtrix_cmd(cmd_str, bkgrnd, verbose);
 
 % Once we know where there are single fibers, we estimate the fiber
 % response function from these voxels: 
-cmd_str = sprintf('estimate_response %s %s %s -grad %s -lmax %i',...
+cmd_str = sprintf('/usr/lib/mrtrix/bin/estimate_response %s %s %s -grad %s -lmax %i',...
     dwi_file, sf_file, response_file, b_file, lmax);
 
 [status, results] = mrtrix_cmd(cmd_str, bkgrnd, verbose);
@@ -50,6 +50,6 @@ cmd_str = sprintf('estimate_response %s %s %s -grad %s -lmax %i',...
 % example in
 % http://www.brain.org.au/software/mrtrix/tractography/preprocess.html): 
 if show_figure
-    cmd_str = sprintf('disp_profile -response %s &',response_file);
+    cmd_str = sprintf('/usr/lib/mrtrix/bin/disp_profile -response %s &',response_file);
     [s,r] = mrtrix_cmd(cmd_str, false, verbose);
 end
