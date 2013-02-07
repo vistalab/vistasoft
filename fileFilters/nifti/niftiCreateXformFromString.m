@@ -28,7 +28,7 @@ xformMatrix(1,:) = tmpVector; %We can hardcode in the 1 there, since we
 tmp = strfind(vectorString,'A');
 tmpVector = zeros(1,4);
 
-if (isempty(tmp)) %Means that we probably have an L and not an R
+if (isempty(tmp)) %Means that we probably have a P and not an A
     tmp = strfind(vectorString,'P');
     if isempty(tmp) %We have neither? Badly formatted string!
         warning('vista:niftiError', 'Unable to parse the vector string and create the Xform matrix. Returning empty.');
@@ -46,7 +46,7 @@ xformMatrix(2,:) = tmpVector;
 tmp = strfind(vectorString,'S');
 tmpVector = zeros(1,4);
 
-if (isempty(tmp)) %Means that we probably have an L and not an R
+if (isempty(tmp)) %Means that we probably have an I and not an S
     tmp = strfind(vectorString,'I');
     if isempty(tmp) %We have neither? Badly formatted string!
         warning('vista:niftiError', 'Unable to parse the vector string and create the Xform matrix. Returning empty.');

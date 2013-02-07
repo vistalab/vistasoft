@@ -62,7 +62,7 @@ else
     % Fill the NIFTI image slots
     ni.dim = size(ni.data);
     ni.pixdim(1:3) = newPixdim;
-    ni = niftiSetQto(ni, inv(canXform*ni.qto_ijk));
+    ni = niftiSetQto(ni, inv(canXform*ni.qto_ijk)); %TODO: Change this into niftiSet
     if(any(ni.sto_xyz(:)>0))
         ni.sto_ijk = canXform*ni.sto_ijk;
         ni.sto_xyz = inv(ni.sto_ijk);
