@@ -33,7 +33,7 @@ if notDefined('b_file')
 end 
 
 % This command generates  tensors: 
-cmd_str = sprintf('/usr/lib/mrtrix/bin/dwi2tensor %s %s -grad %s',in_file, out_file, b_file); 
+cmd_str = sprintf('dwi2tensor %s %s -grad %s',in_file, out_file, b_file); 
 
 % Send it to mrtrix: 
 [status,results] = mrtrix_cmd(cmd_str, bkgrnd, verbose); 

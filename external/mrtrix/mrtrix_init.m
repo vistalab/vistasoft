@@ -129,27 +129,6 @@ if (~computed.('csd'))
 end
 
 
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%
-% % mrtrix_check_processes %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%
-% function computed = mrtrix_check_processes(files)
-% %
-% % Check which mrtrix proceses were computed. Returns an array of 0's and
-% % 1's indicating which process was computed (1) and which one needs to be
-% % computed (0)
-% %
-% 
-% fields = fieldnames(files);
-% for ii = 1:length(fields)
-%   if exist(files.(fields{ii}),'file') == 2
-%     computed.(fields{ii}) = 1;
-%   else
-%     computed.(fields{ii}) = 0;
-%   end
-% end
-
-
 %%%%%%%%%%%%%%%%%%%%%%
 % mrtrix_build_files %
 %%%%%%%%%%%%%%%%%%%%%%
