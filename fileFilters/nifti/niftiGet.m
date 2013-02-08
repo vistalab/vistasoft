@@ -53,6 +53,18 @@ switch param
             warning('vista:niftiError', 'No pixdim information found in nifti. Returning empty');
             val = [];
         end
+	case 'qto_ijk'
+        if isfield(ni, 'qto_ijk'), val = ni.qto_ijk;  
+        else
+            warning('vista:niftiError', 'No qto_ijk information found in nifti. Returning empty');
+            val = [];
+        end
+ 	case 'qto_xyz'
+        if isfield(ni, 'qto_xyz'), val = ni.qto_xyz;  
+        else
+            warning('vista:niftiError', 'No qto_xyz information found in nifti. Returning empty');
+            val = [];
+        end   
     case 'slicedim'
         %Get the slice dimension field
         if isfield(ni, 'slice_dim')
@@ -70,7 +82,20 @@ switch param
         val = [];
         totDim = niftiGet(ni,'dim');
         val(1) = totDim(niftiGet(ni,'freq Dim'));
-        val(2) = totDim(niftiGet(ni,'phase Dim'));        
+        val(2) = totDim(niftiGet(ni,'phase Dim'));
+ 	case 'sto_ijk'
+        if isfield(ni, 'qto_xyz'), val = ni.qto_xyz;  
+        else
+            warning('vista:niftiError', 'No qto_xyz information found in nifti. Returning empty');
+            val = [];
+        end   
+ 	case 'sto_xyz'
+        if isfield(ni, 'qto_xyz'), val = ni.qto_xyz;  
+        else
+            warning('vista:niftiError', 'No qto_xyz information found in nifti. Returning empty');
+            val = [];
+        end   
+
     case 'voxelsize'
         if isfield(ni, 'voxelSize')
             val = ni.voxelSize; 
