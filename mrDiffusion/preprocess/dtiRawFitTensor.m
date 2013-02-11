@@ -11,7 +11,7 @@ function dt6FileName = dtiRawFitTensor(dwRaw, bvecs, bvals, outBaseName, bs, fit
 %
 % Comments about the tensor formula and estimation are embedded in the
 % code, below.
-
+%
 % If adcUnits is not provided, we try to guess based on the magnitude
 % of the mean diffusivity. This guess is based on typical values for
 % in-vivo human brain tissue. Our preferred units are 'micron^2/msec',
