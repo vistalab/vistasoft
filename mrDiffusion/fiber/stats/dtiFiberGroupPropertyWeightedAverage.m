@@ -1,8 +1,8 @@
-function [myValsFgWa, SuperFiber, weightsNormalized, weights] = ...
+function [myValsFgWa, SuperFiber, weightsNormalized, weights, fg] = ...
     dtiFiberGroupPropertyWeightedAverage(fg, dt, numberOfNodes, valNames, p)
 % Average eigenvalues across the fibers, along the bundle length
 %
-% [eigValFG,SuperFiber, weightsNormalized] = ...
+% [eigValFG,SuperFiber, weightsNormalized, weights, fg] = ...
 %   dtiFiberGroupPropertyWeightedAverage(fg, dt, numberOfNodes, valNames)
 %
 % The average is weighted with a gaussian kernel, where fibers close to the
@@ -35,7 +35,9 @@ function [myValsFgWa, SuperFiber, weightsNormalized, weights] = ...
 % weights           - numberOfNodes by numberOfFibers array of weights
 %                     denoting, the gausssian distance of each node in 
 %                     each fiber from the fiber tract core
-%                     
+% fg                - The fiber group that has been resampled to 
+%                     numberOfNodes and each fiber has been reoriented to 
+%                     start and end in a consitent location                    
 %
 % WEB RESOURCES:
 %       mrvBrowseSVN('dtiFiberGroupPropertyWeightedAverage');
