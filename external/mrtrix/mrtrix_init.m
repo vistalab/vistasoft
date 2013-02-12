@@ -48,26 +48,42 @@ function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
 dt_info = load(dt6);
 
 % Strip the file names out of the dt6 strings. 
-dwRawFile   = dt_info.files.alignedDwRaw;
-fname_trunk = dwRawFile(1:strfind(dwRawFile,'.')-1);
-raw_idx     = strfind(fname_trunk,'raw');
-if isempty(raw_idx), error('Could not find raw directory'); end
+dwRawFile    = dt_info.files.alignedDwRaw;
+[session,dwiname] = fileparts(dwRawFile);
+[~,dwiname] = fileparts(dwiname);
+session = fileparts(session);
+
+%fname_trunk = dwRawFile(1:strfind(dwRawFile,'.')-1);
+%raw_idx     = strfind(fname_trunk,'raw');
+%
+% % Find the raw folder
+% if isempty(raw_idx)
+%   % Lets try one folder up
+%   raw_idx     = fullfile(fileparts(fname_trunk),'raw');
+%   if isempty(raw_idx)
+%     % Lets try two folders up
+%     raw_idx     = fullfile(fileparts(fileparts(fname_trunk)),'raw');
+%   else
+%     % Give up and return an error
+%     error('Could not find raw directory');
+%   end
+% end
 
 % Strip out the name information for the mrDiffusion folders.
-session      = fname_trunk(1:raw_idx-1);
+%[session, dwiname] = fileparts(fname_trunk);
 
-% If the outtput fiber folder was nto passed in generate one in the current
+% If the output fibers folder was not passed in, then generate one in the current
 % mrDiffusion session.
 if notDefined('mrtrix_folder'), mrtrix_folder = [session, 'mrtrix']; end
 
+% Make the folder where to save the fibers if it doe snot exist yet.
+if ~exist(mrtrix_folder, 'dir'), mkdir(mrtrix_folder); end
+
 % Generate a file name that contains the information of the original file
 % that was used for tracking.
-fname_trunk  = [mrtrix_folder, fname_trunk(raw_idx+3:end)]; 
-file_sep_idx = strfind(fname_trunk, filesep);
-mrtrix_dir   = fname_trunk(1:file_sep_idx(end)); 
-
-% Make the folder where to save the fibers if it doe snot exist yet.
-if ~exist(mrtrix_dir, 'dir'), mkdir(mrtrix_dir); end
+fname_trunk  = [mrtrix_folder, dwiname]; 
+%file_sep_idx = strfind(fname_trunk, filesep);
+%mrtrix_dir   = fname_trunk(1:file_sep_idx(end)); 
 
 % Build the mrtrix file names.
 files = mrtrix_build_files(fname_trunk,lmax);
