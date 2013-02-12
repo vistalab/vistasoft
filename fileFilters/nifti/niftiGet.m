@@ -104,7 +104,7 @@ switch param
             val = prod(niftiGet(ni,'Pixdim'));
         end
     otherwise
-        error('Unknown parameter %s\n',param);
+        warning('vista:nifti:niftiSet', 'Unknown parameter %s\n',param);
         
 end %switch
 

@@ -151,7 +151,8 @@ INPLANE{s}.ui.cbarRange = [];
 % Label L/R on Inplanes %
 %%%%%%%%%%%%%%%%%%%%%%%%%
 INPLANE{s} = labelInplaneLR(INPLANE{s}); %This assumes that the LR data is saved in mrSESSION
-%TODO: Change this so it can pull it up from mrSESSION directly
+%TODO: Change this so it can pull it directly from the orientation of the
+%matrix
 
 
 %%%%%%%%%%%%%%%%%%%
