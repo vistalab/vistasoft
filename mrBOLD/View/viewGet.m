@@ -607,7 +607,7 @@ switch param
         if length(varargin) < 1
             error('Current slice not defined. Use: viewGet(vw,''anatomy'') instead');
         end
-        val = vw.anat.data;
+        val = viewGet(vw,'anat');
         val = val(:,:,varargin{1});        
     case 'anatsizexyz'
         % The class data store the planes in a different order from the
