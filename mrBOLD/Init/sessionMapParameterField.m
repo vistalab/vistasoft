@@ -21,6 +21,8 @@ fieldName = mrvParamFormat(fieldName);
 %Now, let's create our hard-coded hash, then look it up
 % A hash works like an array, only it maps non-integer keys to values
 
+persistent sessionParameterMap
+
 sessionParameterMap = containers.Map;
 
 sessionParameterMap('functionalparameters') = 'functionals';
