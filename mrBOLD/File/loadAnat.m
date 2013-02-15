@@ -2,8 +2,11 @@ function vw=loadAnat(vw,inplanePath)
 %
 % vw=loadAnat(vw,[pathStr])
 %
-% Loads anatomies and fills anat field in the view structure. 
-% vw = INPLANE: loads anat.mat
+% Loads anatomies and fills anat field in the view structure.
+% Load anat now reads in niftis in the Inplane view and automatically
+% applies and computes the necessary transform. In the inplane, no longer
+% loads or saves from/to 1.0anat.mat
+%
 % vw = VOLUME: loads vAnatomy.dat via loadVolAnat
 % path: optional arg to specify a pathname for the anatomy file
 %
@@ -13,7 +16,7 @@ function vw=loadAnat(vw,inplanePath)
 %
 % 2.26.99 - Get anatomy path from getAnatomyPath - WAP
 
-%global mrSESSION; %TODO: Remove the global variable calls here that are not used
+%global mrSESSION; Removed global variable since not used
 global HOMEDIR;
 global vANATOMYPATH;
 
@@ -26,10 +29,11 @@ case 'Inplane',
     if ~exist(inplanePath,'file')
         myErrorDlg(['No ',inplanePath,' file']);
     else
-        %fprintf('Loading anatomies from %s ...',pathStr);
         vw.anat = niftiRead(inplanePath);
         %Let us also calculate Voxel Size
         vw.anat = niftiSet(vw.anat,'Voxel Size',prod(niftiGet(vw.anat,'pixdim')));
+        %Let us also calculate and and apply transform
+        vw.anat = niftiApplyAndCreateXform(vw.anat,'Inplane');
     end
     
 case {'Volume','Gray','generalGray'}

@@ -14,15 +14,14 @@ end
 %TODO: Replace this with viewGet
 dims = viewSize(vw);
 
-switch vw.viewType
+switch viewGet(vw,'View Type')
 
   case 'Inplane'
-    if ~isempty(vw.anat)
       slice = viewGet(vw,'Anatomy Current Slice',curSlice);
-    else
-      disp('Warning: Anatomies not loaded');
-      slice = zeros(dims(1:2));
-    end
+      if isempty(slice)
+          disp('Warning: Anatomies not loaded');
+          slice = zeros(dims(1:2));
+      end
     
   case {'Volume','Gray','generalGray'}
     curSliceOri = getCurSliceOri(vw);
