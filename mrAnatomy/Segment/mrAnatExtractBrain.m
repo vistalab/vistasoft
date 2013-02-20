@@ -1,8 +1,8 @@
 function [brainMask,checkSlices] = mrAnatExtractBrain(img, mmPerVox, betLevel, outFile)
-%Uses the FSL BET tool to compute a brain mask for the given image volume.
 %
 % [brainMask,checkSlices] = mrAnatExtractBrain([img], [mmPerVox=[1,1,1]], [betLevel=0.5], [outFile])
-% 
+%
+% Uses the FSL BET tool to compute a brain mask for the given image volume.
 % The betLevel is the BET fractional intensity threshold parameter. It
 % should be [0-1]. The default of 0.5 usually works well. Smaller values
 % will yield a larger brain estimate. If you get brain stuff chopped off,
@@ -18,23 +18,30 @@ function [brainMask,checkSlices] = mrAnatExtractBrain(img, mmPerVox, betLevel, o
 %
 % img can be a string, in which case it is assumed to be a NIFTI filename.
 % or, it can be a NIFTI struct (as from readFileNifti). In both cases,
-% mmPerVox is ignored and instead gleaned from the NIFTI header. 
+% mmPerVox is ignored and instead gleaned from the NIFTI header.
 %
 % If no output arguments are captured, the brain mask is saved in the same
 % place as the input file, but with '_mask' appended to the name.
+%
+% WARNING: this currently only runs on linux!
+%
 %
 % HISTORY:
 % 2006.02.02 RFD: wrote it.
 %
 % Bob (c) Stanford VISTASOFT, 2006
 
-if(~exist('betLevel','var') || isempty(betLevel)), betLevel = 0.5; end
-if(~exist('mmPerVox','var') || isempty(mmPerVox)), mmPerVox = [1 1 1]; end
-
-if(~exist('img','var') || isempty(img))
+if(~exist('img','var')||isempty(img))
     [f,p] = uigetfile({'*.nii.gz';'*.*'},'Select a t1-weighted NIFTI file...');
     if(isnumeric(f)), disp('User canceled.'); return; end
-    img = fullfile(p,f); 
+    img = fullfile(p,f);
+end
+
+if(~exist('betLevel','var') || isempty(betLevel))
+    betLevel = 0.5;
+end
+if(~exist('mmPerVox','var') || isempty(mmPerVox))
+    mmPerVox = [1 1 1];
 end
 
 if(isstruct(img))
@@ -50,9 +57,11 @@ elseif(nargout==0)
     error('If you pass in raw image data, you must capture at least one output!');
 end
 
-% TODO: more robust way to find cygwin on PC
-if(ispc), bash = 'c:/cygwin/bin/bash.exe';
-else      bash = 'bash';
+if(ispc)
+    % TODO: more robust way to find cygwin
+    bash = 'c:/cygwin/bin/bash.exe';
+else
+    bash = 'bash';
 end
 
 % First try the shell for the preferrred FSL location, if it is not found
@@ -61,7 +70,7 @@ end
 % version.
 [stat,res] = system('which bet2');
 if(stat==0 && ~isempty(res))
-    bet = res(1:end-1);
+    bet = res;
 else
     if(ismac)
         bet = fullfile(fileparts(which(mfilename)), 'bet2_osx');
@@ -71,35 +80,27 @@ else
 end
 
 bet = strtrim(bet);
-out = fullfile(tempdir,'bet_tmp');
-betScript = fullfile(tempdir,['bet_script_' getDateAndTime '.sh']);
+out = [tempname '.nii.gz'];
 
 if(ischar(img))
     out = img;
 else
     img = double(img);
-    mx = max(abs(img(:)));
-    img = int16(round(img./mx.*32767));
-    analyzeWrite(img, out, mmPerVox);   % Why not write a nifti?
+    img = int16(round(img./max(abs(img(:))).*32767));
+    xform = diag([1./mmPerVox(1:3) 1]); xform(1:3,4) = size(img)/2;
+    dtiWriteNiftiWrapper(img, inv(xform), out);
 end
-
 % We could specify a better starting position for the BET surface
-% sphere estiamte, e.g., by using the talairach landmarks. 
+% sphere estiamte, e.g., by using the talairach landmarks.
 if(nargout==0)
     [p,f,e] = fileparts(ni.fname);
     [x,f,e2] = fileparts(f);
     imBaseName = fullfile(p,f);
 end
-
-%% Run brain extraction tool for each level
-for ii=1:numel(betLevel)
+for(ii=1:numel(betLevel))
     betOut = tempname;
     betCmd = [bet ' ' out ' ' betOut ' -mnf ' num2str(betLevel(ii))];
-    fid = fopen(betScript,'wt');
-    fprintf(fid,'#!/bin/bash\nexport FSLOUTPUTTYPE=NIFTI_GZ\n%s\n',betCmd);
-    fclose(fid);
-    unix([bash ' ' betScript]);
-    %unix(['export FSLOUTPUTTYPE=NIFTI_GZ ; ' betCmd]);
+    unix(betCmd);
     betOut = [betOut '_mask.nii.gz'];
     if(nargout==0)
         if(numel(betLevel)>1)
@@ -111,8 +112,6 @@ for ii=1:numel(betLevel)
         brainMaskFile{ii} = betOut;
     end
 end
-
-%% Manage outputs, but not sure about the logic here.
 if(nargout>0)
     tmp = readFileNifti(betOut);
     brainMask{ii} = logical(tmp.data);
@@ -130,7 +129,7 @@ if(nargout>0)
         checkSlices{ii} = im;
     end
 end
-  
+
 if(nargout>0)
     if(length(betLevel)==1)
         brainMask = brainMask{1};
@@ -139,10 +138,9 @@ if(nargout>0)
 else
     clear all;
 end
-
 return
 
-%%
+
 
 bd = pwd;
 d = dir('*0*');
