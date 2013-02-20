@@ -3,8 +3,8 @@ function ni = dtiWriteNiftiWrapper(imArray, matrixTransform, filename, sclSlope,
 % See also niftiGetStruct and niftiCreate
 % We think this should go away and be replaced by a proper niftiCreate
 %
-% dtiWriteNiftiWrapper (imArray, matrixTransform, filename,
-%     [sclSlope=1], [description='VISTASOFT'], [intentName=''], [intentCode=0], 
+% ni = dtiWriteNiftiWrapper (imArray, matrixTransform, filename,
+%     [sclSlope=1], [description='VISTASOFT'], [intentName=''], [intentCode=0],
 %     [freqPhaseSliceDim=[0 0 0]], [sliceCodeStartEndDuration=[0 0 0 0]])
 %
 % INPUTS:
@@ -17,14 +17,14 @@ function ni = dtiWriteNiftiWrapper(imArray, matrixTransform, filename, sclSlope,
 %   intentCode:      an integer specifying a NIFTI intent type. Eg:
 %                    1002 = NIFTI_INTENT_LABEL (index into a list of labels)
 %                    1005 = NIFTI_INTENT_SYMMATRIX (e.g., DTI data)
-%                    1007 = NIFTI_INTENT_VECTOR 
-% 
-% OUTPUTS: 
+%                    1007 = NIFTI_INTENT_VECTOR
+%
+% OUTPUTS:
 %   ni:              Nifti structure.
 %
 % See http://nifti.nimh.nih.gov/pub/dist/src/niftilib/nifti1.h for
 % details on the other nifti options.
-% 
+%
 % WEB:
 %   mrvBrowseSVN('dtiWriteNiftiWrapper');
 %
@@ -33,11 +33,11 @@ function ni = dtiWriteNiftiWrapper(imArray, matrixTransform, filename, sclSlope,
 % 2007.03.27 RFD: we now save the xform in both qto and sto and
 % properly set qfac. This improves compatibility with some viewers,
 % such as fslview.
-% 
+%
 %  (C) Stanford University, VISTA
 
 %% Handle inputs
-% 
+%
 if(nargin<2)
   help(mfilename);
 end
@@ -67,11 +67,11 @@ end
 
 
 %% Create the nifti structure with the inputs provided
-% 
+%
 % ni = niftiGetStruct(imArray, matrixTransform, sclSlope, description,...
 %                     intentName, intentCode, freqPhaseSliceDim, ...
 %                     sliceCodeStartEndDuration, TR);
-                
+
 ni = niftiCreate('data',imArray,...
                  'qto_xyz',matrixTransform,...
                  'scl_slope',sclSlope,...
@@ -82,9 +82,9 @@ ni = niftiCreate('data',imArray,...
                  'slice_code',sliceCodeStartEndDuration,...
                  'tr',TR);
 
-                
-%% Filenaming 
-% 
+
+%% Filenaming
+%
 if(length(filename)<4)
     filename = [filename '.nii.gz'];
 elseif(strcmpi(filename(end-2:end),'nii'))
@@ -96,7 +96,7 @@ ni.fname = filename;
 
 
 %% Write the file
-% 
+%
 writeFileNifti(ni);
 
 
