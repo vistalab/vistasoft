@@ -104,7 +104,7 @@ end
 %% V. Read Bvecs & Bvals and build if they don't exist
 
 if ~exist(dwDir.bvalsFile,'file') || ~exist(dwDir.bvecsFile,'file')
-    [doBvecs dwParams] = dtiInitBuildBVs(dwDir, dwParams);
+    [doBvecs dwParams] = dtiInitBuildBVs(dwDir, dwParams, size(dwRaw.data,4));
 else
     doBvecs = false;
 end
