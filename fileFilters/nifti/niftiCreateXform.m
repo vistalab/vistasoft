@@ -28,8 +28,11 @@ end %if
 switch xformType
     case 'inplane'
         [vectorFrom, xform] = niftiCurrentOrientation(nii);
-       	vectorTo = niftiCreateStringInplane(vectorFrom,sliceDim);
-        xform = niftiCreateXformBetweenStrings(vectorFrom,vectorTo);
+        if ~strcmp(vectorFrom,'ARS')
+            %We don't need to change the transform at all
+            vectorTo = niftiCreateStringInplane(vectorFrom,sliceDim);
+            xform = niftiCreateXformBetweenStrings(vectorFrom,vectorTo);
+        end
         
     otherwise
         warning('vista:niftiError','The supplied transform type was unrecognized. Please try again. Returning empty transform.');

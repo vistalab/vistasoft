@@ -17,6 +17,11 @@ if ~isfield(vw,'ui')  % doesn't work w/ hidden views either
     error('This is a UI function and doesn''t work with hidden views.');
 end
 
+%New method:
+% 1. Check the direction of the data matrix passed in
+% 2. Based on the direction strings and the slice dimension, add the
+% necessary labels
+
 
 % read dir text:
 % First see if it's saved in mrSESSION, and if not, try  I-files

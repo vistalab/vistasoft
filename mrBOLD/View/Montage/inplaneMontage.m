@@ -226,10 +226,6 @@ for row = 1:nrows
 			im = zeros(size(im));
 		end
         if viewGet(vw, 'flipUD'),im = flipud(im);   end
-        %TODO: Figure out how to add these in beforehand? Into the original
-        % RAS model
-        %im = permute(im,[2 1 3 4 5]);
-        %im = flipud(im);
 		rowIm = [rowIm im];
 	end
 

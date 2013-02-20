@@ -21,9 +21,9 @@ else
     tmpVector(tmp(1)) = 1; %Since we are looking at an R
 end
 
-xformMatrix(1,:) = tmpVector; %We can hardcode in the 1 there, since we
-% know that we always want RAS format, which means that R should always be
-% the first row
+xformMatrix(2,:) = tmpVector; %We can hardcode in the 2 there, since we
+% know that we always want ARS format, which means that R should always be
+% the second row
 
 tmp = strfind(vectorString,'A');
 tmpVector = zeros(1,4);
@@ -40,7 +40,7 @@ else
     tmpVector(tmp(1)) = 1; %Since we are looking at an A
 end
 
-xformMatrix(2,:) = tmpVector;
+xformMatrix(1,:) = tmpVector;
 
 
 tmp = strfind(vectorString,'S');

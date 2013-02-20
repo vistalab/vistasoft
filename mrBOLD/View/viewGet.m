@@ -600,6 +600,7 @@ switch param
         %    vw = loadAnat(vw);
         %end
         val = niftiGet(vw.anat,'Dim');
+        %TODO: Fix this for volumes that use anat but not yet in nifti
 
 	case 'anatomycurrentslice'
         % Return the anatomical underlay image for only one slice

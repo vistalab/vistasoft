@@ -6,7 +6,7 @@ function [vectorTo] = niftiCreateStringInplane(vectorFrom, sliceDimension)
 
 %We are looking to return something that will keep the slice dimension the
 %same, but make it be the 3rd dimension, then if, L-R are there, make it
-%the first dimension, otherwise, leave the other two dimensions as they are
+%the second dimension, otherwise, leave the other two dimensions as they are
 
 vectorTo = vectorFrom; %We will operate purely on vectorTo
 
@@ -22,9 +22,9 @@ end %if
 
 LRdim = niftiFindDimOfString(vectorTo,'R'); %This will find either R or L
 
-if (LRdim ~= 3 && LRdim ~= 1) %i.e. it is not the slice dimension nor is it already the first dimension
-    tmpChar = vectorTo(1);
-    vectorTo(1) = vectorTo(LRdim);
+if (LRdim ~= 3 && LRdim ~= 2) %i.e. it is not the slice dimension nor is it already the second dimension
+    tmpChar = vectorTo(2);
+    vectorTo(2) = vectorTo(LRdim);
     vectorTo(LRdim) = tmpChar;
 end %if
 

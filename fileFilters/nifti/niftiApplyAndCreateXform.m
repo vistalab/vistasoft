@@ -21,7 +21,11 @@ xformType = mrvParamFormat(xformType);
 
 xform = niftiCreateXform(nii,xformType);
 %Create transform
-
-ni = niftiApplyXform(nii,xform);
+if (xform == 0)
+   %We shouldn't do anything
+   ni = nii;
+else
+   ni = niftiApplyXform(nii,xform);
+end
 
 return
