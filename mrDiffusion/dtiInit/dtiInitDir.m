@@ -86,27 +86,22 @@ if ~isempty(dwParams.bvecsFile); dwDir.bvecsFile = dwParams.bvecsFile; end
 
 % Get bvals file
 if ~exist(dwDir.bvalsFile,'file')
-    d = pwd; 
-    cd(mrvDirup(dwRawFileName));
-    bval = dir('*bval*');
+    bval = dir(fullfile(mrvDirup(dwRawFileName),'*bval*'));
     if numel(bval(:,1))>1
         dwDir.bvalsFile = mrvSelectFile('r',{'*bval*';'*.*'},'Select bvals file.');
-    else
+    elseif(numel(bval(:,1))==1)
         dwDir.bvalsFile = fullfile(mrvDirup(dwRawFileName),bval.name);
     end
-    cd(d);
 end
 
 % Get Bvecs file
 if ~exist(dwDir.bvecsFile,'file')
-    d = pwd; cd(mrvDirup(dwRawFileName));
-    bvec = dir('*bvec*');
+    bvec = dir(fullfile(mrvDirup(dwRawFileName),'*bvec*'));
     if numel(bvec(:,1))>1
         dwDir.bvecsFile = mrvSelectFile('r',{'*bvec*';'*.*'},'Select bvecs file.');
-    else
+    elseif(numel(bval(:,1))==1)
         dwDir.bvecsFile = fullfile(mrvDirup(dwRawFileName),bvec.name);
     end
-    cd(d);
 end
 
 return
