@@ -1,6 +1,6 @@
-function err = dtiRawRohdeEddyError(mc, phaseDir, srcIm, trgIm, sampDensity)
+function err = dtiRawRohdeEddyError(mc, phaseDir, srcIm, trgIm, sampDensity, weightIm)
 %  Minimization function for Rohode eddy/motion correction
-% err = dtiRawRohdeEddyError(c, phaseDir, srcIm, trgIm, sampDensity)
+% err = dtiRawRohdeEddyError(c, phaseDir, srcIm, trgIm, sampDensity, weightIm)
 %
 % mc is a 1x14 array of the 6 motion params (translations, rotations) and
 % the 8 eddy-correct params (c). 
@@ -27,7 +27,12 @@ function err = dtiRawRohdeEddyError(mc, phaseDir, srcIm, trgIm, sampDensity)
 % 2007.05.10 RFD: added data cache and in-place coord xform to
 % mrAnatFastInterp3. That makes this function about 4-5x faster.
 
+costFn = 'nmi';
+
 sz = size(trgIm);
+if(~exist('weightIm','var'))
+    weightIm = ones(size(trgIm));
+end
 
 mc = mc(:)';
 
@@ -35,31 +40,45 @@ mc = mc(:)';
 if(length(mc)==6) mc = [mc 0 0 0 0 0 0 0 0 0];
 else mc = [mc phaseDir]; end
 
-% Create the joint histogram
-H = dtiJointHist(trgIm, srcIm, mc, sampDensity);
+if(strcmp(costFn,'nmi'))
+    % Create the joint histogram
+    H = dtiJointHist(trgIm, srcIm, mc, sampDensity);
 
-% Smooth the histogram
-fwhm = 7;
-lim  = ceil(2*fwhm);
-s = (fwhm/sqrt(8*log(2)))^2+eps;
-% Note- for small FWHM, the following will not be accurate.
-krn = (1/sqrt(2*pi*s))*exp(-([-lim:lim].^2)/(2*s));
-krn = krn./sum(krn);
-H = conv2(krn,krn,H);
+    % Smooth the histogram
+    fwhm = 7;
+    lim  = ceil(2*fwhm);
+    s = (fwhm/sqrt(8*log(2)))^2+eps;
+    % Note- for small FWHM, the following will not be accurate.
+    krn = (1/sqrt(2*pi*s))*exp(-([-lim:lim].^2)/(2*s));
+    krn = krn./sum(krn);
+    H = conv2(krn,krn,H);
 
-% Compute cost function
-H  = H+eps;
-sh = sum(H(:));
-H  = H/sh;
-s1 = sum(H,1);
-s2 = sum(H,2);
-% Normalised Mutual Information of:  Studholme,  Hill & Hawkes (1998).
-% "A normalized entropy measure of 3-D medical image alignment".
-% in Proc. Medical Imaging 1998, vol. 3338, San Diego, CA,
-% pp. 132-143.
-err = (sum(s1.*log2(s1))+sum(s2.*log2(s2)))/sum(sum(H.*log2(H)));
-% flip the sign so minimization maximizes NMI
-err= -err;
+    % Compute cost function
+    H  = H+eps;
+    sh = sum(H(:));
+    H  = H/sh;
+    s1 = sum(H,1);
+    s2 = sum(H,2);
+    % Normalised Mutual Information of:  Studholme,  Hill & Hawkes (1998).
+    % "A normalized entropy measure of 3-D medical image alignment".
+    % in Proc. Medical Imaging 1998, vol. 3338, San Diego, CA,
+    % pp. 132-143.
+    err = (sum(s1.*log2(s1))+sum(s2.*log2(s2)))/sum(sum(H.*log2(H)));
+    % flip the sign so minimization maximizes NMI
+    err= -err;
+else
+    % Do least squares
+    persistent trgImCache;
+    persistent srcImCache;
+    if(isempty(trgImCache)||~isempty(trgIm))
+        trgImCache = trgIm.*weightIm;
+    end
+    if(isempty(srcImCache)||~isempty(srcIm))
+    	srcImCache = srcIm.*weightIm;
+    end
+    %[newSrcIm,newAcpcXform] = mrAnatResliceSpm(srcImCache, mc, [], , interpParams, 0);
+    err = sum((trgImCache(:)-srcImCache(:)).^2);
+end
 
 return;
 

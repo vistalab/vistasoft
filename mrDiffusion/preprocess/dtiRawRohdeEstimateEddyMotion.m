@@ -1,6 +1,6 @@
-function xform = dtiRawRohdeEstimateEddyMotion(dwRaw, mnB0, bvals, outEddyCorrectXform, ecFlag)
+function xform = dtiRawRohdeEstimateEddyMotion(dwRaw, mnB0, bvals, outEddyCorrectXform, ecFlag, costFunction, initXform)
 % Estimate the Rohde 14-parameter motion/eddy-current deformation
-% xform = dtiRawRohdeEstimateEddyMotion(dwRaw, mnB0, bvals, outEddyCorrectXform, [ecFlag==true])
+% xform = dtiRawRohdeEstimateEddyMotion(dwRaw, mnB0, bvals, outEddyCorrectXform, [ecFlag==true], [costFunction='nmi'], [initXform=[]])
 %
 % Estimates the 14-parameter motion and eddy-current deformation to unwarp
 % diffusion-weighted images. The algorithm is an implementation of:
@@ -11,6 +11,19 @@ function xform = dtiRawRohdeEstimateEddyMotion(dwRaw, mnB0, bvals, outEddyCorrec
 %
 % Note that b=0 images are motion-corrected with a 6-param rigid-body
 % realignment. If ecFlag==false, then all images are just motio corrected.
+%
+% Cost function options:
+%                      'mi'  - Mutual Information
+%                      'nmi' - Normalised Mutual Information
+%                      'ecc' - Entropy Correlation Coefficient
+%                      'ncc' - Normalised Cross Correlation
+%                      default: 'nmi'
+%
+% E.g.:
+% dwRaw = readFileNifti('dwRaw.nii.gz');
+% bvals = dlmread('dwRaw.bvals');
+% dtiRawComputeMeanB0(dwRaw, bvals, 'mnB0.nii.gz');
+% dtiRawRohdeEstimateEddyMotion(dwRaw, 'mnB0.nii.gz', bvals, 'ecXform.mat')
 %
 % HISTORY:
 %
@@ -62,8 +75,16 @@ if(~exist('outEddyCorrectXform','var')||isempty(outEddyCorrectXform))
   outEddyCorrectXform = fullfile(dataDir,[inBaseName '_ecXform']);
 end
 
+if(~exist('costFunction','var')||isempty(costFunction))
+    costFunction = 'nmi';
+end
+
 if(~exist('ecFlag','var')||isempty(ecFlag))
     ecFlag = true;
+end
+
+if(~exist('initXform','var'))
+    initXform = [];
 end
 
 if(ischar(dwRaw))
@@ -72,7 +93,11 @@ if(ischar(dwRaw))
 end
 
 sz = size(dwRaw.data);
-nvols = sz(4);
+if(numel(sz)<4)
+    nvols = 1;
+else
+    nvols = sz(4);
+end
 dtMm = dwRaw.pixdim(1:3);
 % We hope that the phase-encoding dir is set correctly in the NIFTI header!
 phaseDir = dwRaw.phase_dim; % 'e' in the Rohde paper
@@ -88,6 +113,10 @@ elseif(size(bvals,2)>nvols)
   bvals = bvals(:,1:nvols);
 end
 
+if(~isempty(initXform) && ~isstruct(initXform) && size(initXform,2)~=nvols)
+    error('initXform is bad.');
+end
+
 %% LOOP OVER VOLS
 % For each image, compute the deformation to remove motion and eddy-current
 % distortions.
@@ -97,7 +126,12 @@ end
 spm_defaults; global defaults;
 estParams = defaults.coreg.estimate;
 estParams.params = [0 0 0 0 0 0];
-estParams.cost_fun = 'nmi';
+% cost function options: 
+%        'mi'  - Mutual Information
+%        'nmi' - Normalised Mutual Information
+%        'ecc' - Entropy Correlation Coefficient
+%        'ncc' - Normalised Cross Correlation
+estParams.cost_fun = costFunction;
 estParams.fwhm = [7 7];
 % Multiresolution search control params. Specifies the histogram sampling
 % density, in mm. Try [8 4], [6 3], [4 2]?
@@ -105,7 +139,7 @@ dwiSep = [6 3];
 % For non-dwi images, we do things a little differently
 estParams.sep = [4 2];
 
-targetNoBlur.uint8 = uint8(round(mrAnatHistogramClip(double(mnB0.data),0.4,0.99)*255));
+targetNoBlur.uint8 = uint8(round(mrAnatHistogramClip(double(mnB0.data(:,:,:,1)),0.4,0.99)*255));
 targetNoBlur.mat = eye(4);
 source.mat = eye(4);
 % Blur target image given the specified sampling densities
@@ -153,7 +187,11 @@ for(ii=1:nvols)
     % Wrap it in evalc to avoid the hundreds of lines of
     % print-out. This way, our output is cleaner which makes it
     % easier to track the progress.
+    if(~isempty(initXform))
+        estParams.params = initXform(ii).ecParams(1:6);
+    end
     msg = evalc('m=spm_coreg(targetNoBlur,source,estParams);');
+    %m=spm_coreg(targetNoBlur,source,estParams);
     % We could have used our Rohde estiamtor with non-linear params
     % fixed. It gives about the same answer as spm_coreg, but is a
     % bit slower. 
@@ -166,7 +204,11 @@ for(ii=1:nvols)
     % Start with the rigid-body params from the most recent
     % non-dwi. That should be a solid estimate of the motion
     % correction needed for this region of the time series.
-    mc = prevNdwiParams;
+    if(~isempty(initXform))
+        mc = initXform(ii).ecParams;
+    else
+        mc = prevNdwiParams;
+    end
     startDirs = diag(tol*10);
     for(sr=1:numel(dwiSep))
       fprintf('   Motion/eddy-current correction for DWI (resolution level %d of %d)\n',sr,numel(dwiSep));
@@ -182,6 +224,7 @@ for(ii=1:nvols)
     etDw(end+1) = toc;
   end
   %tmp = source; tmp.mat = target.mat*mc{ii}; dtiShowAlignFigure(99,target,tmp);
+  xform(ii).ecParams
 end
 disp(['Saving eddy/motion correction transforms to ' outEddyCorrectXform '...']);
 disp('These transforms map voxels in the reference image (usually the mean b=0) to each raw image.');

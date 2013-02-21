@@ -5,6 +5,12 @@ function dtiRawEddyCorrect(dwRaw, mnB0, outEddyCorrectXform)
 % Aligns each raw DW image in dwRaw (NIFTI format) to the mean
 % b=0 image, saving all the resulting xforms in outEddyCorrectXform.
 %
+% E.g.:
+% dwRaw = readFileNifti('dwRaw.nii.gz');
+% bvals = dlmread('dwRaw.bvals');
+% dtiRawComputeMeanB0(dwRaw, bvals, 'mnB0.nii.gz');
+% dtiRawEddyCorrect(dwRaw, 'mnB0.nii.gz')
+%
 % HISTORY:
 % 2007.04.23 RFD: wrote it.
 
@@ -13,7 +19,7 @@ spm_defaults; global defaults;
 estParams = defaults.coreg.estimate;
 
 %% Load the raw DW data (in NIFTI format)
-if(~exist('dwRaw','var')|isempty(dwRaw))
+if(~exist('dwRaw','var')||isempty(dwRaw))
     [f,p] = uigetfile({'*.nii.gz;*.nii';'*.*'}, 'Select the raw DW NIFTI dataset...');
     if(isnumeric(f)) error('User cancelled.'); end
     dwRaw = fullfile(p,f);
@@ -28,7 +34,7 @@ end
 if(isempty(dataDir)) dataDir = pwd; end
 
 % Load the b0 data (in NIFTI format)
-if(~exist('mnB0','var')|isempty(mnB0))
+if(~exist('mnB0','var')||isempty(mnB0))
    mnB0 = fullfile(dataDir, [inBaseName '_b0.nii.gz']);
    [f,p] = uigetfile({'*.nii.gz;*.nii';'*.*'}, 'Select the mean b0 NIFTI dataset...',mnB0);
    if(isnumeric(f)) error('User cancelled.'); end
@@ -39,7 +45,7 @@ if(ischar(mnB0))
     mnB0 = readFileNifti(mnB0);
 end
 
-if(~exist('outEddyCorrectXform','var')|isempty(outEddyCorrectXform))
+if(~exist('outEddyCorrectXform','var')||isempty(outEddyCorrectXform))
     outEddyCorrectXform = fullfile(dataDir,[inBaseName 'EcXform']);
 end
 

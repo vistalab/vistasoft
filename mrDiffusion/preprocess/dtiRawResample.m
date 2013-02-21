@@ -1,7 +1,7 @@
-function dtiRawResample(dwRaw, ecXformFile, acpcXformFile, outAlignedRaw, bsplineInterpFlag, dwOutMm, bb)
+function newAcpcXform = dtiRawResample(dwRaw, ecXformFile, acpcXformFile, outAlignedRaw, bsplineInterpFlag, dwOutMm, bb)
 % Resample the diffusion data
 %
-%   dtiRawResample([dwRaw=uigetfile], [ecXformFile=uigetfile], ...
+%   newAcpcXform = dtiRawResample([dwRaw=uigetfile], [ecXformFile=uigetfile], ...
 %      [acpcXformFile=uigetfile], [outAlignedRaw], ...
 %      [bsplineInterpFlag=true], [dwOutMm = [2 2 2]], ...
 %      [boundingBox=default])
@@ -178,7 +178,7 @@ for ii=1:nvols
             end
         end
     end
-    % Now resample the the plane of diffusion data using the SPM
+    % Now resample the plane of diffusion data using the SPM
     % interpolation method.  The method is either trilinear or bspline
     % according to the values in interpParams.
     [im,newAcpcXform] = mrAnatResliceSpm(im, curXform, bb, dwOutMm, interpParams, 0);
