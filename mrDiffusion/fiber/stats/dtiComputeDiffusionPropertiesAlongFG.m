@@ -1,8 +1,8 @@
-function [fa, md, rd, ad, cl, SuperFiber, fgClipped, cp, cs] = ...
+function [fa, md, rd, ad, cl, SuperFiber, fgClipped, cp, cs, fgResampled] = ...
     dtiComputeDiffusionPropertiesAlongFG(fg, dt, roi1, roi2, numberOfNodes, dFallOff)
 %   Compute a weighted average of a variable (FA/MD/RD/AD) in a track segment
 %
-%  [fa, md, rd, ad, cl, SuperFiber,fgClipped, cp, cs] = ...
+%  [fa, md, rd, ad, cl, SuperFiber,fgClipped, cp, cs, fgResampled] = ...
 %    dtiComputeDiffusionPropertiesAlongFG(fg, dt, roi1, roi2, numberOfNodes, [dFallOff])
 %
 %   From a fiber group (fg), and diffusion data (dt), compute the weighted
@@ -31,6 +31,9 @@ function [fa, md, rd, ad, cl, SuperFiber, fgClipped, cp, cs] = ...
 %       fgClipped  - fiber group clipped to the two ROIs
 %       cp         - Weighted Planarity 
 %       cs         - Weighted Sphericity
+%       fgResampled- The fiber group that has been resampled to
+%                    numberOfNodes and each fiber has been reoriented to
+%                    start and end in a consitent location
 %
 % WEB RESOURCES:
 %   mrvBrowseSVN('dtiComputeDiffusionPropertiesAlongFG')
@@ -57,12 +60,14 @@ end
 if ~notDefined('roi1') && ~notDefined('roi2')
     fgClipped = dtiClipFiberGroupToROIs(fg,roi1,roi2);
     % compute weighted averages for eigenvalues along clipped fiber tract
-    [myValsFgWa, SuperFiber, weightsNormalized] = ...
+    [myValsFgWa, SuperFiber, ~, ~, fgResampled] = ...
         dtiFiberGroupPropertyWeightedAverage(fgClipped, dt, numberOfNodes, valname, dFallOff);
 else
     % compute weighted averages for eigenvalues along full fiber tract
-    [myValsFgWa, SuperFiber, weightsNormalized] = ...
+    [myValsFgWa, SuperFiber, ~, ~, fgResampled] = ...
         dtiFiberGroupPropertyWeightedAverage(fg, dt, numberOfNodes, valname, dFallOff);
+    % There is no clipped fiber group
+    fgClipped = nan;
 end
 % Pull out specific properties
 if strcmp(valname,'famdadrdShape')
