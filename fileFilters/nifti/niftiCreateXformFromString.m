@@ -1,11 +1,11 @@
 function [xformMatrix] = niftiCreateXformFromString(vectorString)
 %
 %Given a vectorString of the orientation, create the transform that will
-%reset to RAS
+%reset to ARS
 
 xformMatrix = zeros(4); %Initialize
 
-%First, let's find out where each of the RAS directions are:
+%First, let's find out where each of the ARS directions are:
 
 tmp = strfind(vectorString,'R');
 tmpVector = zeros(1,4);

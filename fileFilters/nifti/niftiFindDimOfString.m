@@ -32,6 +32,7 @@ if isempty(tmp) %it means that we need to get the opposite string
     tmp = strfind(vectorString,searchStringOppositeMap(searchString));
     if isempty(tmp) %We have neither? Badly formatted string!
         warning('vista:niftiError', 'Unable to parse the vector string and create the Xform matrix. Returning empty.');
+        return
     end %if
 end %if
 
@@ -39,6 +40,7 @@ if numel(tmp) ~= 1
     %We should only have 1 of each searchString inside a correctly made
     %string.
     warning('vista:niftiError', 'Incorrectly formatted vectorString, we have more than one of the searchString inside it. Returning empty.');
+    return
 end %if
     
 dim = tmp(1);

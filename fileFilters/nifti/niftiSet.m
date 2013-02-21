@@ -46,9 +46,9 @@ switch param
     case 'slicedim'
         ni.slice_dim = val;
     case 'sto_ijk'
-        ni.qto_ijk = val;
+        ni.sto_ijk = val;
     case 'sto_xyz'
-        ni.qto_xyz = val;
+        ni.sto_xyz = val;
 	case 'voxelsize'
         ni.voxelSize = val;
     otherwise

@@ -179,6 +179,8 @@ save mrInit_params params   % stash the params in case we crash'
 % (we use mrParse becasue other steps, like the crop interface, 
 % may have already loaded one or both -- this way, we don't load twice)
 inplane = mrParse(params.inplane); 
+
+%TODO: Add error checking here in case functional data not supplied.
 func = mrLoadHeader(params.functionals{1});
 
 % test that inplanes, functionals cover the same physical extent

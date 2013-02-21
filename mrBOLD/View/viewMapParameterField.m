@@ -110,6 +110,8 @@ switch fieldName
         res = 'anatclip';
     case {'anatsize' 'anatomysize' 'sizeanatomy'}
         res = 'anatsize';
+    case {'anatomynifti','anatnifti','niftianat','niftianatomy'}
+        res = 'anatomynifti';
     case {'anatsizexyz' 'anatomysizeforclass'}
         res = 'anatsizexyz';
     case {'ngraylayers' 'numgraylayers' 'numbergraylayers'}

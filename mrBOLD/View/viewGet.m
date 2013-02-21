@@ -73,7 +73,9 @@ function val = viewGet(vw,param,varargin)
 %     ------------------------------------------------------------------
 %     'anatomy'
 %     'anatomymap'
+%     'anatomynifti'
 %     'anatclip'
+%     'anatslicedim'
 %     'anatsize'
 %     'anatsizexyz'
 %     'brightness'
@@ -589,10 +591,15 @@ switch param
         % Return the colormap for the anatomical underlay image.
         %   anataomyMap = viewGet(vw, 'Anatomy Map');
         val = round(vw.ui.phMode.cmap(1:64,:) * 255)';
+    case 'anatomynifti'
+        %Return the actual nifti struct stored in anat
+        val = vw.anat;
     case 'anatclip'
         % Return anatomy clipping values from anatMin and anatMax sliders.
         %   anataomyClip = viewGet(vw, 'Anatomy Clip');
         val = getAnatClip(vw);
+    case 'anatslicedim'
+        val = niftiGet(vw.anat,'sliceDim');
     case 'anatsize'
         % Return the size (in voxels) of the anatomical underlay image.
         %   anataomySize = viewGet(vw, 'Anatomy Size');

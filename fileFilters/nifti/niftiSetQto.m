@@ -14,7 +14,6 @@ function ni = niftiSetQto(ni, xformXyz, setStoToo)
 %  'qoffset_y'
 %  'qoffset_z'
 %  'qfac'
-%  'pixdim'
 %
 % (c) Stanford Vista Team 2012
 
@@ -24,7 +23,7 @@ function ni = niftiSetQto(ni, xformXyz, setStoToo)
 %                 and/or the dims are permuted.
 % 2013.02.07  AS: updated to use niftiGet and niftiSet
 
-q = matToQuat(xformXyz); %TODO: Think about a replacement for this?
+q = matToQuat(xformXyz);
 %ni.qform_code = 2;
 ni = niftiSet(ni,'qform_code',2); %Hardcoded, just like before
 
@@ -55,9 +54,10 @@ ni = niftiSet(ni,'qoffset_z',q.quatern_z);
 %ni.qfac = q.qfac;
 ni = niftiSet(ni,'qfac',q.qfac);
 
-newPixDim = niftiGet(ni,'pixdim');
-newPixDim(1:3) = [q.dx q.dy q.dz];
-ni = niftiSet(ni, 'pixdim', newPixDim); 
+%Pixdims are no longer set here. It is instead set outside of this function
+%newPixDim = niftiGet(ni,'pixdim');
+%newPixDim(1:3) = [q.dx q.dy q.dz];
+%ni = niftiSet(ni, 'pixdim', newPixDim); 
 
 if(exist('setStoToo','var')&&~isempty(setStoToo)&&setStoToo)
   %ni.sto_xyz = ni.qto_xyz;

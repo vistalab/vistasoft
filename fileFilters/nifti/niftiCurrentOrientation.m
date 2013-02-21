@@ -4,6 +4,18 @@ function [vectorString, orientationMatrix] = niftiCurrentOrientation(nii)
 % Computes the orientation of the nifti file passed in and returns both 
 % a vector of 3 characters as well as a standard 4x4 matrix  
 %
+% USAGE
+%  nii = readNifti(niftiFullPath);
+%  niftiCurrentOrientation(nii);
+%
+% INPUTS
+%  Nifti struct
+%
+% RETURNS
+%  Vector string of orientation (e.g. 'ARS')
+%  Xform necessary to return to ARS format
+%
+%
 % VistaLab 2013-02-05
 
 %Extract information on the current transform and dimension size
