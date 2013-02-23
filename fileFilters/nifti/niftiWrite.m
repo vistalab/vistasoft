@@ -37,12 +37,12 @@ if isempty(e), ni.fname = fullfile(p,[f '.nii.gz']); end
 % Files are written out in a format complaint with the NIFTI-1 file type.
 % Jimmy Shen's code and VISTASOFT code can read these files.
 % But, the mex file we have only handle one data type: int16.
-switch ni.data_type
-    case  niftiClass2DataType('int16')
-        writeFileNifti(ni);   % Fast, mex-file
-    otherwise
+% switch ni.data_type
+%     case  niftiClass2DataType('int16')
+%         writeFileNifti(ni);   % Fast, mex-file
+%     otherwise
         niftiWriteMatlab(ni);
-end
+% end
 
 
 end
