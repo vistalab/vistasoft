@@ -1,5 +1,23 @@
 function [dim] = niftiFindDimOfString(vectorString, searchString)
 %
+%
+% USAGE:
+%   This function can be called to return the dimension of a specific
+%   orientation inside a vectorString.
+%
+% INPUT:
+%   vectorString - the orientation string, e.g. 'RAS'
+%   searchString - the one character string to search for, e.g. 'S'
+%   Note: the search string needs to be one of 'L','R','A','P','I','S'
+%
+% OUTPUT:
+%   Number such that vectorString[number] = searchString
+%   Note: if there are multiple occurences, then only the first one is
+%   returned, along with a warning
+%
+% Adds text underneat the axes of an inplane window informing the user
+% which side is left and which is right, based in information in the I-file
+% header from the inplanes.
 %Taking a vector, find the dimension of the string given in 'searchString'
 %This is essentially a wrapper of 'find', however, it will return only 1
 %result since there should only be 1 of each L/R, A/P, S/I. You can also
