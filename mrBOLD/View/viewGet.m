@@ -599,7 +599,12 @@ switch param
         %   anataomyClip = viewGet(vw, 'Anatomy Clip');
         val = getAnatClip(vw);
     case 'anatslicedim'
+        %Returns the dimension of the matrix that is associated with
+        %slices
         val = niftiGet(vw.anat,'sliceDim');
+    case 'anatslicedims'
+        %Returns the dimensions of each 2D array making up each slice
+        val = niftiGet(vw.anat,'sliceDims');
     case 'anatsize'
         % Return the size (in voxels) of the anatomical underlay image.
         %   anataomySize = viewGet(vw, 'Anatomy Size');
@@ -720,7 +725,7 @@ switch param
         %   b0angle = viewGet(vw, 'b0 angle');
         try % we use a 'try' statement because the function will fail
             % if the raw anatomical inplane (dicom) is not available
-            [tmp val] = getB0direction(vw);
+            [tmp, val] = getB0direction(vw);
         catch ME
             warning(ME.message);
             val = [];
@@ -772,7 +777,7 @@ switch param
                 
                 % We need to be careful using intersectCols because it
                 % sorts the data.
-                [commonCoords indROI val] = intersectCols(roicoords, vw.coords); %#ok<*ASGLU>
+                [commonCoords, indROI, val] = intersectCols(roicoords, vw.coords); %#ok<*ASGLU>
                 [tmp, inds] = sort(indROI);
                 val = val(inds);
                 
@@ -964,11 +969,6 @@ switch param
         % Return the dimension of data in current slice or specificed slice
         %   dim = viewGet(vw, 'Slice Dimension')
         %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)        
-        if isempty(varargin) || isempty(varargin{1})
-            scan = viewGet(vw, 'Current Scan');
-        else
-            scan = varargin{1};
-        end
         switch vw.viewType
             case 'Inplane'
                 val = niftiGet(vw.anat,'Dim');
@@ -980,10 +980,12 @@ switch param
     case 'slicedim'
         % Return the dimension of data in current slice or specificed slice
         %   dim = viewGet(vw, 'Slice Dimension')
-        %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)        
+        %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)
+        %TODO: Change the location that this is getting the functionals
+        %data from away from the global variable
         switch vw.viewType
             case 'Inplane'
-                val = niftiGet(vw.anat,'slice dims');
+                val = mrSESSION.functionals.cropSize;
             case {'Volume','Gray'}
                 val = [1,size(vw.coords,2)];
             case 'Flat'

@@ -222,9 +222,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (3) crop and save inplane anatomy %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if ~isempty(params.crop)
-	inplane = mrCrop(inplane, params.crop);
-end
+%if ~isempty(params.crop)
+%	inplane = mrCrop(inplane, params.crop);
+%end
 %mrSave(inplane, params.sessionDir, '1.0anat');
 %TODO: Remove this line that saves the inplane data as a separate file
 
@@ -234,7 +234,7 @@ end
 for scan = 1:length(params.functionals)
 	
 	funcPath = mrGet(params.functionals{scan}, 'filename');
-	[p f ext] = fileparts(funcPath);
+	[~, ~, ext] = fileparts(funcPath);
 	
     if isequal(lower(ext), '.mag')
         % if inputs are Lucas Center .mag files, we can read them a slice
@@ -251,7 +251,7 @@ for scan = 1:length(params.functionals)
         end
         
         % select keepFrames if they're provided
-        if isfield(params, 'keepFrames') & ~isempty(params.keepFrames)
+        if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
             nSkip = params.keepFrames(scan,1);
             nKeep = params.keepFrames(scan,2);
             if nKeep==-1
@@ -264,7 +264,7 @@ for scan = 1:length(params.functionals)
         end
         
         % assign annotation if it's provided
-        if length(params.annotations) >= scan & ...
+        if length(params.annotations) >= scan && ...
                 ~isempty(params.annotations{scan})
             func.name = params.annotations{scan};
         end
@@ -279,7 +279,7 @@ fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
 		mfilename, datestr(now));
 
 %% compress raw files if selected
-if checkfields(params, 'compressRawFiles') & params.compressRawFiles==1
+if checkfields(params, 'compressRawFiles') && params.compressRawFiles==1
 	if ~isunix
 		fprintf(['[%s]: Sorry, can only compress raw files ' ...
 				 'in a unix-like environment.\n'], mfilename);
@@ -287,8 +287,8 @@ if checkfields(params, 'compressRawFiles') & params.compressRawFiles==1
 		fprintf('[%s]: Attempting to compress raw files...\n', mfilename);
 		try
 			for i = 1:length(params.functionals)
-				cmd = ['gzip -v ' params.functionals{ii}];
-				[status result] = unix(cmd);
+				cmd = ['gzip -v ' params.functionals{i}];
+				[status, result] = unix(cmd);
 				if status==0
 					% successful
 					fprintf('%s\n', result)
@@ -402,7 +402,7 @@ return
 
 
 % /---------------------------------------------------------------------/ %
-function initMagFiles(functionals, scan, params, scaleFactor);
+function initMagFiles(functionals, scan, params, scaleFactor)
 % initialize a functional scan a slice at a time, the old way
 mrGlobals2;
 cd(params.sessionDir);
@@ -459,7 +459,7 @@ for slice = 1:nSlices
 		try
 			tSeries = tSeries(keep,:);
 		catch
-			warning( sprintf('Invalid keep frames for scan %i', scan) );
+			warning( 'Invalid keep frames for scan %i', scan );
 		end
 	end
 
@@ -471,7 +471,7 @@ end
 % need to manually update mrSESSION.functionals and dataTYPES
 % (in the general version mrSave takes care of this)
 f.PfileName = func.path;
-if length(params.annotations) >= scan & ~isempty(params.annotations{scan})
+if length(params.annotations) >= scan && ~isempty(params.annotations{scan})
 	f.annotation = params.annotations{scan};
 else
 	f.annotation = sprintf('Scan %i', scan);
@@ -491,7 +491,7 @@ f.voxelSize = func.voxelSize(1:3);
 f.effectiveResolution = func.hdr.effectiveResolution;
 f.framePeriod = func.voxelSize(4);
 f.reconParams = func.hdr;
-if isempty(mrSESSION.functionals) | scan==1
+if isempty(mrSESSION.functionals) || scan==1
 	mrSESSION.functionals = f;
 else
 	mrSESSION.functionals(scan) = mergeStructures(mrSESSION.functionals(scan-1), f);

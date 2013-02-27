@@ -49,11 +49,11 @@ Sdim = niftiFindDimOfString(vectorString,'S');
 
 %Let's now create the proper label
 if (strcmp(vectorString(Rdim),'R'))
-    %We have an R, so the left side is Right:
-    dirTextRL = 'Right  \leftrightarrow  Left';
-else
-    %We have an L, so the left side is Left:
+    %We have an R, so the right side is Right because of difference between patient and scanner:
     dirTextRL = 'Left  \leftrightarrow  Right';
+else
+    %We have an L, so the right side is Left:
+    dirTextRL = 'Right  \leftrightarrow  Left';
 end
 
 if (strcmp(vectorString(Rdim),'A'))
@@ -61,7 +61,7 @@ if (strcmp(vectorString(Rdim),'A'))
     dirTextAP = 'Ant  \leftrightarrow  Pos';
 else
     %We have a P, so the left side is Posterior:
-    dirTextAP = 'Pos \leftrightarrow  Ant';
+    dirTextAP = 'Pos  \leftrightarrow  Ant';
 end
 
 if Rdim == viewGet(vw,'slicedim')

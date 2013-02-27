@@ -58,9 +58,8 @@ expectedMatlabVersion = {'6' '6.1' '6.5' '6.5.1' '6.5.2' '7.0' ...
 version = ver('Matlab');
 matlabVersion = version.Version;        
 if ~ismember(matlabVersion, expectedMatlabVersion);    % (matlabVersion ~= expectedMatlabVersion)
-    str = sprintf('Matlab version %s not on supported list (mrVista %s).', ...
+    warning('Matlab version %s not on supported list (mrVista %s).', ...
         matlabVersion, num2str(mrLoadRetVERSION));
-    myWarnDlg(str);
 else
     fprintf('mrVista version: %s\nMatlab version: %s\n',num2str(mrLoadRetVERSION),version.Version);
 end
