@@ -236,42 +236,48 @@ for scan = 1:length(params.functionals)
 	funcPath = mrGet(params.functionals{scan}, 'filename');
 	[~, ~, ext] = fileparts(funcPath);
 	
-    if isequal(lower(ext), '.mag')
-        % if inputs are Lucas Center .mag files, we can read them a slice
-        % at a time and be more memory-efficient:
-        initMagFiles(params.functionals, scan, params, scaleFactor);
-        
-    else
-        % generalized, more memory-hungry way
-        func = mrParse(params.functionals{scan});  % this loads if needed
-        
-        if ~isempty(params.crop)
-            funcCrop = params.crop ./ repmat(scaleFactor([2 1]), [2 1]);
-            func = mrCrop(func, funcCrop);
+    %Read in the nifti to the tS struct, then apply the same transform as
+    %the underlying data. Then, transfer the necessary components to the
+    %local func struct.
+    tS = niftiRead(funcPath);
+    tS = niftiApplyAndCreateXform(tS,'Inplane');
+    %Need to move over:
+    %Data
+    func.data = niftiGet(tS,'Data');
+    %Dims
+    func.dims = niftiGet(tS, 'Dim');
+    %PixDims
+    func.pixdims = niftiGet(tS, 'Pix Dim');
+    
+    %func = mrParse(params.functionals{scan});  % this loads if needed
+    
+    %if ~isempty(params.crop)
+    %    funcCrop = params.crop ./ repmat(scaleFactor([2 1]), [2 1]);
+    %    func = mrCrop(func, funcCrop);
+    %end
+    
+    % select keepFrames if they're provided
+    if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
+        nSkip = params.keepFrames(scan,1);
+        nKeep = params.keepFrames(scan,2);
+        if nKeep==-1
+            % flag to keep all remaining frames
+            nKeep = size(func.data, 4) - nSkip;
         end
-        
-        % select keepFrames if they're provided
-        if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
-            nSkip = params.keepFrames(scan,1);
-            nKeep = params.keepFrames(scan,2);
-            if nKeep==-1
-                % flag to keep all remaining frames
-                nKeep = size(func.data, 4) - nSkip;
-            end
-            keep = [1:nKeep] + nSkip;
-            func.data = func.data(:,:,:,keep);
-            func.dims(4) = size(func.data, 4);
-        end
-        
-        % assign annotation if it's provided
-        if length(params.annotations) >= scan && ...
-                ~isempty(params.annotations{scan})
-            func.name = params.annotations{scan};
-        end
-        
-        mrSave(func, params.sessionDir, '1.0tSeries');
-        
+        keep = [1:nKeep] + nSkip;
+        func.data = func.data(:,:,:,keep);
+        func.dims(4) = size(func.data, 4);
     end
+    
+    % assign annotation if it's provided
+    if length(params.annotations) >= scan && ...
+            ~isempty(params.annotations{scan})
+        func.name = params.annotations{scan};
+    end
+    
+    mrSave(func, params.sessionDir, '1.0tSeries');
+    
+    %end
     
 end
 
