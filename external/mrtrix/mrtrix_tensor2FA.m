@@ -30,10 +30,10 @@ end
 
 % If no mask file was provided, calculate this over the entire volume
 if notDefined('mask_file')
-    cmd_str = sprintf('tensor2FA %s %s', in_file, out_file);
+    cmd_str = sprintf('/usr/lib/mrtrix/bin/tensor2FA %s %s', in_file, out_file);
 % Otherwise, use the mask file provided: 
 else
-    cmd_str = sprintf('tensor2FA %s - | mrmult - %s %s', in_file, mask_file, out_file);
+    cmd_str = sprintf('/usr/lib/mrtrix/bin/tensor2FA %s - | mrmult - %s %s', in_file, mask_file, out_file);
 end
 
 % Send it to mrtrix:
