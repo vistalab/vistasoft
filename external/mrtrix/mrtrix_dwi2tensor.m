@@ -1,4 +1,4 @@
-function [status, results] = mrtrix_tensor_generate (in_file, out_file, b_file, verbose)
+function [status, results] = mrtrix_dwi2tensor (in_file, out_file, b_file, verbose)
 
 %
 % Calculate diffusion tensors. 
