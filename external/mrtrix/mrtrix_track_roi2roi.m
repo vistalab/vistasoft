@@ -38,7 +38,6 @@ switch mode
     error('Input "%s" is not a valid tracking mode', mode); 
 end
 
-keyboard
 % Track, using deterministic estimate: 
 tck_file = strcat(strip_ext(csd), '_' , strip_ext(roi1), '_', strip_ext(roi2), '_', ...
                             strip_ext(seed) , '_', strip_ext(mask), '_', mode, '.tck'); 
@@ -47,10 +46,22 @@ tck_file = strcat(strip_ext(csd), '_' , strip_ext(roi1), '_', strip_ext(roi2), '
 switch mode_str
   case {'SD_PROB', 'SD_STREAM'}
     cmd_str = sprintf('streamtrack -seed %s -mask %s -include %s -include %s %s %s %s -number %d -maxnum %d -stop',...
-      seed, mask, roi1, roi2, mode_str, csd, tck_file, n, n_max);
-  case {'DT_STREAM'}
-      cmd_str = sprintf('streamtrack -seed %s -mask %s -include %s -include %s %s %s %s -number %d -maxnum %d -stop',...
-      seed, mask, roi1, roi2, mode_str, csd, tck_file, n, n_max); 
+      seed, mask, roi1, roi2, mode_str, files.csd, tck_file, n, n_max);
+    
+    % The following lines of code could be intergated here, to allow for
+    % tracking between ROIs using a tensor-based deterministic tractography
+    %   case {'DT_STREAM'}
+    %       cmd_str = sprintf('streamtrack -seed %s -mask %s -include %s -include %s %s %s %s -number %d -maxnum %d -stop',...
+    %       seed, mask, roi1, roi2, mode_str,files.csd, tck_file, n, n_max);
+    %
+    %     [~, pathstr] = strip_ext(files.dwi);
+    %     tck_file = fullfile(pathstr,strcat(strip_ext(files.dwi), '_' , strip_ext(roi), '_',...
+    %       strip_ext(mask) , '_', mode, '-',num2str(nSeeds),'.tck'));
+    %
+    %     % Generate the mrtrix-unix command.
+    %     cmd_str = sprintf('streamtrack %s %s -seed %s -grad %s -mask %s -include %s -include %s %s -num %d', ...
+    %                                 mode_str, files.dwi, roi, files.b, mask, roi1, roi2,  tck_file, nSeeds);
+
   otherwise
     error('Input "%s" is not a valid tracking mode', mode_str);
 end
