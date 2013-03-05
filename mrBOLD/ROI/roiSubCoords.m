@@ -1,4 +1,4 @@
-function [subCoords ind] = roiSubCoords(vw,roiCoords)
+function [subCoords, ind] = roiSubCoords(vw,roiCoords)
 %
 % [subCoords, indices] = roiSubCoords(vw,roiCoords)
 %

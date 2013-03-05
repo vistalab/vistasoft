@@ -612,6 +612,7 @@ switch param
         %    vw = loadAnat(vw);
         %end
         val = niftiGet(vw.anat,'Dim');
+        val = val(1:3);
         %TODO: Fix this for volumes that use anat but not yet in nifti
 
 	case 'anatomycurrentslice'
@@ -971,7 +972,7 @@ switch param
         %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)        
         switch vw.viewType
             case 'Inplane'
-                val = niftiGet(vw.anat,'Dim');
+                val = mrSESSION.functionals.cropSize; %TODO: Change this once we get functional data at the veiw level
             case {'Volume','Gray'}
                 val = [1,size(vw.coords,2)];
             case 'Flat'

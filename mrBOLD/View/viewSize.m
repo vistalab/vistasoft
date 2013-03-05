@@ -17,14 +17,14 @@ global mrSESSION;
 
 switch viewGet(vw,'viewType')
     case 'Inplane'
-        dims = viewGet(vw,'dim');
+        dims = viewGet(vw,'anatsize');
     case {'Volume','Gray','generalGray'}
         if isfield(vw, 'anat')
             if ~isempty(vw.anat), dims = size(vw.anat); end
         end
         if ~exist('dims','var')
             pth = getVAnatomyPath; % assigns it if it's not set
-            [mmPerPix, dims] = readVolAnatHeader(pth);
+            [~, dims] = readVolAnatHeader(pth);
         end
     case 'Flat'
         dims = [vw.ui.imSize,2];
