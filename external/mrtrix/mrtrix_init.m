@@ -4,7 +4,7 @@ function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
 % 
 % Initialize an mrtrix CSD analysis
 %
-% This fucntion computes all the files needed to use mrtrix_track. 
+% This function computes all the files needed to use mrtrix_track. 
 %
 % - Inputs -
 %    dt6  - string, full-path to an mrInit-generated dt6 file. 
@@ -28,43 +28,62 @@ function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
 %    files - The full-path to the files created
 %
 % - Notes -
-% This functionn performs the following operations:
+%   This functionn performs the following operations:
 %
-% 1. Convert the raw dwi file into .mif format
-% 2. Convert the bvecs, bvals into .b format
-% 3. Convert the brain-mask to .mif format 
-% 4. Fit DTI and calculate FA and EV images
-% 5. Estimate the response function for single fibers, based on voxels with
-%    FA > 0.7
-% 6. Fit the CSD model. 
-% 7. Convert the white-matter mask to .mif format. 
+%   1. Convert the raw dwi file into .mif format
+%   2. Convert the bvecs, bvals into .b format
+%   3. Convert the brain-mask to .mif format 
+%   4. Fit DTI and calculate FA and EV images
+%   5. Estimate the response function for single fibers, based on voxels with
+%      FA > 0.7
+%   6. Fit the CSD model. 
+%   7. Convert the white-matter mask to .mif format. 
 % 
 % For details: 
 % http://www.brain.org.au/software/mrtrix/tractography/preprocess.html
 % 
-% Ariel & Franco (c) Stanford Vista Team 2012
-
-if notDefined('mrtrix_folder'), mrtrix_folder = 'mrtrix'; end
+% Bob, Ariel & Franco (c) Stanford Vista Team 2012
 
 % Loading the dt file containing all the paths to the fiels we need.
 dt_info = load(dt6);
 
 % Strip the file names out of the dt6 strings. 
-dwRawFile = dt_info.files.alignedDwRaw;
-fname_trunk = dwRawFile(1:strfind(dwRawFile,'.')-1);
-raw_idx = strfind(fname_trunk,'raw');
-if isempty(raw_idx)
-    error('Could not find raw directory')
-end
-session = fname_trunk(1:raw_idx-1);
-fname_trunk = [session, mrtrix_folder, fname_trunk(raw_idx+3:end)]; 
-file_sep_idx = strfind(fname_trunk, filesep);
+dwRawFile    = dt_info.files.alignedDwRaw;
+[session,dwiname] = fileparts(dwRawFile);
+[~,dwiname] = fileparts(dwiname);
+session = fileparts(session);
 
-mrtrix_dir = fname_trunk(1:file_sep_idx(end)); 
+%fname_trunk = dwRawFile(1:strfind(dwRawFile,'.')-1);
+%raw_idx     = strfind(fname_trunk,'raw');
+%
+% % Find the raw folder
+% if isempty(raw_idx)
+%   % Lets try one folder up
+%   raw_idx     = fullfile(fileparts(fname_trunk),'raw');
+%   if isempty(raw_idx)
+%     % Lets try two folders up
+%     raw_idx     = fullfile(fileparts(fileparts(fname_trunk)),'raw');
+%   else
+%     % Give up and return an error
+%     error('Could not find raw directory');
+%   end
+% end
 
-if ~exist(mrtrix_dir, 'dir')
-    mkdir(mrtrix_dir)
-end
+% Strip out the name information for the mrDiffusion folders.
+%[session, dwiname] = fileparts(fname_trunk);
+
+% If the output fibers folder was not passed in, then generate one in the current
+% mrDiffusion session.
+if notDefined('mrtrix_folder'), mrtrix_folder = [session, 'mrtrix']; end
+
+% Make the folder where to save the fibers if it doe snot exist yet.
+if ~exist(mrtrix_folder, 'dir'), mkdir(mrtrix_folder); end
+
+% Generate a file name that contains the information of the original file
+% that was used for tracking.
+fname_trunk  = [mrtrix_folder, dwiname]; 
+%file_sep_idx = strfind(fname_trunk, filesep);
+%mrtrix_dir   = fname_trunk(1:file_sep_idx(end)); 
 
 % Build the mrtrix file names.
 files = mrtrix_build_files(fname_trunk,lmax);
@@ -73,9 +92,7 @@ files = mrtrix_build_files(fname_trunk,lmax);
 computed = mrtrix_check_processes(files);
 
 % Convert the raw dwi data to the mrtrix format: 
-if (~computed.('dwi'))
-  mrtrix_mrconvert(dwRawFile, files.dwi); 
-end
+if (~computed.('dwi')), mrtrix_mrconvert(dwRawFile, files.dwi); end
 
 % This file contains both bvecs and bvals, as per convention of mrtrix
 if (~computed.('b'))
@@ -125,27 +142,6 @@ end
 if (~computed.('csd'))  
   disp('The following step takes a while (a few hours)');                                  
   mrtrix_csdeconv(files.dwi, files.response, lmax, files.csd, files.b, files.brainmask)
-end
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-% mrtrix_check_processes %
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-function computed = mrtrix_check_processes(files)
-%
-% Check which mrtrix proceses were computed. Returns an array of 0's and
-% 1's indicating which process was computed (1) and which one needs to be
-% computed (0)
-%
-
-fields = fieldnames(files);
-for ii = 1:length(fields)
-  if exist(files.(fields{ii}),'file') == 2
-    computed.(fields{ii}) = 1;
-  else
-    computed.(fields{ii}) = 0;
-  end
 end
 
 
