@@ -19,6 +19,8 @@ switch param
         ni.fname = val;
     case 'freqdim'
         ni.freq_dim = val;
+    case 'nifti'
+        ni = val; %This means that we are passing in an entire Nifti!
     case 'phasedim'
         ni.phase_dim = val;
     case 'pixdim'

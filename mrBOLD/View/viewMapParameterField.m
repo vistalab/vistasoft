@@ -102,7 +102,7 @@ switch fieldName
         res = 'brightness';        
 
         %%%%% Anatomy / Underlay-related properties
-    case {'anatomy' 'anat'}
+    case {'anatomy' 'anat' 'anatomydata' 'anatdata'}
         res = 'anatomy';
     case {'contrast'}
         res = 'contrast';

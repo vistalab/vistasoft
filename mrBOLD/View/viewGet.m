@@ -276,7 +276,7 @@ param = viewMapParameterField(param);
 % way.
 switch param
     
-    %%%%% Session-related properties; selected scan, slice, data type
+    %% Session-related properties; selected scan, slice, data type
     case 'homedir'      
         % Return full path to directory.
         %   homedir = viewGet(vw, 'Home Directory');
@@ -426,7 +426,7 @@ switch param
         curdt = viewGet(vw, 'Current Data TYPE');
         val   = dataTYPES(curdt);
         
-        %%%%% Traveling-Wave / Coherence Analysis properties
+        %% Traveling-Wave / Coherence Analysis properties
     case 'coherence' 
         % Coherence for all voxels, all scans in current dataTYPE        
         %   co = viewGet(vw, 'Coherence');        
@@ -509,8 +509,8 @@ switch param
         %   phwin = viewGet(vw, 'phase window');
         val = getPhWindow(vw);
         
-        %%%%% colorbar-related params: this code uses a simple linear
-        %%%%% mapping from coAnal phase -> polar angle or eccentricity
+        % colorbar-related params: this code uses a simple linear
+        % mapping from coAnal phase -> polar angle or eccentricity
     case 'twparams' 
         % Return travelling wave parameters.
         %   twparams = viewGet(vw, 'Travelling Wave Parameters');        
@@ -534,7 +534,7 @@ switch param
         val = val(1:nGrays,:);
         
         
-        %%%%% Map properties
+        %% Map properties
     case 'map'
         % Return the parameter map for the current data type. Map is cell
         % array 1 x nscans.
@@ -583,7 +583,8 @@ switch param
         if (nMaps>=nScan), val = vw.map{nScan};
         else               val=[];        end        
 
-        %%%%% Anatomy / Underlay-related properties
+        %%
+        % Anatomy / Underlay-related properties
     case 'anatomy'
         % Return the anatomical underlay image.
         val = niftiGet(vw.anat,'Data');
@@ -650,7 +651,7 @@ switch param
         %   mmPerVox = viewGet(vw, 'mm per voxel');
         switch vw.viewType
             case 'Inplane' 
-                val = niftiGet(vw.anat,'Voxel Size');                                               
+                val = niftiGet(viewGet(vw,'anat nifti'),'Voxel Size');
             case {'Volume' 'Gray' 'generalGray'}
                 if isfield(vw, 'mmPerVox'), 
                     val =  vw.mmPerVox;

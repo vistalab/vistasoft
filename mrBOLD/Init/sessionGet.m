@@ -95,10 +95,7 @@ switch param
         val = s.inplanes.inplanePath;
         
         if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>
-        
-        % if it is a char str (and not a cell array), convert to cell
-        if ~isempty(val) && ~iscell(val), val = {val}; end                
-        
+                
     case {'sliceorder'}
         if isempty(varargin), scan = 1;
         else scan = varargin{1};

@@ -129,9 +129,7 @@ INPLANE{s} = eventMenu(INPLANE{s});
 INPLANE{s} = helpMenu(INPLANE{s}, 'Inplane');
 
 % go ahead and load the anatomicals
-inplanePath = sessionGet(mrSESSION,'Inplane Path');
-inplanePath = inplanePath{1}; %Since this is returned as a cell!
-INPLANE{s} = loadAnat(INPLANE{s}, inplanePath); 
+INPLANE{s} = loadAnat(INPLANE{s}, sessionGet(mrSESSION,'Inplane Path'));
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
