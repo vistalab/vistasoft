@@ -14,7 +14,7 @@ function rx = rxOpenControlFig(rx);
 %     feature('javafigures', 0);
 % end
 
-%javaFigs = mrvJavaFeature;
+javaFigs = mrvJavaFeature;
 
 
 % open the control figure
@@ -156,7 +156,7 @@ set(rx.ui.controlFig,'UserData',rx);
 rxSetNudge(rx.ui.nudge.sliderHandle);
 
 % feature('javafigures',javaFigs);
-%mrvJavaFeature(javaFigs);
+mrvJavaFeature(javaFigs);
 
 
 return

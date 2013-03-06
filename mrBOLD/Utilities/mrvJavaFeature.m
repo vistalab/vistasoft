@@ -22,6 +22,9 @@ function javaFigs = mrvJavaFeature(javaFigs)
 %
 %  mrvJavaFeature(javaFigs);
 % 2007 by BAW. 
+warning('You are calling an obsolote function: mrvJavaFeature. Please remove it from your code.');
+javaFigs = []; 
+return;
 
 % If the person sent in a javaFigs variable, they want us to restore
 if notDefined('javaFigs'), javaFigs = []; 

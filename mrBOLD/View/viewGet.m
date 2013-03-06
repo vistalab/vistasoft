@@ -382,7 +382,7 @@ switch param
         %   nslices = viewGet(vw, 'Number of Slices');
         switch vw.viewType
             case 'Inplane'
-                val = niftiGet(vw.anat,'num slices');
+                val = niftiGet(viewGet(vw,'Anatomy Nifti'),'num slices');
             case {'Volume' 'Gray'}
                 val = 1;
             case 'Flat'
@@ -587,7 +587,7 @@ switch param
         % Anatomy / Underlay-related properties
     case 'anatomy'
         % Return the anatomical underlay image.
-        val = niftiGet(vw.anat,'Data');
+        val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Data');
     case 'anatomymap'
         % Return the colormap for the anatomical underlay image.
         %   anataomyMap = viewGet(vw, 'Anatomy Map');
@@ -602,20 +602,19 @@ switch param
     case 'anatslicedim'
         %Returns the dimension of the matrix that is associated with
         %slices
-        val = niftiGet(vw.anat,'sliceDim');
+        val = niftiGet(viewGet(vw,'Anatomy Nifti'),'sliceDim');
     case 'anatslicedims'
         %Returns the dimensions of each 2D array making up each slice
-        val = niftiGet(vw.anat,'sliceDims');
+        val = niftiGet(viewGet(vw,'Anatomy Nifti'),'sliceDims');
     case 'anatsize'
-        % Return the size (in voxels) of the anatomical underlay image.
-        %   anataomySize = viewGet(vw, 'Anatomy Size');
-        %if ~checkfields(vw, 'anat')
-        %    vw = loadAnat(vw);
-        %end
-        val = niftiGet(vw.anat,'Dim');
-        val = val(1:3);
-        %TODO: Fix this for volumes that use anat but not yet in nifti
-
+        switch vw.viewType
+            case 'Inplane' 
+                val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Dim');
+                val = val(1:3);
+            case {'Volume' 'Gray' 'generalGray' 'Flat'}
+                val = size(vw.anat);
+        end
+        
 	case 'anatomycurrentslice'
         % Return the anatomical underlay image for only one slice
         %   anat = viewGet(vw, 'Anatomy Current Slice', curSlice);
@@ -651,7 +650,7 @@ switch param
         %   mmPerVox = viewGet(vw, 'mm per voxel');
         switch vw.viewType
             case 'Inplane' 
-                val = niftiGet(viewGet(vw,'anat nifti'),'Voxel Size');
+                val = niftiGet(viewGet(vw,'anat nifti'),'Pix Dim');
             case {'Volume' 'Gray' 'generalGray'}
                 if isfield(vw, 'mmPerVox'), 
                     val =  vw.mmPerVox;
