@@ -607,6 +607,8 @@ switch param
         %Returns the dimensions of each 2D array making up each slice
         val = niftiGet(viewGet(vw,'Anatomy Nifti'),'sliceDims');
     case 'anatsize'
+        %Load an anatomy if one does not already exist
+        if ~checkfields(vw, 'anat'), vw = loadAnat(vw); end
         switch vw.viewType
             case 'Inplane' 
                 val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Dim');

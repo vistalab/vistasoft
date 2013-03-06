@@ -21,7 +21,7 @@ global vANATOMYPATH
 volROI = roiCheck(volROI);
 
 % Get voxel sizes to make sure that the transformation preserves volume
-ipVoxSize = mrSESSION.inplanes.voxelSize;
+ipVoxSize = viewGet(ipView, 'voxel size');
 volVoxSize = readVolAnatHeader(vANATOMYPATH);
 
 % initialize the inplane ROI
