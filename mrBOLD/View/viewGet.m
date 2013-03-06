@@ -614,7 +614,8 @@ switch param
             case {'Volume' 'Gray' 'generalGray' 'Flat'}
                 val = size(vw.anat);
         end
-        
+        %TODO: As more processes are migrated to NIFTIs, move the view
+        %types from the second switch to the first switch
 	case 'anatomycurrentslice'
         % Return the anatomical underlay image for only one slice
         %   anat = viewGet(vw, 'Anatomy Current Slice', curSlice);
@@ -988,7 +989,7 @@ switch param
             case 'Inplane'
                 val = mrSESSION.functionals.cropSize;
             case {'Volume','Gray'}
-                val = [1,size(vw.coords,2)];
+                val = [1,size(vw.anat,2)];
             case 'Flat'
                 val = [vw.ui.imSize];
         end
