@@ -989,7 +989,7 @@ switch param
             case 'Inplane'
                 val = mrSESSION.functionals.cropSize;
             case {'Volume','Gray'}
-                val = [1,size(vw.anat,2)];
+                val = [1,size(vw.coords,2)];
             case 'Flat'
                 val = [vw.ui.imSize];
         end
