@@ -101,7 +101,6 @@ if ~notDefined('fname')
   niftiWrite(finalResNifti);
 end
 
-keyboard
 end
 
 %------------------------------%

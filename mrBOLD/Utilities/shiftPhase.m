@@ -21,6 +21,6 @@ function shiftedData = shiftPhase(data,phShift)
 
 cxPhShift = exp(sqrt(-1)*phShift);
 cxData = exp(sqrt(-1).*data);
-shiftedData = angleZeroTwoPi(cxData.*cxPhShift);
+shiftedData = angle(cxData.*cxPhShift);
 
 return;
