@@ -1,4 +1,4 @@
-% s_alignInplaneToAnatomical
+mr% s_alignInplaneToAnatomical
 %
 % This script is used to align a T1- or T2-weighted to a high resolution,
 % whole brain anatomical scan. It requires two code repositories:
