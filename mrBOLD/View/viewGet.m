@@ -382,6 +382,7 @@ switch param
         %   nslices = viewGet(vw, 'Number of Slices');
         switch vw.viewType
             case 'Inplane'
+                if ~checkfields(vw, 'anat'), vw = loadAnat(vw); end
                 val = niftiGet(viewGet(vw,'Anatomy Nifti'),'num slices');
             case {'Volume' 'Gray'}
                 val = 1;
@@ -608,7 +609,7 @@ switch param
         val = niftiGet(viewGet(vw,'Anatomy Nifti'),'sliceDims');
     case 'anatsize'
         %Load an anatomy if one does not already exist
-        if ~checkfields(vw, 'anat'), vw = loadAnat(vw); end
+        if ~checkfields(vw, 'anat') || isempty(vw.anat), vw = loadAnat(vw); end
         switch vw.viewType
             case 'Inplane' 
                 val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Dim');
