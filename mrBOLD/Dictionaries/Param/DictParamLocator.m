@@ -14,7 +14,7 @@ function structLocation = DictParamLocator(paramKey)
 
 global DictParamLocate
 
-if empty(DictParamLocate)
+if isempty(DictParamLocate)
     %Define and construct DictParamLocate
     DictParamLocate = containers.Map;
     

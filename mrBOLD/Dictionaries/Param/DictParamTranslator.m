@@ -13,13 +13,12 @@ function paramKey = DictParamTranslator(paramIn)
 % The internal key used by the system as the key to all of the data maps
 
 
-paramIn = mrvParamFormat(paramIn);
-
 global DictParamTranslate
 
-if empty(DictParamTranslate)
+
+if isempty(DictParamTranslate)
     %Define and construct DictParamTranslate
-    DictParamTranslate = containers.Map;
+    %DictParamTranslate = containers.Map;
     
     DictParamTranslate('numscans') = 'nscans';
     DictParamTranslate('numberofscans') = 'nscans';

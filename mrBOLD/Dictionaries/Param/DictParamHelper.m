@@ -15,7 +15,7 @@ function helpMessage = DictParamHelper(paramKey)
 
 global DictParamHelp
 
-if empty(DictParamHelp)
+if isempty(DictParamHelp)
     %Define and construct DictParamHelp
     DictParamHelp = containers.Map;
     

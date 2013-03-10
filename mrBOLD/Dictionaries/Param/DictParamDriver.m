@@ -1,40 +1,45 @@
-function val = DictParamDriver(paramIn)
+function val = DictParamDriver(paramStruct, paramIn)
 
 
 % USAGE: Gets an input parameter and returns the value in the struct it is
 % associated with.
 %
-% INPUT: paramKey
-% Parameter key that will already have been stripped of capitalization as well as
-% whitespace. Should be perfectly matched since created internally within
-% this system.
+% INPUT: paramStruct, paramIn
+% The struct that will be searched to find the specific value, as well as
+% the parameter that relates to that struct location.
 %
-% OUTPUT: paramKey
-% The internal key used by the system as the key to all of the data maps
+% OUTPUT: val
+% The value stored at the location necessary within the parameter struct 
 
 global DictParamTranslate
 
-if (paramIn = 'help')
+if (strcmp(paramIn,'help'))
     %We need to return the help file. Let's do that:
     params = keys(DictParamTranslate);
-    for param 
-end
+    for ii = 1:numel(params),
+        %Print out all of the possible inputs with their help functions
+        inputParam = params{ii};
+        helpMsg = DictParamHelper(DictParamTranslator(params{ii}));
+        fprintf('%s :\t\t%s \n',inputParam,helpMsg);
+    end %for
+    val = '';
+    return;
+end %if
 
-if empty(DictParamHelp)
-    %Define and construct DictParamHelp
-    DictParamHelp = containers.Map;
-    
-    DictParamHelp('nscans') = 'The total number of scans that this param stores.';    
-    DictParamHelp('dim') = 'The screen space dimensions of the data. Can be thought of as size(data).';
-    DictParamHelp('pixdim') = 'The real world dimensions of each pixel of data. Usually in mm or seconds.';
-end
+%We can assume that help wasn't asked for, so let's return the value in the
+%struct associated
 
+paramKey = DictParamTranslator(paramIn);
 
-if DictParamHelp.isKey(paramIn)
-    helpMessage = DictParamHelp(paramIn);
-else
-    warning('Dict:ParamHelperWarning', 'The input of %s does not appear to be in the dictionary', paramIn);
-    helpMessage = '';
-end
+if (isempty(paramKey))
+    %We don't have a record of this. Return with warning
+    val = '';
+    warning('Dict:ParamDriverWarning', 'The input of %s does not appear to be in the dictionary', paramIn);
+    return;
+end %if
+
+location = DictParamLocator(paramKey);
+
+val = paramStruct.(location); %Use dynamic struct navigation to get the correct location
 
 return
