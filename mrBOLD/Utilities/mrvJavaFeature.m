@@ -38,7 +38,7 @@ matlabVersion = version.Version;
 mVersion = str2double(matlabVersion(1:3));
 mMinorVersion = str2double(matlabVersion(3:end));
 
-if ( (mVersion >= 7) && (mMinorVersion < 4)) % version 7, < 7.4
+if ( (mVersion == 7) && (mMinorVersion < 4)) % version 7, < 7.4
     javaFigs = feature('javafigures');
     if ispref('VISTA', 'javaOn') % seems to work diff't for diff't machines
         feature('javafigures', getpref('VISTA', 'javaOn'));

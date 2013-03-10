@@ -101,7 +101,7 @@ tr = alignvolumedata_exporttransformation;
 T = transformationtomatrix(tr,0,rx.volVoxelSize);
 
 %% (5) Save as alignment for your vista session 
-mrGlobals; 
+vw = initHiddenInplane; mrGlobals; 
 mrSESSION.alignment = T;
 saveSession;
 
