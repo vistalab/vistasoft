@@ -43,7 +43,8 @@ switch param
         s.comments = val;
     case 'inplanepath'
         s.inplanes.inplanePath = val;
-        
+    case 'inplane'
+        s.inplanes = val;
 
     % Information about the functional scans
     case 'functionals'

@@ -167,7 +167,7 @@ mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane); %Populates the 
 %mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane);
 
 
-save mrSESSION mrSESSION -append; %TODO: Make a decision whether we want to save this as well
+save mrSESSION mrSESSION -append; 
 save mrInit_params params   % stash the params in case we crash'
 %TODO: Remove this save of the parameters, we no longer need them
 

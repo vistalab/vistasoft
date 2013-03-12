@@ -85,6 +85,13 @@ switch param
         for ii=1:length(varargin)
             val(ii) = cellfind(allPFiles,pFiles{ii});
         end
+    case {'inplane'}
+        % pth = sessionGet(s, 'inplane path');
+        % Return the structure of the inplanes data
+        
+        val = s.inplanes;
+        
+        if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>
     case {'inplanepath'}
         % pth = sessionGet(s, 'inplane path');
         % Return the path to the raw files (e.g., dicoms or nifti) for the

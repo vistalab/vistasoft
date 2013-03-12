@@ -25,8 +25,10 @@ loadSession; %Automatically checks if this directory exists and has mrSession
 
 %Check to see if this session has already been updated for Inplane data,
 %and, if not, run the update function
+mrGlobals;
 
-if isempty(sessionGet(mrSESSION,'Inplane Path'))
+
+if ~isfield(mrSESSION.inplanes,'inplanepath')
     %Has not been updated yet, let's update
     ok = mrInit_updateInplaneSession;
 end %if
@@ -38,3 +40,5 @@ if ~ok
     warning('The update process has failed. Please check your session.');
     return
 end %if
+
+return;
