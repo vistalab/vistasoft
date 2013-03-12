@@ -18,7 +18,7 @@ global DictParamTranslate
 
 if isempty(DictParamTranslate)
     %Define and construct DictParamTranslate
-    %DictParamTranslate = containers.Map;
+    DictParamTranslate = containers.Map;
     
     DictParamTranslate('numscans') = 'nscans';
     DictParamTranslate('numberofscans') = 'nscans';
