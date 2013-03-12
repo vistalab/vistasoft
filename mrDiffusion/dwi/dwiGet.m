@@ -19,11 +19,11 @@ function [val, dwi] = dwiGet(dwi, param, varargin)
 %   Data values
 %    {'diffusion data acpc'}
 %    {'diffusion data image'}
-%    {'b0 acpc' }
 %    {'n images'}
 %    {'n diffusion images'}
 %    {'n nondiffusion images'}
 %    {'b0 image nums'}
+%    {'b0 vals image'}
 %
 %   Estimated values
 %    {'adc data acpc'}
@@ -32,6 +32,10 @@ function [val, dwi] = dwiGet(dwi, param, varargin)
 %    {'tensor acpc'}
 %    {'diffusion distance image'}
 %    {'diffusion distance acpc'}
+%    {'b0 SNR image'};
+%    {'b0 std image'}
+%    {'b0 mean image'}
+%    {'b0 acpc' }
 %
 %   Measurement parameters
 %    {'bvals'}
@@ -41,19 +45,21 @@ function [val, dwi] = dwiGet(dwi, param, varargin)
 %
 % Examples:
 %   To get diffusion data from a fiber
+%   nifti = niftiRead('raw/DTI__aligned_trilin.nii.gz');
+%   bvecs =   dlmread('raw/DTI__aligned_trilin.bvecs');
+%   bvals =   dlmread('raw/DTI_aligned_trilin.bvals');
+%   dwi   = dwiCreate('nifti',nifti,'bvecs',bvecs,'bvals',bvals);
+%   coords = [64 64 30;64 64 31; 64 64 32];
+%   
+%   dws = dwiGet(dwi,'diffusion data acpc',coords);
 %
-% dwi = ...
-%   dwiCreate('raw/DTI__aligned_trilin.nii.gz','raw/DTI__aligned_trilin.bvecs','raw/DTI_aligned_trilin.bvals');
+%   ADC = dwiGet(dwi,'adc data image',coords);
 %
-% fg = dtiReadFibers('fibers/arcuate.mat');
-% coords = fg.fibers{1};
-% val = dwiGet(dwi,coords,'diffusion data acpc');
-%
-% ADC = dwiGet(dwi,'adc data image',coords);
+%   SNR = dwiGet(dwi,'b0 snr',coords); 
 %
 % See also:  dwiCreate, dwiSet, dtiGet, dtiSet, dtiCreate
 %
-% (c) Stanford VISTA Team 2012
+% (c) Stanford Vistasoft 2013
 
 % TODO:
 %   Keep adjusting the diffusion data gets
@@ -327,25 +333,64 @@ switch(mrvParamFormat(param))
     end
     val = nanmean(val,1);
     
-  case{'b0image','s0image'}
-    % S0 = dwiGet(dwi,'b0 image',coords);
-    % Return an S0 value for each voxel in coords
-    % Coords are in the rows (i.e., nCoords x 3)
-    if ~isempty(varargin), coords = varargin{1};
-    else error('coords required');
-    end
-    coords = coordCheck(coords);
-    
-    % Indices of the coords in the 3D volume.
-    indx = sub2ind(dwi.nifti.dim(1:3),coords(:,1),coords(:,2),coords(:,3));
-    b0 = dwiGet(dwi,'b0 image nums');
-    val = zeros(size(coords,1),length(b0));
-    for ii = 1:length(b0)
-      tmp = squeeze(dwi.nifti.data(:,:,:,b0(ii)));
-      val(:,ii) = tmp(indx);
-    end
-    val = nanmean(val,2);
-    
+    case{'b0image','b0meanimage','s0image'}
+        % S0 = dwiGet(dwi,'b0 image',coords);
+        %
+        % Return the S0 value for each voxel in coords
+        % Coords are in the rows (i.e., nCoords x 3)
+        if ~isempty(varargin), coords = varargin{1};
+        else error('coords required');
+        end
+
+        val = dwiGet(dwi,'b0 vals image',coords);
+        val = nanmean(val,2);
+        
+    case {'b0valsimage','s0valsimage'}
+        % S0 = dwiGet(dwi,'b0 image',coords);
+        % Return an S0 value for each voxel in coords
+        % Coords are in the rows (i.e., nCoords x 3)
+        if ~isempty(varargin), coords = varargin{1};
+        else error('coords required');
+        end
+        coords = coordCheck(coords);
+        
+        % Indices of the coords in the 3D volume.
+        indx = sub2ind(dwi.nifti.dim(1:3),coords(:,1),coords(:,2),coords(:,3));
+        b0 = dwiGet(dwi,'b0 image nums');
+        val = zeros(size(coords,1),length(b0));
+        for ii = 1:length(b0)
+            tmp = squeeze(dwi.nifti.data(:,:,:,b0(ii)));
+            val(:,ii) = tmp(indx);
+        end
+        
+    case {'b0stdimage','s0stdimage','s0standarddeviationimage'}
+        % SNR = dwiGet(dwi,'b0 STD image',coords);
+        %
+        % Return an sandard deviation of the b0 image across repeated 
+        % measures for each voxel in coords.
+        % Coords are in the rows (i.e., nCoords x 3)
+        if ~isempty(varargin), coords = varargin{1};
+        else error('coords required');
+        end
+        val = dwiGet(dwi,'b0 vals image',coords);
+        
+        % find the direction equal to the nbvals
+        nbvals = length(dwiGet(dwi,'b0imagenums'));
+        dim    = find(size(val)==nbvals);
+        val    = std(val,[],dim);
+        
+      case {'b0snrimage','s0snrimage','s0signal2noiseratioimage'}
+        % SNR = dwiGet(dwi,'b0 SNR image',coords);
+        % Return an SNR (mean/std) value for each voxel in coords
+        % Coords are in the rows (i.e., nCoords x 3)
+        if ~isempty(varargin), coords = varargin{1};
+        else error('coords required');
+        end
+        
+        m  = dwiGet(dwi,'b0 image',coords);
+        sd = dwiGet(dwi,'b0 std image',coords);
+        val = m./sd;        
+        
   otherwise
     error('Unknown parameter: "%s"\n',param);
 end
