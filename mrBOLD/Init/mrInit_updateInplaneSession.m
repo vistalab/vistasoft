@@ -41,8 +41,8 @@ freqPhaseSliceDims = [1 2 3];
 %Create the slice information
 sliceInfo = [3 0 mrSESSION.inplanes.nSlices-1 mrSESSION.inplanes.voxelSize(3)];
 
-%Build the nifti from these components
-nii = niftiCreate('data',inplaneAnat.anat,'qto_xyz',xform,'freq_dim',freqPhaseSliceDims,'slice_code',sliceInfo); %A new nifti made
+%Build the nifti from the components above
+nii = niftiCreate('data',inplaneAnat.anat,'qto_xyz',xform,'freq_dim',freqPhaseSliceDims,'slice_code',sliceInfo);
 
 %However, this does not create the proper pix dims, so let's fix that
 nii = niftiSet(nii,'Pix dim',mrSESSION.inplanes.voxelSize);

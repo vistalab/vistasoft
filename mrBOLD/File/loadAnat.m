@@ -28,7 +28,7 @@ case 'Inplane',
         pathStr = sessionGet(mrSESSION,'Inplane Path');
     end    
     if ~exist('pathStr','var') || isempty(pathStr)
-        error('No path specified. Please specify the path.');
+        error('No path specified. This may be because you have not updated your session. Please ensure that you update your session by running mrInit_sessionMigration. More information can be found here: http://white.stanford.edu/newlm/index.php/Initialization#New_mrInit_Initialization.');
     end
     if ~exist(pathStr,'file')
         error(['No file at the location: ',pathStr]);
