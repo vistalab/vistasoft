@@ -22,28 +22,30 @@ function ok = mrInit_updateInplaneSession()
 % for this data matrix.
 
 %We should have access to a mrSESSION as well as an anat.mat 
+loadSession;
 mrGlobals;
 
+inplanePath = fullfile(pwd,'Inplane/anat.mat');
 
-inplaneAnat = load('Inplane/anat.mat');
-inplaneAnat.anat = flipdim(flipdim(permute(inplaneAnat.anat,[2 1 3]),2),1);
+inplaneAnat = load(inplanePath);
+inplaneAnat.anat = permute(inplaneAnat.anat,[2 1 3]);
 
 %Build the transform
-inplaneAnat.inplanes.voxelSize = inplaneAnat.inplanes.voxelSize([2 1 3]);
-xform = [diag(1./inplaneAnat.inplanes.voxelSize), size(inplaneAnat.anat)'/2; 0 0 0 1];
+mrSESSION.inplanes.voxelSize = mrSESSION.inplanes.voxelSize([2 1 3]);
+xform = [diag(1./mrSESSION.inplanes.voxelSize), size(inplaneAnat.anat)'/2; 0 0 0 1];
 
 %Create the freq, phase and slice dimensions, assuming that we are in
 %standard format
 freqPhaseSliceDims = [1 2 3];
 
 %Create the slice information
-sliceInfo = [3 0 inplaneAnat.inplanes.nSlices-1 inplaneAnat.inplanes.spacing];
+sliceInfo = [3 0 mrSESSION.inplanes.nSlices-1 mrSESSION.inplanes.voxelSize(3)];
 
 %Build the nifti from these components
 nii = niftiCreate('data',inplaneAnat.anat,'qto_xyz',xform,'freq_dim',freqPhaseSliceDims,'slice_code',sliceInfo); %A new nifti made
 
 %However, this does not create the proper pix dims, so let's fix that
-nii = niftiSet(nii,'Pix dim',inplaneAnat.inplanes.voxelSize);
+nii = niftiSet(nii,'Pix dim',mrSESSION.inplanes.voxelSize);
 
 fileName = fullfile(pwd,'inplaneNifti.nii.gz');
 
@@ -51,12 +53,15 @@ nii = niftiSet(nii,'File Path',fileName);
 
 writeFileNifti(nii);
 
+%Before we reset mrSESSION, let's save a backup
+save mrSESSION_inplaneMigrationBackup mrSESSION;
+
 %Reset mrSESSION.inplanes:
 fieldNames = fieldnames(sessionGet(mrSESSION,'Inplane'));
 
 mrSESSION = sessionSet(mrSESSION,'Inplane',rmfield(sessionGet(mrSESSION,'Inplane'),fieldNames));
 
-sessionSet(mrSESSION,'Inplane Path',fileName);
+mrSESSION = sessionSet(mrSESSION,'Inplane Path',fileName);
 
 save mrSESSION mrSESSION -append; 
 
