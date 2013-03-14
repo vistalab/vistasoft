@@ -21,7 +21,10 @@ function ok = mrInit_updateInplaneSession()
 % Once this has been found, the migration tool creates a nifti structure
 % for this data matrix.
 
-%We should have access to a mrSESSION as well as an anat.mat 
+%We should have access to a mrSESSION as well as an anat.mat
+
+try
+    
 loadSession;
 mrGlobals;
 
@@ -64,6 +67,13 @@ mrSESSION = sessionSet(mrSESSION,'Inplane',rmfield(sessionGet(mrSESSION,'Inplane
 mrSESSION = sessionSet(mrSESSION,'Inplane Path',fileName);
 
 save mrSESSION mrSESSION -append; 
+
+catch err
+    ok = 0;
+    warning(sprintf(['There was an error when attempting to update your session.\n'...
+        ,'No changes have been made to your system. Please run the update code again.\n']));
+    rethrow(err);
+end %try
 
 ok = 1;
 return

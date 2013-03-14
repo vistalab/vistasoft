@@ -1,4 +1,4 @@
-function ok = mrInit_sessionMigration()
+function mrInit_sessionMigration()
 
 %
 % USAGE: Takes a session that has already been initialized with an older
@@ -12,14 +12,10 @@ function ok = mrInit_sessionMigration()
 % translated, a warning is returned as well as an empty answer.
 %
 %
-% OUTPUT: ok
-% error code for whether the migration completed successfully
+% OUTPUT: N/A
+% This tool will report to the user via MATLAB command line, but will not
+% output anything else.
 
-% This migration tool takes an anat.mat file that presently exists and
-% makes some assumptions about its orientation. Specifically, it is assumed
-% that it is already in ARS format (which is the normal display format).
-% Once this has been found, the migration tool creates a nifti structure
-% for this data matrix.
 
 loadSession; %Automatically checks if this directory exists and has mrSession
 
@@ -28,9 +24,12 @@ loadSession; %Automatically checks if this directory exists and has mrSession
 mrGlobals;
 
 
-if ~isfield(mrSESSION.inplanes,'inplanepath')
+if ~isfield(mrSESSION.inplanes,'inplanePath')
     %Has not been updated yet, let's update
     ok = mrInit_updateInplaneSession;
+else
+    disp(sprintf('Inplane session update has already been applied. Will not re-apply.'));
+    ok=1;
 end %if
 
 
@@ -41,4 +40,5 @@ if ~ok
     return
 end %if
 
+disp(sprintf('All updates have completed successfully.'));
 return;
