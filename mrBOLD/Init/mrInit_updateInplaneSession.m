@@ -25,49 +25,49 @@ function ok = mrInit_updateInplaneSession()
 
 try
     
-loadSession;
-mrGlobals;
-
-inplanePath = fullfile(pwd,'Inplane/anat.mat');
-
-inplaneAnat = load(inplanePath);
-inplaneAnat.anat = permute(inplaneAnat.anat,[2 1 3]);
-
-%Build the transform
-mrSESSION.inplanes.voxelSize = mrSESSION.inplanes.voxelSize([2 1 3]);
-xform = [diag(1./mrSESSION.inplanes.voxelSize), size(inplaneAnat.anat)'/2; 0 0 0 1];
-
-%Create the freq, phase and slice dimensions, assuming that we are in
-%standard format
-freqPhaseSliceDims = [1 2 3];
-
-%Create the slice information
-sliceInfo = [3 0 mrSESSION.inplanes.nSlices-1 mrSESSION.inplanes.voxelSize(3)];
-
-%Build the nifti from the components above
-nii = niftiCreate('data',inplaneAnat.anat,'qto_xyz',xform,'freq_dim',freqPhaseSliceDims,'slice_code',sliceInfo);
-
-%However, this does not create the proper pix dims, so let's fix that
-nii = niftiSet(nii,'Pix dim',mrSESSION.inplanes.voxelSize);
-
-fileName = fullfile(pwd,'inplaneNifti.nii.gz');
-
-nii = niftiSet(nii,'File Path',fileName);
-
-writeFileNifti(nii);
-
-%Before we reset mrSESSION, let's save a backup
-save mrSESSION_inplaneMigrationBackup mrSESSION;
-
-%Reset mrSESSION.inplanes:
-fieldNames = fieldnames(sessionGet(mrSESSION,'Inplane'));
-
-mrSESSION = sessionSet(mrSESSION,'Inplane',rmfield(sessionGet(mrSESSION,'Inplane'),fieldNames));
-
-mrSESSION = sessionSet(mrSESSION,'Inplane Path',fileName);
-
-save mrSESSION mrSESSION -append; 
-
+    loadSession;
+    mrGlobals;
+    
+    inplanePath = fullfile(pwd,'Inplane/anat.mat');
+    
+    inplaneAnat = load(inplanePath);
+    inplaneAnat.anat = permute(inplaneAnat.anat,[2 1 3]);
+    
+    %Build the transform
+    mrSESSION.inplanes.voxelSize = mrSESSION.inplanes.voxelSize([2 1 3]);
+    xform = [diag(1./mrSESSION.inplanes.voxelSize), size(inplaneAnat.anat)'/2; 0 0 0 1];
+    
+    %Create the freq, phase and slice dimensions, assuming that we are in
+    %standard format
+    freqPhaseSliceDims = [1 2 3];
+    
+    %Create the slice information
+    sliceInfo = [3 0 mrSESSION.inplanes.nSlices-1 mrSESSION.inplanes.voxelSize(3)];
+    
+    %Build the nifti from the components above
+    nii = niftiCreate('data',inplaneAnat.anat,'qto_xyz',xform,'freq_dim',freqPhaseSliceDims,'slice_code',sliceInfo);
+    
+    %However, this does not create the proper pix dims, so let's fix that
+    nii = niftiSet(nii,'Pix dim',mrSESSION.inplanes.voxelSize);
+    
+    fileName = fullfile(pwd,'inplaneNifti.nii.gz');
+    
+    nii = niftiSet(nii,'File Path',fileName);
+    
+    writeFileNifti(nii);
+    
+    %Before we reset mrSESSION, let's save a backup
+    save mrSESSION_inplaneMigrationBackup mrSESSION;
+    
+    %Reset mrSESSION.inplanes:
+    fieldNames = fieldnames(sessionGet(mrSESSION,'Inplane'));
+    
+    mrSESSION = sessionSet(mrSESSION,'Inplane',rmfield(sessionGet(mrSESSION,'Inplane'),fieldNames));
+    
+    mrSESSION = sessionSet(mrSESSION,'Inplane Path',fileName);
+    
+    save mrSESSION mrSESSION -append;
+    
 catch err
     ok = 0;
     warning(sprintf(['There was an error when attempting to update your session.\n'...

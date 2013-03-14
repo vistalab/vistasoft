@@ -99,6 +99,14 @@ switch param
         % This can now be found in the mrSESSION.inplanes.inplanePath
         % location
         
+        if ~isfield(s.inplanes,'inplanePath')
+            %This session has not been updated. Let's warn the user
+            error(sprintf(['No path has been specified or found in mrSESSION.\n', ...
+                'This may have occurred as a result of not migrating your session.\n', ...
+                'Please ensure that you update your session by running mrInit_sessionMigration.\n', ...
+                'More information can be found here: http://white.stanford.edu/newlm/index.php/Initialization#Updating_old_sessions.\n']));
+        end
+        
         val = s.inplanes.inplanePath;
         
         if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>

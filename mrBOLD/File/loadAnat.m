@@ -16,9 +16,7 @@ function vw=loadAnat(vw,pathStr)
 %
 % 2.26.99 - Get anatomy path from getAnatomyPath - WAP
 
-global mrSESSION;
-global HOMEDIR;
-global vANATOMYPATH;
+mrGlobals;
 
 switch viewGet(vw,'View Type')
     
@@ -26,12 +24,9 @@ case 'Inplane',
 
     if ~exist('pathStr','var') %If does not exist, default to mrSESSION
         pathStr = sessionGet(mrSESSION,'Inplane Path');
-    end    
+    end
     if ~exist('pathStr','var') || isempty(pathStr)
-        error(sprintf(['No path has been specified or found in mrSESSION.\n', ...
-            'This may have occurred as a result of not migrating your session.\n', ...
-            'Please ensure that you update your session by running mrInit_sessionMigration.\n', ...
-            'More information can be found here: http://white.stanford.edu/newlm/index.php/Initialization#Updating_old_sessions.\n']));
+        error(sprintf('No path has been specified or found in mrSESSION.\n'));
     end
     if ~exist(pathStr,'file')
         error(['No file at the location: ',pathStr]);
