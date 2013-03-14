@@ -1,5 +1,5 @@
 function ok = mrInit_updateInplaneSession()
-
+%
 %
 % USAGE: Takes a session that has already been initialized with an older
 % version of mrInit and update it to the newer version. The newer version

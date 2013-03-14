@@ -32,12 +32,13 @@ else
     ok=1;
 end %if
 
-
 if ~ok
     %Error has occurred above, let's quit out of the update process
     ok = 0;
     warning('The update process has failed. Please check your session.');
     return
+else
+    disp(sprintf('The Inplane session update has been applied successfully'));
 end %if
 
 disp(sprintf('All updates have completed successfully.'));
