@@ -79,10 +79,10 @@ switch param
     case 'slicedims'
         %Get the slice dimensions (i.e. the dimensions of each 2-D matrix
         %making up a slice)
-        val = [];
         totDim = niftiGet(ni,'dim');
-        val(1) = totDim(niftiGet(ni,'freq Dim'));
-        val(2) = totDim(niftiGet(ni,'phase Dim'));
+        val = totDim(setdiff(1:length(totDim),niftiGet(ni,'slice dim')));
+        %val(1) = totDim(niftiGet(ni,'freq Dim'));
+        %val(2) = totDim(niftiGet(ni,'phase Dim'));
  	case 'sto_ijk'
         if isfield(ni, 'qto_xyz'), val = ni.qto_xyz;  
         else

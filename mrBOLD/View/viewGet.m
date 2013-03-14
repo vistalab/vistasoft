@@ -982,8 +982,9 @@ switch param
             case 'Flat'
                 val = [vw.ui.imSize];
         end
-    case 'slicedim'
-        % Return the dimension of data in current slice or specificed slice
+    case 'functionalslicedim'
+        % Return the dimension of functional data in current slice or
+        % specificed slice
         %   dim = viewGet(vw, 'Slice Dimension')
         %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)
         %TODO: Change the location that this is getting the functionals

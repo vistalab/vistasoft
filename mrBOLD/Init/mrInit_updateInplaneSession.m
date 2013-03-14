@@ -57,8 +57,8 @@ try
     writeFileNifti(nii);
     
     %Before we reset mrSESSION, let's save a backup
-    save mrSESSION_inplaneMigrationBackup mrSESSION;
-    
+    copyfile('./mrSESSION.mat','./mrSESSION_inplaneMigrationBackup.mat');
+        
     %Reset mrSESSION.inplanes:
     fieldNames = fieldnames(sessionGet(mrSESSION,'Inplane'));
     
@@ -66,7 +66,7 @@ try
     
     mrSESSION = sessionSet(mrSESSION,'Inplane Path',fileName);
     
-    save mrSESSION mrSESSION -append;
+    save('./mrSESSION.mat', 'mrSESSION','-append');
     
 catch err
     ok = 0;

@@ -174,8 +174,9 @@ switch fieldName
         res = 'datasize';
     case {'dim' 'dims'}
         res = 'dim';
-    case {'slicedim' 'slicedims' 'slicedimension' 'slicedimensions'}
-        res = 'slicedim';
+    case {'functionalslicedim' 'functionalslicedims' 'slicedim' ... 
+            'slicedims' 'slicedimension' 'slicedimensions'}
+        res = 'functionalslicedim';
     case {'tr' 'frameperiod' 'framerate' 'repeattime' 'timetorepeat'}
         res = 'tr';
     case {'nframes' 'numframes' 'numberoftimeframes'}
