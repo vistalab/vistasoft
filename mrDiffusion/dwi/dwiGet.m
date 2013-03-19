@@ -104,7 +104,7 @@ switch(mrvParamFormat(param))
     n = dwiGet(dwi,'nimages');
     m = dwiGet(dwi,'n nondiffusion images');
     val = n - m;
-  case {'nnondiffusionimages','numnondiffusionimages'}
+  case {'nb0','nnondiffusionimages','numnondiffusionimages'}
     % Number of non-diffusion images (b=0)
     val = sum(dwi.bvals == 0);
   case {'bvecs'}
@@ -366,7 +366,7 @@ switch(mrvParamFormat(param))
     case {'b0stdimage','s0stdimage','s0standarddeviationimage'}
         % SNR = dwiGet(dwi,'b0 STD image',coords);
         %
-        % Return an sandard deviation of the b0 image across repeated 
+        % Return an sandard deviation of the b0 image across repeated
         % measures for each voxel in coords.
         % Coords are in the rows (i.e., nCoords x 3)
         if ~isempty(varargin), coords = varargin{1};
@@ -379,7 +379,7 @@ switch(mrvParamFormat(param))
         dim    = find(size(val)==nbvals);
         val    = std(val,[],dim);
         
-      case {'b0snrimage','s0snrimage','s0signal2noiseratioimage'}
+    case {'b0snrimage','s0snrimage','s0signal2noiseratioimage'}
         % SNR = dwiGet(dwi,'b0 SNR image',coords);
         % Return an SNR (mean/std) value for each voxel in coords
         % Coords are in the rows (i.e., nCoords x 3)
@@ -389,12 +389,46 @@ switch(mrvParamFormat(param))
         
         m  = dwiGet(dwi,'b0 image',coords);
         sd = dwiGet(dwi,'b0 std image',coords);
-        val = m./sd;        
+        val = m./sd;
         
+    case {'b0sigmaimageroi'}
+        % sigma = dwiGet(fe,'b0 sigma image')
+        % sigma is the std of the b0-image with a correction for small
+        % samples.
+        if ~isempty(varargin), coords = varargin{1};end
+        b0vals = dwiGet(dwi,'b0 vals image',coords);
+        nb0    = dwiGet(dwi,'nb0');
+        
+        % Calculate the median of the standard deviation. We do not think that
+        % this needs to be rescaled. Henkelman et al. (1985) suggest that this
+        % aproaches the true noise as the signal increases.
+        sigma = median(std(b0vals,0,1));
+        
+        % std of a sample underestimates sigma (see http://nbviewer.ipython.org/4287207/)
+        % This can be very big for small n (e.g., 20% for n=2)
+        % We can compute the underestimation bias:
+        bias = sigma * (1 - sqrt(2 / (nb0-1)) * (gamma(nb0 / 2) / gamma((nb0-1) / 2)));
+          
+        % and correct for it:
+        val = sigma + bias;
+    
+    case {'b0snrroi','s0snrroi','s0signal2noiseratioimageroi'}
+        % SNR = dwiGet(dwi,'b0 SNR roi',coords);
+        % Return an SNR (mean/std) value for each voxel in coords
+        % Coords are in the rows (i.e., nCoords x 3)
+        if ~isempty(varargin), coords = varargin{1};
+        else error('coords required'); end
+        
+        m     = median(dwiGet(dwi,'b0 image',coords));
+        sigma = dwiGet(dwi,'b0 sigma image roi',coords);
+        val   = m / sigma;        
+ 
   otherwise
     error('Unknown parameter: "%s"\n',param);
 end
+
 end
+
 
 % Check that coords have 3D
 
@@ -409,7 +443,6 @@ if size(coords,2) ~= 3
     error('Bad size of coords matrix');
   end
 end
-
 end
 
 
