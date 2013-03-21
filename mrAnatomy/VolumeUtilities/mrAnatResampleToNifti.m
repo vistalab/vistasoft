@@ -28,7 +28,7 @@ function [finalResNifti, resample_params] = mrAnatResampleToNifti(originalResNif
 %   fname            = fullfile(basedir,'/diffusion/sampleData/upsample_deleteme.nii.gz');
 %   res              = mrAnatResampleToNifti(originalResNifti, finalResNifti,fname)
 %
-% Franco (c) Stanford Vista Team 2012
+% Franco Pestilli (c) Stanford Vista Team 2012
 
 % Load the nifti file if it was not passed is as nifti structure but as a
 % full path.
