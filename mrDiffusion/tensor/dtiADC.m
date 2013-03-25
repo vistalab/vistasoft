@@ -41,7 +41,7 @@ if notDefined('bvecs'), error('bvecs are required'); end
 
 nDirs = size(bvecs,1);
 
-if ndims(Q) == 2  && size(Q,2) == 9% Q in rows
+if ismatrix(Q)  && size(Q,2) == 9% Q in rows
     nTensors = size(Q,1);
     ADC = zeros(nDirs,nTensors);
     
