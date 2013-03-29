@@ -31,6 +31,8 @@ nPixels = size(tSeries,2);
 % size check:
 % ras 05/13/05, made it not do this for flat tSeries, since these
 % depend on the # of nodes, not the slice dims
+%TODO: This should be getting the tSeries dimensions and not the Inplant
+% anat dimension.
 if (nPixels ~= prod(viewGet(vw, 'sliceDims', scan))) && ~(isequal(vw.viewType,'Flat'))
     disp('loadtSeries: unexpected number of pixels in TSeries.');
 end

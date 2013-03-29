@@ -1,13 +1,26 @@
 function vw = labelInplaneLR(vw)
 % vw = labelInplaneLR(vw);
 %
+%
+% USAGE:
+%   Once the nifti has been loaded into the view, call this function to
+%   add the labels to the view.
+%
+% INPUT:
+%   View with the nifti already loaded.
+%
+%
+% OUTPUT:
+%   View with the labels added.
+%
 % Adds text underneat the axes of an inplane window informing the user
 % which side is left and which is right, based in information in the I-file
 % header from the inplanes.
 %
 % written 03/11/04 by ras.
 if ~exist('vw','var') || isempty(vw), vw=getSelectedInplane; end
-global HOMEDIR mrSESSION
+global mrSESSION
+%TODO: Remove global variables that are unused.
 
 if ~isequal(vw.viewType,'Inplane')
     error('Sorry, this requires an Inplane view ... hence the name. :)');
@@ -17,29 +30,72 @@ if ~isfield(vw,'ui')  % doesn't work w/ hidden views either
     error('This is a UI function and doesn''t work with hidden views.');
 end
 
+%New method:
+% 1. Check the direction of the data matrix passed in
+% 2. Based on the direction strings and the slice dimension, add the
+% necessary labels
+% 3. Remember that the 
 
-% read dir text:
-% First see if it's saved in mrSESSION, and if not, try  I-files
-if checkfields(mrSESSION, 'dirLabel')
-    dirTextRL = mrSESSION.dirLabel.textRL;
-    dirTextAP = mrSESSION.dirLabel.textAP;
-    sagFlag = mrSESSION.dirLabel.sagittalFlag;
+%Let's find out the orientation of our nifti
+
+[vectorString, xform] = niftiCurrentOrientation(viewGet(vw,'anatomynifti'));
+
+%Now that we have the vector string, we know that it is formatted in Y, X, Z
+% Thus, we can make assumptions about what we put in to dirLabel
+%Let's find the directions 
+Rdim = niftiFindDimOfString(vectorString,'R');
+Adim = niftiFindDimOfString(vectorString,'A');
+Sdim = niftiFindDimOfString(vectorString,'S');
+
+%Let's now create the proper label
+if (strcmp(vectorString(Rdim),'R'))
+    %We have an R, so the right side is Right because of difference between patient and scanner:
+    dirTextRL = 'Left  \leftrightarrow  Right';
 else
-    % find first dicom for the inplanes:
-    allIfileNames = sessionGet(mrSESSION, 'inplanepath');
-    if isempty(allIfileNames)
-        disp('Sorry, can''t determine Inplane directions.')
-        return
-    else
-        [dirTextRL, dirTextAP, sagFlag] = ifilesDirectionText(allIfileNames);
-    
-        % store results for later (so we don't need the I-files)
-        mrSESSION.dirLabel.textRL = dirTextRL;
-        mrSESSION.dirLabel.textAP = dirTextAP;
-        mrSESSION.dirLabel.sagittalFlag = sagFlag;
-        saveSession(0);
-    end
+    %We have an L, so the right side is Left:
+    dirTextRL = 'Right  \leftrightarrow  Left';
 end
+
+if (strcmp(vectorString(Rdim),'A'))
+    %We have an A, so the left side is Anterior:
+    dirTextAP = 'Ant  \leftrightarrow  Pos';
+else
+    %We have a P, so the left side is Posterior:
+    dirTextAP = 'Pos  \leftrightarrow  Ant';
+end
+
+if Rdim == viewGet(vw,'slicedim')
+    %This is a sagittal slice, so use A-P along the x axis
+    sagFlag = 1;
+else
+    sagFlag = 0;
+end
+
+%TODO: Change the location that this data is stored in from mrSESSION to
+%the view
+% 
+% % read dir text:
+% % First see if it's saved in mrSESSION, and if not, try  I-files
+% if checkfields(mrSESSION, 'dirLabel')
+%     dirTextRL = mrSESSION.dirLabel.textRL;
+%     dirTextAP = mrSESSION.dirLabel.textAP;
+%     sagFlag = mrSESSION.dirLabel.sagittalFlag;
+% else
+%     % find first dicom for the inplanes:
+%     allIfileNames = sessionGet(mrSESSION, 'inplanepath');
+%     if isempty(allIfileNames)
+%         disp('Sorry, can''t determine Inplane directions.')
+%         return
+%     else
+%         [dirTextRL, dirTextAP, sagFlag] = ifilesDirectionText(allIfileNames);
+%     
+%         % store results for later (so we don't need the I-files)
+%         mrSESSION.dirLabel.textRL = dirTextRL;
+%         mrSESSION.dirLabel.textAP = dirTextAP;
+%         mrSESSION.dirLabel.sagittalFlag = sagFlag;
+%         saveSession(0);
+%     end
+% end
     
 % 05/06/05 ras: 
 % further change of strategy:

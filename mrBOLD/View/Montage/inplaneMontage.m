@@ -38,14 +38,15 @@ if ~exist('slices','var') || isempty(slices),
 end
 
 if ~exist('mode','var') || isempty(mode),
-	mode = vw.ui.displayMode;
+	mode = viewGet(vw,'Display Mode');
+    %Old: vw.ui.displayMode;
 end
 
 if ~exist('zoom','var') || isempty(zoom),
-	% TO DO: upate viewGet to get zoom properly for
-	% all vw types
+	% TO DO: upate viewGet to get zoom properly for all vw types
 	if checkfields(vw, 'ui', 'zoom');
-		zoom = vw.ui.zoom;
+		zoom = viewGet(vw,'zoom');
+        %Old: vw.ui.zoom;
 	else
 		dims = viewSize(vw);
 		zoom = [1 dims(2) 1 dims(1)];
@@ -97,22 +98,28 @@ else
 end
 
 % now decide appropriate [min max] vals for the clip mode, in clim:
-clim = vw.ui.([mode 'Mode']).clipMode;
+clim = viewGet(vw,'cmap cur mode clip');
+    %Old: vw.ui.([mode 'Mode']).clipMode;
 if (isequal(clim, 'auto') || isempty(clim))
 	switch mode
 		case 'anat', clim = [0 0];  % shouldn't apply, no overlay
 		case 'ph', clim = phWindow;
 		case 'co', 
-			data = vw.co{vw.curScan};
-			clim = [cothresh max(data(:))];
+			data = viewGet(vw,'Scan Co');
+			%Old: vw.co{vw.curScan}
+            clim = [cothresh max(data(:))];
 		case 'amp',
-			data = vw.amp{vw.curScan};
-			co = vw.co{vw.curScan};  % assuming this is assigned...
+			data = viewGet(vw,'Scan Amp');
+            %Old: vw.amp{vw.curScan};
+			co = viewGet(vw, 'Scan Co');
+            %Old: vw.co{vw.curScan};  % assuming this is assigned... -
+            %Should never assume! This is now working correctly.
 			ok = find(co >= cothresh);
 			clim = [min(data(ok)) max(data(ok))];
 		case 'map', 
 			try
-				data = vw.map{vw.curScan};
+				data = viewGet(vw, 'Scan Map');
+                %Old: vw.map{vw.curScan};
 				ok = find(data >= mapWindow(1) & data <= mapWindow(2));
 				clim = [min(data(ok)) max(data(ok))];
 			catch
@@ -226,7 +233,7 @@ for row = 1:nrows
 end
 
 
-if isfield(vw,'ui') && ~isequal(vw.name,'hidden')
+if isfield(vw,'ui') && ~isequal(viewGet(vw,'name'),'hidden')
 	if isempty(montage)
 		vw = zoomInplane(vw, 1);
 		myWarnDlg('Zoom produces an empty image. Resetting...')
