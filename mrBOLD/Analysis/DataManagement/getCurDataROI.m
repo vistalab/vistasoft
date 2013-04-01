@@ -1,4 +1,4 @@
-function [subdata indices] = getCurDataROI(vw, fieldname, scan, roi)
+function [subdata, indices] = getCurDataROI(vw, fieldname, scan, roi)
 %
 % [subdata indices]  = getCurDataROI(vw, <fieldname>, <scan>, <roi>)
 %
@@ -81,7 +81,7 @@ case {'Volume','Gray'}
     
     % Intersect the two sets of indices, filling in data for the
     % intersection, NaNs for ROI voxels where there's no data.
-    [commonCoords indRoi indView] = intersectCols(roi.coords, vw.coords); %#ok<ASGLU>
+    [commonCoords, indRoi, indView] = intersectCols(roi.coords, vw.coords); %#ok<ASGLU>
     subdata = NaN([1 size(roi.coords,2)]);
     if ~isempty(data)
         subdata(indRoi) = data(indView);

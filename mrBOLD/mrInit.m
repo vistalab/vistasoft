@@ -117,7 +117,7 @@ function ok = mrInit(varargin)
 % that sets all params. 
 
 ok = 0;
-mrGlobals2;
+mrGlobals; %This has replaced mrGlobals2
 
 %%%%% (0) ensure all input parameters are specified
 if nargin==0		
@@ -149,14 +149,28 @@ fprintf('***** [%s] Initializing Session %s ***** (%s)\n', mfilename, ...
 ensureDirExists(params.sessionDir);	
 callingDir = pwd;
 cd(params.sessionDir);
-initEmptySession;
+initEmptySession; %Replace this save and then load of mrSESSION with that variable simply passed
+                    % from one to the other
 load mrSESSION mrSESSION dataTYPES
-mrSESSION.description = params.description;
-mrSESSION.sessionCode = params.sessionCode;
-mrSESSION.subject = params.subject;
-mrSESSION.comments = params.comments;
-save mrSESSION mrSESSION -append;
-save mrInit_params params   % stash the params in case we crash
+%mrSESSION.description = params.description; %TODO: Replace with sessionSet
+mrSESSION = sessionSet(mrSESSION,'description', params.description);
+%mrSESSION.sessionCode = params.sessionCode;
+mrSESSION = sessionSet(mrSESSION,'sessionCode',params.sessionCode);
+%mrSESSION.subject = params.subject;
+mrSESSION = sessionSet(mrSESSION,'subject',params.subject);
+%mrSESSION.comments = params.comments;
+mrSESSION = sessionSet(mrSESSION,'comments',params.comments);
+
+%New parameter creation
+mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane); %Populates the mrSESSION inplane path var
+%mrSESSION = sessionSet(mrSESSION,'Functionals Path',params.functionals{1});
+%mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane);
+
+
+save mrSESSION mrSESSION -append; 
+save mrInit_params params   % stash the params in case we crash'
+%TODO: Remove this save of the parameters, we no longer need them
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (2) figure out if we have a reasonable crop %
@@ -165,6 +179,8 @@ save mrInit_params params   % stash the params in case we crash
 % (we use mrParse becasue other steps, like the crop interface, 
 % may have already loaded one or both -- this way, we don't load twice)
 inplane = mrParse(params.inplane); 
+
+%TODO: Add error checking here in case functional data not supplied.
 func = mrLoadHeader(params.functionals{1});
 
 % test that inplanes, functionals cover the same physical extent
@@ -206,10 +222,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (3) crop and save inplane anatomy %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if ~isempty(params.crop)
-	inplane = mrCrop(inplane, params.crop);
-end
-mrSave(inplane, params.sessionDir, '1.0anat');
+%if ~isempty(params.crop)
+%	inplane = mrCrop(inplane, params.crop);
+%end
+%mrSave(inplane, params.sessionDir, '1.0anat');
+%TODO: Remove this line that saves the inplane data as a separate file
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (4) read, crop, and save functional time series %
@@ -217,44 +234,50 @@ mrSave(inplane, params.sessionDir, '1.0anat');
 for scan = 1:length(params.functionals)
 	
 	funcPath = mrGet(params.functionals{scan}, 'filename');
-	[p f ext] = fileparts(funcPath);
+	[~, ~, ext] = fileparts(funcPath);
 	
-    if isequal(lower(ext), '.mag')
-        % if inputs are Lucas Center .mag files, we can read them a slice
-        % at a time and be more memory-efficient:
-        initMagFiles(params.functionals, scan, params, scaleFactor);
-        
-    else
-        % generalized, more memory-hungry way
-        func = mrParse(params.functionals{scan});  % this loads if needed
-        
-        if ~isempty(params.crop)
-            funcCrop = params.crop ./ repmat(scaleFactor([2 1]), [2 1]);
-            func = mrCrop(func, funcCrop);
+    %Read in the nifti to the tS struct, then apply the same transform as
+    %the underlying data. Then, transfer the necessary components to the
+    %local func struct.
+    tS = niftiRead(funcPath);
+    tS = niftiApplyAndCreateXform(tS,'Inplane');
+    %Need to move over:
+    %Data
+    func.data = niftiGet(tS,'Data');
+    %Dims
+    func.dims = niftiGet(tS, 'Dim');
+    %PixDims
+    func.pixdims = niftiGet(tS, 'Pix Dim');
+    
+    %func = mrParse(params.functionals{scan});  % this loads if needed
+    
+    %if ~isempty(params.crop)
+    %    funcCrop = params.crop ./ repmat(scaleFactor([2 1]), [2 1]);
+    %    func = mrCrop(func, funcCrop);
+    %end
+    
+    % select keepFrames if they're provided
+    if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
+        nSkip = params.keepFrames(scan,1);
+        nKeep = params.keepFrames(scan,2);
+        if nKeep==-1
+            % flag to keep all remaining frames
+            nKeep = size(func.data, 4) - nSkip;
         end
-        
-        % select keepFrames if they're provided
-        if isfield(params, 'keepFrames') & ~isempty(params.keepFrames)
-            nSkip = params.keepFrames(scan,1);
-            nKeep = params.keepFrames(scan,2);
-            if nKeep==-1
-                % flag to keep all remaining frames
-                nKeep = size(func.data, 4) - nSkip;
-            end
-            keep = [1:nKeep] + nSkip;
-            func.data = func.data(:,:,:,keep);
-            func.dims(4) = size(func.data, 4);
-        end
-        
-        % assign annotation if it's provided
-        if length(params.annotations) >= scan & ...
-                ~isempty(params.annotations{scan})
-            func.name = params.annotations{scan};
-        end
-        
-        mrSave(func, params.sessionDir, '1.0tSeries');
-        
+        keep = [1:nKeep] + nSkip;
+        func.data = func.data(:,:,:,keep);
+        func.dims(4) = size(func.data, 4);
     end
+    
+    % assign annotation if it's provided
+    if length(params.annotations) >= scan && ...
+            ~isempty(params.annotations{scan})
+        func.name = params.annotations{scan};
+    end
+    
+    mrSave(func, params.sessionDir, '1.0tSeries');
+    
+    %end
     
 end
 
@@ -262,7 +285,7 @@ fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
 		mfilename, datestr(now));
 
 %% compress raw files if selected
-if checkfields(params, 'compressRawFiles') & params.compressRawFiles==1
+if checkfields(params, 'compressRawFiles') && params.compressRawFiles==1
 	if ~isunix
 		fprintf(['[%s]: Sorry, can only compress raw files ' ...
 				 'in a unix-like environment.\n'], mfilename);
@@ -270,8 +293,8 @@ if checkfields(params, 'compressRawFiles') & params.compressRawFiles==1
 		fprintf('[%s]: Attempting to compress raw files...\n', mfilename);
 		try
 			for i = 1:length(params.functionals)
-				cmd = ['gzip -v ' params.functionals{ii}];
-				[status result] = unix(cmd);
+				cmd = ['gzip -v ' params.functionals{i}];
+				[status, result] = unix(cmd);
 				if status==0
 					% successful
 					fprintf('%s\n', result)
@@ -385,7 +408,7 @@ return
 
 
 % /---------------------------------------------------------------------/ %
-function initMagFiles(functionals, scan, params, scaleFactor);
+function initMagFiles(functionals, scan, params, scaleFactor)
 % initialize a functional scan a slice at a time, the old way
 mrGlobals2;
 cd(params.sessionDir);
@@ -442,7 +465,7 @@ for slice = 1:nSlices
 		try
 			tSeries = tSeries(keep,:);
 		catch
-			warning( sprintf('Invalid keep frames for scan %i', scan) );
+			warning( 'Invalid keep frames for scan %i', scan );
 		end
 	end
 
@@ -454,7 +477,7 @@ end
 % need to manually update mrSESSION.functionals and dataTYPES
 % (in the general version mrSave takes care of this)
 f.PfileName = func.path;
-if length(params.annotations) >= scan & ~isempty(params.annotations{scan})
+if length(params.annotations) >= scan && ~isempty(params.annotations{scan})
 	f.annotation = params.annotations{scan};
 else
 	f.annotation = sprintf('Scan %i', scan);
@@ -474,7 +497,7 @@ f.voxelSize = func.voxelSize(1:3);
 f.effectiveResolution = func.hdr.effectiveResolution;
 f.framePeriod = func.voxelSize(4);
 f.reconParams = func.hdr;
-if isempty(mrSESSION.functionals) | scan==1
+if isempty(mrSESSION.functionals) || scan==1
 	mrSESSION.functionals = f;
 else
 	mrSESSION.functionals(scan) = mergeStructures(mrSESSION.functionals(scan-1), f);

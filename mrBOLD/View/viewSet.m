@@ -333,11 +333,23 @@ switch param
        
            %%%%% Anatomy / Underlay-related properties
     case 'anatomy'
-        vw.anat = val;
+        vw.anat.data = val;
     case 'brightness'
         vw = setSlider(vw, vw.ui.brightness, val);
     case 'contrast'
         setSlider(vw, vw.ui.contrast, val);
+    case 'inplanepath'
+        vw.anat.inplanepath = val;
+    case 'anatinitialize'
+        %Expects a path as the value
+        %Read in the nifti from the path value
+        vw = viewSet(vw,'Anatomy Nifti', niftiRead(val));
+        %Calculate Voxel Size as that is not read in
+        vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Voxel Size',prod(niftiGet(vw.anat,'pixdim'))));
+        %Let us also calculate and and apply our transform
+        vw = viewSet(vw,'Anatomy Nifti',niftiApplyAndCreateXform(viewGet(vw,'Anatomy Nifti'),'Inplane'));
+    case 'anatomynifti'
+        vw.anat = val; %This means that we are passing in an entire Nifti!
         
         %%%%% ROI-related properties
     case 'roi'

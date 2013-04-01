@@ -47,7 +47,9 @@ VOLUME{s}.refreshFn = 'volume3View';
 %%%%%%%%%%%%%%%%%%
 % Load Anatomies %
 %%%%%%%%%%%%%%%%%%
-VOLUME{s} = loadAnat(VOLUME{s}); %#ok<*NASGU>
+VOLUME{s} = loadAnat(VOLUME{s});
+%TODO: Change the functionality of loadAnat to bring it in line with the
+%inplane load anat functionality
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialize data slots %

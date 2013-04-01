@@ -27,17 +27,30 @@ global dataTYPES
 % Window handle for the current graph window
 global GRAPHWIN
 
-% Structure that holds the INPLANE view
+% Most info about the user interface will be stored in the new global
+% variable GUI:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This will have info on the interface created by the function
+% sessionGUI:
+global GUI
+
+% INPLANE data: data in the coordinate space in which it was collected
+% during a particular session
 global INPLANE
-% Structure that holds the VOLUME view
+
+% VOLUME data: data co-registered to a reference frame, such as a subject's
+% reference anatomy (or, down the line, group analyses)
 global VOLUME
-% Structure that holds the FLAT view
+
+% FLAT data: data from a segmented gray volume, projected onto a flat 2-D
+% surface. (Mostly legacy code):
 global FLAT
 
 % When more than one flat view is open, selectedFLAT specifies which one
 % to use (e.g., when mapping ROIs or data from flat to volume). Likewise
 % for inplane and volume windows. These globals are reset when windows
 % are first opened, and by refreshView.
+% (these should go away soon, and be consolidated into the GUI variable)
 global selectedINPLANE 
 global selectedVOLUME
 global selectedFLAT

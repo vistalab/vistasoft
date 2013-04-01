@@ -25,6 +25,8 @@ disp('Initializing Inplane view')
 % s is the index of the new inplane structure.
 s = getNewViewIndex(INPLANE);
 
+%TODO: Replace all of the rest with viewSet?
+
 % Set name, viewType, & subdir
 INPLANE{s}.name=['INPLANE{',num2str(s),'}'];
 INPLANE{s}.viewType='Inplane';
@@ -39,8 +41,8 @@ end
 % Refresh function, gets called by refreshScreen
 INPLANE{s}.refreshFn = 'refreshMontageView';
 
-% Initialize slot for anat
-INPLANE{s}.anat = [];
+% Initialize slot for anat from a nifti
+INPLANE{s}.anat = niftiCreate;
 
 % Initialize slots for co, amp, and ph
 INPLANE{s}.co = [];
@@ -127,7 +129,8 @@ INPLANE{s} = eventMenu(INPLANE{s});
 INPLANE{s} = helpMenu(INPLANE{s}, 'Inplane');
 
 % go ahead and load the anatomicals
-INPLANE{s} = loadAnat(INPLANE{s});
+INPLANE{s} = loadAnat(INPLANE{s}, sessionGet(mrSESSION,'Inplane Path'));
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Add Annotation String %
@@ -145,7 +148,10 @@ INPLANE{s}.ui.cbarRange = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Label L/R on Inplanes %
 %%%%%%%%%%%%%%%%%%%%%%%%%
-INPLANE{s} = labelInplaneLR(INPLANE{s});
+INPLANE{s} = labelInplaneLR(INPLANE{s}); %This assumes that the LR data is saved in mrSESSION
+%TODO: Change this so it can pull it directly from the orientation of the
+%matrix
+
 
 %%%%%%%%%%%%%%%%%%%
 % Add popup menus %

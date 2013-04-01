@@ -30,7 +30,7 @@ if ~exist('coords','var'), coords=[]; end
 if ~exist('comments','var'), comments=[]; end
 
 ROI.name=name;
-ROI.viewType    = vw.viewType;
+ROI.viewType    = viewGet(vw,'viewType');
 ROI.coords      = coords;
 ROI.color       = color;
 ROI.created     = datestr(now);

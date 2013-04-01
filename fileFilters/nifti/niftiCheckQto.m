@@ -15,7 +15,7 @@ function ni = niftiCheckQto(ni)
 % center of the image. The updated struct is returned and a message is
 % printed to the command line indicating the fix. 
 %
-% it will update the follwoign fields:
+% it will update the follwing fields:
 %  'qform_code'
 %  'qto_xyz'
 %  'qto_ijk'
@@ -40,7 +40,7 @@ if(isfield(ni,'data')&&~isempty(ni.data))
 end
 
 if(ni.qform_code==0 && ni.sform_code~=0)
-    fprintf('[%s] ni.qform_code is zero and sform_code ~=0. Setting ni.qto_* form ni.sto_*...',mfilename);
+    fprintf('[%s] ni.qform_code is zero and sform_code ~=0. Setting ni.qto_* from ni.sto_*...',mfilename);
     ni = niftiSetQto(ni, ni.sto_xyz);
 end
 

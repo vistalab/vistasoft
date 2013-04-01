@@ -19,7 +19,7 @@ if nargin<2, scan=1; end %#ok<*NASGU>
 % disabled it. -ras, 01/2004.
 switch lower(viewGet(vw, 'View Type'))
     case {'inplane' 'flat'}
-        n = viewSize(vw) ./ dataSize(vw,1);
+        n = viewGet(vw,'anatSize') ./ viewGet(vw,'dataSize');
         
     case {'volume' 'gray'}
         n = [1 1 1];

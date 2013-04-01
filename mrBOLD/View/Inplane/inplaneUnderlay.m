@@ -39,7 +39,7 @@ end
 if checkfields(vw, 'ui', 'zoom')
     zoom = vw.ui.zoom;
 else
-    zoom = [1 size(vw.anat, 2) 1 size(vw.anat, 1)];
+    zoom = [1 size(viewGet(vw,'Anatomy'), 2) 1 size(viewGet(vw,'Anatomy'), 1)];
 end
 
 % get # of slices; figure out a good # of rows, cols for montage
