@@ -49,7 +49,7 @@ rawDir            = params.rawDataDir(matchend+1:end);
 params.rawDataDir = fullfile(subDir,rawDir);
 
 % (5) Move the current dt6 into a backup
-eval('!mv -v dt6.mat dt6_old.mat')
+movefile('dt6.mat', 'dt6_old.mat')
 
 % (6) Update the dt6 information
 save('dt6.mat','params','files','adcUnits')
