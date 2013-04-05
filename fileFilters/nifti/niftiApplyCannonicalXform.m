@@ -41,7 +41,8 @@ function [ni,canXform] = niftiApplyCannonicalXform(ni, canXform, phaseDir)
 if(nargin<1), help(mfile); end
 
 % Do a sanity-check on the nifti transform
-ni = niftiCheckQto(ni);
+%ni = niftiCheckQto(ni);
+ni = niftiSet(ni,'Check Qto',''); %The final value is not necessary here
 
 if(~exist('canXform','var') || isempty(canXform))
     canXform = mrAnatComputeCannonicalXformFromDicomXform(ni.qto_xyz, ni.dim(1:3));
@@ -63,7 +64,8 @@ else
     ni = niftiSet(ni,'dim',size(niftiGet(ni,'data')));
     %ni.dim = size(ni.data); %This overwrites the 1 for time dimensions if it doesn't really have one, is that ok?
     ni.pixdim(1:3) = newPixdim;
-    ni = niftiSetQto(ni, inv(canXform*ni.qto_ijk)); %Everything in niftiSetQto now calls niftiSet
+    %ni = niftiSetQto(ni, inv(canXform*ni.qto_ijk)); %Everything in niftiSetQto now calls niftiSet
+    ni = niftiSet(ni, 'qto', inv(canXform * niftiGet(ni,'qto_ijk')));
     if(any(ni.sto_xyz(:)>0))
         ni.sto_ijk = canXform*ni.sto_ijk;
         ni.sto_xyz = inv(ni.sto_ijk);

@@ -1,4 +1,4 @@
-function [vw s] = openMontageWindow
+function [vw, s] = openMontageWindow
 %
 % Opens a new inplane montage window and initializes the corresponding data
 % structure.
@@ -26,52 +26,76 @@ disp('Initializing Inplane view')
 s = getNewViewIndex(INPLANE);
 
 %TODO: Replace all of the rest with viewSet?
-
+INPLANE{s} = struct;
 % Set name, viewType, & subdir
-INPLANE{s}.name=['INPLANE{',num2str(s),'}'];
-INPLANE{s}.viewType='Inplane';
+%INPLANE{s}.name=['INPLANE{',num2str(s),'}'];
+INPLANE{s} = viewSet(INPLANE{s}, 'name', ['INPLANE{',num2str(s),'}']);
+%INPLANE{s}.viewType='Inplane';
+INPLANE{s} = viewSet(INPLANE{s}, 'view type', 'Inplane');
 
-INPLANE{s}.subdir='Inplane';
-if(isfield(mrSESSION,'sessionCode'))
-  INPLANE{s}.sessionCode=mrSESSION.sessionCode;
-else
-  INPLANE{s}.sessionCode='';
-end
+
+%INPLANE{s}.subdir='Inplane';
+INPLANE{s} = viewSet(INPLANE{s}, 'subdir', 'Inplane');
+
+%INPLANE{s}.sessionCode=mrSESSION.sessionCode;
+INPLANE{s} = viewSet(INPLANE{s}, 'Session Code', sessionGet(mrSESSION,'Session Code'));
+INPLANE{s} = viewSet(INPLANE{s}, 'Subject', sessionGet(mrSESSION,'Subject'));
 
 % Refresh function, gets called by refreshScreen
-INPLANE{s}.refreshFn = 'refreshMontageView';
+%INPLANE{s}.refreshFn = 'refreshMontageView';
+INPLANE{s} = viewSet(INPLANE{s}, 'refresh function', 'refreshMontageView');
 
 % Initialize slot for anat from a nifti
-INPLANE{s}.anat = niftiCreate;
+%INPLANE{s}.anat = niftiCreate;
+INPLANE{s} = viewSet(INPLANE{s}, 'Anatomy Nifti', niftiCreate);
 
 % Initialize slots for co, amp, and ph
-INPLANE{s}.co = [];
-INPLANE{s}.amp = [];
-INPLANE{s}.ph = [];
-INPLANE{s}.map = [];
-INPLANE{s}.mapName = '';
-INPLANE{s}.mapUnits = '';
-INPLANE{s}.spatialGrad = [];
+%INPLANE{s}.co = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'Coherence', []);
+
+%INPLANE{s}.amp = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'Amplitude', []);
+%INPLANE{s}.ph = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'Phase', []);
+%INPLANE{s}.map = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'Map', []);
+%INPLANE{s}.mapName = '';
+INPLANE{s} = viewSet(INPLANE{s}, 'Map Name', '');
+%INPLANE{s}.mapUnits = '';
+INPLANE{s} = viewSet(INPLANE{s}, 'Map Units', []);
+%INPLANE{s}.spatialGrad = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'Spatial Grad', []);
 
 % Initialize slots for tSeries
-INPLANE{s}.tSeries = [];
-INPLANE{s}.tSeriesScan = NaN;
-INPLANE{s}.tSeriesSlice = NaN;
+%INPLANE{s}.tSeries = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'T Series', []);
+%INPLANE{s}.tSeriesScan = NaN;
+INPLANE{s} = viewSet(INPLANE{s}, 'T Series Scan', NaN);
+%INPLANE{s}.tSeriesSlice = NaN;
+INPLANE{s} = viewSet(INPLANE{s}, 'T Series Slice', NaN);
 
 % Initialize ROIs
-INPLANE{s}.ROIs = [];
-INPLANE{s}.selectedROI = 0;
+%INPLANE{s}.ROIs = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'ROIs',[]);
+%INPLANE{s}.selectedROI = 0;
+INPLANE{s} = viewSet(INPLANE{s}, 'Selected ROI',[]);
 
 % Initialize curDataType, curScan
-INPLANE{s}.curDataType = 1;
-INPLANE{s}.curScan = 1;
+%INPLANE{s}.curDataType = 1;
+INPLANE{s} = viewSet(INPLANE{s}, 'Current Data Type', 1);
+
+%INPLANE{s}.curScan = 1;
+INPLANE{s} = viewSet(INPLANE{s}, 'Cur Scan', 1);
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Make displayModes and color maps %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialize displayModes
 INPLANE{s}=resetDisplayModes(INPLANE{s});
-INPLANE{s}.ui.displayMode='anat';
+%INPLANE{s}.ui.displayMode='anat';
+INPLANE{s} = viewSet(INPLANE{s}, 'Display Mode', 'anat');
+
 
 %%%%%%%%%%%%%%%%%%%
 % Open the window %
@@ -81,27 +105,28 @@ figName = sprintf('Inplane %i: %s  [%s]',s,...
     mrSESSION.sessionCode,...
     mrSESSION.description);
 
-INPLANE{s}.ui.figNum=figure('MenuBar','none',...
+%INPLANE{s}.ui.figNum=figure('MenuBar','none',...
+%    'NumberTitle','off',...
+%    'Name',figName,...
+%    'Color',[.9 .9 .9]);   % 'Position', [304   462   760   563]
+INPLANE{s} = viewSet(INPLANE{s}, 'Figure Number', figure('MenuBar','none',...
     'NumberTitle','off',...
     'Name',figName,...
-    'Color',[.9 .9 .9]);   % 'Position', [304   462   760   563]
+    'Color',[.9 .9 .9]));
+
 
 % Handle for inplane view window
-INPLANE{s}.ui.windowHandle = gcf;
+%INPLANE{s}.ui.windowHandle = gcf;
+INPLANE{s} = viewSet(INPLANE{s}, 'Window Handle', gcf);
 
 % Handle for main axis of inplane view
-INPLANE{s}.ui.mainAxisHandle = gca;
+%INPLANE{s}.ui.mainAxisHandle = gca;
+INPLANE{s} = viewSet(INPLANE{s}, 'Main Axis Handle', gca);
+
 
 % Adjust position and size of main axes so there's room for
 % buttons, colorbar, and sliders
 set(INPLANE{s}.ui.mainAxisHandle, 'position', [0.12 0.2 0.7 0.72]);
-
-% Set minColormap property so there's potentially room for 128
-% colors 
-%  This line now produces a warning ('figure MinColormap produces a warning
-%  and will be removed in a future release').
-%  Is it needed?
-% set(INPLANE{s}.ui.windowHandle,'minColormap',128)
 
 % Set closeRequestFcn so we can clean up when the window is closed
 set(gcf,'CloseRequestFcn','closeInplaneWindow');
@@ -141,9 +166,11 @@ INPLANE{s} = makeAnnotationString(INPLANE{s});
 % Add Color Bar %
 %%%%%%%%%%%%%%%%%
 % Make color bar and initialize it to 'off'
-INPLANE{s}.ui.colorbarHandle=makeColorBar(INPLANE{s});
+%INPLANE{s}.ui.colorbarHandle=makeColorBar(INPLANE{s});
+INPLANE{s} = viewSet(INPLANE{s}, 'Color Bar Handle', makeColorBar(INPLANE{s}));
 setColorBar(INPLANE{s},'off');
-INPLANE{s}.ui.cbarRange = [];
+%INPLANE{s}.ui.cbarRange = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'Color Bar Range', []);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Label L/R on Inplanes %
@@ -170,7 +197,7 @@ disp('Attaching sliders')
 w = 0.12; h = 0.03; l = 0; b = 0.95;
 INPLANE{s} = makeSlider(INPLANE{s},'scan',[],[l b w h]);
 INPLANE{s} = initScanSlider(INPLANE{s},1);
-INPLANE{s} = selectDataType(INPLANE{s},INPLANE{s}.curDataType);
+INPLANE{s} = selectDataType(INPLANE{s},viewGet(INPLANE{s},'Current Data Type'));
 
 
 % slice slider
@@ -228,12 +255,16 @@ INPLANE{s} = makeZoomButtons(INPLANE{s});
 % Initialize display parameters %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialize image field
-INPLANE{s}.ui.image = [];
+%INPLANE{s}.ui.image = [];
+INPLANE{s} = viewSet(INPLANE{s}, 'UI Image', []);
 
 % New ROI display fields (ras 01/07)
-INPLANE{s}.ui.showROIs = -2;        % list of ROIs to show (0 = hide, -1 = selected)
-INPLANE{s}.ui.roiDrawMethod = 'perimeter'; % can be 'boxes', 'perimeter', 'patches'   
-INPLANE{s}.ui.filledPerimeter = 0; % filled perimeter toggle
+%INPLANE{s}.ui.showROIs = -2;  % list of ROIs to show (0 = hide, -1 = selected, -2 = all)
+INPLANE{s} = viewSet(INPLANE{s}, 'Show ROIs', -2);
+%INPLANE{s}.ui.roiDrawMethod = 'perimeter'; % can be 'boxes', 'perimeter', 'patches'   
+INPLANE{s} = viewSet(INPLANE{s}, 'ROI Draw Method', 'perimeter');
+%INPLANE{s}.ui.filledPerimeter = 0; % filled perimeter toggle
+INPLANE{s} = viewSet(INPLANE{s}, 'Filled Perimeter', 0);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Load user preferences %

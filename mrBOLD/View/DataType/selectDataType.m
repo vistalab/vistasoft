@@ -33,7 +33,7 @@ if ischar(n)
     end
 end
     
-if vw.curDataType ~= n
+if (viewGet(vw, 'Cur Data Type') ~= n)
     vw.curDataType = n;
     vw = clearData(vw);
 end
