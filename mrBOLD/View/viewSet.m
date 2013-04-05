@@ -167,9 +167,11 @@ switch param
     case 'homedir'
         HOMEDIR = val;  %#ok<NASGU>
     case 'sessionname'
-        mrSESSION.sessionCode = val;   %#ok<STRNU>
+        vw.sessionCode = val;
+        %TODO: Make a change to the view instead of session
     case 'subject'
-        mrSESSION.subject = val;    %#ok<STRNU>
+        vw.subject = val;
+        %TODO: Make a change to the view instead of session
     case 'name'
         vw.name = val;
     case 'viewtype'
@@ -225,8 +227,16 @@ switch param
                 selectButton(vw.ui.sliceButtons,h)
         end
         
+    case 'refreshfn'
+        vw.refreshFn = val;
+        
     case 'curscan'
-        vw = setCurScan(vw,val);
+        %vw = setCurScan(vw,val);
+        view.curScan = val;
+        % If we have a GUI open, update it as well:
+        if checkfields(view, 'ui', 'scan'),
+            setSlider(view,view.ui.scan,val,0);
+        end
         
     case 'datavalindex'
         % Only works on the generalGray view type
@@ -270,6 +280,8 @@ switch param
             setSlider(vw, vw.ui.phWinMax, val(2));
             
         end
+    case 'spatialgrad'
+        vw.spatialGrad = val;
     case 'cothresh'
         vw = setCothresh(vw, val);
     case 'refph'
@@ -359,7 +371,7 @@ switch param
         % Example: vw = viewSet(vw, 'ROIs', rois);
         vw.ROIs = val;
     case 'selectedroi'
-        vw = selectROI(vw, val);
+            vw = selectROI(vw, val);
 	case 'selroicolor'
         % Set the color of the currently selected or the requested ROI.
         % This can be a Matlab character for a color ('c', 'w', 'b', etc)
@@ -695,8 +707,20 @@ switch param
         vw.ui.corMode = val;
     case 'phasemode'
         vw.ui.phMode = val;
+    case 'fignum'
+        vw.ui.figNum = val;
+    case 'windowhandle'
+        vw.ui.windowHandle = val;
+    case 'mainaxishandle'
+        vw.ui.mainAxisHandle = val;
+    case 'colorbarhandle'
+        vw.ui.colorbarHandle = val;
+    case 'cbarrange'
+        vw.ui.cbarRange = val;
     case 'amplitudemode'
         vw.ui.ampMode = val;
+    case 'uiimage'
+        vw.ui.image = val;
     case 'projectedamplitudemode'
         vw.ui.projampMode = val;
     case 'mapmode'
@@ -747,12 +771,6 @@ switch param
         error('Unknown view parameter %s.', param);
         
 end			% End big SWITCH statement
-
-
-
-% % Should we also run a refreshScreen here, unless the window is hidden?
-%
-% No. Let the user refresh if s/he wants.
 
 return;
 
