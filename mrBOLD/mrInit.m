@@ -152,24 +152,17 @@ cd(params.sessionDir);
 initEmptySession; %Replace this save and then load of mrSESSION with that variable simply passed
                     % from one to the other
 load mrSESSION mrSESSION dataTYPES
-%mrSESSION.description = params.description; %TODO: Replace with sessionSet
 mrSESSION = sessionSet(mrSESSION,'description', params.description);
-%mrSESSION.sessionCode = params.sessionCode;
 mrSESSION = sessionSet(mrSESSION,'sessionCode',params.sessionCode);
-%mrSESSION.subject = params.subject;
 mrSESSION = sessionSet(mrSESSION,'subject',params.subject);
-%mrSESSION.comments = params.comments;
 mrSESSION = sessionSet(mrSESSION,'comments',params.comments);
 
 %New parameter creation
 mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane); %Populates the mrSESSION inplane path var
-%mrSESSION = sessionSet(mrSESSION,'Functionals Path',params.functionals{1});
-%mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane);
 
 
 save mrSESSION mrSESSION -append; 
 save mrInit_params params   % stash the params in case we crash'
-%TODO: Remove this save of the parameters, we no longer need them
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,14 +212,14 @@ if ~isempty(params.crop)
     params.crop = [x1 y1; x2 y2];
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% (3) crop and save inplane anatomy %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (3) crop and save inplane anatomy        %
+% This has been removed as of 2013-03-01   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %if ~isempty(params.crop)
 %	inplane = mrCrop(inplane, params.crop);
 %end
 %mrSave(inplane, params.sessionDir, '1.0anat');
-%TODO: Remove this line that saves the inplane data as a separate file
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (4) read, crop, and save functional time series %

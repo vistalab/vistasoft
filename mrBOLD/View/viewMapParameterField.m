@@ -59,7 +59,8 @@ switch fieldName
         res = 'dtname';               
     case {'dtstruct' 'currentdatatypestructure' 'curdtstruct'}
         res = 'dtstruct';
-        
+    case {'refreshfn' 'refreshfunction' 'reffn' 'reffunction'}
+        res = 'refreshfn';
         %%%%% Traveling-Wave / Coherence Analysis properties
  
     case {'coherence' 'co' 'allcoherence'} 
@@ -288,8 +289,16 @@ switch fieldName
         res = 'fignum';
     case {'windowhandle'}
         res = 'windowhandle';
+    case {'mainaxishandle'}
+        res = 'mainaxishandle';
+    case {'colorbarhandle'}
+        res = 'colorbarhandle';
+    case {'colorbarrange' 'cbarrange'}
+        res = 'cbarrange';
     case {'anatomymode' 'anatmode'}
         res = 'anatomymode';
+    case {'uiimage' 'imageui'}
+        res = 'uiimage';
     case {'coherencemode' 'comode'}
         res = 'coherencemode';
     case {'correlationmode' 'cormode'}

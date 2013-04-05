@@ -617,8 +617,6 @@ switch param
             case {'Volume' 'Gray' 'generalGray' 'Flat'}
                 val = size(vw.anat);
         end
-        %TODO: As more processes are migrated to NIFTIs, move the view
-        %types from the second switch to the first switch
 	case 'anatomycurrentslice'
         % Return the anatomical underlay image for only one slice
         %   anat = viewGet(vw, 'Anatomy Current Slice', curSlice);
@@ -987,8 +985,6 @@ switch param
         % specificed slice
         %   dim = viewGet(vw, 'Slice Dimension')
         %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)
-        %TODO: Change the location that this is getting the functionals
-        %data from away from the global variable
         switch vw.viewType
             case 'Inplane'
                 val = mrSESSION.functionals.cropSize;

@@ -20,7 +20,6 @@ function vw = labelInplaneLR(vw)
 % written 03/11/04 by ras.
 if ~exist('vw','var') || isempty(vw), vw=getSelectedInplane; end
 global mrSESSION
-%TODO: Remove global variables that are unused.
 
 if ~isequal(vw.viewType,'Inplane')
     error('Sorry, this requires an Inplane view ... hence the name. :)');
@@ -70,32 +69,6 @@ if Rdim == viewGet(vw,'slicedim')
 else
     sagFlag = 0;
 end
-
-%TODO: Change the location that this data is stored in from mrSESSION to
-%the view
-% 
-% % read dir text:
-% % First see if it's saved in mrSESSION, and if not, try  I-files
-% if checkfields(mrSESSION, 'dirLabel')
-%     dirTextRL = mrSESSION.dirLabel.textRL;
-%     dirTextAP = mrSESSION.dirLabel.textAP;
-%     sagFlag = mrSESSION.dirLabel.sagittalFlag;
-% else
-%     % find first dicom for the inplanes:
-%     allIfileNames = sessionGet(mrSESSION, 'inplanepath');
-%     if isempty(allIfileNames)
-%         disp('Sorry, can''t determine Inplane directions.')
-%         return
-%     else
-%         [dirTextRL, dirTextAP, sagFlag] = ifilesDirectionText(allIfileNames);
-%     
-%         % store results for later (so we don't need the I-files)
-%         mrSESSION.dirLabel.textRL = dirTextRL;
-%         mrSESSION.dirLabel.textAP = dirTextAP;
-%         mrSESSION.dirLabel.sagittalFlag = sagFlag;
-%         saveSession(0);
-%     end
-% end
     
 % 05/06/05 ras: 
 % further change of strategy:
