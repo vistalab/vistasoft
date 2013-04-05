@@ -30,9 +30,9 @@ if notDefined('clobber'), clobber = false;end
 switch mode
   case {'prob','probabilistic','probabilistic tractography','p'}
     mode_str = 'SD_PROB';
-  case {'stream','deterministic','deterministic tractogrpahy based on spherical deconvolution','d'}
+  case {'stream','deterministic','deterministic tractography based on spherical deconvolution','d'}
     mode_str = 'SD_STREAM';
-  case {'tensor','deterministic tractogrpahy based on a tensor model','t'}
+  case {'tensor','deterministic tractography based on a tensor model','t'}
     mode_str = 'DT_STREAM';
   otherwise
     error('Input "%s" is not a valid tracking mode', mode); 

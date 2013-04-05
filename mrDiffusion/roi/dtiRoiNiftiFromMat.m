@@ -15,7 +15,7 @@ function  [ni, roiName] = dtiRoiNiftiFromMat(matRoi,refImg,roiName,saveFlag)
 % 
 % OUTPUTS:
 %   ni       - nifti structure cointaining roi data
-%   roiName  - path to the saved nifit file
+%   roiName  - path to the saved nifti file
 %
 %   Saves your roi in the same directory as matRoi with the same
 %   name (if you set saveFlag to 1 - which is the default).
