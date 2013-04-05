@@ -1,4 +1,4 @@
-function  ni = dtiRoiNiftiFromMat(matRoi,refImg,roiName,saveFlag)
+function  [ni, roiName] = dtiRoiNiftiFromMat(matRoi,refImg,roiName,saveFlag)
 % 
 % function dtiRoiNiftiFromMat([matRoi = mrvSelectFile],[refImg],[roiName], ... 
 %                             [saveFlag=1])
@@ -15,7 +15,8 @@ function  ni = dtiRoiNiftiFromMat(matRoi,refImg,roiName,saveFlag)
 % 
 % OUTPUTS:
 %   ni       - nifti structure cointaining roi data
-%   
+%   roiName  - path to the saved nifti file
+%
 %   Saves your roi in the same directory as matRoi with the same
 %   name (if you set saveFlag to 1 - which is the default).
 % 
@@ -89,7 +90,6 @@ if saveFlag
     niftiWrite(ni);
     fprintf('Saved: %s.nii.gz \n',roiName);
 end
-
 
 return
 
