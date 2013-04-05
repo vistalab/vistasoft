@@ -26,7 +26,7 @@ disp('Initializing Inplane view')
 s = getNewViewIndex(INPLANE);
 
 %TODO: Replace all of the rest with viewSet?
-
+INPLANE{s} = struct;
 % Set name, viewType, & subdir
 %INPLANE{s}.name=['INPLANE{',num2str(s),'}'];
 INPLANE{s} = viewSet(INPLANE{s}, 'name', ['INPLANE{',num2str(s),'}']);
@@ -197,7 +197,7 @@ disp('Attaching sliders')
 w = 0.12; h = 0.03; l = 0; b = 0.95;
 INPLANE{s} = makeSlider(INPLANE{s},'scan',[],[l b w h]);
 INPLANE{s} = initScanSlider(INPLANE{s},1);
-INPLANE{s} = selectDataType(INPLANE{s},INPLANE{s}.curDataType);
+INPLANE{s} = selectDataType(INPLANE{s},viewGet(INPLANE{s},'Current Data Type'));
 
 
 % slice slider

@@ -419,8 +419,12 @@ switch param
         val = dataTYPES( viewGet(vw, 'curdt') ).name;
     case 'curdt'
         % Return the number of the currently selected dataTYPE
-        %   dtNum = viewGet(vw, 'Current Data TYPE');       
-        val = vw.curDataType;
+        %   dtNum = viewGet(vw, 'Current Data TYPE');
+        if isfield(vw, 'curDataType')
+            val = vw.curDataType;
+        else
+            val = 0;
+        end
     case 'dtstruct'
         % Return the currently selected dataTYPE struct
         %   dtStruct = viewGet(vw, 'DT struct');       

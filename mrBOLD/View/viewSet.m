@@ -371,11 +371,7 @@ switch param
         % Example: vw = viewSet(vw, 'ROIs', rois);
         vw.ROIs = val;
     case 'selectedroi'
-        if isempty(val)
-            vw.selectedROI = 0;
-        else
             vw = selectROI(vw, val);
-        end
 	case 'selroicolor'
         % Set the color of the currently selected or the requested ROI.
         % This can be a Matlab character for a color ('c', 'w', 'b', etc)
@@ -718,7 +714,7 @@ switch param
     case 'mainaxishandle'
         vw.ui.mainAxisHandle = val;
     case 'colorbarhandle'
-        vw.ui.colorBarHandle = val;
+        vw.ui.colorbarHandle = val;
     case 'cbarrange'
         vw.ui.cbarRange = val;
     case 'amplitudemode'
