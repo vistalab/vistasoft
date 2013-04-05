@@ -53,25 +53,6 @@ dwRawFile    = dt_info.files.alignedDwRaw;
 [~,dwiname] = fileparts(dwiname);
 session = fileparts(session);
 
-%fname_trunk = dwRawFile(1:strfind(dwRawFile,'.')-1);
-%raw_idx     = strfind(fname_trunk,'raw');
-%
-% % Find the raw folder
-% if isempty(raw_idx)
-%   % Lets try one folder up
-%   raw_idx     = fullfile(fileparts(fname_trunk),'raw');
-%   if isempty(raw_idx)
-%     % Lets try two folders up
-%     raw_idx     = fullfile(fileparts(fileparts(fname_trunk)),'raw');
-%   else
-%     % Give up and return an error
-%     error('Could not find raw directory');
-%   end
-% end
-
-% Strip out the name information for the mrDiffusion folders.
-%[session, dwiname] = fileparts(fname_trunk);
-
 % If the output fibers folder was not passed in, then generate one in the current
 % mrDiffusion session.
 if notDefined('mrtrix_folder'), mrtrix_folder = [session, 'mrtrix']; end
@@ -81,9 +62,7 @@ if ~exist(mrtrix_folder, 'dir'), mkdir(mrtrix_folder); end
 
 % Generate a file name that contains the information of the original file
 % that was used for tracking.
-fname_trunk  = [mrtrix_folder, dwiname]; 
-%file_sep_idx = strfind(fname_trunk, filesep);
-%mrtrix_dir   = fname_trunk(1:file_sep_idx(end)); 
+fname_trunk  = fullfile(mrtrix_folder, dwiname); 
 
 % Build the mrtrix file names.
 files = mrtrix_build_files(fname_trunk,lmax);
