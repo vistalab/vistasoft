@@ -24,7 +24,6 @@ xformLocal = xform(1:3,1:3);
 if(all(all(xformLocal == eye(3))))
     fprintf('The transform does not need to be applied. Returning nifti without change.');
     return %No need to do the rest of the calculations
-        %However, if this is commented out, should still work
 end %if
 
 nii = niftiCheckQto(nii); %This is necessary to set up the qto_ijk and xyz for the transform

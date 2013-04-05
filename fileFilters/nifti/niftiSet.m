@@ -34,7 +34,7 @@ switch param
         if(any(origin<2)||any(origin>dim(1:3)-2))
             [~,r,s,k] = affineDecompose(niftiGet(ni, 'qto_ijk'));
             t = ni.dim/2;
-            warning('[%s] NIFTI header origin is at or outside the image volume.\n',mfilename)
+            warning('[%s] Qto matrix defines an origin very far away from the isocenter.\n',mfilename)
             warning('[%s] Origin to the image center [%2.3f,%2.3f,%2.3f] pix.\n',mfilename,t(1),t(2),t(3));
             %ni = niftiSetQto(ni, inv(affineBuild(t,r,s,k)));
             ni = niftiSet(ni,'qto',inv(affineBuild(t,r,s,k)));
