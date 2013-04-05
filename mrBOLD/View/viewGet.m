@@ -73,7 +73,9 @@ function val = viewGet(vw,param,varargin)
 %     ------------------------------------------------------------------
 %     'anatomy'
 %     'anatomymap'
+%     'anatomynifti'
 %     'anatclip'
+%     'anatslicedim'
 %     'anatsize'
 %     'anatsizexyz'
 %     'brightness'
@@ -259,6 +261,9 @@ if notDefined('param'), error('No parameter defined'); end
 mrGlobals;
 val = [];
 
+%Format the parameter as lowercase and without spaces
+param = mrvParamFormat(param);
+
 % Standardize the name of the parameter field with name-mapping function
 param = viewMapParameterField(param);
 
@@ -271,7 +276,7 @@ param = viewMapParameterField(param);
 % way.
 switch param
     
-    %%%%% Session-related properties; selected scan, slice, data type
+    %% Session-related properties; selected scan, slice, data type
     case 'homedir'      
         % Return full path to directory.
         %   homedir = viewGet(vw, 'Home Directory');
@@ -377,7 +382,8 @@ switch param
         %   nslices = viewGet(vw, 'Number of Slices');
         switch vw.viewType
             case 'Inplane'
-                val = mrSESSION.inplanes.nSlices;
+                if ~checkfields(vw, 'anat'), vw = loadAnat(vw); end
+                val = niftiGet(viewGet(vw,'Anatomy Nifti'),'num slices');
             case {'Volume' 'Gray'}
                 val = 1;
             case 'Flat'
@@ -413,15 +419,19 @@ switch param
         val = dataTYPES( viewGet(vw, 'curdt') ).name;
     case 'curdt'
         % Return the number of the currently selected dataTYPE
-        %   dtNum = viewGet(vw, 'Current Data TYPE');       
-        val = vw.curDataType;
+        %   dtNum = viewGet(vw, 'Current Data TYPE');
+        if isfield(vw, 'curDataType')
+            val = vw.curDataType;
+        else
+            val = 0;
+        end
     case 'dtstruct'
         % Return the currently selected dataTYPE struct
         %   dtStruct = viewGet(vw, 'DT struct');       
         curdt = viewGet(vw, 'Current Data TYPE');
         val   = dataTYPES(curdt);
         
-        %%%%% Traveling-Wave / Coherence Analysis properties
+        %% Traveling-Wave / Coherence Analysis properties
     case 'coherence' 
         % Coherence for all voxels, all scans in current dataTYPE        
         %   co = viewGet(vw, 'Coherence');        
@@ -504,8 +514,8 @@ switch param
         %   phwin = viewGet(vw, 'phase window');
         val = getPhWindow(vw);
         
-        %%%%% colorbar-related params: this code uses a simple linear
-        %%%%% mapping from coAnal phase -> polar angle or eccentricity
+        % colorbar-related params: this code uses a simple linear
+        % mapping from coAnal phase -> polar angle or eccentricity
     case 'twparams' 
         % Return travelling wave parameters.
         %   twparams = viewGet(vw, 'Travelling Wave Parameters');        
@@ -529,7 +539,7 @@ switch param
         val = val(1:nGrays,:);
         
         
-        %%%%% Map properties
+        %% Map properties
     case 'map'
         % Return the parameter map for the current data type. Map is cell
         % array 1 x nscans.
@@ -578,28 +588,47 @@ switch param
         if (nMaps>=nScan), val = vw.map{nScan};
         else               val=[];        end        
 
-        %%%%% Anatomy / Underlay-related properties
+        %%
+        % Anatomy / Underlay-related properties
     case 'anatomy'
         % Return the anatomical underlay image.
-        %   anat = viewGet(vw, 'anatomy');
-        val = vw.anat;
+        val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Data');
     case 'anatomymap'
         % Return the colormap for the anatomical underlay image.
         %   anataomyMap = viewGet(vw, 'Anatomy Map');
         val = round(vw.ui.phMode.cmap(1:64,:) * 255)';
+    case 'anatomynifti'
+        %Return the actual nifti struct stored in anat
+        val = vw.anat;
     case 'anatclip'
         % Return anatomy clipping values from anatMin and anatMax sliders.
         %   anataomyClip = viewGet(vw, 'Anatomy Clip');
         val = getAnatClip(vw);
+    case 'anatslicedim'
+        %Returns the dimension of the matrix that is associated with
+        %slices
+        val = niftiGet(viewGet(vw,'Anatomy Nifti'),'sliceDim');
+    case 'anatslicedims'
+        %Returns the dimensions of each 2D array making up each slice
+        val = niftiGet(viewGet(vw,'Anatomy Nifti'),'sliceDims');
     case 'anatsize'
-        % Return the size (in voxels) of the anatomical underlay image.
-        %   anataomySize = viewGet(vw, 'Anatomy Size');
-        if checkfields(vw, 'anat')
-            val = size(vw.anat);
-        else
-            vw = loadAnat(vw);
-            val = size(vw.anat);
+        %Load an anatomy if one does not already exist
+        if ~checkfields(vw, 'anat') || isempty(vw.anat), vw = loadAnat(vw); end
+        switch vw.viewType
+            case 'Inplane' 
+                val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Dim');
+                val = val(1:3);
+            case {'Volume' 'Gray' 'generalGray' 'Flat'}
+                val = size(vw.anat);
         end
+	case 'anatomycurrentslice'
+        % Return the anatomical underlay image for only one slice
+        %   anat = viewGet(vw, 'Anatomy Current Slice', curSlice);
+        if length(varargin) < 1
+            error('Current slice not defined. Use: viewGet(vw,''anatomy'') instead');
+        end
+        val = viewGet(vw,'anat');
+        val = val(:,:,varargin{1});        
     case 'anatsizexyz'
         % The class data store the planes in a different order from the
         % vw.anat.  If you want sizes that work for the class data, call
@@ -627,7 +656,7 @@ switch param
         %   mmPerVox = viewGet(vw, 'mm per voxel');
         switch vw.viewType
             case 'Inplane' 
-                val = mrSESSION.inplanes.voxelSize;                                               
+                val = niftiGet(viewGet(vw,'anat nifti'),'Pix Dim');
             case {'Volume' 'Gray' 'generalGray'}
                 if isfield(vw, 'mmPerVox'), 
                     val =  vw.mmPerVox;
@@ -703,7 +732,7 @@ switch param
         %   b0angle = viewGet(vw, 'b0 angle');
         try % we use a 'try' statement because the function will fail
             % if the raw anatomical inplane (dicom) is not available
-            [tmp val] = getB0direction(vw);
+            [tmp, val] = getB0direction(vw);
         catch ME
             warning(ME.message);
             val = [];
@@ -755,7 +784,7 @@ switch param
                 
                 % We need to be careful using intersectCols because it
                 % sorts the data.
-                [commonCoords indROI val] = intersectCols(roicoords, vw.coords); %#ok<*ASGLU>
+                [commonCoords, indROI, val] = intersectCols(roicoords, vw.coords); %#ok<*ASGLU>
                 [tmp, inds] = sort(indROI);
                 val = val(inds);
                 
@@ -947,14 +976,22 @@ switch param
         % Return the dimension of data in current slice or specificed slice
         %   dim = viewGet(vw, 'Slice Dimension')
         %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)        
-        if isempty(varargin) || isempty(varargin{1})
-            scan = viewGet(vw, 'Current Scan');
-        else
-            scan = varargin{1};
-        end
         switch vw.viewType
             case 'Inplane'
-                val = [dataTYPES(vw.curDataType).scanParams(scan).cropSize];
+                val = mrSESSION.functionals.cropSize; %TODO: Change this once we get functional data at the veiw level
+            case {'Volume','Gray'}
+                val = [1,size(vw.coords,2)];
+            case 'Flat'
+                val = [vw.ui.imSize];
+        end
+    case 'functionalslicedim'
+        % Return the dimension of functional data in current slice or
+        % specificed slice
+        %   dim = viewGet(vw, 'Slice Dimension')
+        %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)
+        switch vw.viewType
+            case 'Inplane'
+                val = mrSESSION.functionals.cropSize;
             case {'Volume','Gray'}
                 val = [1,size(vw.coords,2)];
             case 'Flat'

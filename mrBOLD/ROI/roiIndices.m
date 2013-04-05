@@ -50,7 +50,7 @@ if iscell(coords),
 end;
 
 
-switch view.viewType
+switch viewGet(view, 'viewType')
     case 'Inplane'
         rsFactor = upSampleFactor(view, 1);
         coords(1,:) = ceil(coords(1,:) ./ rsFactor(1));

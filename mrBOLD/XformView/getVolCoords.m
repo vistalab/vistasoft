@@ -73,7 +73,8 @@ else
   %     Also, let's use viewGet calls when we can.
   % % volSize = viewSize(view);
   volSize = viewGet(view, 'Anat Size');
-  inplaneSize = [mrSESSION.inplanes.cropSize,mrSESSION.inplanes.nSlices];
+  ipView = initHiddenInplane;
+  inplaneSize = viewGet(ipView,'Anat Size');
 
   % Use meshgrid to get volume coordinates
   % 

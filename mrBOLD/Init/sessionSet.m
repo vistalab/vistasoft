@@ -13,7 +13,11 @@ if notDefined('s'), error('mrSESSION variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
 if ~exist('val','var'), error('Val required'); end
 
-switch lower(param)
+param = mrvParamFormat(param);
+
+param = sessionMapParameterField(param);
+
+switch param
 
     case 'title'
         s.title = val;
@@ -22,7 +26,7 @@ switch lower(param)
     case 'examnum'
         s.examNum = val;
 
-    case 'screenSaveSize'
+    case 'screensavesize'
         s.screenSaveSize = val;
     case 'alignment'
         s.alignment =val;
@@ -31,6 +35,12 @@ switch lower(param)
         s.sessionCode = val;
     case 'description'
         s.description = val;
+    case 'comments'
+        s.comments = val;
+    case 'inplanepath'
+        s.inplanes.inplanePath = val;
+    case 'inplane'
+        s.inplanes = val;
 
     % Information about the functional scans
     case 'functionals'

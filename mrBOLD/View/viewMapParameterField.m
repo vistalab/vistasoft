@@ -17,6 +17,8 @@ function res = viewMapParameterField(fieldName)
 
 fieldName = mrvParamFormat(fieldName);
 
+%TODO: Replace the below with a hash map, as in sessionMapParameterField
+
 switch fieldName
     
     %%%%% Session-related properties; selected scan, slice, data type
@@ -57,7 +59,8 @@ switch fieldName
         res = 'dtname';               
     case {'dtstruct' 'currentdatatypestructure' 'curdtstruct'}
         res = 'dtstruct';
-        
+    case {'refreshfn' 'refreshfunction' 'reffn' 'reffunction'}
+        res = 'refreshfn';
         %%%%% Traveling-Wave / Coherence Analysis properties
  
     case {'coherence' 'co' 'allcoherence'} 
@@ -100,7 +103,7 @@ switch fieldName
         res = 'brightness';        
 
         %%%%% Anatomy / Underlay-related properties
-    case {'anatomy' 'anat'}
+    case {'anatomy' 'anat' 'anatomydata' 'anatdata'}
         res = 'anatomy';
     case {'contrast'}
         res = 'contrast';
@@ -108,6 +111,8 @@ switch fieldName
         res = 'anatclip';
     case {'anatsize' 'anatomysize' 'sizeanatomy'}
         res = 'anatsize';
+    case {'anatomynifti','anatnifti','niftianat','niftianatomy'}
+        res = 'anatomynifti';
     case {'anatsizexyz' 'anatomysizeforclass'}
         res = 'anatsizexyz';
     case {'ngraylayers' 'numgraylayers' 'numbergraylayers'}
@@ -168,8 +173,11 @@ switch fieldName
         res = 'tseriesscan';
     case {'datasize' 'mapsize' 'functionalsize' 'funcsize'}
         res = 'datasize';
-    case {'dim' 'dims' 'slicedim' 'slicedims' 'slicedimension' 'slicedimensions'}
+    case {'dim' 'dims'}
         res = 'dim';
+    case {'functionalslicedim' 'functionalslicedims' 'slicedim' ... 
+            'slicedims' 'slicedimension' 'slicedimensions'}
+        res = 'functionalslicedim';
     case {'tr' 'frameperiod' 'framerate' 'repeattime' 'timetorepeat'}
         res = 'tr';
     case {'nframes' 'numframes' 'numberoftimeframes'}
@@ -281,8 +289,16 @@ switch fieldName
         res = 'fignum';
     case {'windowhandle'}
         res = 'windowhandle';
+    case {'mainaxishandle'}
+        res = 'mainaxishandle';
+    case {'colorbarhandle'}
+        res = 'colorbarhandle';
+    case {'colorbarrange' 'cbarrange'}
+        res = 'cbarrange';
     case {'anatomymode' 'anatmode'}
         res = 'anatomymode';
+    case {'uiimage' 'imageui'}
+        res = 'uiimage';
     case {'coherencemode' 'comode'}
         res = 'coherencemode';
     case {'correlationmode' 'cormode'}

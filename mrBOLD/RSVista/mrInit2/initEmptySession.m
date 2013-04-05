@@ -19,11 +19,14 @@ mrSESSION.inplanes = [];
 mrSESSION.functionals = [];
 mrSESSION.coil = '';
 mrSESSION.operator = '';
+mrSESSION.inplanes.inplanePath = '';
+%mrSESSION.functionals.functionalsPath = []; %TODO: Think about how to
+%store multiple paths
 
 dataTYPES.name = 'Original';
 
 vANATOMYPATH = '';
 
-save mrSESSION mrSESSION dataTYPES
+save mrSESSION mrSESSION dataTYPES %TODO: Add vANATOMYPATH to save here?
 
 return
