@@ -227,10 +227,13 @@ end
 for scan = 1:length(params.functionals)
 	
 	funcPath = mrGet(params.functionals{scan}, 'filename');
-	[~, ~, ext] = fileparts(funcPath);
 	
+    %We will need to replace this code with something that adds the paths to
+    %the session variable and then performs these data processes on-the-fly
+    %when functional data is called
+    
     %Read in the nifti to the tS struct, then apply the same transform as
-    %the underlying data. Then, transfer the necessary components to the
+    %the inplane data. Then, transfer the necessary components to the
     %local func struct.
     tS = niftiRead(funcPath);
     tS = niftiApplyAndCreateXform(tS,'Inplane');
@@ -241,14 +244,7 @@ for scan = 1:length(params.functionals)
     func.dims = niftiGet(tS, 'Dim');
     %PixDims
     func.pixdims = niftiGet(tS, 'Pix Dim');
-    
-    %func = mrParse(params.functionals{scan});  % this loads if needed
-    
-    %if ~isempty(params.crop)
-    %    funcCrop = params.crop ./ repmat(scaleFactor([2 1]), [2 1]);
-    %    func = mrCrop(func, funcCrop);
-    %end
-    
+        
     % select keepFrames if they're provided
     if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
         nSkip = params.keepFrames(scan,1);
@@ -396,163 +392,6 @@ cd(callingDir);
 
 return
 % /---------------------------------------------------------------------/ %
-
-
-
-
-% /---------------------------------------------------------------------/ %
-function initMagFiles(functionals, scan, params, scaleFactor)
-% initialize a functional scan a slice at a time, the old way
-mrGlobals2;
-cd(params.sessionDir);
-func = mrLoadHeader(functionals{scan});
-voxPerSlice = prod( func.dims(1:2) );
-nSlices = func.dims(3);
-nFrames = func.dims(4);
-
-% check that the tSeries dir exists
-saveDir = fullfile(pwd, 'Inplane', 'Original', 'TSeries', sprintf('Scan%i', scan));
-ensureDirExists(saveDir);
-
-% parse the date of the mag file to determine if we use little endian
-% byte order when reading the mag files
-% (doesn't always parse this correctly -- 99% odds it's little endian)
-% if (func.info.scanStart(1)>=2005) & (func.info.scanStart(2)>=3)
-    littleEndian = 1;
-% else
-%     littleEndian = 0;
-% end
-
-fprintf('Saving Scan %i [%s], slice: ', scan, func.path);
-
-for slice = 1:nSlices
-    tSeries = readMagFile(functionals{scan}, slice, littleEndian);
-
-	fclose all;  % gum
-	
-    % crop if specified
-    if ~isempty(params.crop)
-        x1 = params.crop(1,1) / scaleFactor(2);
-        x2 = params.crop(2,1) / scaleFactor(2);
-        y1 = params.crop(1,2) / scaleFactor(1);
-        y2 = params.crop(2,2) / scaleFactor(1);
-		funcCrop = [x1 y1; x2 y2];
-        tSeries = tSeries(y1:y2, x1:x2, :, :);
-		
-		voxPerSlice = size(tSeries, 1) * size(tSeries, 2);
-	else
-		funcCrop = [1 1; func.dims(1:2)];
-    end
-
-    % note the transpose: size will be [nFrames voxPerSlice]
-    tSeries = reshape(squeeze(tSeries), [voxPerSlice nFrames])';
-	
-	% keep the appropriate # of frames, if specified
-	if size(params.keepFrames, 1) >= scan
-		nSkip = params.keepFrames(scan,1);
-		nKeep = params.keepFrames(scan,2);
-		if nKeep==-1
-			nKeep = size(tSeries, 1) - nSkip;
-		end
-		keep = [1:nKeep] + nSkip;
-		try
-			tSeries = tSeries(keep,:);
-		catch
-			warning( 'Invalid keep frames for scan %i', scan );
-		end
-	end
-
-    tSeriesPath = fullfile( saveDir, sprintf('tSeries%i.mat', slice) );
-    save(tSeriesPath, 'tSeries');
-    fprintf('%i ', slice);
-end
-
-% need to manually update mrSESSION.functionals and dataTYPES
-% (in the general version mrSave takes care of this)
-f.PfileName = func.path;
-if length(params.annotations) >= scan && ~isempty(params.annotations{scan})
-	f.annotation = params.annotations{scan};
-else
-	f.annotation = sprintf('Scan %i', scan);
-end
-f.totalFrames = func.dims(4);
-f.firstName = func.info.subject; % break into 2 later
-f.lastName = func.info.subject;
-f.date = func.info.date;
-f.time = func.info.scanStart;
-f.junkFirstFrames = 0;
-f.nFrames = size(tSeries, 1);
-f.slices = 1:nSlices;
-f.fullSize = func.dims(1:2);
-f.cropSize = fliplr( diff(funcCrop) ) + 1;
-f.crop = funcCrop;
-f.voxelSize = func.voxelSize(1:3);
-f.effectiveResolution = func.hdr.effectiveResolution;
-f.framePeriod = func.voxelSize(4);
-f.reconParams = func.hdr;
-if isempty(mrSESSION.functionals) || scan==1
-	mrSESSION.functionals = f;
-else
-	mrSESSION.functionals(scan) = mergeStructures(mrSESSION.functionals(scan-1), f);
-end
-
-f.scanGroup = ''; % deal w/ scanGroups param
-for i = 1:length(params.scanGroups)
-    if ismember(scan, params.scanGroups{i})
-        f.scanGroup = ['Original: ' num2str(params.scanGroups{i})];
-    end
-end
-if length(params.parfile) >= scan & ~isempty(params.parfile{scan})
-	f.parfile = params.parfile{scan};
-end
-
-
-if scan==1 
-	dataTYPES.scanParams = sortfields(f);
-else
-	tmp = mergeStructures(dataTYPES.scanParams(scan-1), f);
-	for f = fieldnames(tmp)'
-		dataTYPES.scanParams(scan).(f{1}) = tmp.(f{1});
-	end
-end
-
-%%%%%copy over params:
-% Copy one field at a time, so we don't get type-mismatch errors.        
-% blocked analysis params
-srcBlockParams = blockedAnalysisDefaults;
-for f = fieldnames(srcBlockParams)'
-    dataTYPES(1).blockedAnalysisParams(scan).(f{1}) = ...
-        srcBlockParams.(f{1});
-end
-
-% event analysis params
-srcEventParams = er_defaultParams;
-for f = fieldnames(srcEventParams)'
-    dataTYPES(1).eventAnalysisParams(scan).(f{1}) = ...
-        srcEventParams.(f{1});
-end
-
-save mrSESSION mrSESSION dataTYPES -append
-
-fprintf('done. \t(%s) \n', datestr(now));
-
-
-return
-% /-----------------------------------------------------------------/ %
-
-
-
-
-% /-----------------------------------------------------------------/ %
-function params = blockedAnalysisDefaults
-% Default values for the blocked analyses.
-params.blockedAnalysis = 1;
-params.detrend = 1;
-params.inhomoCorrect = 1;
-params.temporalNormalization = 0;
-params.nCycles = 6;
-return
-% /-----------------------------------------------------------------/ %
 
 
 

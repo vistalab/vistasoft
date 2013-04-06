@@ -51,7 +51,7 @@ if notDefined('roi'),       roi = viewGet(vw, 'curRoi');      end
 
 roi = tc_roiStruct(vw, roi);
 
-switch vw.viewType
+switch viewGet(vw,'View Type')
     
 case 'Inplane'
     % Pull out data for this scan

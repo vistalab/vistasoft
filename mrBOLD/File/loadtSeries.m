@@ -18,8 +18,11 @@ if strcmp(vw.viewType,'Gray'),  slice = 1; end
 if notDefined('scan'),  scan  = viewGet(vw, 'curScan'); end
 if notDefined('slice'), slice = viewGet(vw, 'curSlice'); end
 
-dirPathStr = fullfile(tSeriesDir(vw),['Scan',int2str(scan)]);
+dirPathStr = fullfile(viewGet(vw,'tSeriesDir'),['Scan',int2str(scan)]);
 fileName   = fullfile(dirPathStr,['tSeries',int2str(slice)]);
+
+%This will need to be changed to the loading of a nifti. Should tSeries
+%then be changed to be a nifti rather than just data as well?
 
 load(fileName,'tSeries');    % Load the variable tSeries
 nFrames = size(tSeries,1);   %#ok<NODEF>
@@ -31,9 +34,9 @@ nPixels = size(tSeries,2);
 % size check:
 % ras 05/13/05, made it not do this for flat tSeries, since these
 % depend on the # of nodes, not the slice dims
-%TODO: This should be getting the tSeries dimensions and not the Inplant
+%TODO: This should be getting the tSeries dimensions and not the Inplane
 % anat dimension.
-if (nPixels ~= prod(viewGet(vw, 'sliceDims', scan))) && ~(isequal(vw.viewType,'Flat'))
+if (nPixels ~= prod(viewGet(vw, 'sliceDims', scan))) && ~(isequal(viewGet(vw,'View Type'),'Flat'))
     disp('loadtSeries: unexpected number of pixels in TSeries.');
 end
 tSeries = single(tSeries);
