@@ -1,4 +1,4 @@
-function groupName = groupScans(view, scanList, groupName, notes)
+function groupName = groupScans(vw, scanList, groupName, notes)
 %
 % dataTypeName = groupScans(view, [scanList], [dataTypeName], [annotation])
 % 
@@ -20,12 +20,12 @@ function groupName = groupScans(view, scanList, groupName, notes)
 % ras 09/08: added optional annotation for the scans.
 mrGlobals;
 
-if (~exist('scanList','var') | isempty(scanList)), scanList = er_selectScans(view); end
+if (~exist('scanList','var') || isempty(scanList)), scanList = er_selectScans(vw); end
 if isempty(scanList), return; end
 % if ~strcmp(view.viewType,'Inplane'), error('Grouping is only applied in the Inplane view'); end
 if notDefined('groupName')
     % Select a name for the group
-	groupName = mrSelectName({dataTYPES.name}, view.curDataType);
+	groupName = mrSelectName({dtGet(dataTYPES, 'Name')}, viewGet(vw, 'Current Data Type');
 end
 
 % Add the name to the dataTYPES
@@ -37,7 +37,7 @@ else
     addDataType(groupName); 
 end
 
-switch lower(view.viewType),
+switch lower(viewGet(vw, 'View Type')),
   case 'inplane',
     hiddenView = initHiddenInplane;
   case 'gray',
@@ -48,7 +48,7 @@ switch lower(view.viewType),
     hiddenView = initHiddenFlat;
 end;
 
-srcDt = view.curDataType;
+srcDt = viewGet(vw, 'Current Data Type');
 tgtDt = existDataType(groupName);
 hiddenView = selectDataType(hiddenView, tgtDt);
 
@@ -56,7 +56,7 @@ hiddenView = selectDataType(hiddenView, tgtDt);
 % the 1st scan on scanList.
 newScanNum = length(scanList);
 if existDataType(groupName)
-    firstNewScan = length(dataTYPES(tgtDt).scanParams)+1;
+    firstNewScan = length(dtGet(dataTYPES(tgtDt), 'Scan Params'))+1;
 else
     firstNewScan = 1;
 end
@@ -64,17 +64,33 @@ end
 newScanRange = firstNewScan:firstNewScan+newScanNum-1;
 for ii = 1:length(newScanRange)
     tgt = newScanRange(ii);
-    initScan(view, groupName, tgt, {view.curDataType view.curScan});
+    initScan(vw, groupName, tgt, {viewGet(vw, 'Current Data Type') viewGet(vw, 'Current Scan')});
 	
-	dataTYPES(tgtDt).scanParams(tgt) = ...
-		dataTYPES(view.curDataType).scanParams(scanList(ii));
-    dataTYPES(tgtDt).blockedAnalysisParams(tgt) = dataTYPES(view.curDataType).blockedAnalysisParams(scanList(ii));
+    %dataTYPES(tgtDt).scanParams(tgt) = ...
+	%	dtGet(dataTYPES(viewGet(vw, 'Current Data Type')),'Scan Params', scanList(ii));
+
+    dataTYPES(tgtDt) = dtSet(dataTYPES(tgtDt), 'Scan Params', ...
+        dtGet(dataTYPES(viewGet(vw, 'Current Data Type')),'Scan Params', scanList(ii)),...
+        tgt);
+    
+    %dataTYPES(tgtDt).blockedAnalysisParams(tgt) = dataTYPES(vw.curDataType).blockedAnalysisParams(scanList(ii));
+    
+    dataTYPES(tgtDt) = dtSet(dataTYPES(tgtDt),'Blocked Analysis Params', ...
+        dtGet(dataTYPES(viewGet(vw, 'Current Data Type')), 'Blocked Analysis Params', scanList(ii)), ...
+        tgt);
     
 	if notDefined('notes')
-		dataTYPES(tgtDt).scanParams(tgt).annotation = ...
-			dataTYPES(srcDt).scanParams(scanList(ii)).annotation;
-	else
-		dataTYPES(tgtDt).scanParams(tgt).annotation = notes;
+        %dataTYPES(tgtDt).scanParams(tgt).annotation = ...
+ 		%   dataTYPES(srcDt).scanParams(scanList(ii)).annotation;
+        
+        dataTYPES(tgtDt) = dtSet(dataTYPES(tgtDt),'Annotation', ...
+            dtGet(dataTYPES(srcDt),'Annotation', scanList(ii)), ...
+            tgt);
+        
+    else
+		%dataTYPES(tgtDt).scanParams(tgt).annotation = notes;
+        
+        dataTYPES(tgtDt) = dtSet(dataTYPES(tgtDt),'Annotation', notes, tgt);
 	end
 end
 saveSession;
@@ -90,7 +106,7 @@ if ~exist(scandir,'dir')
 end
 
 % Double loop through slices and scans in scanList
-nSlices = length(sliceList(view,scanList(1)));
+nSlices = length(sliceList(vw,scanList(1)));
 wbar = waitbar(0,'Copying tseries...');
 nTseries = newScanNum*nSlices;
 for  iScan = 1:length(newScanRange)
@@ -98,7 +114,7 @@ for  iScan = 1:length(newScanRange)
     for iSlice = 1:nSlices
         % For each slice...
         tgt = newScanRange(iScan);
-        tSeries = loadtSeries(view, scanList(iScan), iSlice);
+        tSeries = loadtSeries(vw, scanList(iScan), iSlice);
         savetSeries(tSeries,hiddenView,tgt,iSlice);
         waitbar((nSlices*(iScan-1) + iSlice)/nTseries,wbar)
     end
@@ -107,7 +123,7 @@ close(wbar);
 
 % for event-related scans, group the scans
 try
-    er_groupScans(view, newScanRange, 2, existDataType(groupName));
+    er_groupScans(vw, newScanRange, 2, existDataType(groupName));
 catch
     % don't worry about it...
 end

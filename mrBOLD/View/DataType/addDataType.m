@@ -9,20 +9,16 @@ function newTypeNum = addDataType(dataTypeName);
 % djh, 2/21/2001, updated to mrLoadRet-3 implementation
 % rfd, 3/08/2002, added return value 'num', clean stale comments
 
-%mrGlobals
-global mrSESSION
-global dataTYPES
-global INPLANE
-global VOLUME
-global FLAT
-if isempty(mrSESSION)|isempty(dataTYPES);
+mrGlobals
+
+if isempty(mrSESSION) || isempty(dataTYPES);
     error('mrSESSION not loaded. Try loadSession');
 end
 if existDataType(dataTypeName)
     myErrorDlg(['Data type ',dataTypeName,' already exists.']);
 end
 newTypeNum = length(dataTYPES)+1;
-dataTYPES(newTypeNum).name = dataTypeName;
+dataTYPES(newTypeNum) = dtSet(dataTYPES(newTypeNum), 'name', dataTypeName);
 saveSession;
 
 % Loop through the open views, reselecting their curDataType to update the popups 

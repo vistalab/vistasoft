@@ -31,7 +31,7 @@ if notDefined('annotation'),
 end
  
 if notDefined('scanList') || isequal(scanList, 'dialog')
-	[scanList typeName annotation] = averageTSeriesGUI(vw, scanList, typeName, annotation); 
+	[scanList, typeName, annotation] = averageTSeriesGUI(vw, scanList, typeName, annotation); 
 end
   
 % create the new data type if it doesn't already exist
@@ -40,7 +40,7 @@ end
 checkScans(vw, scanList);
 
 % Open a hidden vw and set its dataType to 'Averages'
-switch vw.viewType
+switch viewGet(vw, 'View Type')
     case 'Inplane'
         hiddenView = initHiddenInplane;
     case 'Volume'
@@ -55,8 +55,10 @@ end
 % Set dataTYPES.scanParams so that new average scan has the same params as
 % the 1st scan on scanList.
 src = {vw.curDataType scanList(1)};
-[hiddenView newScanNum ndataType] = initScan(hiddenView, typeName, [], src);
-dataTYPES(ndataType).scanParams(newScanNum).annotation = annotation;
+[hiddenView, newScanNum, ndataType] = initScan(hiddenView, typeName, [], src);
+%dataTYPES(ndataType).scanParams(newScanNum).annotation = annotation;
+dataTYPES(ndataType) = dtSet(dataTYPES(ndataType), 'Annotation', annotation, ...
+    newScanNum);
 hiddenView = selectDataType(hiddenView, typeName);
 
 saveSession
@@ -144,8 +146,8 @@ return;
 
 
 % /-----------------------------------------------------------/ %
-function [scans typeName str] = averageTSeriesGUI(vw, scans, typeName, str)
-%% Dialog to get the scan selection and type name for averageTSeries
+function [scans, typeName, str] = averageTSeriesGUI(vw, scans, typeName, str)
+% Dialog to get the scan selection and type name for averageTSeries
 for ii = 1:viewGet(vw, 'numScans')
 	scanList{ii} = sprintf('(%i) %s', ii, annotation(vw, ii));
 end
@@ -168,7 +170,7 @@ dlg(end).value = str;
 
 resp = generalDialog(dlg, 'Average Time Series');
 
-[ignore, scans] = intersect(scanList, resp.scans);
+[~, scans] = intersect(scanList, resp.scans);
 typeName = resp.typeName;
 str = resp.annotation;
 

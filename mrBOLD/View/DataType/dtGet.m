@@ -26,7 +26,9 @@ if notDefined('dt'),    error('dataTYPES parameter required'); end
 if notDefined('param'), error('param required'); end
 val = [];       % Default
 
-switch lower(param)
+param = mrvParamFormat(param);
+
+switch param
     case 'name'
         val = dt.name;
     case 'annotation'
@@ -63,16 +65,14 @@ switch lower(param)
     case {'blockedanalysisparams','blockparams','bparams','bparms'}
         % dtGet(dt,'blockParams',scan)
         if isempty(varargin), val = dt.blockedAnalysisParams;
-        else
-            val = dt.blockedAnalysisParams(varargin{1});
+        else val = dt.blockedAnalysisParams(varargin{1});
         end
     case {'eventanalysisparams','eventparams','eparams','eparms'}
         % dtGet(dt,'eventParams',scan)
         if isempty(varargin), val = dt.eventAnalysisParams;
         else val = dt.eventAnalysisParams(varargin{1});
         end
-
-
+        
         % Which analysis type for a specific scan
     case {'analysistype','atype','eventorblock'}
         % dtGet(dt,'aType',scan)

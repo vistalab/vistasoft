@@ -23,13 +23,17 @@ if notDefined('param'), error('param required'); end
 % This can be empty, but it must be there
 if ~exist('val','var'), error('val required'); end
 
-switch lower(param)
+param = mrvParamFormat(param);
+
+switch param
     case 'name'
         dt.name = val;
 
         % Scan params
     case 'scanparams'
-        dt.scanParams = val;
+        if isempty(varargin), dt.scanParams = val;
+        else dt.scanParams(varargin{1}) = val;
+        end 
     case 'annotation'
         % dt = dtSet(dt,'annotation',description,scan)
         if isempty(varargin), dt.scanParams(:).annotation = val;
@@ -42,13 +46,19 @@ switch lower(param)
         end
 
     case {'blockedanalysisparams','blockparams','bparams'}
-        dt.blockedAnalysisParams = val;
+        %dt.blockedAnalysisParams = val;
+        if isempty(varargin), dt.blockedAnalysisParams = val;
+        else dt.blockedAnalysisParams(varargin{1}) = val;
+        end 
         
     case {'eventanalysisparams','eventparams','eparams'}
-        dt.eventAnalysisParams = val;
-
+        %dt.eventAnalysisParams = val;
+        if isempty(varargin), dt.eventAnalysisParams = val;
+        else dt.eventAnalysisParams(varargin{1}) = val;
+        end 
+        
         % Retinotopy model parameter
-    case {'rmstimparams','retinomodelparams','retinotopymodelstimulusparams','rmparams','retinomodelparams','retinotopymodelparams'}
+    case {'rmstimparams','retinomodelparams','retinotopymodelstimulusparams','rmparams','retinotopymodelparams'}
         % dtSet(dt,'rmStimParams',v,scan);
         % Unfortunately, this slot is only the stim params, although it is
         % named as the full rm params. We can rename the slot after the

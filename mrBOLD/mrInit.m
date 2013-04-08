@@ -166,109 +166,60 @@ save mrInit_params params   % stash the params in case we crash'
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% (2) figure out if we have a reasonable crop %
+% (2) Load functional data, if it exists      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% load the inplanes and the first functional scan
-% (we use mrParse becasue other steps, like the crop interface, 
-% may have already loaded one or both -- this way, we don't load twice)
-inplane = mrParse(params.inplane); 
 
-%TODO: Add error checking here in case functional data not supplied.
-func = mrLoadHeader(params.functionals{1});
-
-% test that inplanes, functionals cover the same physical extent
-% (due to some roundoff error, allow for a small fudge factor)
-diff =  abs( inplane.extent(1:3) - func.extent(1:3) );
-% if max(diff) > 1
-%     % in this case, we might offer to do the 'scale FOV' thing that
-%     % Junjie/Ress have used. But this would come later.
-% 	fprintf('INPLANE: Voxel Size %s, Dimensions: %s, Extent %s \n', ...
-% 		    num2str(inplane.voxelSize), num2str(inplane.dims), ...
-% 			num2str(inplane.extent));
-% 	fprintf('FUNCTIONALS: Voxel Size %s, Dimensions: %s, Extent %s \n', ...
-% 		    num2str(func.voxelSize), num2str(func.dims), ...
-% 			num2str(func.extent));
-% 		
-%     error(['The Functionals don''t seem to cover the same physical ' ...
-%            'extent as the Inplanes. This may be a header issue, or ' ...
-%            'they may not be corresponding data. ']);
-% end
-
-% get scale factor b/w inplane and time series
-scaleFactor = round( func.voxelSize(1:3) ./ inplane.voxelSize(1:3) );
-
-if ~isempty(params.crop)
-    x1 = params.crop(1,1); x2 = params.crop(2,1);
-    y1 = params.crop(1,2); y2 = params.crop(2,2);
+if isfield(params,'functionals') && ~isempty(params.functionals)
+    func = mrLoadHeader(params.functionals{1});
     
-    % the way we know the crops won't partial volume the functionals is if
-    % the value of each corner, mod the scale factor, is non-zero. So,
-    % subtract this remainder out:
-    x1 = x1 - mod(x1, scaleFactor(2));
-    x2 = x2 - mod(x2, scaleFactor(2));
-    y1 = y1 - mod(y1, scaleFactor(1));
-    y2 = y2 - mod(y2, scaleFactor(1));
-    
-    params.crop = [x1 y1; x2 y2];
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% (3) crop and save inplane anatomy        %
-% This has been removed as of 2013-03-01   %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%if ~isempty(params.crop)
-%	inplane = mrCrop(inplane, params.crop);
-%end
-%mrSave(inplane, params.sessionDir, '1.0anat');
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% (4) read, crop, and save functional time series %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for scan = 1:length(params.functionals)
-	
-	funcPath = mrGet(params.functionals{scan}, 'filename');
-	
-    %We will need to replace this code with something that adds the paths to
-    %the session variable and then performs these data processes on-the-fly
-    %when functional data is called
-    
-    %Read in the nifti to the tS struct, then apply the same transform as
-    %the inplane data. Then, transfer the necessary components to the
-    %local func struct.
-    tS = niftiRead(funcPath);
-    tS = niftiApplyAndCreateXform(tS,'Inplane');
-    %Need to move over:
-    %Data
-    func.data = niftiGet(tS,'Data');
-    %Dims
-    func.dims = niftiGet(tS, 'Dim');
-    %PixDims
-    func.pixdims = niftiGet(tS, 'Pix Dim');
+    for scan = 1:length(params.functionals)
         
-    % select keepFrames if they're provided
-    if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
-        nSkip = params.keepFrames(scan,1);
-        nKeep = params.keepFrames(scan,2);
-        if nKeep==-1
-            % flag to keep all remaining frames
-            nKeep = size(func.data, 4) - nSkip;
+        funcPath = mrGet(params.functionals{scan}, 'filename');
+        
+        %We will need to replace this code with something that adds the paths to
+        %the session variable and then performs these data processes on-the-fly
+        %when functional data is called
+        
+        %Read in the nifti to the tS struct, then apply the same transform as
+        %the inplane data. Then, transfer the necessary components to the
+        %local func struct.
+        tS = niftiRead(funcPath);
+        tS = niftiApplyAndCreateXform(tS,'Inplane');
+        %Need to move over:
+        %Data
+        func.data = niftiGet(tS,'Data');
+        %Dims
+        func.dims = niftiGet(tS, 'Dim');
+        %PixDims
+        func.pixdims = niftiGet(tS, 'Pix Dim');
+        
+        % select keepFrames if they're provided
+        if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
+            nSkip = params.keepFrames(scan,1);
+            nKeep = params.keepFrames(scan,2);
+            if nKeep==-1
+                % flag to keep all remaining frames
+                nKeep = size(func.data, 4) - nSkip;
+            end
+            keep = [1:nKeep] + nSkip;
+            func.data = func.data(:,:,:,keep);
+            func.dims(4) = size(func.data, 4);
         end
-        keep = [1:nKeep] + nSkip;
-        func.data = func.data(:,:,:,keep);
-        func.dims(4) = size(func.data, 4);
+        
+        % assign annotation if it's provided
+        if length(params.annotations) >= scan && ...
+                ~isempty(params.annotations{scan})
+            func.name = params.annotations{scan};
+        end
+        
+        mrSave(func, params.sessionDir, '1.0tSeries');
+        
+        %end
+        
     end
-    
-    % assign annotation if it's provided
-    if length(params.annotations) >= scan && ...
-            ~isempty(params.annotations{scan})
-        func.name = params.annotations{scan};
-    end
-    
-    mrSave(func, params.sessionDir, '1.0tSeries');
-    
-    %end
     
 end
+
 
 fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
 		mfilename, datestr(now));
