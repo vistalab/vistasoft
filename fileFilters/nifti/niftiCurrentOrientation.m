@@ -39,15 +39,15 @@ volRas = volRas(1:3,:)';
 % are left, posterior and inferior. The code below finds the correct 
 % rotation by measuring the distance from each of the 8 corners to a 
 % point in space that is very far to the left, superior and anterior 
-% (-1000,1000,1000). Then, we find which of the 8 corners is closest to
-% that point. 
-d = sqrt((-1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+% (-10000,10000,10000). Then, we find which of the 8 corners is closest to
+% that point.  
+d = sqrt((-10000-volRas(:,1)).^2 + (10000-volRas(:,2)).^2 + (10000-volRas(:,3)).^2);
 las = find(min(d)==d); las = las(1);
-d = sqrt((1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+d = sqrt((10000-volRas(:,1)).^2 + (10000-volRas(:,2)).^2 + (10000-volRas(:,3)).^2);
 ras = find(min(d)==d); ras = ras(1);
-d = sqrt((-1000-volRas(:,1)).^2 + (-1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+d = sqrt((-10000-volRas(:,1)).^2 + (-10000-volRas(:,2)).^2 + (10000-volRas(:,3)).^2);
 lps = find(min(d)==d); lps = lps(1);
-d = sqrt((-1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (-1000-volRas(:,3)).^2);
+d = sqrt((-10000-volRas(:,1)).^2 + (10000-volRas(:,2)).^2 + (-10000-volRas(:,3)).^2);
 lai = find(min(d)==d); lai = lai(1);
 
 % The same volRas image corners represented with 0,1:
