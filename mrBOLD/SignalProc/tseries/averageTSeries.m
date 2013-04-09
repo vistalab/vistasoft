@@ -48,7 +48,7 @@ switch viewGet(vw, 'View Type')
     case 'Gray'
         hiddenView = initHiddenGray;
     case 'Flat'
-        hiddenView = initHiddenFlat(viewDir(vw));
+        hiddenView = initHiddenFlat(viewGet(vw,'View Directory'));
 end
 
 

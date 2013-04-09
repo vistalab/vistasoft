@@ -28,9 +28,8 @@ param = mrvParamFormat(param);
 switch param
     case 'name'
         dt.name = val;
-
-        % Scan params
     case 'scanparams'
+        % Scan params
         if isempty(varargin), dt.scanParams = val;
         else dt.scanParams(varargin{1}) = val;
         end 

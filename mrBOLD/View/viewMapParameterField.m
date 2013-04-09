@@ -34,6 +34,8 @@ switch fieldName
         res = 'subject';
     case {'subdir' 'subdirectory'}
         res = 'subdir';
+    case {'viewdir' 'viewdirectory'}
+        res = 'viewdir';
     case {'annotation' 'scandescription'}
         res = 'annotation';
     case {'annotations' 'allscandescriptions'}

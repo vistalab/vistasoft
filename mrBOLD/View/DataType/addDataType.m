@@ -18,6 +18,7 @@ if existDataType(dataTypeName)
     myErrorDlg(['Data type ',dataTypeName,' already exists.']);
 end
 newTypeNum = length(dataTYPES)+1;
+dataTYPES(newTypeNum) = struct;
 dataTYPES(newTypeNum) = dtSet(dataTYPES(newTypeNum), 'name', dataTypeName);
 saveSession;
 

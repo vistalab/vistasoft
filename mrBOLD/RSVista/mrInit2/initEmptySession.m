@@ -20,8 +20,6 @@ mrSESSION.functionals = [];
 mrSESSION.coil = '';
 mrSESSION.operator = '';
 mrSESSION.inplanes.inplanePath = '';
-%mrSESSION.functionals.functionalsPath = []; %TODO: Think about how to
-%store multiple paths
 
 dataTYPES.name = 'Original';
 

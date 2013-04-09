@@ -31,9 +31,9 @@ end
 
 % make sure we have the data type name and #
 if ischar(dt), dt = existDataType(dt); end
-dtName = dataTYPES(dt).name;
+dtName = dtGet(dataTYPES(dt), 'Name');
 
-allParams = dataTYPES(dt).eventAnalysisParams;
+allParams = dtGet(dataTYPES(dt), 'Event Analysis Params');
 
 fnames = fieldnames(params);
 

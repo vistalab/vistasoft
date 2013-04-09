@@ -91,20 +91,19 @@ if (dtNum==0) || (dtNum > length(dataTYPES))
     fprintf('Made directory %s\n', fullfile(viewDir(vw), dataType));
     
     %dataTYPES(end+1).name = dataType;
-    dataTYPES(end+1) = dtSet(dataTYPES(end+1), 'Name', dataType);
+    %dataTYPES(end+1) = dtSet(dataTYPES(end+1), 'Name', dataType);
 
-    dtNum = length(dataTYPES);
+    %dtNum = length(dataTYPES);
     
-    % also update data type popups: do this for mrVista 1 and 2 GUIs
-    mrGlobals;
+    %Create the datatype here
+	dtNum = addDataType(dataType);
+    
+    % also update data type popups: do this for mrVista GUIs
     INPLANE = resetDataTypes(INPLANE, dtNum);
     VOLUME  = resetDataTypes(VOLUME, dtNum);
     FLAT    = resetDataTypes(FLAT, dtNum);
     
-	% select the new data type and scan
-	vw = viewSet(vw, 'curDataType', dtNum);
-
-    if ~isempty(GUI)    % a mrVista 2 session GUI is open
+    if ~isempty(GUI)    % mrVista session GUI is open
         sessionGUI_selectDataType;
     end        
 end
@@ -157,6 +156,10 @@ srcRMParams = dtGet(srcDt, 'Retinotopy Model Params', srcScan);
 
 %%%%%copy over params:
 % Copy one field at a time, so we don't get type-mismatch errors.    
+
+%TODO: Change the below to using dtSet and dtGet. Most likely, no longer
+%need to copy over one parameter at a time, but can copy over an entire
+%struct.
 
 % scan params
 for f = fieldnames(srcScanParams)'

@@ -224,46 +224,15 @@ end
 fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
 		mfilename, datestr(now));
 
-%% compress raw files if selected
-if checkfields(params, 'compressRawFiles') && params.compressRawFiles==1
-	if ~isunix
-		fprintf(['[%s]: Sorry, can only compress raw files ' ...
-				 'in a unix-like environment.\n'], mfilename);
-	else
-		fprintf('[%s]: Attempting to compress raw files...\n', mfilename);
-		try
-			for i = 1:length(params.functionals)
-				cmd = ['gzip -v ' params.functionals{i}];
-				[status, result] = unix(cmd);
-				if status==0
-					% successful
-					fprintf('%s\n', result)
-				end
-			end
-		catch
-			fprintf('[%s]: Failed to compress raw files.\n', mfilename);
-			fprintf('Error = %s\n', lasterr);
-		end
-	end
-end
-		
-
 %%%%%%%%%%%%%%%%%%%%%%%
 % (5)  pre-processing %
 %%%%%%%%%%%%%%%%%%%%%%%
-%% update dataTYPES as needed.
+% update dataTYPES as needed.
 
-% 2011.05.05 RFD: We always need the INPLANE view to initalize dataTYPES.
-%% initialize an inplane view of the data if we need it
-% if (params.sliceTimingCorrection==1) | (params.motionComp > 0) | ...
-% 		(params.applyGlm==1) | (any(params.applyCorAnal > 0)) | ...
-% 		(~isempty(params.scanGroups)) | (~isempty(params.glmParams)) | ...
-% 		(~isempty(params.parfile)) | (~isempty(params.coParams))
-%     INPLANE{1} = initHiddenInplane; % we'll need this
-% end
+
 INPLANE{1} = initHiddenInplane;
 
-%% assign coherence analysis parameters
+% assign coherence analysis parameters
 for s = cellfind(params.coParams)
 	coParams = params.coParams{s};
 	for f = fieldnames(coParams)'
@@ -271,19 +240,19 @@ for s = cellfind(params.coParams)
 	end	
 end
 
-%% assign GLM analysis parameters
+% assign GLM analysis parameters
 for scan = cellfind(params.glmParams)
 	er_setParams(INPLANE{1}, params.glmParams{scan}, scan);
 end
 
 
-%% slice timing correction
+% slice timing correction
 if params.sliceTimingCorrection==1
     INPLANE{1} = AdjustSliceTiming(INPLANE{1}, 0);
 	INPLANE{1} = selectDataType(INPLANE{1}, 'Timed');
 end
 
-%% motion compensation
+% motion compensation
 if params.motionComp > 1
     switch params.motionComp
         case 1, % between scans only
@@ -311,7 +280,7 @@ if params.motionComp > 1
     end
 end
     
-%% group scans, assign parfiles, apply GLM
+% group scans, assign parfiles, apply GLM
 for scan = cellfind(params.parfile)
 	er_assignParfilesToScans(INPLANE{1}, scan, params.parfile(scan));
 end
@@ -327,12 +296,12 @@ if ~isempty(params.scanGroups)
 	end	
 end
 
-%% apply coherence analysis
+% apply coherence analysis
 if any(params.applyCorAnal > 0)
 	INPLANE{1} = computeCorAnal(INPLANE{1}, params.applyCorAnal, 1);
 end
 
-%%%%% we're done! hooray!
+% All tasks are now complete
 saveSession;	
 fprintf('***** [%s] Finished Initializing Session %s (%s)*****\n', ...
 		mfilename, mrSESSION.sessionCode, datestr(now));
