@@ -32,7 +32,7 @@ imgCorners = [1 1 1 1; imDim(1) 1 1 1; 1 imDim(2) 1 1; imDim(1) imDim(2) 1 1; ..
 volRas = xform*imgCorners';
 volRas = volRas(1:3,:)';
 
-extPtValue = 100 * max(volRas(1:3,1:3));
+extPtValue = 100 * max(max(abs(volRas)));
 extPtPos = extPtValue;
 extPtNeg = -1 * extPtValue;
 
