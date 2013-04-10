@@ -63,7 +63,7 @@ switch format
         %% save as a matlab file, saving each field
         % of the mr struct as a separate variable
         % (for easy loading later)
-        [p f ext] = fileparts(pth); %#ok<ASGLU>
+        [p, f, ext] = fileparts(pth); %#ok<ASGLU>
         if ~isequal(lower(ext), '.mat')
             pth = [pth '.mat'];
         end

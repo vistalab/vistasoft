@@ -33,9 +33,6 @@ end
 if notDefined('scanList') || isequal(scanList, 'dialog')
 	[scanList, typeName, annotation] = averageTSeriesGUI(vw, scanList, typeName, annotation); 
 end
-  
-% create the new data type if it doesn't already exist
-%if ~existDataType(typeName),      addDataType(typeName);         end
 
 checkScans(vw, scanList);
 

@@ -14,12 +14,19 @@ function tSeries = loadtSeries(vw,scan,slice)
 
 % Gray tSeries are stored differently, one per scan
 % This is a bit ugly, but the only way to do it (for now). DJH
-if strcmp(vw.viewType,'Gray'),  slice = 1; end
+if strcmp(viewGet(vw,'View Type'),'Gray'),  slice = 1; end
 if notDefined('scan'),  scan  = viewGet(vw, 'curScan'); end
 if notDefined('slice'), slice = viewGet(vw, 'curSlice'); end
 
+%Now loaded since we need dataTYPES for the file information
+mrGlobals;
+
 dirPathStr = fullfile(viewGet(vw,'tSeriesDir'),['Scan',int2str(scan)]);
-fileName   = fullfile(dirPathStr,['tSeries',int2str(slice)]);
+%fileName   = fullfile(dirPathStr,['tSeries',int2str(slice)]);
+
+dtNum = viewGet(vw,'Current Data Type');
+
+fileName = dtGet(dataTYPES(dtNum),'Inplane Path', scan);
 
 %This will need to be changed to the loading of a nifti. Should tSeries
 %then be changed to be a nifti rather than just data as well?
