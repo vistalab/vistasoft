@@ -32,17 +32,67 @@ switch param
     case 'name'
         val = dt.name;
     case 'annotation'
-        % dtGet(dt,'annotation',scan)
-        if isempty(varargin), val = dt.scanParams;
-        else val = dt.scanParams(varargin{1}).annotation;
+        if checkfields(dt,'scanParams','annotation')
+            if isempty(varargin), val = dt.scanParams(:).annotation;
+            else val = dt.scanParams(varargin{1}).annotation;
+            end
+        end
+    case 'cropsize'
+        if checkfields(dt,'scanParams','cropSize')
+            if isempty(varargin), val = dt.scanParams(:).cropSize;
+            else val = dt.scanParams(varargin{1}).cropSize;
+            end
+        end
+    case 'frameperiod'
+        if checkfields(dt,'scanParams','framePeriod')
+            if isempty(varargin), val = dt.scanParams(:).framePeriod;
+            else val = dt.scanParams(varargin{1}).framePeriod;
+            end
+        end
+    case 'inplanepath'
+        if checkfields(dt,'scanParams','inplanePath')
+            if isempty(varargin), val = dt.scanParams(:).inplanePath;
+            else val = dt.scanParams(varargin{1}).inplanePath;
+            end
+        elseif checkfields(dt,'scanParams','PfileName')
+            if isempty(varargin), val = dt.scanParams(:).PfileName;
+            else val = dt.scanParams(varargin{1}).PfileName;
+            end
+        end
+    case {'nframes'}
+        % dtGet(dt,'nframes',scan)
+        % dtGet(dt,'nframes',scan,vw)
+        if checkfields(dt,'scanParams','nFrames')
+            if isempty(varargin), val = dt.scanParams(:).nFrames;
+            else val = dt.scanParams(varargin{1}).nFrames;
+            end
+        end
+    case 'parfile'
+        if checkfields(dt,'scanParams','parfile') 
+            if isempty(varargin), val = dt.scanParams(:).parfile;
+            else val = dt.scanParams(varargin{1}).parfile;
+            end
+        end
+    case 'pfilename'
+        if checkfields(dt,'scanParams','PfileName') 
+            if isempty(varargin), val = dt.scanParams(:).PfileName;
+            else val = dt.scanParams(varargin{1}).PfileName;
+            end
         end
     case 'scanparams'
         % dtGet(dt,'scanParams',scan)
-        if isempty(varargin), val = dt.scanParams;
-        else val = dt.scanParams(varargin{1});
+        if checkfields(dt,'scanParams')
+            if isempty(varargin), val = dt.scanParams;
+            else val = dt.scanParams(varargin{1});
+            end
+        end
+    case 'slices'
+        if checkfields(dt,'scanParams','slices')
+            if isempty(varargin), val = dt.scanParams(:).slices;
+            else val = dt.scanParams(varargin{1}).slices;
+            end
         end
     case {'rmparams','retinomodelparams','retinotopymodelparams'}
-        % dtGet(dt,'scanParams',scan)
         if checkfields(dt,'retinotopyModelParams')
             if isempty(varargin), val = dt.retinotopyModelParams;
             else val = dt.retinotopyModelParams(varargin{1});
@@ -101,12 +151,6 @@ switch param
             val = 'block';
             warning('Neither blocked nor event analysis set! Re-run mrInitRet');
         end
-        
-    case {'nframes'}
-        % dtGet(dt,'nframes',scan)
-        % dtGet(dt,'nframes',scan,vw)
-        if isempty(varargin), error('Scan field required'); end
-        val = dt.scanParams(varargin{1}).nFrames;
     case {'smoothframes'}
         % dtGet(dt,'smoothFrames',scan)
         % dtGet(dt,'smoothFrames',scan,vw)  % For block analysis

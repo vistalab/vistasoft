@@ -117,7 +117,7 @@ function ok = mrInit(varargin)
 % that sets all params. 
 
 ok = 0;
-mrGlobals; %This has replaced mrGlobals2
+mrGlobals;
 
 %%%%% (0) ensure all input parameters are specified
 if nargin==0		
@@ -156,13 +156,11 @@ mrSESSION = sessionSet(mrSESSION,'description', params.description);
 mrSESSION = sessionSet(mrSESSION,'sessionCode',params.sessionCode);
 mrSESSION = sessionSet(mrSESSION,'subject',params.subject);
 mrSESSION = sessionSet(mrSESSION,'comments',params.comments);
-
-%New parameter creation
 mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane); %Populates the mrSESSION inplane path var
 
 
 save mrSESSION mrSESSION -append; 
-save mrInit_params params   % stash the params in case we crash'
+save mrInit_params params   % stash the params in case we crash
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,9 +210,9 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
             func.name = params.annotations{scan};
         end
         
+        %This call updates dataTYPES as well
         mrSave(func, params.sessionDir, '1.0tSeries');
-        
-        %end
+
         
     end
     
@@ -313,19 +311,3 @@ cd(callingDir);
 return
 % /---------------------------------------------------------------------/ %
 
-
-
-
-% /-----------------------------------------------------------------/ %
-function params = scanParamsDefaults(mrSESSION, scan, annotation);
-% Default scan parameters for a new scan.
-params.annotation = annotation;
-params.nFrames = mrSESSION.functionals(scan).nFrames;
-params.framePeriod = mrSESSION.functionals(scan).framePeriod;
-params.slices = mrSESSION.functionals(scan).slices;
-params.cropSize = mrSESSION.functionals(scan).cropSize;
-params.PfileName = mrSESSION.functionals(scan).PfileName;
-params.parfile = '';
-params.scanGroup = sprintf('Original: %i',scan);
-return
-        

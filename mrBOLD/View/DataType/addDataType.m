@@ -18,7 +18,10 @@ if existDataType(dataTypeName)
     myErrorDlg(['Data type ',dataTypeName,' already exists.']);
 end
 newTypeNum = length(dataTYPES)+1;
-dataTYPES(newTypeNum) = struct;
+dataTYPES(newTypeNum).name = ''; %Must initialize some value.
+%dataTYPES(newTypeNum) = struct('name',''); %TODO: Figure out a more robust
+%way to add another struct to the struct array, I don't like just setting
+%the name to something.
 dataTYPES(newTypeNum) = dtSet(dataTYPES(newTypeNum), 'name', dataTypeName);
 saveSession;
 

@@ -179,7 +179,7 @@ for f = fieldnames(srcEventParams)'
 end
 
 % retinotopy model params (if any are specified)
-if exist('srcRMParams', 'var')
+if exist('srcRMParams', 'var') && isstruct(srcRMParams)
 	for f = fieldnames(srcRMParams)'
 		dataTYPES(dtNum).retinotopyModelParams(scanNum).(f{1}) = ...
 			srcRMParams.(f{1});

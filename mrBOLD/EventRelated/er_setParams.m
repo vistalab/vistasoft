@@ -21,7 +21,7 @@ function er_setParams(view,params,scans,dt)
 global dataTYPES;
 
 if notDefined('scans') || notDefined('dt')
-    [scans dt] = er_getScanGroup(view);
+    [scans, dt] = er_getScanGroup(view);
 end
 if notDefined('params')
     % When params is empty, we need to do something ... maybe just return?

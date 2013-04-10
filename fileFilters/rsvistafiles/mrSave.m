@@ -27,6 +27,9 @@ function mrSave(mr, pth, format, varargin)
 % jw,  07/2011: allow ('scan', scannum) as inputs in varargin
 %
 
+mrGlobals; %Called to specify that the dataTYPES and other variables that
+    % are loaded here are the same as the global variables
+
 if notDefined('mr'), mr = mrLoad;                               end
 if notDefined('pth'), pth = mrSelectDataFile('stayput','w');    end
 if ~isempty(varargin) && strcmpi(varargin{1}, 'scan'),
@@ -36,7 +39,7 @@ else
 end
 
 if notDefined('format'),
-    [p f ext] = fileparts(pth); %#ok<ASGLU>
+    [p, f, ext] = fileparts(pth); %#ok<ASGLU>
     if ismember(lower(ext), {'.nii' '.gz' '.img'})
         format = 'nifti';
     else
@@ -126,6 +129,9 @@ params.framePeriod = mrSESSION.functionals(scan).framePeriod;
 params.slices = mrSESSION.functionals(scan).slices;
 params.cropSize = mrSESSION.functionals(scan).cropSize;
 params.PfileName = mrSESSION.functionals(scan).PfileName;
+%Added the inplanePath string to ensure that we maintain that data,
+%regardless of what happens to PfileName
+params.inplanePath = mrSESSION.functionals(scan).PfileName; 
 params.parfile = '';
 params.scanGroup = sprintf('Original: %i',scan);
 return
@@ -211,6 +217,7 @@ mrSessPath = fullfile(pth, 'mrSESSION.mat');
 if ~exist(mrSessPath, 'file')
 	initEmptySession;    
 end
+%TODO: Think about removing this since we are already calling mrGlobals above
 load(mrSessPath, 'mrSESSION', 'dataTYPES');
 
 % set header info in mrSESSION.functionals, dataTYPES.scanParmas
@@ -252,14 +259,6 @@ if scan==1
 else
 	mrSESSION.functionals(scan) = mergeStructures(mrSESSION.functionals(scan-1), f);
 end
-
-% % data TYPES
-% dataTYPES(1).scanParams(scan) = mergeStructures(dataTYPES(1).scanParams(scan-1),  ...
-% 									scanParamsDefaults(mrSESSION, scan, mr.name));
-% dataTYPES(1).eventAnalysisParams(scan) = ...
-% 	mergeStructures(dataTYPES(1).eventAnalysisParams(scan-1), er_defaultParams);
-% dataTYPES(1).blockedAnalysisParams(scan) = ...
-% 	mergeStructures(dataTYPES(1).blockedAnalysisParams(scan-1), blockedAnalysisDefaults);
 
 %%%%%copy over params:
 % Copy one field at a time, so we don't get type-mismatch errors.    
