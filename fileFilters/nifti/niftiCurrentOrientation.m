@@ -19,8 +19,9 @@ function [vectorString, orientationMatrix] = niftiCurrentOrientation(nii)
 % VistaLab 2013-02-05
 
 %Extract information on the current transform and dimension size
-xform = nii.qto_xyz;
-imDim = nii.dim(1:3);
+xform = niftiGet(nii, 'Qto_xyz');
+imDim = niftiGet(nii, 'Dim');
+imDim = imDim(1:3);
 
 %The following code was taken from mrAnatComputeCannonicalXformFromDicomXform
 
@@ -31,6 +32,10 @@ imgCorners = [1 1 1 1; imDim(1) 1 1 1; 1 imDim(2) 1 1; imDim(1) imDim(2) 1 1; ..
 volRas = xform*imgCorners';
 volRas = volRas(1:3,:)';
 
+extPtValue = 100 * max(max(abs(volRas)));
+extPtPos = extPtValue;
+extPtNeg = -1 * extPtValue;
+
 % Now we need to find the correct rotation & slice reordering to bring 
 % volXyz into our standard space. We do this by finding the most right, 
 % most anterior, and most superior point (ras), the most left, most 
@@ -38,16 +43,19 @@ volRas = volRas(1:3,:)';
 % orientation. Note that the NIFTI convention is that negative values 
 % are left, posterior and inferior. The code below finds the correct 
 % rotation by measuring the distance from each of the 8 corners to a 
-% point in space that is very far to the left, superior and anterior 
-% (-1000,1000,1000). Then, we find which of the 8 corners is closest to
+% point in space that is very far to the left, superior and anterior. 
+% Originally, this was (-1000,1000,1000), however, to make this no longer 
+% arbitrary, this was changed to be 2 orders of magnitude larger than the
+% largest value in VolRas. 
+% Then, we find which of the 8 corners is closest to
 % that point. 
-d = sqrt((-1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+d = sqrt((extPtNeg-volRas(:,1)).^2 + (extPtPos-volRas(:,2)).^2 + (extPtPos-volRas(:,3)).^2);
 las = find(min(d)==d); las = las(1);
-d = sqrt((1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+d = sqrt((extPtPos-volRas(:,1)).^2 + (extPtPos-volRas(:,2)).^2 + (extPtPos-volRas(:,3)).^2);
 ras = find(min(d)==d); ras = ras(1);
-d = sqrt((-1000-volRas(:,1)).^2 + (-1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+d = sqrt((extPtNeg-volRas(:,1)).^2 + (extPtNeg-volRas(:,2)).^2 + (extPtPos-volRas(:,3)).^2);
 lps = find(min(d)==d); lps = lps(1);
-d = sqrt((-1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (-1000-volRas(:,3)).^2);
+d = sqrt((extPtNeg-volRas(:,1)).^2 + (extPtPos-volRas(:,2)).^2 + (extPtNeg-volRas(:,3)).^2);
 lai = find(min(d)==d); lai = lai(1);
 
 % The same volRas image corners represented with 0,1:
