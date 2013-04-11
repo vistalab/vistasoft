@@ -21,11 +21,16 @@ if notDefined('slice'), slice = viewGet(vw, 'curSlice'); end
 %Now loaded since we need dataTYPES for the file information
 mrGlobals;
 
+%We also need to decide which way to load the tSeries based on which view
+%type we are in. If inplane, then we will need to load a nifti tseries. If
+%gray, then we will need to load a matrix tseries file.
+
 dirPathStr = fullfile(viewGet(vw,'tSeriesDir'),['Scan',int2str(scan)]);
 %fileName   = fullfile(dirPathStr,['tSeries',int2str(slice)]);
 
 dtNum = viewGet(vw,'Current Data Type');
-
+%TODO: split this out to choose whether we are an inplane view or a gray
+%view and then act on that
 fileName = dtGet(dataTYPES(dtNum),'Inplane Path', scan);
 
 %This will need to be changed to the loading of a nifti. Should tSeries
