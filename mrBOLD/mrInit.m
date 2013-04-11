@@ -193,6 +193,8 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         
         % select keepFrames if they're provided
         if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
+            %Put keepFrames into func so that we can save it into mrSESSION
+            func.keepFrames = params.keepFrames;
             nSkip = params.keepFrames(scan,1);
             nKeep = params.keepFrames(scan,2);
             if nKeep==-1

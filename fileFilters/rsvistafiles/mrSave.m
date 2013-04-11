@@ -218,7 +218,7 @@ if ~exist(mrSessPath, 'file')
 	initEmptySession;    
 end
 %TODO: Think about removing this since we are already calling mrGlobals above
-load(mrSessPath, 'mrSESSION', 'dataTYPES');
+%load(mrSessPath, 'mrSESSION', 'dataTYPES');
 
 % set header info in mrSESSION.functionals, dataTYPES.scanParmas
 if notDefined('scan'), scan = length(mrSESSION.functionals) + 1; end %#ok<NODEF>
@@ -248,6 +248,7 @@ f.cropSize = mr.dims(1:2);
 f.crop = [1 1; mr.dims(1:2)];
 f.voxelSize = mr.voxelSize(1:3);
 f.effectiveResolution = mr.voxelSize(1:3);
+f.keepFrames = mr.keepFrames; %Keep Frames will now be udpated in both mrSESSION and dataTYPES
 if checkfields(mr, 'info', 'effectiveResolution')
 	f.effectiveResolution = mr.info.effectiveResolution;
 end
@@ -255,9 +256,11 @@ f.framePeriod = mr.voxelSize(4);
 f.reconParams = mr.hdr;
 
 if scan==1
-	mrSESSION.functionals = f;
+    mrSESSION = sessionSet(mrSESSION, 'Functionals', f);
+	%mrSESSION.functionals = f;
 else
-	mrSESSION.functionals(scan) = mergeStructures(mrSESSION.functionals(scan-1), f);
+    mrSESSION = sessionSet(mrSESSION, 'Functionals', ...
+        mergeStructures(sessionGet(mrSESSION, 'Functionals', scan-1), f), scan);
 end
 
 %%%%%copy over params:

@@ -59,9 +59,15 @@ switch param
             else val = dt.scanParams(varargin{1}).PfileName;
             end
         end
+    case {'keepframes'}
+        if checkfields(dt,'scanParams','keepframes')
+            if isempty(varargin), val = dt.scanParams(:).keepFrames;
+            else val = dt.scanParams(varargin{1}).keepFrames;
+            end
+        end
     case {'nframes'}
-        % dtGet(dt,'nframes',scan)
-        % dtGet(dt,'nframes',scan,vw)
+        % dtGet(dataTYPES,'nframes',scan);
+        % dtGet(dataTYPES,'nframes');
         if checkfields(dt,'scanParams','nFrames')
             if isempty(varargin), val = dt.scanParams(:).nFrames;
             else val = dt.scanParams(varargin{1}).nFrames;

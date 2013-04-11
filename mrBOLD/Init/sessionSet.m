@@ -44,9 +44,11 @@ switch param
 
     % Information about the functional scans
     case 'functionals'
-        % The entire functional structure is set here.
-        s.functionals = val;
-
+        % We can set either the entire functional structure or just one scan
+        if isempty(varargin), s.functionals = val;
+        else s.functionals(varargin{1}) = val;
+        end
+        
     % More functional parameters should be entered here.  Lots of
     % parameters are still left out and addressed badly in the code.
     case 'sliceorder'
