@@ -73,9 +73,20 @@ if(any(any(niftiGet(nii,'sto_xyz')>0)>0))
     %ni.sto_xyz = inv(ni.sto_ijk);
 	nii = niftiSet(nii, 'sto_xyz',inv(niftiGet(nii,'sto_ijk')));
 end
-nii = niftiSet(nii,'freqdim', dimOrder(niftiGet(nii,'freqdim')));
-nii = niftiSet(nii,'phasedim', dimOrder(niftiGet(nii,'phasedim')));
-nii = niftiSet(nii,'slicedim', dimOrder(niftiGet(nii,'slicedim')));
 
+
+if (~isempty(niftiGet(nii,'freqdim')) && niftiGet(nii,'freqdim'))
+    nii = niftiSet(nii,'freqdim', dimOrder(niftiGet(nii,'freqdim')));
+end
+
+if (~isempty(niftiGet(nii,'phasedim')) && niftiGet(nii,'phasedim'))
+    nii = niftiSet(nii,'phasedim', dimOrder(niftiGet(nii,'phasedim')));
+end
+
+if (~isempty(niftiGet(nii,'slicedim')) && niftiGet(nii,'slicedim'))
+    %Should never get here as niftiGet returns '3' if slicedim is 0, but
+    %good to be careful anyway
+    nii = niftiSet(nii,'slicedim', dimOrder(niftiGet(nii,'slicedim')));
+end
 
 return
