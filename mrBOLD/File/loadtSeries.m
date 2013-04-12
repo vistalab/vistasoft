@@ -96,7 +96,7 @@ elseif strcmp(viewType,'Inplane')
     
     for slice = 1:nSlices
         tSeries = squeeze(mr.data(:,:,slice,:)); % rows x cols x time
-        tSeries = reshape(tSeries, [voxPerSlice nFrames])'; %#ok<NASGU> % time x voxels
+        tSeries = reshape(tSeries, [voxPerSlice nFrames])'; % time x voxels
     end
     
 else

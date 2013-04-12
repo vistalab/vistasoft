@@ -116,13 +116,12 @@ function ok = mrInit(varargin)
 % reflect this. Email DY if you would like to see an example wrapper script
 % that sets all params. 
 
-ok = 0;
 mrGlobals;
 
 %%%%% (0) ensure all input parameters are specified
 if nargin==0		
 	% get params interactively
-    [params ok] = mrInitGUI;
+    [params, ok] = mrInitGUI;
 	if ~ok, disp('mrInit Aborted.'); return; end
 	
 elseif length(varargin)==1 && isstruct(varargin{1})
@@ -206,7 +205,8 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         end
         
         %This call updates dataTYPES as well
-        mrInitInplaneTseries(func);
+        %We will no longer call mrSave
+        mrInitInplaneTseries(func,scan);
         
     end
     
@@ -251,7 +251,7 @@ if params.motionComp > 1
             newDataType = 'BwScansMotionComp';
             if ~existDataType(newDataType), addDataType(newDataType); end
             hI = initHiddenInplane(newDataType);
-            [INPLANE{1}, M] = betweenScanMotComp(INPLANE{1}, hI, params.motionCompRefScan);
+            [INPLANE{1}, ~] = betweenScanMotComp(INPLANE{1}, hI, params.motionCompRefScan);
             INPLANE{1} = selectDataType(INPLANE{1}, newDataType);
 			
         case 2, % within scans only
@@ -310,7 +310,10 @@ return
 
 
 % /-----------------------------------------------------------------/ %
-function saveDir = mrInitInplaneTseries(mr, scan)
+function mrInitInplaneTseries(mr, scan)
+
+%Taken from mrSave, with the 'save' functionality removed, the rest of the
+%data transfer functionality has been retained, however
 
 mrGlobals;
 
@@ -386,3 +389,35 @@ saveSession
 
 return
 % /-----------------------------------------------------------------/ %
+
+
+
+% /-----------------------------------------------------------------/ %
+function params = scanParamsDefaults(mrSESSION, scan, annotation)
+% Default scan parameters for a new scan.
+params.annotation = annotation;
+params.nFrames = mrSESSION.functionals(scan).nFrames;
+params.framePeriod = mrSESSION.functionals(scan).framePeriod;
+params.slices = mrSESSION.functionals(scan).slices;
+params.cropSize = mrSESSION.functionals(scan).cropSize;
+params.PfileName = mrSESSION.functionals(scan).PfileName;
+params.inplanePath = mrSESSION.functionals(scan).PfileName;
+params.keepFrames = mrSESSION.functionals(scan).keepFrames;
+params.parfile = '';
+params.scanGroup = sprintf('Original: %i',scan);
+return
+% /-----------------------------------------------------------------/ %
+
+
+
+% /-----------------------------------------------------------------/ %
+function params = blockedAnalysisDefaults
+% Default values for the blocked analyses.
+params.blockedAnalysis = 1;
+params.detrend = 1;
+params.inhomoCorrect = 1;
+params.temporalNormalization = 0;
+params.nCycles = 6;
+return
+% /-----------------------------------------------------------------/ %
+
