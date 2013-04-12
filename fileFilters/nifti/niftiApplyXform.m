@@ -74,19 +74,26 @@ if(any(any(niftiGet(nii,'sto_xyz')>0)>0))
 	nii = niftiSet(nii, 'sto_xyz',inv(niftiGet(nii,'sto_ijk')));
 end
 
-
+%In case the nifti does not have the following fields, let's check them
+%before we 
 if (~isempty(niftiGet(nii,'freqdim')) && niftiGet(nii,'freqdim'))
     nii = niftiSet(nii,'freqdim', dimOrder(niftiGet(nii,'freqdim')));
+else
+    warning('nifti;ValuesNotSet','No freqdim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
 end
 
 if (~isempty(niftiGet(nii,'phasedim')) && niftiGet(nii,'phasedim'))
     nii = niftiSet(nii,'phasedim', dimOrder(niftiGet(nii,'phasedim')));
+else
+    warning('nifti;ValuesNotSet','No phasedim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
 end
 
 if (~isempty(niftiGet(nii,'slicedim')) && niftiGet(nii,'slicedim'))
     %Should never get here as niftiGet returns '3' if slicedim is 0, but
     %good to be careful anyway
     nii = niftiSet(nii,'slicedim', dimOrder(niftiGet(nii,'slicedim')));
+else
+    warning('nifti;ValuesNotSet','No slicedim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
 end
 
 return
