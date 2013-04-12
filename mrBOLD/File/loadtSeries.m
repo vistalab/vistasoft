@@ -87,6 +87,17 @@ elseif strcmp(viewType,'Inplane')
     %For backwards compatibility, let's also make the 'tSeries' data
     tSeries = single(niftiGet(nii,'Data'));
     
+    %Now, let us take the tSeries data and transform it into the same
+    %format as previously saved
+
+    nSlices = dims(3);
+    nFrames = dims(4);
+    voxPerSlice = prod(mr.dims(1:2));
+    
+    for slice = 1:nSlices
+        tSeries = squeeze(mr.data(:,:,slice,:)); % rows x cols x time
+        tSeries = reshape(tSeries, [voxPerSlice nFrames])'; %#ok<NASGU> % time x voxels
+    end
     
 else
     %Neither an Inplane or a Gray view - error!

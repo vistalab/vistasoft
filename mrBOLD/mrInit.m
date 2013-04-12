@@ -177,6 +177,8 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         %We will need to replace this code with something that adds the paths to
         %the session variable and then performs these data processes on-the-fly
         %when functional data is called
+        %We will need to move all of the necessary data into dataTYPES and
+        %mrSESSION, the previous work of mrSave
         
         %Read in the nifti to the tS struct, then apply the same transform as
         %the inplane data. Then, transfer the necessary components to the
@@ -195,15 +197,6 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
             %Put keepFrames into func so that we can save it into mrSESSION
             func.keepFrames = params.keepFrames;
-            nSkip = params.keepFrames(scan,1);
-            nKeep = params.keepFrames(scan,2);
-            if nKeep==-1
-                % flag to keep all remaining frames
-                nKeep = size(func.data, 4) - nSkip;
-            end
-            keep = [1:nKeep] + nSkip;
-            func.data = func.data(:,:,:,keep);
-            func.dims(4) = size(func.data, 4);
         end
         
         % assign annotation if it's provided
@@ -213,8 +206,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         end
         
         %This call updates dataTYPES as well
-        mrSave(func, params.sessionDir, '1.0tSeries');
-
+        mrInitInplaneTseries(func);
         
     end
     
@@ -313,3 +305,84 @@ cd(callingDir);
 return
 % /---------------------------------------------------------------------/ %
 
+
+
+
+
+% /-----------------------------------------------------------------/ %
+function saveDir = mrInitInplaneTseries(mr, scan)
+
+mrGlobals;
+
+% set header info in mrSESSION.functionals, dataTYPES.scanParmas
+if notDefined('scan') || isempty(scan), scan = length(mrSESSION.functionals) + 1; end %#ok<NODEF>
+f.PfileName = mr.path;
+f.totalFrames = mr.dims(4);
+
+f.firstName = '';  f.lastName = '';
+if checkfields(mr, 'info', 'subject')
+	sp = strfind(' ', mr.info.subject);
+	if ~isempty(sp) % space in name
+		f.firstName = mr.info.subject( 1:(sp(1)-1) );
+		f.lastName = mr.info.subject( (sp(1)+1):end );
+	else
+		f.firstName = mr.info.subject;
+	end
+end
+
+f.date = ''; f.time = '';
+if checkfields(mr, 'info', 'date'), f.date = mr.info.date; end
+if checkfields(mr, 'info', 'time'), f.time = mr.info.time; end
+
+f.junkFirstFrames = 0; %This always appears to be 0. perhaps remove it?
+f.nFrames = mr.dims(4);
+f.slices =  1:mr.dims(3);
+f.fullSize = mr.dims(1:2);
+f.cropSize = mr.dims(1:2);
+f.crop = [1 1; mr.dims(1:2)];
+f.voxelSize = mr.voxelSize(1:3);
+f.effectiveResolution = mr.voxelSize(1:3);
+f.keepFrames = mr.keepFrames; %Keep Frames will now be udpated in both mrSESSION and dataTYPES
+if checkfields(mr, 'info', 'effectiveResolution')
+	f.effectiveResolution = mr.info.effectiveResolution;
+end
+f.framePeriod = mr.voxelSize(4);
+f.reconParams = mr.hdr;
+
+if scan==1
+    mrSESSION = sessionSet(mrSESSION, 'Functionals', f);
+	%mrSESSION.functionals = f;
+else
+    mrSESSION = sessionSet(mrSESSION, 'Functionals', ...
+        mergeStructures(sessionGet(mrSESSION, 'Functionals', scan-1), f), scan);
+end
+
+% Default params, initializing the parameters in dataTYPES
+
+
+% Copy one field at a time, so we don't get type-mismatch errors.    
+
+% scan params
+srcScanParams = scanParamsDefaults(mrSESSION, scan, mr.name);
+for f = fieldnames(srcScanParams)'
+    dataTYPES(1).scanParams(scan).(f{1}) = srcScanParams.(f{1});
+end
+    
+% blocked analysis params
+srcBlockParams = blockedAnalysisDefaults;
+for f = fieldnames(srcBlockParams)'
+    dataTYPES(1).blockedAnalysisParams(scan).(f{1}) = ...
+        srcBlockParams.(f{1});
+end
+
+% event analysis params
+srcEventParams = er_defaultParams;
+for f = fieldnames(srcEventParams)'
+    dataTYPES(1).eventAnalysisParams(scan).(f{1}) = ...
+        srcEventParams.(f{1});
+end
+
+saveSession
+
+return
+% /-----------------------------------------------------------------/ %
