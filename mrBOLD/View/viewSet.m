@@ -358,6 +358,7 @@ switch param
         vw = viewSet(vw,'Anatomy Nifti', niftiRead(val));
         %Calculate Voxel Size as that is not read in
         vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Voxel Size',prod(niftiGet(vw.anat,'pixdim'))));
+
         %Let us also calculate and and apply our transform
         vw = viewSet(vw,'Anatomy Nifti',niftiApplyAndCreateXform(viewGet(vw,'Anatomy Nifti'),'Inplane'));
     case 'anatomynifti'
