@@ -358,25 +358,7 @@ switch param
         vw = viewSet(vw,'Anatomy Nifti', niftiRead(val));
         %Calculate Voxel Size as that is not read in
         vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Voxel Size',prod(niftiGet(vw.anat,'pixdim'))));
-        %Check to see other fields that are not always applied and
-        %initialize them:
-        freqdim = niftiGet(viewGet(vw,'Anatomy Nifti'),'Freq Dim');
-        phasedim = niftiGet(viewGet(vw,'Anatomy Nifti'),'Phase Dim');
-        slicedim = niftiGet(viewGet(vw,'Anatomy Nifti'),'Slice Dim');
 
-        if isempty(freqdim) || ~freqdim
-            vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Freq Dim',1));
-        end
-        
-        if isempty(phasedim) || ~phasedim
-            vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Phase Dim',2));
-        end
-        
-        if isempty(slicedim) || ~slicedim
-            vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Slice Dim',3));
-        end
-
-        vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Voxel Size',prod(niftiGet(vw.anat,'pixdim'))));
         %Let us also calculate and and apply our transform
         vw = viewSet(vw,'Anatomy Nifti',niftiApplyAndCreateXform(viewGet(vw,'Anatomy Nifti'),'Inplane'));
     case 'anatomynifti'
