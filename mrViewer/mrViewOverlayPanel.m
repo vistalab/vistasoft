@@ -15,14 +15,6 @@ if ~exist('ui', 'var') | isempty(ui),  ui = mrViewGet;            end
 if ishandle(ui),  ui = get(ui, 'UserData'); end
 if ~exist('dockFlag', 'var') | isempty(dockFlag),  dockFlag = 0;  end
 if ~exist('o', 'var') | isempty(o),  o = length(ui.overlays);     end
-
-% javaFigs = feature('javafigures');
-% if ispref('VISTA', 'javaOn') 
-%     feature('javafigures', getpref('VISTA', 'javaOn'));
-% else
-%     feature('javafigures', 0);
-% end
-javaFigs = mrvJavaFeature;
  
 m = ui.overlays(o).mapNum;
 
@@ -232,6 +224,4 @@ end
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ui = mrViewColorbarOpen(ui, o, prefOrder{o});                     
       
-% feature('javafigures', javaFigs);
-mrvJavaFeature(javaFigs);
 return
