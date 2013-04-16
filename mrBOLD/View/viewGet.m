@@ -977,8 +977,9 @@ switch param
         %   makeIt = 0; tDir = viewGet(vw,'tSeriesDir',makeIt);
         %   makeIt = 1; tDir = viewGet(vw,'tSeriesDir',makeIt);
         %   tDir = viewGet(vw,'tSeriesDir')
-        makeIt = 0;
-        if ~isempty(varargin), makeIt = varargin{1}; end
+        if ~isempty(varargin), makeIt = varargin{1};
+        else makeIt = 0;
+        end
         val = tSeriesDir(vw,makeIt);
     case 'datasize'
         % Return the size of the data arrays, i.e., size of co for
@@ -1005,7 +1006,8 @@ switch param
         %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)
         switch vw.viewType
             case 'Inplane'
-                val = mrSESSION.functionals.cropSize;
+                scan = viewGet(vw, 'Cur Scan');
+                val = sessionGet(mrSESSION,'Functionals Slice Dim',scan);
             case {'Volume','Gray'}
                 val = [1,size(vw.coords,2)];
             case 'Flat'

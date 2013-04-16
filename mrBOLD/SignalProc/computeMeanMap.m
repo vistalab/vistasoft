@@ -45,7 +45,7 @@ if ~exist('scanList','var')
 elseif scanList == 0
     scanList = 1:nScans;
 end
-if isempty(scanList),  error('Analysis aborted'); end
+if isempty(scanList),  error('Analysis aborted: scan list is empty.'); end
 
 % Compute it
 waitHandle = waitbar(0,'Computing mean images from the tSeries.  Please wait...');

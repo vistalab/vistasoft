@@ -18,53 +18,58 @@ param = mrvParamFormat(param);
 param = sessionMapParameterField(param);
 
 switch param
-
-    case 'title'
-        s.title = val;
-    case 'subject'
-        s.subject = val;
-    case 'examnum'
-        s.examNum = val;
-
-    case 'screensavesize'
-        s.screenSaveSize = val;
     case 'alignment'
         s.alignment =val;
-
-    case 'sessioncode'
-        s.sessionCode = val;
-    case 'description'
-        s.description = val;
+        
     case 'comments'
         s.comments = val;
-    case 'inplanepath'
-        s.inplanes.inplanePath = val;
-    case 'inplane'
-        s.inplanes = val;
-
-    % Information about the functional scans
+        
+    case 'description'
+        s.description = val;
+        
+    case 'examnum'
+        s.examNum = val;
+        
     case 'functionals'
         % We can set either the entire functional structure or just one scan
         if isempty(varargin), s.functionals = val;
         else s.functionals(varargin{1}) = val;
         end
         
-    % More functional parameters should be entered here.  Lots of
-    % parameters are still left out and addressed badly in the code.
-    case 'sliceorder'
-        if isempty(varargin), scan = 1;
-        else scan = varargin{1};
-        end
-        s.functionals(scan).sliceOrder = val;
+    case 'inplane'
+        s.inplanes = val;
+        % Information about the functional scans
+        
+    case 'inplanepath'
+        s.inplanes.inplanePath = val;
+        
     case {'nsamples','nframes'}
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end
         s.functionals(scan).nFrames = val;
         
+    case 'screensavesize'
+        s.screenSaveSize = val;
+        
+    case 'sessioncode'
+        s.sessionCode = val;
+        
+    case 'sliceorder'
+        if isempty(varargin), scan = 1;
+        else scan = varargin{1};
+        end
+        s.functionals(scan).sliceOrder = val;
+        
+    case 'subject'
+        s.subject = val;
+        
+    case 'title'
+        s.title = val;
+        
     otherwise
         error('Unknown parameter %s\n',param);
-
+        
 end
 
 return;

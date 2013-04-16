@@ -26,37 +26,35 @@ if ~exist('val','var'), error('val required'); end
 param = mrvParamFormat(param);
 
 switch param
-    case 'name'
-        dt.name = val;
-    case 'scanparams'
-        % Scan params
-        if isempty(varargin), dt.scanParams = val;
-        else dt.scanParams(varargin{1}) = val;
-        end 
-    case 'annotation'
+    case {'annotation'}
         % dt = dtSet(dt,'annotation',description,scan)
         if isempty(varargin), dt.scanParams(:).annotation = val;
         else dt.scanParams(varargin{1}).annotation = val;
         end
-    case 'nframes'
-        % dt = dtSet(dt,'nFrames',128,scan)
-        if isempty(varargin), dt.scanParams(:).nFrames = val;
-        else dt.scanParams(varargin{1}).nFrames = val;
-        end
-
+        
     case {'blockedanalysisparams','blockparams','bparams'}
         %dt.blockedAnalysisParams = val;
         if isempty(varargin), dt.blockedAnalysisParams = val;
         else dt.blockedAnalysisParams(varargin{1}) = val;
-        end 
+        end
         
     case {'eventanalysisparams','eventparams','eparams'}
         %dt.eventAnalysisParams = val;
         if isempty(varargin), dt.eventAnalysisParams = val;
         else dt.eventAnalysisParams(varargin{1}) = val;
-        end 
+        end
         
         % Retinotopy model parameter
+        
+    case {'name'}
+        dt.name = val;
+        
+    case {'nframes'}
+        % dt = dtSet(dt,'nFrames',128,scan)
+        if isempty(varargin), dt.scanParams(:).nFrames = val;
+        else dt.scanParams(varargin{1}).nFrames = val;
+        end
+        
     case {'rmstimparams','retinomodelparams','retinotopymodelstimulusparams','rmparams','retinotopymodelparams'}
         % dtSet(dt,'rmStimParams',v,scan);
         % Unfortunately, this slot is only the stim params, although it is
@@ -66,9 +64,16 @@ switch param
         if isempty(varargin),dt.retinotopyModelParams = val;
         else dt.retinotopyModelParams(varargin{1}) = val;
         end
-
+        
+    case {'scanparams'}
+        % Scan params
+        if isempty(varargin), dt.scanParams = val;
+        else dt.scanParams(varargin{1}) = val;
+        end
+        
     otherwise
         error('Unknown parameter %s\n',param);
+        
 end
 
 

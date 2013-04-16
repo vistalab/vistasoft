@@ -92,12 +92,11 @@ elseif strcmp(viewType,'Inplane')
 
     nSlices = dims(3);
     nFrames = dims(4);
-    voxPerSlice = prod(mr.dims(1:2));
+    voxPerSlice = prod(dims(1:2));
     
-    for slice = 1:nSlices
-        tSeries = squeeze(mr.data(:,:,slice,:)); % rows x cols x time
-        tSeries = reshape(tSeries, [voxPerSlice nFrames])'; % time x voxels
-    end
+    data = niftiGet(nii,'Data');
+    tSeries = squeeze(data(:,:,slice,:)); % rows x cols x time
+    tSeries = reshape(tSeries, [voxPerSlice nFrames])'; % time x voxels
     
 else
     %Neither an Inplane or a Gray view - error!
