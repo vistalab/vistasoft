@@ -86,12 +86,8 @@ if strcmp(viewType,'Inplane')
     if numScans < scan
         for newScan = (numScans+1):(scan-numScans)
              %Copy over the scan information from the previous scan
-             dataTYPES(curDt) = dtSet(dataTYPES(curDt), 'Scan Params', dtGet(dataTYPES(curDt), 'Scan Params', newScan - 1), newScan);
-             dataTYPES(curDt) = dtSet(dataTYPES(curDt), 'Block Params', dtGet(dataTYPES(curDt), 'Block Params', newScan - 1), newScan);
-             dataTYPES(curDt) = dtSet(dataTYPES(curDt), 'Event Params', dtGet(dataTYPES(curDt), 'Event Params', newScan - 1), newScan);
+             vw = initScan(vw,curDt,newScan);
         end %for
-        %We need to add scans
-        %TODO: Add scans until you get to this scan number
     end %if
     
     dataTYPES = dtSet(dataTYPES(curDt),'Inplane Path',pathStr,scan);
@@ -99,7 +95,6 @@ if strcmp(viewType,'Inplane')
 
     %Add in keepFrames information
     dataTYPES = dtSet(dataTYPES(curDt),'Keep Frames',keepFrames,scan);
-    
     
     verbose = prefsVerboseCheck;
     if verbose > 1		% starting to use graded levels of feedback
