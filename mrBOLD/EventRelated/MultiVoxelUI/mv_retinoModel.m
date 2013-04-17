@@ -1,4 +1,4 @@
-function mv = mv_retinoModel(mv, rmParams, view, varargin);
+function mv = mv_retinoModel(mv, rmParams, view, varargin)
 %
 % mv = mv_retinoModel(mv, [rmParams], [view], [options]);
 %
@@ -221,9 +221,8 @@ return
 
 
 % /-----------------------------------------------------------/ %
-function mv = mv_retinoModelGUI(mv);
+function mv = mv_retinoModelGUI(mv)
 % create GUI for viewing the results of the retinotopy model.
-javaFigs = mrvJavaFeature;
 
 nVoxels = size(mv.amps, 1);
 nConds = size(mv.amps, 2);
@@ -383,8 +382,6 @@ uicontrol('Parent', mv.ui.rmPanel, 'Style', 'pushbutton', ...
 % update figure w/ mv stuff
 set(gcf, 'UserData', mv);
                       
-mrvJavaFeature(javaFigs);
-
 mv_retinoModel('update');
 
 return
@@ -394,7 +391,7 @@ return
 
 
 % /----------------------------------------------------------------------/ %
-function mv_retinoModelUpdate;
+function mv_retinoModelUpdate
 % update the GUI for the retinotopy model viewer.
 mv = get(gcf, 'UserData');
 

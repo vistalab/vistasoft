@@ -1,4 +1,4 @@
-function rx = rxOpenInterp3ViewFig(rx);
+function rx = rxOpenInterp3ViewFig(rx)
 %
 %  rx = rxOpenInterp3ViewFig(rx);
 %
@@ -6,7 +6,6 @@ function rx = rxOpenInterp3ViewFig(rx);
 % 3 orientations (rows, cols, slices), rather than just slices.
 %
 % ras, 02/08/2008
-javaFigs = mrvJavaFeature;
 
 %% open the figure
 rx.ui.interp3ViewFig = figure('Color', 'w', ...
@@ -165,9 +164,6 @@ uimenu(rx.ui.interp3ViewMenu, 'Label', 'List AC/PC Points', ...
 	
 
 rxComparePrefsMenu(gcf);
-	
-mrvJavaFeature(javaFigs);
-
 
 %% give it an initial refresh
 rxRefresh3View(rx);

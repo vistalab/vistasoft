@@ -1,4 +1,4 @@
-function [p, ok] = coParamsEdit(p);
+function [p, ok] = coParamsEdit(p)
 % Edit coherence analysis ("blocked analysis") parameters.
 %
 %  [params, ok] = coParamsEdit(params);
@@ -10,9 +10,6 @@ function [p, ok] = coParamsEdit(p);
 if notDefined('p'), p = coParamsDefault;  end
 
 ok = 0;
-
-%% deal w/ java figures issue
-javaFigs = mrvJavaFeature;
 
 %% Create dialog
 
@@ -67,7 +64,7 @@ dlg(end).string = 'Noise Band for Coherence Analysis (0=all frequencies)';
 
 
 %% Put up dialog, get response
-[resp ok] = generalDialog(dlg, mfilename);
+[resp, ok] = generalDialog(dlg, mfilename);
 if ~ok, return; end
 
 %% parse response
@@ -75,8 +72,5 @@ p.nCycles = str2num(resp.nCycles);
 p.detrend = cellfind(dtList, resp.detrend) - 2;
 p.inhomoCorrect = cellfind(icList, resp.inhomoCorrect)-1;
 p.noiseBand = str2num(resp.noiseBand);
-
-%% restore java figures state
-mrvJavaFeature(javaFigs);
 
 return

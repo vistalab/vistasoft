@@ -34,8 +34,6 @@ function h = mrViewer(mr, format, varargin)
 % this m-file opens the mrViewer figure. Other files refresh
 % or perform operations on it.
 
-% first, deal with the ever-troublesome JAVA:
-javaFigs = mrvJavaFeature;
 
 if notDefined('format'),  format = ''; end
 
@@ -109,9 +107,6 @@ ui = mrViewSet(ui, 'space', ui.settings.space);
 
 % refresh view
 ui = mrViewRefresh(ui);
-
-% switch java state back to normal
-mrvJavaFeature(javaFigs);
 
 h = ui.fig;
 
