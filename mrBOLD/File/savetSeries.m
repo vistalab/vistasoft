@@ -12,7 +12,10 @@ function savetSeries(tSeries,vw,scan,slice,nii)
 % vw, scan, & slice: Used only to determine the full path for the tSeries file.
 %
 % djh, 2/17/2001
+mrGlobals;
+
 tseriesdir = viewGet(vw,'tSeriesDir', 1);
+
 if ~exist(fullfile(tseriesdir),'dir')
     mkdir(tseriesdir);
 end
@@ -32,11 +35,71 @@ if strcmp(viewType,'Inplane')
         % Now we need to change the data, the dimensions and the filepath
         % to reflect the new data that was passed in the tSeries
         
+        % Let's first reshape the data into the proper size
+        
+        size = viewGet(vw,'Functional Slice Dim');
+        newtSeries = zeros(size,size(tSeries,3),size(tSeries,1));
+        keepFrames = ones(size, 2);
+        for slice = 1:size(tSeries,3)
+            newtSeries(:,:,slice,:) = reshape(tSeries,size);
+        end %for
         
         
-    end
+        %Now let's update the nifti
+        dim = size(newtSeries);
+        nii = niftiSet(nii,'Dim',dim);
+        nii = niftiSet(nii,'Data',newtSeries);
+    end %if
     
+	nii = niftiSet(nii,'F Name',pathStr);
+
     niftiWrite(nii,pathStr);
+
+    %Let's also make sure that the dataTYPES are updated properly
+    %First, check if this datatype exists
+    %Then, check if this scan exists
+    %Then, change the path for this scan to the new path
+    
+    %This is the same code as in duplicateDataType
+    curDt = viewGet(vw,'Cur Dt');
+    if ~existDataType(curDt)
+        newName = [];
+        dlg = 'Please give a new name for the new datatype';
+        while isempty(newName);
+            newName = inputdlg(dlg,'Name new datatype');
+            if iscell(newName) && ~isempty(newName);
+                newName = deblank(newName{1}); % remove possible blanks
+                if existDataType(newName);
+                    dlg = 'What you just input is already in dataTYPES. Try again !!!';
+                    newName = []; disp(['Warning: ',dlg]);
+                end
+            else
+                dlg = 'You MUST give a NEW name for the new datatype !!!';
+                disp(['Warning: ',dlg]);
+            end %if
+        end %while
+        addDataType(newName);
+    end %if
+
+    numScans = dtGet(dataTYPES(curDt),'N Scans');
+    
+    if numScans < scan
+        for newScan = (numScans+1):(scan-numScans)
+             %Copy over the scan information from the previous scan
+             dataTYPES(curDt) = dtSet(dataTYPES(curDt), 'Scan Params', dtGet(dataTYPES(curDt), 'Scan Params', newScan - 1), newScan);
+             dataTYPES(curDt) = dtSet(dataTYPES(curDt), 'Block Params', dtGet(dataTYPES(curDt), 'Block Params', newScan - 1), newScan);
+             dataTYPES(curDt) = dtSet(dataTYPES(curDt), 'Event Params', dtGet(dataTYPES(curDt), 'Event Params', newScan - 1), newScan);
+        end %for
+        %We need to add scans
+        %TODO: Add scans until you get to this scan number
+    end %if
+    
+    dataTYPES = dtSet(dataTYPES(curDt),'Inplane Path',pathStr,scan);
+    dataTYPES = dtSet(dataTYPES(curDt),'Size',dim,scan);
+
+    %Add in keepFrames information
+    dataTYPES = dtSet(dataTYPES(curDt),'Keep Frames',keepFrames,scan);
+    
     
     verbose = prefsVerboseCheck;
     if verbose > 1		% starting to use graded levels of feedback

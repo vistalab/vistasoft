@@ -140,7 +140,7 @@ for scan = selectedScans
 	if verbose,   
 		waitbar(find(selectedScans==scan)/nScans, waitHandle);
 	end
-end
+end %for
 
 % close waitbar
 if verbose, close(waitHandle); end

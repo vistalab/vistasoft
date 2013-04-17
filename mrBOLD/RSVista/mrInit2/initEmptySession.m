@@ -1,4 +1,4 @@
-function mrSESSION = initEmptySession;
+function mrSESSION = initEmptySession
 %
 % mrSESSION = initEmptySession: [no arguments]
 %
@@ -8,7 +8,7 @@ function mrSESSION = initEmptySession;
 %
 % ras 04/05.
 
-[p f] = fileparts(pwd);
+[~, f] = fileparts(pwd);
 
 mrSESSION.mrVistaVersion = '2.0'; 
 mrSESSION.sessionCode = f;
@@ -23,8 +23,10 @@ mrSESSION.inplanes.inplanePath = '';
 
 dataTYPES.name = 'Original';
 
+%TODO: Decide if we want to save vANATOMYPATH as well, and if we don't,
+%then remove it from this call
 vANATOMYPATH = '';
 
-save mrSESSION mrSESSION dataTYPES %TODO: Add vANATOMYPATH to save here?
+save mrSESSION mrSESSION dataTYPES
 
 return

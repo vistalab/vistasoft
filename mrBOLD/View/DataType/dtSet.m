@@ -44,7 +44,17 @@ switch param
         else dt.eventAnalysisParams(varargin{1}) = val;
         end
         
-        % Retinotopy model parameter
+	case {'inplanepath'}
+        % dt = dtSet(dt,'nFrames',128,scan)
+        if isempty(varargin), dt.scanParams(:).inplanePath = val;
+        else dt.scanParams(varargin{1}).inplanePath = val;
+        end
+        
+    case {'keepframes'}
+        % dt = dtSet(dt,'nFrames',128,scan)
+        if isempty(varargin), dt.scanParams(:).keepFrames = val;
+        else dt.scanParams(varargin{1}).keepFrames = val;
+        end
         
     case {'name'}
         dt.name = val;
@@ -71,6 +81,12 @@ switch param
         else dt.scanParams(varargin{1}) = val;
         end
         
+    case {'size'}
+        % dt = dtSet(dt,'nFrames',128,scan)
+        if isempty(varargin), dt.scanParams(:).cropSize = val;
+        else dt.scanParams(varargin{1}).cropSize = val;
+        end
+
     otherwise
         error('Unknown parameter %s\n',param);
         

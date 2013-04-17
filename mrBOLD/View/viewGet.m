@@ -1006,8 +1006,8 @@ switch param
         %   scan = 1; dim = viewGet(vw, 'Slice Dimension', scan)
         switch vw.viewType
             case 'Inplane'
-                scan = viewGet(vw, 'Cur Scan');
-                val = sessionGet(mrSESSION,'Functionals Slice Dim',scan);
+                scan = 1; %We want the first scan of the first dataTYPE
+                val = dtGet(dataTYPES(1),'Func Size', scan);
             case {'Volume','Gray'}
                 val = [1,size(vw.coords,2)];
             case 'Flat'

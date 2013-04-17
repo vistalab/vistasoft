@@ -36,11 +36,11 @@ if (view.curDataType~=1) % In general, there's no reason to enforce this but it 
     error('The data type must be Original (dataTYPE == 1)');
 end
 
-if (~exist('view','var')  | (isempty(view)))
+if (~exist('view','var')  || (isempty(view)))
     view=getSelectedInplane;
 end
 
-if (~exist('scansToProcess','var')  | (isempty(scansToProcess)))
+if (~exist('scansToProcess','var')  || (isempty(scansToProcess)))
     disp('Select scans to process');
     scansToProcess=selectScans(view,'Scans to process');
 end
@@ -90,7 +90,7 @@ disp(tSerDir)
 
 for thisScan=1:nScansToProcess   
     dataTYPES(view.curDataType).scanParams(thisScan)=dataTYPES(1).scanParams(1);
-    dataTYPES(view.curDataType).scanParams(thisScan).annotation='From original scan',int2str(scansToProcess(thisScan));
+    dataTYPES(view.curDataType).scanParams(thisScan).annotation=['From original scan ',int2str(scansToProcess(thisScan))];
     dataTYPES(view.curDataType).blockedAnalysisParams(thisScan)=dataTYPES(1).blockedAnalysisParams(1);
     dataTYPES(view.curDataType).eventAnalysisParams(thisScan)=dataTYPES(1).eventAnalysisParams(1);
 end
@@ -117,17 +117,17 @@ for thisScanIndex=1:nScansToProcess
     
     % Here, add option to crop leading frames
     for thisSlice=1:nSlices
-      thisTSer=img(:,:,thisSlice,:);
-      thisTSer=reshape(thisTSer,(dims(1)*dims(2)),dims(4));
-      thisTSer=thisTSer';
-      
-      % Cast to 16bit  signed ints to save space
-      thisTSer=thisTSer./max(abs(thisTSer(:)));
-      thisTSer=int16(thisTSer*32767);     
-      
-      savetSeries(thisTSer,view,thisScan,thisSlice);
-    disp(thisSlice);    
-  end
+        thisTSer=img(:,:,thisSlice,:);
+        thisTSer=reshape(thisTSer,(dims(1)*dims(2)),dims(4));
+        thisTSer=thisTSer';
+        
+        % Cast to 16bit  signed ints to save space
+        thisTSer=thisTSer./max(abs(thisTSer(:)));
+        thisTSer=int16(thisTSer*32767);
+        
+        savetSeries(thisTSer,view,thisScan,thisSlice);
+        disp(thisSlice);
+    end
   
 end
 
