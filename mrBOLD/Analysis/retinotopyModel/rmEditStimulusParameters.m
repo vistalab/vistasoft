@@ -73,8 +73,6 @@ end;
 % % initiate struct
 % M = rmInitStimStruct(view, stimulusFields);
 
-javaFigs = mrvJavaFeature;  % Probably obsolete
-
 [M, stimulusFields] = rmStimCreate;
 
 %--- now create the GUI
@@ -85,9 +83,6 @@ rmEditStimulusParameters_update(view);
 
 % now do the uiwait and let the user deal w/ the interface:
 uiwait;
-
-mrvJavaFeature(javaFigs);
-
 
 return;
 %-------------------------------------------------------------
