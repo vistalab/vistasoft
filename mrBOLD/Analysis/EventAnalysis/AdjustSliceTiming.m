@@ -82,7 +82,8 @@ for ii = 1:length(scans)
     % main loop: loop across slices, doing spline interpolation
     wH = waitbar(0, ['Adjusting scan ' int2str(scan)]);
     iS = 0;
-
+    
+    
     for slice=slices
         iS = iS + 1;
         ts = loadtSeries(vw, scan, slice);
@@ -90,10 +91,11 @@ for ii = 1:length(scans)
             % frameAdjustment = deltaFrame*(refSlice - slice);
             ts = mrSliceTiming(ts,frameAdjustment(slice),'spline');           
         end
+        tsFull(is) = ts;
         waitbar(iS/length(slices), wH);
     end
     %Moved outside the for loop
-    savetSeries(ts, hiddenView, outScan, slice);
+    savetSeries(tsFull, hiddenView, outScan, slice);
     close(wH);
 end
 

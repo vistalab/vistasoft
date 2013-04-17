@@ -93,9 +93,10 @@ for iSlice = sliceList(vw, scanList(1));
     end
     tSeriesAvg = tSeriesAvg ./ nValid;
     tSeriesAvg(nValid == 0) = NaN;
-    savetSeries(tSeriesAvg, hiddenView, newScanNum, iSlice);
+    tSeriesAvgFull(iSlice) = tSeriesAvg;
     waitbar(iSlice/nSlices);
-end
+end %for
+savetSeries(tSeriesAvgFull, hiddenView, newScanNum);
 close(waitHandle);
 
 verbose = prefsVerboseCheck;  % only pop up if we prefer it

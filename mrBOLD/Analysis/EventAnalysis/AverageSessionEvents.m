@@ -101,9 +101,11 @@ for iSlice=1:nSlices
     sliceBlockTS(~isfinite(sliceBlockTS)) = 0;
     sliceBlockTS = sliceBlockTS - repmat(sum(sliceBlockTS)/nEventFrames, [nEventFrames 1 1 1]);
     meanTS = squeeze(sum(sliceBlockTS, 2)./numPoints);
-    savetSeries(reshape(meanTS, nEventFrames, nVoxels), hiddenView, 1, iSl);
+    meanTSFull(iSlice) = reshape(meanTS, nEventFrames, nVoxels);
+    %savetSeries(reshape(meanTS, nEventFrames, nVoxels), hiddenView, 1, iSl);
     meanTSerrs = squeeze(std(sliceBlockTS, 0, 2)) / sqrt(tEvents);
-    savetSeries(reshape(meanTSerrs, nEventFrames, nVoxels), hiddenView, 2, iSl);
+    meanTSerrsFull(iSlice) = reshape(meanTSerrs, nEventFrames, nVoxels);
+    %savetSeries(reshape(meanTSerrs, nEventFrames, nVoxels), hiddenView, 2, iSl);
     lengthTS = sqrt(squeeze(sum(meanTS.^2)));
     zeroLength = find(lengthTS == 0);
     for ii=1:tEvents
@@ -115,7 +117,10 @@ for iSlice=1:nSlices
     ampErrs(:, :, iSl) = squeeze(std(ampsBlock)) / sqrt(tEvents);
     close(wH);
   end
-end
+end %for
+savetSeries(meanTSFull,hiddenView, 1);
+savetSeries(meanTSerrsFull,hiddenView, 2);
+
 
 % Save the parameter maps:
 hiddenView = setParameterMap(hiddenView, {amps, ampErrs}, 'EventAmplitudes');

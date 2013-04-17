@@ -129,8 +129,9 @@ for iScan = 1:nScans
         for frame=1:nFrames
             tSeries(frame, :) = reshape(volSeries(:,:,slice,frame), [1 numPixels]);
         end
-        savetSeries(tSeries, newView, newScanNum, slice);
-	end
+        tSeriesFull(slice) = tSeries;
+    end
+    savetSeries(tSeriesFull, newView, newScanNum, slice);
 	if verbose > 1,     close(waitHandle);  end
     clear volSeries
 	
