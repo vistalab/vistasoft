@@ -14,16 +14,19 @@ function savetSeries(tSeries,vw,scan,slice,nii)
 % djh, 2/17/2001
 mrGlobals;
 
-tseriesdir = viewGet(vw,'tSeriesDir', 1);
-
-if ~exist(fullfile(tseriesdir),'dir')
-    mkdir(tseriesdir);
-end
+if notDefined('scan'),  scan  = viewGet(vw, 'curScan'); end
+if notDefined('slice'), slice = viewGet(vw, 'curSlice'); end
 
 viewType = viewGet(vw,'View Type');
 
 if strcmp(viewType,'Inplane')
     
+    tseriesdir = viewGet(vw,'tSeriesDir', 1);
+    
+    if ~exist(fullfile(tseriesdir),'dir')
+        mkdir(tseriesdir);
+    end
+
     pathStr = fullfile(tseriesdir,['tSeriesScan',num2str(scan),'Slice',num2str(slice),'nii.gz']);
     
     %We now have a path to save the nifti to, let's make a nifti!
@@ -101,7 +104,12 @@ if strcmp(viewType,'Inplane')
         fprintf('Saved time series %s. (%s)\n', pathStr, datestr(now));
     end
     
-else strcmp(viewType,'Gray')
+else
+    
+    %First check if we are getting multiple slices or just one
+    sliceDim = viewGet(vw,'Functional Slice Dim');
+    
+    
     
     tseriesdir = tSeriesDir(vw, 1);
     scandir = ['Scan',num2str(scan)];

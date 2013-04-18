@@ -74,7 +74,6 @@ if(any(any(niftiGet(nii,'sto_xyz')>0)>0))
 	nii = niftiSet(nii, 'sto_xyz',inv(niftiGet(nii,'sto_ijk')));
 end
 
-<<<<<<< HEAD
 %In case the nifti does not have the following fields, let's check them
 %before we 
 if (~isempty(niftiGet(nii,'freqdim')) && niftiGet(nii,'freqdim'))

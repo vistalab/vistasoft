@@ -49,14 +49,16 @@ if strcmp(viewType,'Inplane')
         nKeep = keepFrames(scan,2);
         if nKeep==-1
             % flag to keep all remaining frames
-            nKeep = size(func.data, 4) - nSkip;
+            nKeep = size(niftiGet(nii,'Data'), 4) - nSkip;
         end
-        keep = [1:nKeep] + nSkip;
+        keepFrame = [1:nKeep] + nSkip;
+    else
+        keepFrame = [1:size(niftiGet(nii,'Data'),4)];
     end
     
     %Change the data and dimensions of the nifti
     data = niftiGet(nii,'Data');
-    nii = niftiSet(nii,'Data', data(:,:,:,keep));
+    nii = niftiSet(nii,'Data', data(:,:,:,keepFrame));
     dims = niftiGet(nii,'Dim');
     dims(4) = size(niftiGet(nii,'Data'), 4);
     nii = niftiSet(nii,'Dim',dims);

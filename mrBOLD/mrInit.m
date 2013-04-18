@@ -116,8 +116,6 @@ function ok = mrInit(varargin)
 % reflect this. Email DY if you would like to see an example wrapper script
 % that sets all params. 
 
-mrGlobals;
-
 %%%%% (0) ensure all input parameters are specified
 if nargin==0		
 	% get params interactively
@@ -148,6 +146,9 @@ fprintf('***** [%s] Initializing Session %s ***** (%s)\n', mfilename, ...
 ensureDirExists(params.sessionDir);	
 callingDir = pwd;
 cd(params.sessionDir);
+
+mrGlobals;
+
 initEmptySession; %Replace this save and then load of mrSESSION with that variable simply passed
                     % from one to the other
 load mrSESSION mrSESSION dataTYPES
