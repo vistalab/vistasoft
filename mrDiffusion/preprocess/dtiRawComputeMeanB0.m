@@ -88,7 +88,7 @@ VF.mat = VG.mat;
 bb = [1 1 1; size(mnB0)];
 tic;
 for ii=2:length(b0inds)
-  fprintf('Aligning b=0 volume %d of %d to first b=0 image...\n', ii, length(b0inds));
+  fprintf('[%s] Aligning b=0 volume %d of %d to first b=0 image...\n', mfilename, ii, length(b0inds));
   im = double(dwRaw.data(:,:,:,b0inds(ii)));
   VF.uint8 = uint8(round(mrAnatHistogramClip(im,0.4,0.99)*255));
   % Use evalc to suppress the annoying output from spm_coreg
@@ -99,16 +99,16 @@ for ii=2:length(b0inds)
   b0Xform{ii} = VF.mat\spm_matrix(xformParams(end,:))*VG.mat;
 end
 b0AlignSecs = b0AlignSecs+toc;
-fprintf('Finished aligning %d vols in %0.1f minutes.\n', length(b0inds)-1, b0AlignSecs./60);
+fprintf('[%s] Finished aligning %d vols in %0.1f minutes.\n', mfilename, length(b0inds)-1, b0AlignSecs./60);
 tic
 for ii=2:length(b0inds)
-  fprintf('Resampling b=0 volume %d of %d to first b=0 image...\n', ii, length(b0inds));
+  fprintf('[%s] Resampling b=0 volume %d of %d to first b=0 image...\n', mfilename, ii, length(b0inds));
   im = double(dwRaw.data(:,:,:,b0inds(ii)));
   im = mrAnatResliceSpm(im, b0Xform{ii}, bb, [1 1 1], [1 1 1 0 0 0], 0);
   im(im<0) = 0;
   mnB0 = mnB0+im;
 end
-fprintf('Finished resampling %d vols in %0.1f seconds.\n', length(b0inds)-1, toc);
+fprintf('[%s] Finished resampling %d vols in %0.1f seconds.\n', mfilename, length(b0inds)-1, toc);
 mnB0 = mnB0./length(b0inds);
 mnB0(isnan(mnB0)) = 0;
 mnB0 = int16(round(mnB0));

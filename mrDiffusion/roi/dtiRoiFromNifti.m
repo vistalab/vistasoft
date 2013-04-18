@@ -180,7 +180,7 @@ switch lower(outType)
         end
         
         % Convert indexed locations to I J K coords
-        [I J K] = ind2sub(size(ni.data),inds);
+        [I, J, K] = ind2sub(size(ni.data),inds);
         
         % Now convert I J K coords to ACPC
         acpcCoords = mrAnatXformCoords(ni.qto_xyz, [I J K]);

@@ -104,7 +104,7 @@ end
 %% V. Read Bvecs & Bvals and build if they don't exist
 
 if ~exist(dwDir.bvalsFile,'file') || ~exist(dwDir.bvecsFile,'file')
-    [doBvecs dwParams] = dtiInitBuildBVs(dwDir, dwParams);
+    [doBvecs, dwParams] = dtiInitBuildBVs(dwDir, dwParams);
 else
     doBvecs = false;
 end
@@ -160,7 +160,7 @@ if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name); end
 
 % Based on user selected params decide if we do eddy current correction 
 % and resampling. If the ecc is done doResamp will be true.
-[doECC doResamp] = dtiInitEddyCC(dwParams,dwDir,doResamp);
+[doECC, doResamp] = dtiInitEddyCC(dwParams,dwDir,doResamp);
 
 % If doECC comes back true do the eddy current correction
 if doECC
@@ -173,7 +173,7 @@ end
 
 % Based on user selected params decide if we align the raw dwi data to a
 % reference image (t1). If the alignment is computed doResamp will be true.
-[doAlign doResamp] = dtiInitAlign(dwParams,dwDir,doResamp);
+[doAlign, doResamp] = dtiInitAlign(dwParams,dwDir,doResamp);
 
 if doAlign, dtiRawAlignToT1(dwDir.mnB0Name, t1FileName, dwDir.acpcFile); end
 

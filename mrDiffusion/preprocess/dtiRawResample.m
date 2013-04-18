@@ -31,8 +31,8 @@ if(numel(dwOutMm)==1), dwOutMm = [dwOutMm dwOutMm dwOutMm]; end
 
 %% Set defaults
 % Initialize SPM default params
-spm_defaults;
-global defaults;
+%spm_defaults;
+%global defaults;
 % estParams = defaults.coreg.estimate;
 
 if(~exist('dwRaw','var')||isempty(dwRaw))
@@ -46,7 +46,7 @@ if(ischar(dwRaw))
 else
     [dataDir,inBaseName] = fileparts(dwRaw.fname);
 end
-[junk,inBaseName,junk] = fileparts(inBaseName);
+[~,inBaseName,~] = fileparts(inBaseName);
 if(isempty(dataDir)), dataDir = pwd; end
 
 if(~exist('ecXformFile','var'))
