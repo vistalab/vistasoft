@@ -131,7 +131,7 @@ for iScan = 1:nScans
         end
         tSeriesFull(slice) = tSeries;
     end
-    savetSeries(tSeriesFull, newView, newScanNum, slice);
+    savetSeries(tSeriesFull, newView, newScanNum);
 	if verbose > 1,     close(waitHandle);  end
     clear volSeries
 	

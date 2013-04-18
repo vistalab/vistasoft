@@ -141,7 +141,7 @@ for slice=slices
   end
   tSeriesFull(slice) = tSeries;
 end %for
-savetSeries(tSeries, vw, scan, slice);
+savetSeries(tSeriesFull, vw, scan);
 close(waitHandle)
 
 return

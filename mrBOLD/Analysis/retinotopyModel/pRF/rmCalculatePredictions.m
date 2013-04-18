@@ -411,7 +411,7 @@ for scan = 1:nScans
     % Write out the time series
     %------------------------------------------------------------------
     vw = viewSet(vw, 'currentDataTYPE',  tgtDt);
-    savetSeries(tSeries(:,:,slice), vw, tgtScan, slice);
+    savetSeries(tSeries, vw, tgtScan);
 
     %% also save residuals in a separate data type if requested
     if saveResiduals==1

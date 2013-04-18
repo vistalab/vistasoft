@@ -68,7 +68,7 @@ for newScanNum = 1:nScans
 		result = upConv(tmp,filt,'circular',[2 1]);
 		resultFull(iSlice) = result;
 	end
-    savetSeries(resultFull,hiddenView,newScanNum,iSlice);
+    savetSeries(resultFull,hiddenView,newScanNum);
 	
 	% update dataTYPES.scanParams so that new scan has the same params as
 	% the orig scan.

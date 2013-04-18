@@ -162,7 +162,7 @@ for thisScan=1:length(scanList)
             tSeries = loadtSeries(vw,scanList(thisScan));
             iterlambda = kernelSize_mm;
             tSeries = dhkGraySmooth(vw,tSeries,iterlambda);
-            %This should be fine since we are not changing tSeries
+            %This should be fine since we this is a 'gray' view
             savetSeries(tSeries, hiddenView,thisScan,1);
     end
     

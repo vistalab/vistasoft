@@ -218,7 +218,7 @@ for thisScanIndex=1:nScansToProcess
       thisTSerFull(thisSlice) = thisTSer;
     disp(thisSlice);    
     end
-    savetSeries(thisTSer,vw,thisScan);
+    savetSeries(thisTSerFull,vw,thisScan);
   
 end
 

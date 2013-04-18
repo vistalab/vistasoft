@@ -95,7 +95,7 @@ for ii = 1:length(scans)
         waitbar(iS/length(slices), wH);
     end
     %Moved outside the for loop
-    savetSeries(tsFull, hiddenView, outScan, slice);
+    savetSeries(tsFull, hiddenView, outScan);
     close(wH);
 end
 
