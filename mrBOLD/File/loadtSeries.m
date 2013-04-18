@@ -29,30 +29,7 @@ mrGlobals;
 %type we are in. If inplane, then we will need to load a nifti tseries. If
 %gray, then we will need to load a matrix tseries file.
 
-if strcmp(viewType,'Gray')
-    
-    %Original way of loading matrix files
-    dirPathStr = fullfile(viewGet(vw,'tSeriesDir'),['Scan',int2str(scan)]);
-    fileName   = fullfile(dirPathStr,['tSeries',int2str(slice)]);
-    
-    load(fileName,'tSeries');    % Load the variable tSeries
-    nFrames = size(tSeries,1);   %#ok<NODEF>
-    if (nFrames ~= viewGet(vw,'nFrames',scan))
-        disp('loadtSeries: unexpected number of tSeries frames in file.');
-    end
-    nPixels = size(tSeries,2);
-    
-    %TODO: This should be getting the tSeries dimensions and not the Inplane
-    % anat dimension.
-    if (nPixels ~= prod(viewGet(vw, 'sliceDims', scan))) && ~(isequal(viewGet(vw,'View Type'),'Flat'))
-        disp('loadtSeries: unexpected number of pixels in TSeries.');
-    end
-    tSeries = single(tSeries);
-    
-    
-    nii = [];
-    
-elseif strcmp(viewType,'Inplane')
+if strcmp(viewType,'Inplane')
     
     dtNum = viewGet(vw,'Current Data Type');
     fileName = dtGet(dataTYPES(dtNum),'Inplane Path', scan);
@@ -85,22 +62,42 @@ elseif strcmp(viewType,'Inplane')
     nii = niftiSet(nii,'Dim',dims);
     
     %For backwards compatibility, let's also make the 'tSeries' data
-    tSeries = single(niftiGet(nii,'Data'));
+    data = single(niftiGet(nii,'Data'));
     
     %Now, let us take the tSeries data and transform it into the same
     %format as previously saved
-
-    nSlices = dims(3);
+    
     nFrames = dims(4);
     voxPerSlice = prod(dims(1:2));
     
-    data = niftiGet(nii,'Data');
     tSeries = squeeze(data(:,:,slice,:)); % rows x cols x time
     tSeries = reshape(tSeries, [voxPerSlice nFrames])'; % time x voxels
     
 else
-    %Neither an Inplane or a Gray view - error!
-    error('tSeries:LoadTSeries','Loading tSeries using neither an Inplane nor Gray view.');
+    strcmp(viewType,'Gray')
+    
+    %Original way of loading matrix files
+    dirPathStr = fullfile(viewGet(vw,'tSeriesDir'),['Scan',int2str(scan)]);
+    fileName   = fullfile(dirPathStr,['tSeries',int2str(slice)]);
+    
+    load(fileName,'tSeries');    % Load the variable tSeries
+    nFrames = size(tSeries,1);   %#ok<NODEF>
+    if (nFrames ~= viewGet(vw,'nFrames',scan))
+        disp('loadtSeries: unexpected number of tSeries frames in file.');
+    end
+    nPixels = size(tSeries,2);
+    
+    %TODO: This should be getting the tSeries dimensions and not the Inplane
+    % anat dimension.
+    if (nPixels ~= prod(viewGet(vw, 'sliceDims', scan))) && ~(isequal(viewGet(vw,'View Type'),'Flat'))
+        disp('loadtSeries: unexpected number of pixels in TSeries.');
+    end
+    tSeries = single(tSeries);
+    
+    
+    nii = [];
+    
+    
 end
 
 return

@@ -61,8 +61,9 @@ for scan = scans
     for slice = 1:viewGet(vw, 'NumSlices')
         tSeries = loadtSeries(vw, scan, slice);
         tSeries = tSeries(keep,:);
-        savetSeries(tSeries, vw, scan, slice);
+        tSeriesFull(slice) = tSeries;
     end
+    savetSeries(tSeriesFull, vw, scan);
 
     dataTYPES(dataType).scanParams(scan).nFrames = length(keep);
     save mrSESSION dataTYPES -append;

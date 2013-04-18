@@ -139,8 +139,9 @@ for slice=slices
   for frame=1:nFrames
     tSeries(frame,:) = reshape(warpedVolSeries(:,:,slice,frame),[1 numPixels]);
   end
-  savetSeries(tSeries, vw, scan, slice);
-end
+  tSeriesFull(slice) = tSeries;
+end %for
+savetSeries(tSeries, vw, scan, slice);
 close(waitHandle)
 
 return

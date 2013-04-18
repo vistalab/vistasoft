@@ -101,7 +101,7 @@ if strcmp(viewType,'Inplane')
         fprintf('Saved time series %s. (%s)\n', pathStr, datestr(now));
     end
     
-elseif strcmp(viewType,'Gray')
+else strcmp(viewType,'Gray')
     
     tseriesdir = tSeriesDir(vw, 1);
     scandir = ['Scan',num2str(scan)];
@@ -120,10 +120,7 @@ elseif strcmp(viewType,'Gray')
     if verbose > 1		% starting to use graded levels of feedback
         fprintf('Saved time series %s. (%s)\n', pathStr, datestr(now));
     end
-    
-else
-    error('When calling savetSeries, we are using an incorrect viewType');
-    
+       
 end %if
 
 return

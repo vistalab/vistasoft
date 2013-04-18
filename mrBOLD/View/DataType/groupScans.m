@@ -25,7 +25,7 @@ if isempty(scanList), return; end
 % if ~strcmp(view.viewType,'Inplane'), error('Grouping is only applied in the Inplane view'); end
 if notDefined('groupName')
     % Select a name for the group
-	groupName = mrSelectName({dtGet(dataTYPES, 'Name')}, viewGet(vw, 'Current Data Type');
+	groupName = mrSelectName({dtGet(dataTYPES, 'Name')}, viewGet(vw, 'Current Data Type'));
 end
 
 % Add the name to the dataTYPES
@@ -111,13 +111,14 @@ wbar = waitbar(0,'Copying tseries...');
 nTseries = newScanNum*nSlices;
 for  iScan = 1:length(newScanRange)
     % For each scan... copy the tseries.
+    tgt = newScanRange(iScan);
     for iSlice = 1:nSlices
         % For each slice...
-        tgt = newScanRange(iScan);
         tSeries = loadtSeries(vw, scanList(iScan), iSlice);
-        savetSeries(tSeries,hiddenView,tgt,iSlice);
+        tSeriesFull(iSlice) = tSeries;
         waitbar((nSlices*(iScan-1) + iSlice)/nTseries,wbar)
     end
+    savetSeries(tSeriesFull,hiddenView,tgt);
 end
 close(wbar);
 

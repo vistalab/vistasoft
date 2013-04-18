@@ -1,5 +1,5 @@
-function view=fsl_analyze2MLR(view,scansToProcess,processedDataType,newDataTypeName)
-% view=fsl_analyze2MLR(view,scansToProcess,processedDataType,newDataTypeName)
+function vw=fsl_analyze2MLR(vw,scansToProcess,processedDataType,newDataTypeName)
+% vw=fsl_analyze2MLR(vw,scansToProcess,processedDataType,newDataTypeName)
 % PURPOSE: Generates MLR tSeries from analyze data
 % The analyze files are typically the result of running fsl to do either motion correction or ICA noise removal or both.
 % They are placed into a new dataType in the MLR session.
@@ -14,7 +14,7 @@ function view=fsl_analyze2MLR(view,scansToProcess,processedDataType,newDataTypeN
 % data file relative to the 'Analyze' directory.
 % NOTE: all these fsl_xxx routines expect you to work on the Original
 % datatype. 
-% Example call: view=fsl_analyze2MLR(INPLANE{1},1:12,4,'filteredMCC_Orig')
+% Example call: vw=fsl_analyze2MLR(INPLANE{1},1:12,4,'filteredMCC_Orig')
 % AUTHOR: ARW 12/16/04 
 % $Author: wade $
 % $Date: 2006/03/08 01:33:08 $
@@ -31,18 +31,18 @@ fslBase='/raid/MRI/toolbox/FSL/fsl';
     end
 fslPath=fullfile(fslBase,'bin'); % This is where FSL lives - should also be able to get this from a Matlab pref
 
-if (view.curDataType~=1) % In general, there's no reason to enforce this but it makes everythign a little simpler.
+if (vw.curDataType~=1) % In general, there's no reason to enforce this but it makes everythign a little simpler.
                          % In version 2 of these routines we'll allow you to work on any dataTYPE. 
     error('The data type must be Original (dataTYPE == 1)');
 end
 
-if (~exist('view','var')  || (isempty(view)))
-    view=getSelectedInplane;
+if (~exist('vw','var')  || (isempty(vw)))
+    vw=getSelectedInplane;
 end
 
 if (~exist('scansToProcess','var')  || (isempty(scansToProcess)))
     disp('Select scans to process');
-    scansToProcess=selectScans(view,'Scans to process');
+    scansToProcess=selectScans(vw,'Scans to process');
 end
 
 nSlices=mrSESSION.inplanes.nSlices;
@@ -78,21 +78,22 @@ end
 if ~existDataType(newDataTypeName), addDataType(newDataTypeName); end
 
 % Switch to it.
-view = selectDataType(view,existDataType(newDataTypeName));
+vw = selectDataType(vw,existDataType(newDataTypeName));
 
 % Get the tSeries directory for that dType
-tSerDir=tSeriesDir(view);
+tSerDir=tSeriesDir(vw);
 disp(tSerDir)
 
  
 % We have to populate the dataTYPES structure
 % for the new dataTYPE with reasonable numbers
 
-for thisScan=1:nScansToProcess   
-    dataTYPES(view.curDataType).scanParams(thisScan)=dataTYPES(1).scanParams(1);
-    dataTYPES(view.curDataType).scanParams(thisScan).annotation=['From original scan ',int2str(scansToProcess(thisScan))];
-    dataTYPES(view.curDataType).blockedAnalysisParams(thisScan)=dataTYPES(1).blockedAnalysisParams(1);
-    dataTYPES(view.curDataType).eventAnalysisParams(thisScan)=dataTYPES(1).eventAnalysisParams(1);
+for thisScan=1:nScansToProcess
+    %TODO: Change these to use dtGet and dtSet
+    dataTYPES(vw.curDataType).scanParams(thisScan)=dataTYPES(1).scanParams(1);
+    dataTYPES(vw.curDataType).scanParams(thisScan).annotation=['From original scan ',int2str(scansToProcess(thisScan))];
+    dataTYPES(vw.curDataType).blockedAnalysisParams(thisScan)=dataTYPES(1).blockedAnalysisParams(1);
+    dataTYPES(vw.curDataType).eventAnalysisParams(thisScan)=dataTYPES(1).eventAnalysisParams(1);
 end
 
 saveSession;
@@ -125,10 +126,12 @@ for thisScanIndex=1:nScansToProcess
         thisTSer=thisTSer./max(abs(thisTSer(:)));
         thisTSer=int16(thisTSer*32767);
         
-        savetSeries(thisTSer,view,thisScan,thisSlice);
+        thisTSerFull(thisSlice) = thisTSer;
         disp(thisSlice);
     end
-  
+    
+    savetSeries(thisTSerFull,vw,thisScan);
+    
 end
 
 % --------------

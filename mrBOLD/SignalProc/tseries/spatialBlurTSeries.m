@@ -153,14 +153,16 @@ for thisScan=1:length(scanList)
             disp('Saving');
             for thisSlice=1:nSlices
                 thisSliceData=squeeze(dataArray(:,:,:,thisSlice));
-                
-                savetSeries(reshape(thisSliceData,nTR,nx*ny),hiddenView,thisScan,thisSlice);
+                tSeries = reshape(thisSliceData,nTR,nx*ny);
+                tSeriesFull(thisSlice) = tSeries;
             end
+            savetSeries(tSeriesFull,hiddenView,thisScan);
             
         case 'Gray'
             tSeries = loadtSeries(vw,scanList(thisScan));
             iterlambda = kernelSize_mm;
             tSeries = dhkGraySmooth(vw,tSeries,iterlambda);
+            %This should be fine since we are not changing tSeries
             savetSeries(tSeries, hiddenView,thisScan,1);
     end
     

@@ -1,4 +1,4 @@
-function [vw tgtScan tgtDt] = rmCalculatePredictions(vw, useDialog, varargin)
+function [vw, tgtScan, tgtDt] = rmCalculatePredictions(vw, useDialog, varargin)
 % Applies a pRF model to a stimulus and saves time series as a new scan
 %
 %   [vw tgtScan tgtDt] = rmCalculatePredictions([vw], [useDialog], [varargin])
@@ -114,7 +114,6 @@ mrGlobals;  % we'll need this for updating data types below
 for ii = 1:2:length(varargin)
     switch lower(varargin{ii})
         case 'varthresh',                        varthresh = varargin{ii+1};
-        case 'dtname',                           dtName = varargin{ii+1};
         case 'rmodel',                           model = varargin{ii+1};
         case {'p','stimparams'},                 P = varargin{ii+1};
         case 'alltimepoints',                    allTimePoints = varargin{ii+1};
@@ -124,7 +123,7 @@ for ii = 1:2:length(varargin)
         case {'normtomeansignal', 'normtomean'}, normToMeanSignal = varargin{ii+1};
         case {'add100','savepercent'},           savePercent = varargin{ii+1};
         case {'saveresidual' 'saveresiduals'},   saveResiduals = 1;
-        case {'detrend' 'detrendFlag'},       detrendFlag = varargin{ii+1};
+        case {'detrend' 'detrendflag'},       detrendFlag = varargin{ii+1};
         otherwise,
             % Unspeakable hack, but leaving until later
             eval( sprintf('%s = %s', varargin{ii}, num2str(varargin{ii+1})) );
@@ -295,8 +294,6 @@ for scan = 1:nScans
             I = v:v+step-1;  % indices of voxels to compute for this cycle
             I = I(I<nVoxels);  % restrict to num voxels
 
-            warning off MATLAB:divideByZero
-
             % create the pRFs
             pRFs = rfGaussian2d(P.analysis.X, P.analysis.Y, ...
                 sigmaMajor(I), sigmaMinor(I), 0, x0(I), y0(I));
@@ -332,8 +329,6 @@ for scan = 1:nScans
                 %       output = (stim*samplerate^2) * pRF/samplerate^2
 
             end
-
-            warning on MATLAB:divideByZero
 
             % convolve the pRFs with the stimulus specification
             if savePercent==1
@@ -379,7 +374,7 @@ for scan = 1:nScans
     % initialize the new scan
     % If dtName already exists, it is added. Otherwise a new dataType slot
     % is created with the dtName.
-    [vw tgtScan tgtDt] = initScan(vw, dtName, [], {srcDt thescan});
+    [vw, tgtScan, tgtDt] = initScan(vw, dtName, [], {srcDt thescan});
 
     % update the dataTYPES fields to reflect this scan
     % (tacit assumption: the model reflects 1:nScans in this data type)
@@ -416,14 +411,12 @@ for scan = 1:nScans
     % Write out the time series
     %------------------------------------------------------------------
     vw = viewSet(vw, 'currentDataTYPE',  tgtDt);
-    for slice = 1:numSlices(vw)
-        savetSeries(tSeries(:,:,slice), vw, tgtScan, slice);
-    end
+    savetSeries(tSeries(:,:,slice), vw, tgtScan, slice);
 
     %% also save residuals in a separate data type if requested
     if saveResiduals==1
         % initialize the new scan
-        [vw resScan resDt] = initScan(vw, [dtName '_Residual'], [], {srcDt scan});
+        [vw, resScan, resDt] = initScan(vw, [dtName '_Residual'], [], {srcDt scan});
 
         % save the time series
         for slice = 1:numSlices(vw)
@@ -436,7 +429,7 @@ for scan = 1:nScans
             end
 
             % scale the predictions to match the data
-            [trends nt dcid] = rmMakeTrends(P, 0);
+            [trends, nt, dcid] = rmMakeTrends(P, 0);
             tSeries(:,:,slice) = scalePredictionToData(tSeries(:,:,slice), ...
                 dataTSeries, trends(:,1));
 
@@ -444,15 +437,17 @@ for scan = 1:nScans
             % clean up this code, removing a lot of the flags, and always
             % do this regardless of whether we save residuals)
             vw.curDataType = tgtDt;
-            savetSeries(tSeries(:,:,slice), vw, tgtScan, slice);
 
             % compute the residual: difference between data and prediction
             residual = dataTSeries - tSeries(:,:,slice);
 
             % save
+            % TODO: Move this function to using viewGet
             vw.curDataType = resDt;
-            savetSeries(residual, vw, resScan, slice);
+            residualFull(slice) = residual;
         end
+        savetSeries(tSeries, vw, tgtScan);
+        savetSeries(residualFull, vw, resScan);
 
         % update dataTYPES
         % 		dataTYPES(resDt) = dtSet(dataTYPES(resDt), 'retinotopyModelParams', ...
@@ -474,7 +469,7 @@ return
 
 
 % ------
-function ts = convertToPercent(ts);
+function ts = convertToPercent(ts)
 % convert a set of time series to percent, following the steps in
 % percentTSeries. (Divide by the mean, and convert to % signal
 % change about the mean.)
@@ -485,7 +480,7 @@ return
 
 
 % ------
-function pred = scalePredictionToData(pred, data, trends);
+function pred = scalePredictionToData(pred, data, trends)
 % given a predicted time series, an observed time series, and a set of
 % trends, scale the predictions to match the data. This tries to
 % re-capitulate the scaling that is done to predicted time series in
@@ -500,7 +495,7 @@ h_wait = waitbar(0, 'Scaling predictions to observed data...');
 nVoxels = size(pred, 2);
 
 for v = 1:nVoxels
-    if any( isnan(pred(:,v)) | isinf(pred(:,v)) | isnan(pred(:,v)) | isinf(pred(:,v)) ) | ...
+    if any( isnan(pred(:,v)) | isinf(pred(:,v)) | isnan(pred(:,v)) | isinf(pred(:,v)) ) || ...
             length(unique(pred(:,v)))==1
         continue
     end
@@ -520,7 +515,7 @@ return
 
 
 % ------
-function [resp ok] = rmSavePredictionsParams
+function [resp, ok] = rmSavePredictionsParams
 % Brings up a dialog for the user to set stimulus parameters
 %
 %  called by rmCalculatePredictions
@@ -576,7 +571,7 @@ dlg(end).string = 'Save data residuals in a separate data type?';
 dlg(end).value = 0;
 
 
-[resp ok] = generalDialog(dlg, mfilename);
+[resp, ok] = generalDialog(dlg, mfilename);
 if ~ok
     disp('User Aborted.')
     return;

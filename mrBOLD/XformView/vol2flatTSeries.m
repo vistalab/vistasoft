@@ -95,6 +95,7 @@ for scan = selectedScans
        end
         
         % Save tSeries
+        % Should not be changed since this is called on a 'flat' view
         savetSeries(tSeries,flat,scan,h);
     end
 end

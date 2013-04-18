@@ -319,7 +319,7 @@ switch param
     case 'viewdir'
         % Return the complete path combination of homedir and subdir
         % Will then try to create them if not already created
-        val = fullfile(viewGet(vw,'Home Directory'),viewGet(vw,'Sub Directory'))
+        val = fullfile(viewGet(vw,'Home Directory'),viewGet(vw,'Sub Directory'));
         if ~exist(val,'dir')
             fprintf('Trying to make %s...',str);
             try

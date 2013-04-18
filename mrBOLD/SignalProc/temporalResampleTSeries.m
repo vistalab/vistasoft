@@ -1,4 +1,4 @@
-function view = temporalResampleTSeries(view, scan, newFramePeriod, dt);
+function vw = temporalResampleTSeries(vw, scan, newFramePeriod, dt)
 % Temporally resample time series.
 %
 %   view = temporalResampleTSeries([view], [scan], [newFramePeriod=1.5], [dataType]);
@@ -18,22 +18,22 @@ function view = temporalResampleTSeries(view, scan, newFramePeriod, dt);
 %
 %
 % ras, 09/2009.
-if notDefined('view'),				view = getCurView;			end
-if notDefined('scan'),				scan = view.curScan;		end
+if notDefined('vw'),				vw = getCurView;			end
+if notDefined('scan'),				scan = vw.curScan;		end
 if notDefined('newFramePeriod'),	newFramePeriod = 1.5;		end
-if notDefined('dt'),				dt = view.curDataType;		end
+if notDefined('dt'),				dt = vw.curDataType;		end
 
 if length(scan) > 1
 	% iteratively resample each scan
 	for s = scan
-		view = temporalResampleTSeries(view, s, newFramePeriod, dt);
+		vw = temporalResampleTSeries(vw, s, newFramePeriod, dt);
 	end
 	return
 end
 
 %% compute the temporal sample points for the source and new time series
-framePeriod  = viewGet(view, 'FramePeriod', scan);
-nFrames      = viewGet(view, 'NumFrames', scan);
+framePeriod  = viewGet(vw, 'FramePeriod', scan);
+nFrames      = viewGet(vw, 'NumFrames', scan);
 newNumFrames = nFrames * framePeriod / newFramePeriod;
 
 t = [0:nFrames-1] .* framePeriod;
@@ -46,11 +46,11 @@ if verbose >= 1
 	h_wait = waitbar(0, ['Resampling time series for scan ' num2str(scan)]);
 end
 
-nSlices = numSlices(view);
+nSlices = numSlices(vw);
 
 %% main resampling stage
 for slice = 1:nSlices
-	src = loadtSeries(view, scan, slice);
+	src = loadtSeries(vw, scan, slice);
 	
 	nVoxels = size(src, 2);
 	tSeries = single( NaN(newNumFrames, nVoxels) );
@@ -73,10 +73,10 @@ for slice = 1:nSlices
 	end
 	
 	% save the time series
-	[tgtView tgtScan tgtDt] = initScan(view, dt, [], {view.curDataType scan});
-	savetSeries(tSeries, tgtView, tgtScan, slice);
-	
-	% update the data type params -- including retinotopy model params if
+	[tgtView, tgtScan, tgtDt] = initScan(vw, dt, [], {vw.curDataType scan});
+	tSeriesFull(slice) = tSeries;
+
+    % update the data type params -- including retinotopy model params if
 	% they exist:
 	mrGlobals;
 	dataTYPES(tgtDt).scanParams(tgtScan).framePeriod = newFramePeriod;
@@ -90,6 +90,9 @@ for slice = 1:nSlices
 	 end
 	saveSession;
 end
+
+savetSeries(tSeriesFull, vw, tgtScan);
+
 
 if verbose >= 1
 	close(h_wait);

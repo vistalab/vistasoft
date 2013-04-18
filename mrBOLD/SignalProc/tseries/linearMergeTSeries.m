@@ -1,5 +1,5 @@
-function view=linearMergeTSeries(view,scanList,typeName,weights)
-% view=linearMergeTSeries(view,scanList,typeName,weights)
+function vw=linearMergeTSeries(vw,scanList,typeName,weights)
+% vw=linearMergeTSeries(vw,scanList,typeName,weights)
 %
 % Merge tSeries data together using the weights specified. Weights can be
 % negative as well as positive. There must be as many weights as tSeries.
@@ -19,11 +19,11 @@ function view=linearMergeTSeries(view,scanList,typeName,weights)
 
 mrGlobals
 
-if (~exist('scanList','var') | isempty(scanList)), scanList = selectScans(view); end
-if (~exist('typeName','var') | isempty(typeName)), typeName='Merged'; end
+if (~exist('scanList','var') || isempty(scanList)), scanList = selectScans(vw); end
+if (~exist('typeName','var') || isempty(typeName)), typeName='Merged'; end
 if ~existDataType(typeName), addDataType(typeName); end
 
-checkScans(view,scanList);
+checkScans(vw,scanList);
 
 if (ieNotDefined('weights')) 
     % Several options here: 1: just force all weights to 1
@@ -36,7 +36,8 @@ if (ieNotDefined('weights'))
 end
 
 % Open a hidden view and set its dataType to 'Averages'
-switch view.viewType
+% TODO: Change these to start using viewGet
+switch vw.viewType
     case 'Inplane'
         hiddenView = initHiddenInplane;
     case 'Volume'
@@ -44,7 +45,7 @@ switch view.viewType
     case 'Gray'
         hiddenView = initHiddenGray;
     case 'Flat'
-        hiddenView = initHiddenFlat(viewDir(view));
+        hiddenView = initHiddenFlat(viewDir(vw));
 end
 hiddenView = selectDataType(hiddenView,existDataType(typeName));
 
@@ -52,10 +53,10 @@ hiddenView = selectDataType(hiddenView,existDataType(typeName));
 % the 1st scan on scanList.
 newScanNum = numScans(hiddenView)+1;
 ndataType = hiddenView.curDataType;
-dataTYPES(ndataType).scanParams(newScanNum) = dataTYPES(view.curDataType).scanParams(scanList(1));
-dataTYPES(ndataType).blockedAnalysisParams(newScanNum) = dataTYPES(view.curDataType).blockedAnalysisParams(scanList(1));
-dataTYPES(ndataType).eventAnalysisParams(newScanNum) = dataTYPES(view.curDataType).eventAnalysisParams(scanList(1));
-dataTYPES(ndataType).scanParams(newScanNum).annotation = ['Lin merge of ',getDataTypeName(view),', scans: ',num2str(scanList)];
+dataTYPES(ndataType).scanParams(newScanNum) = dataTYPES(vw.curDataType).scanParams(scanList(1));
+dataTYPES(ndataType).blockedAnalysisParams(newScanNum) = dataTYPES(vw.curDataType).blockedAnalysisParams(scanList(1));
+dataTYPES(ndataType).eventAnalysisParams(newScanNum) = dataTYPES(vw.curDataType).eventAnalysisParams(scanList(1));
+dataTYPES(ndataType).scanParams(newScanNum).annotation = ['Lin merge of ',getDataTypeName(vw),', scans: ',num2str(scanList)];
 saveSession
 
 % Get the tSeries directory for this dataType 
@@ -72,15 +73,15 @@ end
 nAvg = length(scanList);
 % *** check that all scans have the same slices
 waitHandle = waitbar(0,'Merging tSeries.  Please wait...');
-nSlices = length(sliceList(view,scanList(1)));
+nSlices = length(sliceList(vw,scanList(1)));
 
-for iSlice = sliceList(view,scanList(1));
+for iSlice = sliceList(vw,scanList(1));
     % For each slice...
     % disp(['Averaging scans for slice ', int2str(iSlice)])
     for iAvg=1:nAvg
         iScan = scanList(iAvg);
  
-        tSeries = loadtSeries(view, iScan, iSlice);
+        tSeries = loadtSeries(vw, iScan, iSlice);
         
         % Remove the mean. Why? Because if we subtract tSeries from each
         % other, we can drive the mean value very low. Then when we come to
@@ -118,9 +119,11 @@ for iSlice = sliceList(view,scanList(1));
     
     %tSeriesAvg = tSeriesAvg ./ nValid;
     tSeriesAvg(nValid == 0) = NaN;
-    savetSeries(tSeriesAvg,hiddenView,newScanNum,iSlice);
+    tSeriesAvgFull(iSlice) = tSeriesAvg;
     waitbar(iSlice/nSlices);
-end
+end %for
+
+savetSeries(tSeriesAvgFull,hiddenView,newScanNum,iSlice);
 
 close(waitHandle);
 
@@ -132,17 +135,17 @@ FLAT    = resetDataTypes(FLAT,ndataType);
 
 return;
 
-function checkScans(view,scanList)
+function checkScans(vw,scanList)
 %
 % Check that all scans in scanList have the same slices, numFrames, cropSizes
 for iscan = 2:length(scanList)
-    if find(sliceList(view,scanList(1)) ~= sliceList(view,scanList(iscan)))
+    if find(sliceList(vw,scanList(1)) ~= sliceList(vw,scanList(iscan)))
         mrErrorDlg('Can not merge these scans; they have different slices.');
     end
-    if (numFrames(view,scanList(1)) ~= numFrames(view,scanList(iscan)))
+    if (numFrames(vw,scanList(1)) ~= numFrames(vw,scanList(iscan)))
         mrErrorDlg('Can not merge these scans; they have different numFrames.');
     end
-    if find(sliceDims(view,scanList(1)) ~= sliceDims(view,scanList(iscan)))
+    if find(sliceDims(vw,scanList(1)) ~= sliceDims(vw,scanList(iscan)))
         mrErrorDlg('Can not merge these scans; they have different cropSizes.');
     end
 end

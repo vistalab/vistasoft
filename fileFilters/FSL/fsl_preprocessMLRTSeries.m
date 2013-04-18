@@ -1,4 +1,4 @@
-function view=fsl_preprocessMLRTseries(view,scansToProcess)
+function vw=fsl_preprocessMLRTSeries(vw,scansToProcess)
 % PURPOSE: Does mcflirt (and one day slice time correction) on time series data in MLR
 % See also fsl_runMelodicMLRTSeries
 % ARW 120604
@@ -34,18 +34,18 @@ fslBase='/raid/MRI/toolbox/FSL/fsl';
 fslPath=fullfile(fslBase,'bin'); % This is where FSL lives - should also be able to get this from a Matlab pref
 reconPath='/raid/MRI/toolbox/Recon'; % required for the recon program to convert .mag files into Analyze format
 dataDir=[thisDir,filesep,'Raw']; % The raw directory containing the e-files and .mag files
-if (~exist('view','var')  | (isempty(view)))
-    view=getSelectedInplane;
+if (~exist('vw','var')  | (isempty(vw)))
+    vw=getSelectedInplane;
 end
 
-if (view.curDataType~=1)
+if (vw.curDataType~=1)
     error('The data type must be Original (dataTYPE == 1)');
 end
 if (~exist('scansToProcess','var')  | (isempty(scansToProcess)))
 
 disp('Select scans to process');
 
-scansToProcess=selectScans(view,'Scans to process');
+scansToProcess=selectScans(vw,'Scans to process');
 end
 
 nSlices=mrSESSION.inplanes.nSlices;
@@ -61,7 +61,7 @@ for thisScanIndex=1:nScansToProcess
     dataBlock=zeros(cropSize(1),cropSize(2),nSlices,nFrames); % Pre-allocate a large data array
 
     for thisSlice=1:nSlices
-        thistSeries = loadtSeries(view,thisScan,thisSlice);
+        thistSeries = loadtSeries(vw,thisScan,thisSlice);
         % For historical reasons, tSeries come in as nFrames*(y*x)
         % So a 128*128 pixel by 72 frame data set for a single slice would
         % come out as size=72*16384
@@ -110,8 +110,8 @@ return;
 % are in good alignment with the T1...
 % The first step is to create an analyze image from anat.mat
 % This means that the anatomy has to be loaded in the current view
-view=loadAnat(view);
-thisAnat=view.anat;
+vw=loadAnat(vw);
+thisAnat=vw.anat;
 % For consistnecy, use save_avw to save this to disk.
 % This whole thing could be a function makeInplaneAnalyzeAnatomy... 
 adim=mrSESSION.inplanes.voxelSize;
@@ -179,10 +179,10 @@ end
 % Make the new data type and fill in the directories...
 typeName='remixedOrig';
 if ~existDataType(typeName), addDataType(typeName); end
-view = selectDataType(view,existDataType(typeName));
+vw = selectDataType(vw,existDataType(typeName));
 
 % ----------------------
-tSerDir=tSeriesDir(view);
+tSerDir=tSeriesDir(vw);
 % The new dataType will be a clone of Original
 % If we have remixed the tSeries for scan 'n' then
 % we will place the remixed tSeries in the new dataTYPE
@@ -191,9 +191,9 @@ tSerDir=tSeriesDir(view);
 
 % We have to populate the dataTYPES structure with reasonable numbers
 % even if the individual scans have no tSeries data
-dataTYPES(view.curDataType).scanParams=dataTYPES(1).scanParams;
-dataTYPES(view.curDataType).blockedAnalysisParams=dataTYPES(1).blockedAnalysisParams;
-dataTYPES(view.curDataType).eventAnalysisParams=dataTYPES(1).eventAnalysisParams;
+dataTYPES(vw.curDataType).scanParams=dataTYPES(1).scanParams;
+dataTYPES(vw.curDataType).blockedAnalysisParams=dataTYPES(1).blockedAnalysisParams;
+dataTYPES(vw.curDataType).eventAnalysisParams=dataTYPES(1).eventAnalysisParams;
 
 for thisScanIndex=1:nScansToProcess
     
@@ -215,9 +215,10 @@ for thisScanIndex=1:nScansToProcess
       thisTSer=img(:,:,thisSlice,:);
       thisTSer=reshape(thisTSer,(dims(1)*dims(2)),dims(4));
       thisTSer=thisTSer';
-      savetSeries(thisTSer,view,thisScan,thisSlice);
+      thisTSerFull(thisSlice) = thisTSer;
     disp(thisSlice);    
-  end
+    end
+    savetSeries(thisTSer,vw,thisScan);
   
 end
 

@@ -1,4 +1,4 @@
-function view=read4dAnalyzeToTseries(view,inFile,scan,volsToSkip,flipLRflag,timesRot90,flipSliceOrder)
+function vw=read4dAnalyzeToTseries(vw,inFile,scan,volsToSkip,flipLRflag,timesRot90,flipSliceOrder)
 % view=read4dAnalyzeToTseries(view,inFile,scan,volsToSkip,flipLR,timesRot90,flipSliceOrder)
 %
 % reads in a 4d analyze file and writes TSeries for MRL
@@ -41,7 +41,7 @@ funcVol = spm_read_vols(V);
 if ~isempty(volsToSkip)
     funcVol=funcVol(:,:,:,(volsToSkip+1):end);
 end
-[y x nSlices nVols]=size(funcVol);
+[y, x, nSlices, nVols]=size(funcVol);
 
 if y == x
     for thisSlice=1:nSlices
@@ -93,20 +93,22 @@ if flipSliceOrder
         tSeries=squeeze(funcVol(:,:,nSlices-t+1,:));
         tSeries=reshape(tSeries,x*y,nVols);
         tSeries=tSeries';
-        savetSeries(tSeries,view,scan,t);
+        tSeriesFull(t) = tSeries;
 
         fprintf('.');
     end
+    savetSeries(tSeriesFull,vw,scan);
 else
     for t=1:nSlices
 
         tSeries=squeeze(funcVol(:,:,t,:));
         tSeries=reshape(tSeries,x*y,nVols);
         tSeries=tSeries';
-        savetSeries(tSeries,view,scan,t);
+        tSeriesFull(t) = tSeries;
 
         fprintf('.');
     end
+    savetSeries(tSeriesFull,vw,scan);
 end
 
 fprintf('Done.\n');

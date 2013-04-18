@@ -28,7 +28,20 @@ if ~exist('baseFrame','var')
 end
 
 % Load tSeries
-tSeries = loadtSeries(vw,scan,slice);
+[~,nii] = loadtSeries(vw,scan,slice);
+
+dims = niftiGet(nii,'Dim');
+data = single(niftiGet(nii,'Data'));
+
+%Now, let us take the tSeries data and transform it into the same
+%format as previously saved
+
+nFrames = dims(4);
+voxPerSlice = prod(dims(1:2));
+
+tSeries = squeeze(data(:,:,slice,:)); % rows x cols x time
+tSeries = reshape(tSeries, [voxPerSlice nFrames])'; % time x voxels
+
 nFrames = numFrames(vw,scan);
 dims = sliceDims(vw,scan);
 baseIm = reshape(tSeries(baseFrame,:),dims);
@@ -47,7 +60,17 @@ end
 close(waitHandle)
 
 % Return warped tSeries in vw.tSeries and save it to the tSeries file
-savetSeries(wtSeries,vw,scan,slice);
+
+size = viewGet(vw,'Functional Slice Dim');
+newwtSeries = reshape(wtSeries,size);
+
+%Now let's update the nifti
+dim = size(newwtSeries);
+nii = niftiSet(nii,'Dim',dim);
+data(:,:,slice,:) = newwtSeries;
+nii = niftiSet(nii,'Data',data);
+
+savetSeries(wtSeries,vw,scan,slice,nii);
 
 return
 

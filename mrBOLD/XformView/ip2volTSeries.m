@@ -134,6 +134,8 @@ for scan = selectedScans
     end;
 
     % Save tSeries
+    % This should not need to be changed to new version because it is only
+    % for the gray view
     savetSeries(tSeries, gray, scan, 1);
     
     % update the waitbar
