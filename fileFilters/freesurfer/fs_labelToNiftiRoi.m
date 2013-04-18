@@ -1,6 +1,6 @@
-function [nRoi fsLabelName outName] = fs_labelToNiftiRoi(fsIn,labelVal,outName,smoothKernel)
-
-% function fs_aparcAsegLabelToNiftiRoi([fsIn],[labelVal],[outName],[smoothKernel])
+function [nRoi, fsLabelName, outName] = fs_labelToNiftiRoi(fsIn,labelVal,outName,smoothKernel)
+%
+%  [nRoi, fsLabelName, outName] = fs_aparcAsegLabelToNiftiRoi([fsIn],[labelVal],[outName],[smoothKernel])
 % 
 % This function will take a freesurfer segmentation file (eg fsIn =
 % aparc+aseg.nii) and convert specific lables within it to a nifti roi. If
@@ -83,12 +83,12 @@ function [nRoi fsLabelName outName] = fs_labelToNiftiRoi(fsIn,labelVal,outName,s
 % Get the fsIn file. 
 if notDefined('fsIn') || ~exist(fsIn,'file')
     fsSubDir = getenv('SUBJECTS_DIR');
-    [fileName path] = uigetfile({'*'},'Select the aparc_aseg Freesurfer Nifti or MGZ File',fsSubDir);    
+    [fileName, path] = uigetfile({'*'},'Select the aparc_aseg Freesurfer Nifti or MGZ File',fsSubDir);    
     if isnumeric(fileName); disp('Canceled by user.'); return; end
 
     fsIn = fullfile(path,fileName);
 else
-    [p ~] = fileparts(fsIn);
+    [p, ~] = fileparts(fsIn);
     if isempty(p)
         fsIn = fullfile(pwd,fsIn);
     end
@@ -102,7 +102,7 @@ fsIn = f_fsMgzCheck(fsIn);
 % Set labelVal if notDefined. If the user does not pass in a label value
 % then we ask them to select one. In this case they also can select a name for the roi.
 if notDefined('labelVal')
-    [labelVal outName smoothKernel] = f_getLabelVal(fsIn);
+    [labelVal, outName, smoothKernel] = f_getLabelVal(fsIn);
     
 end
 
@@ -127,10 +127,10 @@ if notDefined('outName')
     load fslabel.mat;
     index = find(ismember(fslabel.num, labelVal)==1);
     fsLabelName = (fslabel.name{index}); %#ok<*FNDSB,*FNDSB>
-    [p n e] = fileparts(fsIn);
+    [p, n, e] = fileparts(fsIn);
     outName = fullfile(p,['roi_'  fsLabelName '_' labelVal  '_' n e]);
 else
-    [p n e] = fileparts(outName);
+    [p, n, e] = fileparts(outName);
     if isempty(e)
         e = '.nii.gz';
         n = [n e]; 
@@ -184,15 +184,15 @@ return
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  This funciton checks the file type of fsIn. If MGZ convert to NIFIT.
 function fsIn = f_fsMgzCheck(fsIn)
-[p f e] = fileparts(fsIn);
+[p, f, e] = fileparts(fsIn);
 flag = strcmp(e,'.mgz');
 if flag == 1
    % Warn the user that they have passed in a .mgz file and wait for their response
-   h = warndlg(sprintf('You have selected an mgz file. \n We will convert that mgz to nifti using fs_mgzSegToNifti...'),...
-       'fs_labelToNiftiRoi Warning'); uiwait(h);
+   fprintf('[%s] MGZ file passed in. \n Converting MGZ to NIFTI-1',mfilename);
    outName = fullfile(p,[f '.nii.gz']);
    fs_mgzSegToNifti(fsIn,[],outName);
-   fsIn = outName;    
+   fsIn = outName;   
+   fprintf('[%s] Written file: %s\n',mfilename,outName); 
 end
 return
 
@@ -200,7 +200,7 @@ return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Launches a dialog that will prompt the user to input the arguments we
 % need. We're here because labelVal is not passed in. 
-function [labelVal outName smoothKernel] = f_getLabelVal(fsIn)
+function [labelVal, outName, smoothKernel] = f_getLabelVal(fsIn)
 % Set options for the dialog prompt
 prompt              = {sprintf('Enter a valid Freesurfer label number (REQUIRED) \n  (See fslabel.mat for label numbers and names.)\n'),...
                         sprintf('Enter a name for the ROI (OPTIONAL) \n'),...
@@ -228,7 +228,7 @@ else
             l=length(fsIn);
             inds=l-6:l;
             fsIn(inds)=[];
-            [p n] = fileparts(fsIn);
+            [p, n] = fileparts(fsIn);
             outName = fullfile(p, ['roi_' uiName '_' n '.nii.gz']);
         else
             outName = uiName;
@@ -240,7 +240,7 @@ else
         load fslabel.mat;
         index = find(ismember(fslabel.num, inputs{1})==1);
         fsLabelName = (fslabel.name{index}); %#ok<*FNDSB>
-        [p n e] = fileparts(fsIn);
+        [p, n, e] = fileparts(fsIn);
         outName = fullfile(p, ['roi_'  fsLabelName '_' labelVal  '_' n e]);
     end
     if ~isempty(inputs{3})

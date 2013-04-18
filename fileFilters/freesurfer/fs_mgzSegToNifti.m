@@ -40,7 +40,7 @@ if notDefined('refImg') || ~exist(refImg,'file')
 end
 
 if notDefined('outName') 
-    [p n] = fileparts(mgzIn);
+    [p, n] = fileparts(mgzIn);
     outName = fullfile(p,[n '.nii.gz']);
 end
 
