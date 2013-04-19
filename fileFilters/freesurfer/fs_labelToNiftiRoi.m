@@ -1,6 +1,6 @@
 function [nRoi, fsLabelName, outName] = fs_labelToNiftiRoi(fsIn,labelVal,outName,smoothKernel)
 %
-%  [nRoi, fsLabelName, outName] = fs_aparcAsegLabelToNiftiRoi([fsIn],[labelVal],[outName],[smoothKernel])
+%  [nRoi, fsLabelName, outName] = fs_labelToNiftiRoi([fsIn],[labelVal],[outName],[smoothKernel])
 % 
 % This function will take a freesurfer segmentation file (eg fsIn =
 % aparc+aseg.nii) and convert specific lables within it to a nifti roi. If
@@ -46,7 +46,7 @@ function [nRoi, fsLabelName, outName] = fs_labelToNiftiRoi(fsIn,labelVal,outName
 %       labelVal = '1026';
 %       outName = '/home/lmperry/software/freesurfer/subjects/JB5/mri/rostralanteriorcingulate.nii.gz';
 %       smoothKernel = 3;
-%       fs_aparcAsegLabelToNiftiRoi(fsIn,labelVal,outName,smoothKernel);
+%       fs_labelToNiftiRoi(fsIn,labelVal,outName,smoothKernel);
 % 
 % 
 % (C) Stanford University, VISTA Lab [2011-2012]

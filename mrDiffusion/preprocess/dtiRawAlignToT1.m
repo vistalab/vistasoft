@@ -31,7 +31,7 @@ if(~exist('unwarpDti','var') || isempty(unwarpDti))
   unwarpDti = false;
 end
 if(~exist('sepParam','var') || isempty(sepParam))
-  sepParam = [8 4];
+  sepParam = [16 8 4 2];
 end
 
 

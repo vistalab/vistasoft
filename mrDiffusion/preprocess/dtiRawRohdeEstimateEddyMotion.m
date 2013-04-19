@@ -136,8 +136,6 @@ for(ii=1:nvols)
     if(estRemain>90), estRemain = estRemain./60; et = et./60; estUnits = 'hours';
     else estUnits = 'minutes'; end
     fprintf('[%s] elapsed time %0.1f %s; %0.1f %s remaining...\n',mfilename, et,estUnits,estRemain,estUnits);
-  else
-    fprintf('\n');
   end
   tic;
   srcIm = uint8(round(mrAnatHistogramClip(double(dwRaw.data(:,:,:,ii)),0.4,0.99)*255));
@@ -179,7 +177,7 @@ for(ii=1:nvols)
   end
   %tmp = source; tmp.mat = target.mat*mc{ii}; dtiShowAlignFigure(99,target,tmp);
 end
-fprintf('[%s] Saving eddy/motion correction transforms to %s...\n',mfilename, outEddyCorrectXform);
+fprintf('[%s] Saving eddy/motion correction transforms to \n %s ...\n',mfilename, outEddyCorrectXform);
 fprintf('[%s] These transforms map voxels in the reference image (usually the mean b=0) to each raw image.\n',mfilename);
 save(outEddyCorrectXform, 'xform');
 % Might switch to a simple text-format output?
