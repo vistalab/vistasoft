@@ -31,8 +31,8 @@ if(numel(dwOutMm)==1), dwOutMm = [dwOutMm dwOutMm dwOutMm]; end
 
 %% Set defaults
 % Initialize SPM default params
-spm_defaults;
-global defaults;
+%spm_defaults;
+%global defaults;
 % estParams = defaults.coreg.estimate;
 
 if(~exist('dwRaw','var')||isempty(dwRaw))
@@ -46,7 +46,7 @@ if(ischar(dwRaw))
 else
     [dataDir,inBaseName] = fileparts(dwRaw.fname);
 end
-[junk,inBaseName,junk] = fileparts(inBaseName);
+[~,inBaseName,~] = fileparts(inBaseName);
 if(isempty(dataDir)), dataDir = pwd; end
 
 if(~exist('ecXformFile','var'))
@@ -124,7 +124,7 @@ if(~exist('bb','var')||isempty(bb))
     % bb, then use the data.
     if(any(abs(bbDef(:)-bbDat(:))>300))
         bb = bbDat;
-        fprintf('Using bounding box from data: [%d %d %d; %d %d %d]\n',bb');
+        fprintf('[%s] Using bounding box from data: [%d %d %d; %d %d %d]\n',mfilename,bb');
     else
         bb = bbDef;
     end
@@ -134,7 +134,9 @@ end
 % (08/5/11) LMP commented this out as it was causing a dimension mismatch). 
 % newImgs = uint16(zeros(size(dwRaw.data(:,:,:,nvols))));
 for ii=1:nvols
-    if(mod(ii,10)==0), fprintf('Resampling vol %d of %d %s...\n', ii, nvols, interpStr); end
+    if(mod(ii,10)==0), 
+        fprintf('[%s] Resampling vol %d of %d %s...\n', mfilename, ii, nvols, interpStr);
+    end
     im = double(dwRaw.data(:,:,:,ii));
     if(isstruct(xform))
         % Rohde et. al. (MRM 2004) style deformation
@@ -194,7 +196,7 @@ try
 catch
     tname = tempname;
     fn = [tname '.nii.gz'];
-    disp(['error writing ' fn '- saving to ' fn '.']);
+    fprintf('[%s] error writing %s - saving to %s.\n',mfilename,fn,fn);
     dtiWriteNiftiWrapper(newImgs, newAcpcXform, fn, 1, ...
         'Raw Eddy Corrected', [],[],[],[], TR);
 end

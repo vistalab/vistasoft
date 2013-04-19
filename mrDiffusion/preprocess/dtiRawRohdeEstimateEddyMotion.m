@@ -31,7 +31,7 @@ if(ischar(dwRaw))
 else
   [dataDir,inBaseName] = fileparts(dwRaw.fname);
 end
-[junk,inBaseName,junk] = fileparts(inBaseName);
+[~,inBaseName,~] = fileparts(inBaseName);
 if(isempty(dataDir)) dataDir = pwd; end
 
 if(~exist('bvals','var')||isempty(bvals))
@@ -94,16 +94,12 @@ end
 
 % Set-up rigid-body alignment for motion correction
 % Initialize SPM default params
-spm_defaults; global defaults;
-estParams = defaults.coreg.estimate;
-estParams.params = [0 0 0 0 0 0];
-estParams.cost_fun = 'nmi';
-estParams.fwhm = [7 7];
+estParams        = spm_get_defaults('coreg.estimate');
+estParams.params = [0 0 0 0 0 0];% Rigid-body (6-params)
+
 % Multiresolution search control params. Specifies the histogram sampling
 % density, in mm. Try [8 4], [6 3], [4 2]?
 dwiSep = [6 3];
-% For non-dwi images, we do things a little differently
-estParams.sep = [4 2];
 
 targetNoBlur.uint8 = uint8(round(mrAnatHistogramClip(double(mnB0.data),0.4,0.99)*255));
 targetNoBlur.mat = eye(4);
@@ -133,22 +129,20 @@ ndw = sum(ecVols); nndw = sum(~ecVols);
 tol = [2e-2 2e-2 2e-2, 1e-3 1e-3 1e-3, 3e-4 3e-4 3e-4, 1e-4 1e-4 1e-4 4e-5 2e-5];
 prevNdwiParams = [0 0 0 0 0 0 0 0 0 0 0 0 0 0];
 for(ii=1:nvols)
-  fprintf('Aligning vol %d of %d to mean b=0 image', ii, nvols);
+  fprintf('[%s] Aligning vol %d of %d to mean b=0 image\n', mfilename,ii, nvols);
   if(~isempty(etDw)&&~isempty(etNdw))
     et = (sum(etDw)+sum(etNdw))./60;
     estRemain = (mean(etDw)*ndw+mean(etNdw)*nndw)./60 - et;
-    if(estRemain>90) estRemain = estRemain./60; et = et./60; estUnits = 'hours';
+    if(estRemain>90), estRemain = estRemain./60; et = et./60; estUnits = 'hours';
     else estUnits = 'minutes'; end
-    fprintf(' (elapsed time %0.1f %s; %0.1f %s remaining)...\n',et,estUnits,estRemain,estUnits);
-  else
-    fprintf('\n');
+    fprintf('[%s] elapsed time %0.1f %s; %0.1f %s remaining...\n',mfilename, et,estUnits,estRemain,estUnits);
   end
   tic;
   srcIm = uint8(round(mrAnatHistogramClip(double(dwRaw.data(:,:,:,ii)),0.4,0.99)*255));
   xform(ii).phaseDir = phaseDir;
   if(~ecVols(ii))
     % Compute rigid-body motion correction
-    fprintf('   Motion correction for non-DWI...\n');
+    fprintf('[%] Motion correction for non-DWI...\n',mfilename);
     source.uint8 = srcIm;
     % Wrap it in evalc to avoid the hundreds of lines of
     % print-out. This way, our output is cleaner which makes it
@@ -169,7 +163,7 @@ for(ii=1:nvols)
     mc = prevNdwiParams;
     startDirs = diag(tol*10);
     for(sr=1:numel(dwiSep))
-      fprintf('   Motion/eddy-current correction for DWI (resolution level %d of %d)\n',sr,numel(dwiSep));
+      fprintf('[%s] Motion/eddy-current correction for DWI (resolution level %d of %d)\n',mfilename,sr,numel(dwiSep));
       sd = dwiSep(sr)./dtMm;
       srcImBlur = mrAnatSmoothUint8(srcIm,fwhm(sr,:));
       % Initialize the error function- it will cache the srcImg and
@@ -183,8 +177,8 @@ for(ii=1:nvols)
   end
   %tmp = source; tmp.mat = target.mat*mc{ii}; dtiShowAlignFigure(99,target,tmp);
 end
-disp(['Saving eddy/motion correction transforms to ' outEddyCorrectXform '...']);
-disp('These transforms map voxels in the reference image (usually the mean b=0) to each raw image.');
+fprintf('[%s] Saving eddy/motion correction transforms to \n %s ...\n',mfilename, outEddyCorrectXform);
+fprintf('[%s] These transforms map voxels in the reference image (usually the mean b=0) to each raw image.\n',mfilename);
 save(outEddyCorrectXform, 'xform');
 % Might switch to a simple text-format output?
 % fn = [outEddyCorrectXform '.txt'];
