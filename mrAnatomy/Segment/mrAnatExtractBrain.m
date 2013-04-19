@@ -55,6 +55,7 @@ if(ispc), bash = 'c:/cygwin/bin/bash.exe';
 else      bash = 'bash';
 end
 
+
 % First try the shell for the preferrred FSL location, if it is not found
 % then we'll test to see if the user is running OSX, if so then we'll point
 % to an OSX version of bet2 (bet2_osx) else we'll point to the linux
@@ -69,6 +70,7 @@ else
         bet = fullfile(fileparts(which(mfilename)), 'bet2');
     end
 end
+
 
 bet = strtrim(bet);
 out = fullfile(tempdir,'bet_tmp');
