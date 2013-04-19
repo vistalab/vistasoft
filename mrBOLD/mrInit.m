@@ -147,7 +147,7 @@ ensureDirExists(params.sessionDir);
 callingDir = pwd;
 cd(params.sessionDir);
 
-mrGlobals;
+mrGlobals; %Moved in here so HOMEDIR is reset to sessDir
 
 initEmptySession; %Replace this save and then load of mrSESSION with that variable simply passed
                     % from one to the other
