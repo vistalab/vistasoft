@@ -53,7 +53,7 @@ evalin('base','mrGlobals');
 
 % Check Matlab version number
 % Change list after testing Matlab upgrades
-expectedMatlabVersion = {'7.7', '7.8', '7.9', '7.10', '7.11', '7.13', '7.14', '8'};  
+expectedMatlabVersion = {'7.7', '7.8', '7.9', '7.10', '7.11', '7.13', '7.14', '8.0'};  
 version = ver('Matlab');
 matlabVersion = version.Version;        
 if ~ismember(matlabVersion, expectedMatlabVersion);    % (matlabVersion ~= expectedMatlabVersion)
