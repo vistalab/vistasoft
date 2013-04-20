@@ -49,6 +49,9 @@ function vw = viewSet(vw,param,val,varargin)
 %      'anatomy'
 %      'brightness'
 %      'contrast'
+%      'inplanepath'
+%      'anatinitialize'
+%      'anatomynifti'
 %
 % %%%%% ROI-related properties
 %      'roi'
@@ -157,6 +160,9 @@ if notDefined('val'),   val = []; end
 % for all view types. I tried to gruop them in a reasonable
 % way.
 mrGlobals;
+
+param = mrvParamFormat(param);
+
 
 % Standardize the name of the parameter field with name-mapping function
 param = viewMapParameterField(param);
@@ -461,7 +467,7 @@ switch param
         else                                        roi = varargin{1}; end
         vw.ROIs(roi).modified = val;
 
-        %% Time-series related properties
+    %% Time-series related properties
     case 'tseries'
         vw.tSeries = val;
     case 'tseriesslice'
@@ -469,7 +475,7 @@ switch param
     case 'tseriesscan'
         vw.tSeriesScan = val;
         
-        %% Retinotopy/pRF Model related properties
+    %% Retinotopy/pRF Model related properties
     case 'rmfile'
         vw.rm.retinotopyModelFile = val;
     case 'rmmodel'
@@ -486,11 +492,11 @@ switch param
             vw.rm.modelNum = val;
         end
         
-        %% Mesh-related properties
-        % these params relate to the segmentation / coords.mat file
+    %% Mesh-related properties
+    % these params relate to the segmentation / coords.mat file
     case {'leftclassfile' 'rightclassfile' 'leftgrayfile' 'rightgrayfile'};
         
-        %% Vol/Gray check
+        % Vol/Gray check
         if ~ismember(vw.viewType, {'Volume' 'Gray'})
             error(['Can only set %s property in ' ...
                 'Volume / Gray views.'], param);            
