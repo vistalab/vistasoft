@@ -16,15 +16,7 @@ if notDefined('val'),   val = []; end
 
 mrGlobals;
 
-param = mrvParamFormat(param);
-
-
-% Standardize the name of the parameter field with name-mapping function
-param = viewMapParameterField(param);
-paramSplit = viewMapParameterSplit(param);
-
-
-switch paramSplit
+switch param
     
     case 'map'
         vw.map = val;

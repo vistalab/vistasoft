@@ -111,6 +111,7 @@ if isempty(DictViewSplit)
     DictViewSplit('viewtype') =  'session';
     DictViewSplit('datasize') =  'timeseries';
     DictViewSplit('dim') =  'timeseries';
+    DictViewSplit('functionalslicedim') = 'timeseries';
     DictViewSplit('ncycles') =  'timeseries';
     DictViewSplit('nframes') =  'timeseries';
     DictViewSplit('tr') =  'timeseries';
@@ -176,8 +177,8 @@ end %if
 if DictViewSplit.isKey(paramIn)
     splitParam = DictViewSplit(paramIn);
 else
-    error('Dict:ViewSplitError', 'The input of %s does not appear to be in the dictionary', paramIn);
     splitParam = '';
+    error('Dict:ViewSplitError', 'The input of %s does not appear to be in the dictionary', paramIn);
 end
 
 

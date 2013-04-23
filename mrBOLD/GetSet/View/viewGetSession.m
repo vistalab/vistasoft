@@ -113,11 +113,11 @@ switch param
                 val=str2double(get(vw.ui.sliceNumFields(sliceOri),'String'));
             case 'Flat'
                 if isfield(vw,'numLevels') % test for levels view
-                    %% flat-levels view (older, but still supported)
+                    % flat-levels view (older, but still supported)
                     val = getFlatLevelSlices(vw);
                     val = val(1);
                 else
-                    %% regular flat view: slice is hemisphere, slice 3 means both
+                    % regular flat view: slice is hemisphere, slice 3 means both
                     val = findSelectedButton(vw.ui.sliceButtons);
                 end
         end

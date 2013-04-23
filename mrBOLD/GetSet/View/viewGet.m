@@ -115,6 +115,7 @@ function val = viewGet(vw,param,varargin)
 %     'tseriesdir'
 %     'datasize'
 %     'dim'
+%     'functionalslicedim'
 %     'tseries'
 %     'tseriesslice'
 %     'tseriesscan'

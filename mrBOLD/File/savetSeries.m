@@ -103,31 +103,67 @@ if strcmp(viewType,'Inplane')
     if verbose > 1		% starting to use graded levels of feedback
         fprintf('Saved time series %s. (%s)\n', pathStr, datestr(now));
     end
-    
+ 
 else
-    
-    %First check if we are getting multiple slices or just one
-    sliceDim = viewGet(vw,'Functional Slice Dim');
-    
-    
-    
+
     tseriesdir = tSeriesDir(vw, 1);
     scandir = ['Scan',num2str(scan)];
     if ~exist(fullfile(tseriesdir,scandir),'dir')
         mkdir(tseriesdir,scandir);
     end
-    pathStr = fullfile(tseriesdir,scandir,['tSeries',num2str(slice)]);
-    
-    % ras 03/07: trying again, now single-precision.
-    tSeries = single(tSeries); %#ok<NASGU>
-    
-    %disp(['Saving: ',pathStr]);
-    save(pathStr,'tSeries');
+    pathStr = fullfile(tseriesdir,scandir,['tSeries',num2str(slice)]);    
+
+    if strcmp(viewType,'Flat')
+        % In the flat view, we will be getting multiple slices, so go
+        % through each slice and save down the tSeries
+        % We may sometimes encounter the case where we have 3 or 4
+        % dimensions, and we want to save them all. We need to account for
+        % that:
+        
+        numEle = numel(size(tSeries));
+        numSlices = size(tSeries,numEle);
+        
+        if numEle == 4
+            
+            for i = 1:numSlices
+                pathStr = fullfile(tseriesdir,scandir,['tSeries',num2str(i)]);
+                tSeriesTmp = tSeries(:,:,:,i);
+                
+                tSeriesTmp = single(tSeriesTmp);
+                
+                %disp(['Saving: ',pathStr]);
+                save(pathStr,'tSeriesTmp');
+            end %for
+            
+        elseif numEle ==3
+            
+            for i = 1:numSlices
+                pathStr = fullfile(tseriesdir,scandir,['tSeries',num2str(i)]);
+                tSeriesTmp = tSeries(:,:,i);
+                
+                tSeriesTmp = single(tSeriesTmp);
+                
+                %disp(['Saving: ',pathStr]);
+                save(pathStr,'tSeriesTmp');
+            end %for
+            
+        else
+            %We don't know what to do
+            error('Incorrect number of elements in tSeries.');
+        end %if
+        
+    else
+        %This is what happens in the Gray view, since only 1 slice
+        tSeries = single(tSeries); %#ok<NASGU>
+        
+        %disp(['Saving: ',pathStr]);
+        save(pathStr,'tSeries');
+    end %if
     
     verbose = prefsVerboseCheck;
     if verbose > 1		% starting to use graded levels of feedback
         fprintf('Saved time series %s. (%s)\n', pathStr, datestr(now));
-    end
+    end %if
        
 end %if
 
