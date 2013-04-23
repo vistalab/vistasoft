@@ -1,7 +1,7 @@
 function val = viewGet(vw,param,varargin)
 % Get data from various view structures
 %
-%   val = viewGet(vw,param,varargin)
+%   val = viewGet(vw,param,varargin{:})
 %
 % Reads the parameters of a view struct.
 % Access to these structures should go through this routine and through
@@ -17,14 +17,14 @@ function val = viewGet(vw,param,varargin)
 %     ------------------------------------------------------------------
 %     -- Session-related properties; selected scan, slice, data type ---
 %     ------------------------------------------------------------------
-%     'homedir'      
-%     'sessionname'  
-%     'subject'      
-%     'name'         
-%     'annotation'   
-% 	  'annotations' 
+%     'homedir'
+%     'sessionname'
+%     'subject'
+%     'name'
+%     'annotation'
+% 	  'annotations'
 %     'viewtype'
-%     'subdir' 
+%     'subdir'
 %     'curscan'
 %     'curslice'
 %     'nscans'
@@ -33,11 +33,12 @@ function val = viewGet(vw,param,varargin)
 %     'dtname'
 %     'curdt'
 %     'dtstruct'
+%     'refreshfn'
 %
 %     ------------------------------------------------------------------
 %     -- Traveling-Wave / Coherence Analysis properties ----------------
 %     ------------------------------------------------------------------
-%     'coherence' 
+%     'coherence'
 %     'scanco'
 %     'phase'
 %     'scanph'
@@ -48,16 +49,16 @@ function val = viewGet(vw,param,varargin)
 %     'coherencemap'
 %     'correlationmap'
 %     'cothresh'
-%     'phwin'       
+%     'phwin'
 %
 %     ------------------------------------------------------------------
 %     -- colorbar-related params ---------------------------------------
 %     ------------------------------------------------------------------
-%     'twparams' 
+%     'twparams'
 %     'cmap'
 %     'cmapcolor'
 %     'cmapgrayscale'
-%         
+%
 %     ------------------------------------------------------------------
 %     --  Map properties -----------------------------------------------
 %     ------------------------------------------------------------------
@@ -66,7 +67,7 @@ function val = viewGet(vw,param,varargin)
 %     'mapname'
 %     'mapunits'
 %     'mapclip'
-%     'scanmap' 
+%     'scanmap'
 %
 %     ------------------------------------------------------------------
 %     -- Anatomy / Underlay-related properties -------------------------
@@ -125,7 +126,7 @@ function val = viewGet(vw,param,varargin)
 %
 %     ------------------------------------------------------------------
 %     --  Retinotopy/pRF Model related properties ----------------------
-%     ------------------------------------------------------------------   
+%     ------------------------------------------------------------------
 %     'framestouse'
 %     'rmfile'
 %     'rmmodel'
@@ -147,7 +148,7 @@ function val = viewGet(vw,param,varargin)
 %     'meshdata'
 %     'nmesh'
 %     'meshnames'
-%     'meshdir'        
+%     'meshdir'
 %
 %     ------------------------------------------------------------------
 %     --  Volume/Gray-related properties -------------------------------
@@ -165,16 +166,16 @@ function val = viewGet(vw,param,varargin)
 %     'coords'
 %     'allcoords'
 %     'coordsfilename'
-%     'ncoords'           
+%     'ncoords'
 %     'classfilename'
 %     'classdata'
-%     'graymatterfilename'        
+%     'graymatterfilename'
 %
 %     ------------------------------------------------------------------
 %     --  EM / General-Gray-related properties -------------------------
 %     ------------------------------------------------------------------
 %     'datavalindex'
-%     'analysisdomain'      
+%     'analysisdomain'
 %
 %     ------------------------------------------------------------------
 %     --  Flat-related properties --------------------------------------
@@ -243,15 +244,15 @@ function val = viewGet(vw,param,varargin)
 % add a new parameter (new case) to viewGet or viewSet, please use only a
 % single standardized parameter name in the viewGet and viewSet functions.
 % You can put as many aliases as you like in viewMapParameterField.
-% 
-% For example: 
-%    viewMapParameterField('curdt') 
+%
+% For example:
+%    viewMapParameterField('curdt')
 % and
-%   viewMapParameterField('Current Data TYPE') 
+%   viewMapParameterField('Current Data TYPE')
 % both return 'curdt'. This means that
-%    viewGet(vw, 'curdt') 
+%    viewGet(vw, 'curdt')
 % and
-%    viewGet(vw, 'Current Data TYPE') 
+%    viewGet(vw, 'Current Data TYPE')
 % are equivalent. Hence viewGet and viewSet should have the case 'curdt'.
 % They do not need the case 'Current Data TYPE' or 'currentdatatype'.
 
@@ -268,35 +269,36 @@ param = mrvParamFormat(param);
 param = viewMapParameterField(param);
 splitParam = viewMapParameterSplit(param);
 
+
 switch splitParam
     case 'anatomy'
-        val = viewGetAnatomy(vw,param,varargin);
+        val = viewGetAnatomy(vw,param,varargin{:});
     case 'colorbar'
-        val = viewGetColorbar(vw,param,varargin);
+        val = viewGetColorbar(vw,param,varargin{:});
     case 'em'
-        val = viewGetEm(vw,param,varargin);
+        val = viewGetEm(vw,param,varargin{:});
     case 'flat'
-        val = viewGetFlat(vw,param,varargin);
+        val = viewGetFlat(vw,param,varargin{:});
     case 'map'
-        val = viewGetMap(vw,param,varargin);
+        val = viewGetMap(vw,param,varargin{:});
     case 'mesh'
-        val = viewGetMesh(vw,param,varargin);
+        val = viewGetMesh(vw,param,varargin{:});
     case 'retinotopy'
-        val = viewGetRetinotopy(vw,param,varargin);
+        val = viewGetRetinotopy(vw,param,varargin{:});
     case 'roi'
-        val = viewGetROI(vw,param,varargin);
+        val = viewGetROI(vw,param,varargin{:});
     case 'session'
-        val = viewGetSession(vw,param,varargin);
+        val = viewGetSession(vw,param,varargin{:});
     case 'timeseries'
-        val = viewGetTimeSeries(vw,param,varargin);
+        val = viewGetTimeSeries(vw,param,varargin{:});
     case 'travelingwave'
-        val = viewGetTravelingWave(vw,param,varargin);
+        val = viewGetTravelingWave(vw,param,varargin{:});
     case 'ui'
-        val = viewGetUI(vw,param,varargin);
+        val = viewGetUI(vw,param,varargin{:});
     case 'volume'
-        val = viewGetVolume(vw,param,varargin);
+        val = viewGetVolume(vw,param,varargin{:});
     otherwise
-        error('Unknown viewGet parameter');        
+        error('Unknown viewGet parameter');
 end %switch
 
 return

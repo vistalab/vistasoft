@@ -1,14 +1,14 @@
 function vw = viewSet(vw,param,val,varargin)
 %Organize methods for setting view parameters.
 %  
-%   vw = viewSet(vw,param,val,varargin)
+%   vw = viewSet(vw,param,val,val,varargin)
 %
 % Example:
 %   vw = viewSet(vw, 'cothresh', 0.1);
 %
 % Author: Wandell
 %  
-% See also viewGet, viewMapParameterField
+% See also viewSet, viewMapParameterField
 %
 % These are the cases that can be set (as of July 5, 2011):
 %
@@ -125,13 +125,13 @@ function vw = viewSet(vw,param,val,varargin)
 % ras, 06/07: eliminated subfunctions for each view (ipGet, volGet,
 %			  flatGet); all one big SWITCH statement now.
 %
-% JW: 2/2011: viewSet and viewGet now take the input parameter field and
+% JW: 2/2011: viewSet and viewSet now take the input parameter field and
 %               call viewMapParameterField before the long switch/case.
 %               This function returns a standardized parameter field name.
 %               It removes spaces and captials, and maps multiple names
 %               (aliases) onto a single name. If you add a new parameter
-%               (new case) to viewGet or viewSet, please use only a single
-%               standardized parameter name in the viewGet and viewSet
+%               (new case) to viewSet or viewSet, please use only a single
+%               standardized parameter name in the viewSet and viewSet
 %               functions. You can put as many aliases as you like in
 %               viewMapParameterField.
 % 
@@ -140,10 +140,10 @@ function vw = viewSet(vw,param,val,varargin)
 % and
 %   viewMapParameterField('Current Data TYPE') 
 % both return 'curdt'. This means that
-%    viewGet(vw, 'curdt') 
+%    viewSet(vw, 'curdt') 
 % and
-%    viewGet(vw, 'Current Data TYPE') 
-% are equivalent. Hence viewGet and viewSet should have the case 'curdt'.
+%    viewSet(vw, 'Current Data TYPE') 
+% are equivalent. Hence viewSet and viewSet should have the case 'curdt'.
 % They do not need the case 'Current Data TYPE' or 'currentdatatype'.
 %
 %
@@ -151,7 +151,7 @@ function vw = viewSet(vw,param,val,varargin)
 
 if notDefined('vw'),  error('No view defined.'); end
 if notDefined('param'), error('No parameter defined'); end
-if notDefined('val'),   val = []; end
+if notDefined('val'),   vw = []; end
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 % Big SWITCH Statement %
@@ -171,31 +171,31 @@ splitParam = viewMapParameterSplit(param);
 
 switch splitParam
     case 'anatomy'
-        vw = viewSetAnatomy(vw,param,val,varargin);
+        vw = viewSetAnatomy(vw,param,val,varargin{:});
     case 'colorbar'
-        vw = viewSetColorbar(vw,param,val,varargin);
+        vw = viewSetColorbar(vw,param,val,varargin{:});
     case 'em'
-        vw = viewSetEm(vw,param,val,varargin);
+        vw = viewSetEm(vw,param,val,varargin{:});
     case 'flat'
-        vw = viewSetFlat(vw,param,val,varargin);
+        vw = viewSetFlat(vw,param,val,varargin{:});
     case 'map'
-        vw = viewSetMap(vw,param,val,varargin);
+        vw = viewSetMap(vw,param,val,varargin{:});
     case 'mesh'
-        vw = viewSetMesh(vw,param,val,varargin);
+        vw = viewSetMesh(vw,param,val,varargin{:});
     case 'retinotopy'
-        vw = viewSetRetinotopy(vw,param,val,varargin);
+        vw = viewSetRetinotopy(vw,param,val,varargin{:});
     case 'roi'
-        vw = viewSetROI(vw,param,val,varargin);
+        vw = viewSetROI(vw,param,val,varargin{:});
     case 'session'
-        vw = viewSetSession(vw,param,val,varargin);
+        vw = viewSetSession(vw,param,val,varargin{:});
     case 'timeseries'
-        vw = viewSetTimeSeries(vw,param,val,varargin);
+        vw = viewSetTimeSeries(vw,param,val,varargin{:});
     case 'travelingwave'
-        vw = viewSetTravelingWave(vw,param,val,varargin);
+        vw = viewSetTravelingWave(vw,param,val,varargin{:});
     case 'ui'
-        vw = viewSetUI(vw,param,val,varargin);
+        vw = viewSetUI(vw,param,val,varargin{:});
     case 'volume'
-        vw = viewSetVolume(vw,param,val,varargin);
+        vw = viewSetVolume(vw,param,val,varargin{:});
     otherwise
         error('Unknown viewSet parameter');        
 end %switch

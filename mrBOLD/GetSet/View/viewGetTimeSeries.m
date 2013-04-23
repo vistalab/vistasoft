@@ -113,8 +113,7 @@ switch param
             scan = varargin{1};
         end
         curDT = viewGet(vw,'curdt');
-        dt    = dataTYPES(curDT);
-        blockParms = dtGet(dt,'bparms',scan);
+        blockParms = dtGet(dataTYPES(curDT),'bparms',scan);
         % There are some issues with event and block that we need to figure out
         % here.
         
