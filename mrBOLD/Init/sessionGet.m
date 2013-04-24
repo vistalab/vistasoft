@@ -33,7 +33,7 @@ function val = sessionGet(s,param,varargin)
 %          description: 'sDesc'
 %
 
-global HOMEDIR
+global HOMEDIR;
 
 if notDefined('s'), error('mrSESSION variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
@@ -109,7 +109,22 @@ switch param
         
         val = s.inplanes.inplanePath;
         
-        if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>
+        if ~exist(val,'file')
+            %We cannot find the file, let's ask the user to 'browse' for it
+            warning('The file that has been specified in the inplane path does not exist. Please select a new file.');
+            dlgTitle = 'Select inplane nifti to open...';
+            [val,pthName] = uigetfile('',dlgTitle);
+            if isempty(val), error('Inplane path not found'); end
+            val = fullfile(pthName,val);
+            
+            % We need to also ensure that we save down this new path to the
+            % session:
+            mrGlobals;
+            loadSession;
+            
+            mrSESSION = sessionSet(mrSESSION,'Inplane Path', val);
+            saveSession;            
+        end
                 
     case {'sliceorder'}
         if isempty(varargin), scan = 1;
