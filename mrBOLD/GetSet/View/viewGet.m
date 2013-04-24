@@ -50,6 +50,7 @@ function val = viewGet(vw,param,varargin)
 %     'correlationmap'
 %     'cothresh'
 %     'phwin'
+%     'spatialgrad'
 %
 %     ------------------------------------------------------------------
 %     -- colorbar-related params ---------------------------------------
@@ -87,6 +88,7 @@ function val = viewGet(vw,param,varargin)
 %     'scannerxform'
 %     'b0dir'
 %     'b0angle'
+%     'anatomycurrentslice'
 %
 %     ------------------------------------------------------------------
 %     -- ROI-related properties ----------------------------------------
@@ -205,6 +207,7 @@ function val = viewGet(vw,param,varargin)
 %     'mapmode'
 %     'zoom'
 %     'crosshairs'
+%     'mainaxishandle'
 %     'locs'
 %     'phasecma'
 %     'cmapcurrent'
@@ -212,6 +215,9 @@ function val = viewGet(vw,param,varargin)
 %     'cmapcurnumgrays'
 %     'cmapcurnumcolors'
 %     'flipud'
+%     'uiimage'
+%     'cbarrange'
+%     'colorbarhandle'
 
 
 % TODO:

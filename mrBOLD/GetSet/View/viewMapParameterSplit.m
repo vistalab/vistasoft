@@ -15,6 +15,7 @@ if isempty(DictViewSplit)
     DictViewSplit('anatclip') =  'anatomy';
     DictViewSplit('anatinitialize') =  'anatomy';
     DictViewSplit('anatomy') =  'anatomy';
+    DictViewSplit('anatomycurrentslice') = 'anatomy';
     DictViewSplit('anatomymap') =  'anatomy';
     DictViewSplit('anatomynifti') =  'anatomy';
     DictViewSplit('anatsize') =  'anatomy';
@@ -105,6 +106,7 @@ if isempty(DictViewSplit)
     DictViewSplit('name') =  'session';
     DictViewSplit('nscans') =  'session';
     DictViewSplit('nslices') =  'session';
+    DictViewSplit('refreshfn') = 'session';
     DictViewSplit('sessionname') =  'session';
     DictViewSplit('subdir') =  'session';
     DictViewSplit('subject') =  'session';
@@ -132,8 +134,11 @@ if isempty(DictViewSplit)
     DictViewSplit('scanamp') =  'travelingwave';
     DictViewSplit('scanco') =  'travelingwave';
     DictViewSplit('scanph') =  'travelingwave';
+    DictViewSplit('spatialgrad') =  'travelingwave';
     DictViewSplit('amplitudemode') =  'ui';
     DictViewSplit('anatomymode') =  'ui';
+    DictViewSplit('cbarrange') = 'ui';
+    DictViewSplit('colorbarhandle') = 'ui';
     DictViewSplit('cmapcurmodeclip') =  'ui';
     DictViewSplit('cmapcurnumcolors') =  'ui';
     DictViewSplit('cmapcurnumgrays') =  'ui';
@@ -148,10 +153,12 @@ if isempty(DictViewSplit)
     DictViewSplit('ishidden') =  'ui';
     DictViewSplit('locs') =  'ui';
     DictViewSplit('mapmode') =  'ui';
+    DictViewSplit('mainaxishandle') = 'ui';
     DictViewSplit('phasecma') =  'ui';
     DictViewSplit('phasemode') =  'ui';
     DictViewSplit('projectedamplitudemode') =  'ui';
     DictViewSplit('ui') =  'ui';
+    DictViewSplit('uiimage') = 'ui';
     DictViewSplit('windowhandle') =  'ui';
     DictViewSplit('zoom') =  'ui';
     DictViewSplit('allcoords') =  'volume';
@@ -178,7 +185,7 @@ if DictViewSplit.isKey(paramIn)
     splitParam = DictViewSplit(paramIn);
 else
     splitParam = '';
-    error('Dict:ViewSplitError', 'The input of %s does not appear to be in the dictionary', paramIn);
+    error('Dict:ViewSplitError', 'The input %s does not appear to be in the split dictionary.', paramIn);
 end
 
 

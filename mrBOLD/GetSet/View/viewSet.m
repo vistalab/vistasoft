@@ -151,7 +151,7 @@ function vw = viewSet(vw,param,val,varargin)
 
 if notDefined('vw'),  error('No view defined.'); end
 if notDefined('param'), error('No parameter defined'); end
-if notDefined('val'),   vw = []; end
+if notDefined('val'),   val = []; end
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 % Big SWITCH Statement %

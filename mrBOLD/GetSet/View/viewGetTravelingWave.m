@@ -30,7 +30,8 @@ switch param
         else                     nScan = varargin{1};   end
         if ~isempty(vw.co) && length(vw.co) >=nScan, val = vw.co{nScan};
         else                val = []; end
-        
+    case 'spatialgrad'
+        val = vw.spatialGrad
     case 'phase'
         % Phase for all voxels, all scans in current dataTYPE
         %   ph = viewGet(vw, 'Phase');

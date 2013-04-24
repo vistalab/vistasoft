@@ -404,10 +404,6 @@ if isempty(DictViewTranslate)
     DictViewTranslate('parametermapmode') = 'mapmode';
     DictViewTranslate('displaymode') = 'displaymode';
     DictViewTranslate('dispmode') = 'displaymode';
-    DictViewTranslate('fieldname') = 'displaymode';
-    DictViewTranslate('field') = 'displaymode';
-    DictViewTranslate('field') = 'displaymode';
-    DictViewTranslate('name') = 'displaymode';
     DictViewTranslate('phasecma') = 'phasecma';
     DictViewTranslate('cmapphase') = 'phasecma';
     DictViewTranslate('phasemap') = 'phasecma';
@@ -463,13 +459,20 @@ if isempty(DictViewTranslate)
     DictViewTranslate('verticalflip') = 'flipud';
     DictViewTranslate('ishidden') = 'ishidden';
     DictViewTranslate('hidden') = 'ishidden';
+    DictViewTranslate('anatinitialize') = 'anatinitialize';
+    DictViewTranslate('anatomyinitialize') = 'anatinitialize';
+    DictViewTranslate('anatinit') = 'anatinitialize';
+    DictViewTranslate('anatomyinit') = 'anatinitialize';
+    DictViewTranslate('spatialgrad') = 'spatialgrad';
+    DictViewTranslate('spatialgradient') = 'spatialgrad';
+    DictViewTranslate('anatomycurrentslice') = 'anatomycurrentslice';
     
 end %if
 
 if DictViewTranslate.isKey(paramIn)
     res = DictViewTranslate(paramIn);
 else
-    error('Dict:ViewSplitError', 'The input of %s does not appear to be in the dictionary', paramIn);
+    error('Dict:ViewSplitError', 'The input %s does not appear to be in the dictionary', paramIn);
     res = [];
 end
 
