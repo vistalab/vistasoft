@@ -113,7 +113,7 @@ switch param
             %We cannot find the file, let's ask the user to 'browse' for it
             warning('The file that has been specified in the inplane path does not exist. Please select a new file.');
             dlgTitle = 'Select inplane nifti to open...';
-            [val,pthName] = uigetfile('',dlgTitle);
+            [val,pthName] = uigetfile({'*.nii.gz', 'gzipped nifti (*.nii.gz)';'*.nii', 'nifti (*.nii)'},dlgTitle);
             if isempty(val), error('Inplane path not found'); end
             val = fullfile(pthName,val);
             
