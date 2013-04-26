@@ -466,6 +466,13 @@ if isempty(DictViewTranslate)
     DictViewTranslate('spatialgrad') = 'spatialgrad';
     DictViewTranslate('spatialgradient') = 'spatialgrad';
     DictViewTranslate('anatomycurrentslice') = 'anatomycurrentslice';
+    DictViewTranslate('anatomyslicedimensions') = 'anatslicedim';
+    DictViewTranslate('anatomyslicedims') = 'anatslicedims';
+    DictViewTranslate('anatslicedims') = 'anatslicedims';
+    DictViewTranslate('anatslicedim') = 'anatslicedim';
+    DictViewTranslate('anatomyslicedim') = 'anatslicedim';
+    DictViewTranslate('anatomyslicedimension') = 'anatslicedim';
+    
     
 end %if
 

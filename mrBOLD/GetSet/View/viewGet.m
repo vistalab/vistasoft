@@ -78,6 +78,7 @@ function val = viewGet(vw,param,varargin)
 %     'anatomynifti'
 %     'anatclip'
 %     'anatslicedim'
+%     'anatslicedims'
 %     'anatsize'
 %     'anatsizexyz'
 %     'brightness'

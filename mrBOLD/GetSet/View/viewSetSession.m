@@ -22,10 +22,8 @@ switch param
         HOMEDIR = val;  %#ok<NASGU>
     case 'sessionname'
         vw.sessionCode = val;
-        %TODO: Make a change to the view instead of session
     case 'subject'
         vw.subject = val;
-        %TODO: Make a change to the view instead of session
     case 'name'
         vw.name = val;
     case 'viewtype'

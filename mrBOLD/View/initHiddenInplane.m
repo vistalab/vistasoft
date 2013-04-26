@@ -33,6 +33,7 @@ evalin('base','mrGlobals');
 evalin('base','HOMEDIR = pwd;');
 evalin('base','loadSession');
 
+%TODO: Make all of the below use viewSets
 vw.name     ='hidden';
 vw.viewType ='Inplane';
 vw.subdir   ='Inplane';

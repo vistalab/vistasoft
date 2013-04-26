@@ -21,6 +21,7 @@ if isempty(DictViewSplit)
     DictViewSplit('anatsize') =  'anatomy';
     DictViewSplit('anatsizexyz') =  'anatomy';
     DictViewSplit('anatslicedim') =  'anatomy';
+    DictViewSplit('anatslicedims') =  'anatomy';
     DictViewSplit('b0angle') =  'anatomy';
     DictViewSplit('b0dir') =  'anatomy';
     DictViewSplit('brightness') =  'anatomy';
