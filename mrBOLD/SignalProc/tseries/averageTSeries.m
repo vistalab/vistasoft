@@ -75,12 +75,14 @@ nAvg = length(scanList);
 % *** check that all scans have the same slices
 waitHandle = waitbar(0, 'Averaging tSeries.  Please wait...');
 nSlices = length(sliceList(vw, scanList(1)));
+tSeriesAvgFull = []; %Initialize
 for iSlice = sliceList(vw, scanList(1));
     % For each slice...
     % disp(['Averaging scans for slice ',  int2str(iSlice)])
     for iAvg=1:nAvg
         iScan = scanList(iAvg);
         tSeries = loadtSeries(vw,  iScan,  iSlice);
+        dimNum = length(size(tSeries)); %Can handle 2 and 3D tSeries
         bad = isnan(tSeries);
         tSeries(bad) = 0;
         if iAvg > 1;
@@ -93,9 +95,16 @@ for iSlice = sliceList(vw, scanList(1));
     end
     tSeriesAvg = tSeriesAvg ./ nValid;
     tSeriesAvg(nValid == 0) = NaN;
-    tSeriesAvgFull(iSlice) = tSeriesAvg;
+    tSeriesAvgFull = cat(dimNum + 1, tSeriesAvgFull, tSeriesAvg); %Combine together
     waitbar(iSlice/nSlices);
 end %for
+% Now we need to reshape to have slices be the 3rd dimension. But only if we
+% have a total of 4 dimensions now, i.e. dimNum == 3
+
+if dimNum == 3
+    tSeriesAvgFull = reshape(tSeriesAvgFull,[1,2,4,3]);
+end %if
+
 savetSeries(tSeriesAvgFull, hiddenView, newScanNum);
 close(waitHandle);
 
