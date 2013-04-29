@@ -83,7 +83,8 @@ for ii = 1:length(scans)
     wH = waitbar(0, ['Adjusting scan ' int2str(scan)]);
     iS = 0;
     
-    
+    tsFull = [];
+    numDim = 0;
     for slice=slices
         iS = iS + 1;
         ts = loadtSeries(vw, scan, slice);
@@ -91,10 +92,13 @@ for ii = 1:length(scans)
             % frameAdjustment = deltaFrame*(refSlice - slice);
             ts = mrSliceTiming(ts,frameAdjustment(slice),'spline');           
         end
-        tsFull(is) = ts;
+        numDim = numel(size(ts));
+        tsFull = cat(numel(size(ts)) + 1, tsFull, ts);
         waitbar(iS/length(slices), wH);
     end
-    %Moved outside the for loop
+    if numDim == 3
+        tsFull = reshape(tsFull,[1,2,4,3]); %flip time and slices
+    end %if
     savetSeries(tsFull, hiddenView, outScan);
     close(wH);
 end

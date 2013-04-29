@@ -76,50 +76,58 @@ tEvents = floor(totalFrames / nEventFrames);
 sliceBlockTS = zeros(nEventFrames, tEvents, nn(1), nn(2));
 ampsBlock = zeros(tEvents, nn(1), nn(2));
 
+meanTSFull = [];
+meanTSerrsFull = [];
 for iSlice=1:nSlices
-  % Stack the events for each slice
-  iSl = find(iSlice == mrSESSION.functionals(iS).slices);
-  if ~isempty(iSl)
-    iEvent = 1;
-    wH = waitbar(0, ['Stacking events for slice ', int2str(iSl)]);
-    for iScan=1:nScans
-      iS = scanList(iScan);
-      ts = loadtSeries(view, iS, iSl);
-      if exist('filterRange', 'var')
-        ts = FilterF(filterRange/fNyq, ts);
-      end
-      nFrames = mrSESSION.functionals(iS).nFrames;
-      nEvents = floor(nFrames / nEventFrames);
-      ts = ts(1:nEvents*nEventFrames, :);
-      ts = reshape(ts, nEventFrames, nEvents, nn(1), nn(2));
-      sliceBlockTS(:, iEvent:(iEvent+nEvents-1), :, :) = ts;
-      iEvent = iEvent + nEvents;
-      waitbar(iScan/nScans, wH);
+    % Stack the events for each slice
+    iSl = find(iSlice == mrSESSION.functionals(iS).slices);
+    if ~isempty(iSl)
+        iEvent = 1;
+        wH = waitbar(0, ['Stacking events for slice ', int2str(iSl)]);
+        for iScan=1:nScans
+            iS = scanList(iScan);
+            ts = loadtSeries(view, iS, iSl);
+            if exist('filterRange', 'var')
+                ts = FilterF(filterRange/fNyq, ts);
+            end %if
+            nFrames = mrSESSION.functionals(iS).nFrames;
+            nEvents = floor(nFrames / nEventFrames);
+            ts = ts(1:nEvents*nEventFrames, :);
+            ts = reshape(ts, nEventFrames, nEvents, nn(1), nn(2));
+            sliceBlockTS(:, iEvent:(iEvent+nEvents-1), :, :) = ts;
+            iEvent = iEvent + nEvents;
+            waitbar(iScan/nScans, wH);
+        end %for
+        waitbar(1, wH, ['Processing events for slice ', int2str(iSl)]);
+        numPoints = sum(isfinite(sliceBlockTS), 2);
+        sliceBlockTS(~isfinite(sliceBlockTS)) = 0;
+        sliceBlockTS = sliceBlockTS - repmat(sum(sliceBlockTS)/nEventFrames, [nEventFrames 1 1 1]);
+        meanTS = squeeze(sum(sliceBlockTS, 2)./numPoints);
+        meanTSFull(iSlice) = reshape(meanTS, nEventFrames, nVoxels);
+        %savetSeries(reshape(meanTS, nEventFrames, nVoxels), hiddenView, 1, iSl);
+        meanTSerrs = squeeze(std(sliceBlockTS, 0, 2)) / sqrt(tEvents);
+        meanTSerrsFull(iSlice) = reshape(meanTSerrs, nEventFrames, nVoxels);
+        %savetSeries(reshape(meanTSerrs, nEventFrames, nVoxels), hiddenView, 2, iSl);
+        lengthTS = sqrt(squeeze(sum(meanTS.^2)));
+        zeroLength = find(lengthTS == 0);
+        for ii=1:tEvents
+            ampsBlock1 = squeeze(sum(meanTS .* squeeze(sliceBlockTS(:, ii, :, :)))) ./ lengthTS;
+            ampsBlock1(zeroLength) = NaN;
+            ampsBlock(ii, :, :) = ampsBlock1;
+        end
+        amps(:, :, iSl) = squeeze(mean(ampsBlock));
+        ampErrs(:, :, iSl) = squeeze(std(ampsBlock)) / sqrt(tEvents);
+        close(wH);
     end
-    waitbar(1, wH, ['Processing events for slice ', int2str(iSl)]);
-    numPoints = sum(isfinite(sliceBlockTS), 2);
-    sliceBlockTS(~isfinite(sliceBlockTS)) = 0;
-    sliceBlockTS = sliceBlockTS - repmat(sum(sliceBlockTS)/nEventFrames, [nEventFrames 1 1 1]);
-    meanTS = squeeze(sum(sliceBlockTS, 2)./numPoints);
-    meanTSFull(iSlice) = reshape(meanTS, nEventFrames, nVoxels);
-    %savetSeries(reshape(meanTS, nEventFrames, nVoxels), hiddenView, 1, iSl);
-    meanTSerrs = squeeze(std(sliceBlockTS, 0, 2)) / sqrt(tEvents);
-    meanTSerrsFull(iSlice) = reshape(meanTSerrs, nEventFrames, nVoxels);
-    %savetSeries(reshape(meanTSerrs, nEventFrames, nVoxels), hiddenView, 2, iSl);
-    lengthTS = sqrt(squeeze(sum(meanTS.^2)));
-    zeroLength = find(lengthTS == 0);
-    for ii=1:tEvents
-        ampsBlock1 = squeeze(sum(meanTS .* squeeze(sliceBlockTS(:, ii, :, :)))) ./ lengthTS;
-        ampsBlock1(zeroLength) = NaN;
-        ampsBlock(ii, :, :) = ampsBlock1;
-    end
-    amps(:, :, iSl) = squeeze(mean(ampsBlock));
-    ampErrs(:, :, iSl) = squeeze(std(ampsBlock)) / sqrt(tEvents);
-    close(wH);
-  end
 end %for
-savetSeries(meanTSFull,hiddenView, 1);
-savetSeries(meanTSerrsFull,hiddenView, 2);
+
+if dimNum == 3
+    meanTSFull = reshape(meanTSFull,[1,2,4,3]);
+    meanTSerrsFull = reshape(meanTSerrsFull,[1,2,4,3]);
+end %if
+
+savetSeries(meanTSFull,hiddenView);
+savetSeries(meanTSerrsFull,hiddenView);
 
 
 % Save the parameter maps:

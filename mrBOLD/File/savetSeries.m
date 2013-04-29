@@ -1,6 +1,6 @@
 function savetSeries(tSeries,vw,scan,slice,nii)
 %
-% function savetSeries(tSeries,vw,scan,slice,[nii])
+% function savetSeries(tSeries,vw,scan,[slice],[nii])
 %
 % This function should be called everytime you save a tSeries.
 % Makes the tSeries directory and scan subdirectory if they don't already exist.
@@ -27,10 +27,10 @@ if strcmp(viewType,'Inplane')
         mkdir(tseriesdir);
     end
 
-    pathStr = fullfile(tseriesdir,['tSeriesScan',num2str(scan),'Slice',num2str(slice),'nii.gz']);
+    pathStr = fullfile(tseriesdir,['tSeriesScan',num2str(scan),'Slice',num2str(slice),'.nii.gz']);
     
     %We now have a path to save the nifti to, let's make a nifti!
-    if ~exist('var',nii)
+    if ~exist('nii','var')
         % We have no Nifti, we need to create our own
         % We can take the data from loadtSeries
         [~,nii] = loadtSeries(vw,scan,slice);
@@ -40,22 +40,25 @@ if strcmp(viewType,'Inplane')
         
         % Let's first reshape the data into the proper size
         
-        size = viewGet(vw,'Functional Slice Dim');
-        newtSeries = zeros(size,size(tSeries,3),size(tSeries,1));
-        keepFrames = ones(size, 2);
-        for slice = 1:size(tSeries,3)
-            newtSeries(:,:,slice,:) = reshape(tSeries,size);
-        end %for
-        
-        
+        sizeDim = viewGet(vw,'Functional Slice Dim');
+        totalSize = [size(tSeries,1),sizeDim,size(tSeries,3)];
+        keepFrames = ones(sizeDim(1), 2);
+        newtSeries = reshape(tSeries,totalSize);
+        newtSeries = permute(newtSeries, [2 3 4 1]); %Put the time at the end
         %Now let's update the nifti
         dim = size(newtSeries);
         nii = niftiSet(nii,'Dim',dim);
         nii = niftiSet(nii,'Data',newtSeries);
     end %if
     
-	nii = niftiSet(nii,'F Name',pathStr);
+	nii = niftiSet(nii,'File Path',pathStr);
 
+    %Now we need to add another dimension to the pixdim if it only has 3
+    if numel(size(niftiGet(nii,'Pix Dim'))) < numel(dim)
+        %Add another pixdim
+        nii = niftiSet(nii, 'Pix Dim',[niftiGet(nii,'Pix Dim') 1]);
+    end
+    
     niftiWrite(nii,pathStr);
 
     %Let's also make sure that the dataTYPES are updated properly
@@ -65,7 +68,7 @@ if strcmp(viewType,'Inplane')
     
     %This is the same code as in duplicateDataType
     curDt = viewGet(vw,'Cur Dt');
-    if ~existDataType(curDt)
+    if curDt > numel(dataTYPES)
         newName = [];
         dlg = 'Please give a new name for the new datatype';
         while isempty(newName);
@@ -93,11 +96,11 @@ if strcmp(viewType,'Inplane')
         end %for
     end %if
     
-    dataTYPES = dtSet(dataTYPES(curDt),'Inplane Path',pathStr,scan);
-    dataTYPES = dtSet(dataTYPES(curDt),'Size',dim,scan);
+    dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Inplane Path',pathStr,scan);
+    dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Size',dim,scan);
 
     %Add in keepFrames information
-    dataTYPES = dtSet(dataTYPES(curDt),'Keep Frames',keepFrames,scan);
+    dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Keep Frames',keepFrames,scan);
     
     verbose = prefsVerboseCheck;
     if verbose > 1		% starting to use graded levels of feedback
