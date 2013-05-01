@@ -42,7 +42,7 @@ if strcmp(viewType,'Inplane')
     
     nii = niftiApplyAndCreateXform(nii,'Inplane');
     
-    keepFrames = dtGet(dataTYPES,'Keep Frames');
+    keepFrames = dtGet(dataTYPES(dtNum),'Keep Frames', scan);
     %Let's also implement keepFrames
     if ~isempty(keepFrames)
         nSkip = keepFrames(scan,1);

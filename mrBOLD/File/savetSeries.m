@@ -97,7 +97,7 @@ if strcmp(viewType,'Inplane')
     end %if
     
     dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Inplane Path',pathStr,scan);
-    dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Size',dim,scan);
+    dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Size',dim(1:2),scan);
 
     %Add in keepFrames information
     dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Keep Frames',keepFrames,scan);
@@ -130,7 +130,7 @@ else
             
             for i = 1:numSlices
                 pathStr = fullfile(tseriesdir,scandir,['tSeries',num2str(i)]);
-                tSeriesTmp = tSeries(:,:,:,i);
+                tSeriesTmp = tSeries(:,:,i,:); %The slices will be on the 3rd dimension
                 
                 tSeriesTmp = single(tSeriesTmp);
                 

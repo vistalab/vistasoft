@@ -116,7 +116,7 @@ switch param
         end
         
     case {'keepframes'}
-        if checkfields(dt,'scanParams','keepframes')
+        if checkfields(dt,'scanParams','keepFrames')
             if isempty(varargin), val = dt.scanParams(:).keepFrames;
             else val = dt.scanParams(varargin{1}).keepFrames;
             end
