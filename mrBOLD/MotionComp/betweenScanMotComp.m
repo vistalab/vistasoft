@@ -118,19 +118,27 @@ for iScan = 1:nScans
     end % motion correct
 
 	% initialize a slot for the new time series
-	[newView newScanNum] = initScan(newView, newDtName, [], {vw.curDataType scan});
+	[newView, newScanNum] = initScan(newView, newDtName, [], {vw.curDataType scan});
 	
     % Save tSeries
     tSeries = zeros(size(ts));
     numPixels = size(tSeries,2);
+    dimNum = numel(size(ts));
+    tSeriesFull = zeros([size(ts) slices]);
 	if verbose > 1,    waitHandle = waitbar(0,'Saving tSeries...');	end
     for slice=slices
         if verbose > 1, waitbar(slice/nSlices);  end
         for frame=1:nFrames
             tSeries(frame, :) = reshape(volSeries(:,:,slice,frame), [1 numPixels]);
         end
-        tSeriesFull(slice) = tSeries;
-    end
+        tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries);
+    end %for
+
+    if dimNum == 3
+        tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
+    end %if
+
+    
     savetSeries(tSeriesFull, newView, newScanNum);
 	if verbose > 1,     close(waitHandle);  end
     clear volSeries

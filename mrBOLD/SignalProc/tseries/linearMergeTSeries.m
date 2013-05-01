@@ -75,6 +75,9 @@ nAvg = length(scanList);
 waitHandle = waitbar(0,'Merging tSeries.  Please wait...');
 nSlices = length(sliceList(vw,scanList(1)));
 
+tSeriesAvgFull = [];
+dimNum = 0;
+
 for iSlice = sliceList(vw,scanList(1));
     % For each slice...
     % disp(['Averaging scans for slice ', int2str(iSlice)])
@@ -116,14 +119,18 @@ for iSlice = sliceList(vw,scanList(1));
     end
     meanBaseline=meanBaseline/nAvg;
     tSeriesAvg=tSeriesAvg+repmat(meanBaseline,nFrames,1);
-    
+    dimNum = numel(size(tSeriesAvg));
     %tSeriesAvg = tSeriesAvg ./ nValid;
     tSeriesAvg(nValid == 0) = NaN;
-    tSeriesAvgFull(iSlice) = tSeriesAvg;
+    tSeriesAvgFull = cat(dimNum + 1, tSeriesAvgFull, tSeriesAvg); %Combine together
     waitbar(iSlice/nSlices);
 end %for
 
-savetSeries(tSeriesAvgFull,hiddenView,newScanNum,iSlice);
+if dimNum == 3
+    tSeriesAvgFull = reshape(tSeriesAvgFull,[1,2,4,3]);
+end %if
+
+savetSeries(tSeriesAvgFull,hiddenView,newScanNum);
 
 close(waitHandle);
 

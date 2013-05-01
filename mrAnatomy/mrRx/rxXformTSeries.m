@@ -150,13 +150,25 @@ if ~isempty(base)
         dataTYPES(srcNum).eventAnalysisParams(base);
     
     hwait = waitbar(0,'Copying base tSeries...');
+    
+    tSeriesFull = [];
+    dimNum = 0;    
     for slice = 1:numSlices(hI)
         hI = selectDataType(hI,srcDataType);
         tSeries = loadtSeries(hI,base,slice);        
         hI = selectDataType(hI,tgtDataType);
+        dimNum = numel(size(tSeries));
         savetSeries(tSeries,hI,newBaseNum,slice);
+        tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries);
         waitbar(slice/numSlices(hI),hwait);
     end
+    
+    if dimNum == 3
+        tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
+    end %if
+    
+    savetSeries(tSeriesFull,hI,newBaseNum);
+    
     close(hwait);
     clear tSeries
 end
@@ -184,7 +196,7 @@ for s = 1:length(scans)
     xrng = (1:xsz) - round(xsz/2);
     yrng = (1:ysz) - round(ysz/2);
     zrng = (1:zsz) - round(zsz/2);
-    [X Y Z] = meshgrid(xrng,yrng,zrng);
+    [X, Y, Z] = meshgrid(xrng,yrng,zrng);
     coords = [X(:) Y(:) Z(:) ones(size(Z(:)))]';
 
 	% get new coords for the xformed frames

@@ -58,11 +58,19 @@ keep = [1:keepFrames] + junkFrames;
 hwait = waitbar(0, 'Clipping Frames from tSeries...');
 
 for scan = scans
+    tSeriesFull = [];
+    dimNum = 0;
     for slice = 1:viewGet(vw, 'NumSlices')
         tSeries = loadtSeries(vw, scan, slice);
         tSeries = tSeries(keep,:);
-        tSeriesFull(slice) = tSeries;
+        dimNum = numel(size(tSeries));
+        tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries); %Combine together
     end
+    
+    if dimNum == 3
+        tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
+    end %if
+    
     savetSeries(tSeriesFull, vw, scan);
 
     dataTYPES(dataType).scanParams(scan).nFrames = length(keep);

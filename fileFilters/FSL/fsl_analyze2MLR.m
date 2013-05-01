@@ -115,23 +115,26 @@ for thisScanIndex=1:nScansToProcess
         fprintf('\nMaking scan directory %s\n',scandir);
         mkdir(tSerDir,['Scan',num2str(thisScan)]);
     end
-    
+    thisTSerFull = [];
+    dimNum = 0;
     % Here, add option to crop leading frames
     for thisSlice=1:nSlices
         thisTSer=img(:,:,thisSlice,:);
         thisTSer=reshape(thisTSer,(dims(1)*dims(2)),dims(4));
         thisTSer=thisTSer';
-        
+        dimNum = numel(size(thisTSer));
         % Cast to 16bit  signed ints to save space
         thisTSer=thisTSer./max(abs(thisTSer(:)));
         thisTSer=int16(thisTSer*32767);
         
-        thisTSerFull(thisSlice) = thisTSer;
+        thisTSerFull = cat(dimNum + 1, thisTSerFull, thisTSer);
         disp(thisSlice);
     end
+    
+    if dimNum == 3
+        thisTSerFull = reshape(thisTSerFull,[1,2,4,3]);
+    end %if
     
     savetSeries(thisTSerFull,vw,thisScan);
     
 end
-
-% --------------

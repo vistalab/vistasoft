@@ -49,6 +49,9 @@ end
 nSlices = numSlices(vw);
 
 %% main resampling stage
+tSeriesFull = [];
+dimNum = 0;
+
 for slice = 1:nSlices
 	src = loadtSeries(vw, scan, slice);
 	
@@ -74,7 +77,8 @@ for slice = 1:nSlices
 	
 	% save the time series
 	[tgtView, tgtScan, tgtDt] = initScan(vw, dt, [], {vw.curDataType scan});
-	tSeriesFull(slice) = tSeries;
+    dimNum = numel(size(tSeries));
+	tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries); %Combine together
 
     % update the data type params -- including retinotopy model params if
 	% they exist:
@@ -90,6 +94,10 @@ for slice = 1:nSlices
 	 end
 	saveSession;
 end
+
+if dimNum == 3
+    tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
+end %if
 
 savetSeries(tSeriesFull, vw, tgtScan);
 

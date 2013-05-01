@@ -103,10 +103,13 @@ for iSlice=1:nSlices
         sliceBlockTS(~isfinite(sliceBlockTS)) = 0;
         sliceBlockTS = sliceBlockTS - repmat(sum(sliceBlockTS)/nEventFrames, [nEventFrames 1 1 1]);
         meanTS = squeeze(sum(sliceBlockTS, 2)./numPoints);
-        meanTSFull(iSlice) = reshape(meanTS, nEventFrames, nVoxels);
+        meanTSFinal = reshape(meanTS, nEventFrames, nVoxels);
+        dimNum = numel(size(meanTSFinal));
+        meanTSFull = cat(dimNum + 1, meanTSFull, meanTSFinal);
         %savetSeries(reshape(meanTS, nEventFrames, nVoxels), hiddenView, 1, iSl);
         meanTSerrs = squeeze(std(sliceBlockTS, 0, 2)) / sqrt(tEvents);
-        meanTSerrsFull(iSlice) = reshape(meanTSerrs, nEventFrames, nVoxels);
+        meanTSerrsFinal = reshape(meanTSerrs, nEventFrames, nVoxels);
+        meanTSerrsFull = cat(dimNum + 1, meanTSFull, meanTSerrsFinal);
         %savetSeries(reshape(meanTSerrs, nEventFrames, nVoxels), hiddenView, 2, iSl);
         lengthTS = sqrt(squeeze(sum(meanTS.^2)));
         zeroLength = find(lengthTS == 0);
@@ -126,8 +129,8 @@ if dimNum == 3
     meanTSerrsFull = reshape(meanTSerrsFull,[1,2,4,3]);
 end %if
 
-savetSeries(meanTSFull,hiddenView);
-savetSeries(meanTSerrsFull,hiddenView);
+savetSeries(meanTSFull,hiddenView,1);
+savetSeries(meanTSerrsFull,hiddenView,2);
 
 
 % Save the parameter maps:

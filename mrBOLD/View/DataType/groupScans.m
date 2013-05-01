@@ -112,12 +112,20 @@ nTseries = newScanNum*nSlices;
 for  iScan = 1:length(newScanRange)
     % For each scan... copy the tseries.
     tgt = newScanRange(iScan);
+    tSeriesFull = [];
+    dimNum = 0;
     for iSlice = 1:nSlices
         % For each slice...
         tSeries = loadtSeries(vw, scanList(iScan), iSlice);
-        tSeriesFull(iSlice) = tSeries;
+        dimNum = numel(size(tSeries));
+        tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries);
         waitbar((nSlices*(iScan-1) + iSlice)/nTseries,wbar)
     end
+    
+    if dimNum == 3
+        tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
+    end %if
+    
     savetSeries(tSeriesFull,hiddenView,tgt);
 end
 close(wbar);

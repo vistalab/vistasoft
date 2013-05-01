@@ -411,7 +411,8 @@ for scan = 1:nScans
     % Write out the time series
     %------------------------------------------------------------------
     vw = viewSet(vw, 'currentDataTYPE',  tgtDt);
-    savetSeries(tSeries, vw, tgtScan);
+    savetSeries(tSeries, vw, tgtScan); %This is alright since tSeries 
+    % already contains all the slices
 
     %% also save residuals in a separate data type if requested
     if saveResiduals==1
@@ -419,6 +420,8 @@ for scan = 1:nScans
         [vw, resScan, resDt] = initScan(vw, [dtName '_Residual'], [], {srcDt scan});
 
         % save the time series
+        residualFull = [];
+        dimNum = 0;
         for slice = 1:numSlices(vw)
             % load the time series from the original data
             vw.curDataType = srcDt;
@@ -444,9 +447,15 @@ for scan = 1:nScans
             % save
             % TODO: Move this function to using viewGet
             vw.curDataType = resDt;
+            residualFull = cat(dimNum + 1, residualFull, residual); %Combine together
             residualFull(slice) = residual;
         end
-        savetSeries(tSeries, vw, tgtScan);
+        savetSeries(tSeries, vw, tgtScan); %Already sends all the slices
+        
+        if dimNum == 3
+            residualFull = reshape(residualFull,[1,2,4,3]);
+        end %if
+        
         savetSeries(residualFull, vw, resScan);
 
         % update dataTYPES

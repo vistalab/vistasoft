@@ -65,10 +65,10 @@ size = viewGet(vw,'Functional Slice Dim');
 newwtSeries = reshape(wtSeries,size);
 
 %Now let's update the nifti
-dim = size(newwtSeries);
-nii = niftiSet(nii,'Dim',dim);
 data(:,:,slice,:) = newwtSeries;
 nii = niftiSet(nii,'Data',data);
+dim = size(niftiGet(nii,'Data'));
+nii = niftiSet(nii,'Dim',dim);
 
 savetSeries(wtSeries,vw,scan,slice,nii);
 

@@ -9,12 +9,12 @@ function XlateFunctionals(x, scanList)
 mrGlobals
 
 if isempty(selectedINPLANE)
-  if isempty(INPLANE{1})
-    Alert('Select an INPLANE!')
-    return
-  else
-    selectedINPLANE = 1;
-  end
+    if isempty(INPLANE{1})
+        Alert('Select an INPLANE!')
+        return
+    else
+        selectedINPLANE = 1;
+    end
 end
 
 view = INPLANE{selectedINPLANE};
@@ -22,66 +22,57 @@ view = INPLANE{selectedINPLANE};
 M = [eye(3), -x(:)];
 
 if ~exist('scanList', 'var')
-  scanList = selectScans(view);
-  if isempty(scanList), return, end
+    scanList = selectScans(view);
+    if isempty(scanList), return, end
 end
 
 % Set up new datatype for the translated inplanes:
 hiddenView = initHiddenInplane;
-if (~exist('typeName', 'var') | isempty(typeName)), typeName = 'Translated'; end
+if (~exist('typeName', 'var') || isempty(typeName)), typeName = 'Translated'; end
 if ~existDataType(typeName), addDataType(typeName); end
 hiddenView = selectDataType(hiddenView, existDataType(typeName));
 ndataType = hiddenView.curDataType;
 tSeriesDir = tSeriesDir(hiddenView);
 
 for scan = scanList
-  slices = sliceList(view,scan);
-  nSlices = length(slices);
-  nFrames = numFrames(view,scan);
-  dims = sliceDims(view,scan);
-  % Load tSeries from all slices into one big matrix 
-  volSeries = zeros([dims(1) dims(2) nSlices nFrames]);
-  waitHandle = waitbar(0,'Loading tSeries from all slices.  Please wait...');
-  for slice=slices
-    waitbar(slice/nSlices);
-    ts = loadtSeries(view,scan,slice);
-    for frame=1:nFrames
-      volSeries(:, :, slice, frame) = reshape(ts(frame,:),dims);
+    slices = sliceList(view,scan);
+    nSlices = length(slices);
+    nFrames = numFrames(view,scan);
+    dims = sliceDims(view,scan);
+    % Load tSeries from all slices into one big matrix
+    volSeries = zeros([dims(1) dims(2) nSlices nFrames]);
+    waitHandle = waitbar(0,'Loading tSeries from all slices.  Please wait...');
+    for slice=slices
+        waitbar(slice/nSlices);
+        ts = loadtSeries(view,scan,slice);
+        for frame=1:nFrames
+            volSeries(:, :, slice, frame) = reshape(ts(frame,:),dims);
+        end
     end
-  end
-  close(waitHandle)
-  
-  % compute the warped volume series according to M
-  waitHandle = waitbar(0,['Warping scan ', num2str(scan),'...']);
-  for frame = 1:nFrames
-    waitbar(frame/nFrames)
-    % warp the volume putting an edge of 1 voxel around to avoid lost data
-    volSeries(:,:,:,frame) = warpAffine3(volSeries(:,:,:,frame), M, NaN, 1);
-  end
-  close(waitHandle)
-  
-  % Save warped tSeries
-  % Make the Scan subdirectory for the new tSeries (if it doesn't exist)
-  scanDir = fullfile(tSeriesDir, ['Scan',int2str(scan)]);
-  if ~exist(scanDir, 'dir')
-    mkdir(tSeriesDir, ['Scan',int2str(scan)]);
-  end
-  tSeries = zeros(size(ts));
-  numPixels = size(tSeries,2);
-  waitHandle = waitbar(0,'Saving tSeries...');
-  for slice=slices
-    waitbar(slice/nSlices);
-    for frame=1:nFrames
-      tSeries(frame, :) = reshape(volSeries(:,:,slice,frame), [1 numPixels]);
+    close(waitHandle)
+    
+    % compute the warped volume series according to M
+    waitHandle = waitbar(0,['Warping scan ', num2str(scan),'...']);
+    for frame = 1:nFrames
+        waitbar(frame/nFrames)
+        % warp the volume putting an edge of 1 voxel around to avoid lost data
+        volSeries(:,:,:,frame) = warpAffine3(volSeries(:,:,:,frame), M, NaN, 1);
     end
-    savetSeries(tSeries, hiddenView, scan, slice);
-  end
-  close(waitHandle)
-  clear volSeries
-  dataTYPES(ndataType).scanParams(scan) = dataTYPES(view.curDataType).scanParams(scan);
-  dataTYPES(ndataType).blockedAnalysisParams(scan) = dataTYPES(view.curDataType).blockedAnalysisParams(scan);
-  dataTYPES(ndataType).eventAnalysisParams(scan) = dataTYPES(view.curDataType).eventAnalysisParams(scan);
-  dataTYPES(ndataType).scanParams(scan).annotation = ['Translated ', getDataTypeName(view)];
+    close(waitHandle)
+    
+    % Save warped tSeries
+    % Make the Scan subdirectory for the new tSeries (if it doesn't exist)
+    waitHandle = waitbar(0,'Saving tSeries...');
+
+    savetSeries(volSeries, hiddenView, scan);
+
+    close(waitHandle)
+    clear volSeries
+    
+    dataTYPES(ndataType).scanParams(scan) = dataTYPES(view.curDataType).scanParams(scan);
+    dataTYPES(ndataType).blockedAnalysisParams(scan) = dataTYPES(view.curDataType).blockedAnalysisParams(scan);
+    dataTYPES(ndataType).eventAnalysisParams(scan) = dataTYPES(view.curDataType).eventAnalysisParams(scan);
+    dataTYPES(ndataType).scanParams(scan).annotation = ['Translated ', getDataTypeName(view)];
 end % Scan loop
 
 hiddenView = computeMeanMap(hiddenView, scanList, 1);

@@ -151,12 +151,10 @@ for thisScan=1:length(scanList)
             
             % Now loop over slices again, saving out the data
             disp('Saving');
-            for thisSlice=1:nSlices
-                thisSliceData=squeeze(dataArray(:,:,:,thisSlice));
-                tSeries = reshape(thisSliceData,nTR,nx*ny);
-                tSeriesFull(thisSlice) = tSeries;
-            end
-            savetSeries(tSeriesFull,hiddenView,thisScan);
+
+            dataArray = permute(dataArray, [1 2 4 3]);
+            
+            savetSeries(dataArray,hiddenView,thisScan);
             
         case 'Gray'
             tSeries = loadtSeries(vw,scanList(thisScan));

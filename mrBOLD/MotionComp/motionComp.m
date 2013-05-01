@@ -134,13 +134,21 @@ numPixels = size(tSeries,2);
 waitHandle = waitbar(0,'Saving tSeries. Please wait...');
 
 vw = viewSet(vw, 'curdt', tgtDt);
+tSeriesFull = [];
+dimNum = 0;
 for slice=slices
   waitbar(slice/nSlices);
   for frame=1:nFrames
     tSeries(frame,:) = reshape(warpedVolSeries(:,:,slice,frame),[1 numPixels]);
   end
-  tSeriesFull(slice) = tSeries;
+  dimNum = numel(size(tSeries));
+  tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries); %Combine together
 end %for
+
+if dimNum == 3
+    tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
+end %if
+
 savetSeries(tSeriesFull, vw, scan);
 close(waitHandle)
 
