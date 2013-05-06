@@ -46,7 +46,9 @@ param = sessionMapParameterField(param);
 val = [];
 switch param
     case {'alignment'}
-        if isfield(s,'alignment'), val = s.alignment; end
+        if isfield(s,'alignment'), val = s.alignment; 
+        else warning('The field: %s was not found!', param); %TODO: Add this line to all of the choices
+        end
         
     case {'description'}
         if isfield(s,'description'),val = s.description; end
