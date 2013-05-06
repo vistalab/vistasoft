@@ -147,7 +147,7 @@ ensureDirExists(params.sessionDir);
 callingDir = pwd;
 cd(params.sessionDir);
 
-mrGlobals; %Moved in here so HOMEDIR is reset to sessDir
+mrGlobals; %Declared here since we want HOMEDIR to be sessPath
 
 initEmptySession; %Replace this save and then load of mrSESSION with that variable simply passed
                     % from one to the other
@@ -339,7 +339,7 @@ if checkfields(mr, 'info', 'date'), f.date = mr.info.date; end
 if checkfields(mr, 'info', 'time'), f.time = mr.info.time; end
 
 f.junkFirstFrames = 0; %This always appears to be 0. perhaps remove it?
-f.nFrames = mr.dims(4);
+f.nFrames = mr.dims(4) - mr.keepFrames(scan,1);
 f.slices =  1:mr.dims(3);
 f.fullSize = mr.dims(1:2);
 f.cropSize = mr.dims(1:2);
