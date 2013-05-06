@@ -7,7 +7,7 @@ function gray = ip2volTSeries(inplane,gray,selectedScans,method)
 % gray views must already be open. Loads the inplane tSeries as
 % it goes.
 %
-% Output tSeries matrics are (as usual) nFrames x nVoxels in size
+% Output tSeries matrices are (as usual) nFrames x nVoxels in size
 % where nVoxels is the number of gray voxels that correspond to the
 % inplanes, i.e., size(gray.grayCoords,2).
 %
