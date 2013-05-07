@@ -50,7 +50,7 @@ try
     %However, this does not create the proper pix dims, so let's fix that
     nii = niftiSet(nii,'Pix dim',mrSESSION.inplanes.voxelSize);
     
-    fileName = fullfile(pwd,'inplaneNifti.nii.gz');
+    fileName = fullfile(pwd,'Inplane/inplaneNifti.nii.gz');
     
     nii = niftiSet(nii,'File Path',fileName);
     

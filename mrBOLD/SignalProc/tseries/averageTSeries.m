@@ -102,7 +102,7 @@ end %for
 % have a total of 4 dimensions now, i.e. dimNum == 3
 
 if dimNum == 3
-    tSeriesAvgFull = reshape(tSeriesAvgFull,[1,2,4,3]);
+    tSeriesAvgFull = permute(tSeriesAvgFull,[1,2,4,3]);
 end %if
 
 savetSeries(tSeriesAvgFull, hiddenView, newScanNum);

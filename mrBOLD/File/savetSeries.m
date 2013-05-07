@@ -105,7 +105,7 @@ if strcmp(viewType,'Inplane')
     verbose = prefsVerboseCheck;
     if verbose > 1		% starting to use graded levels of feedback
         fprintf('Saved time series %s. (%s)\n', pathStr, datestr(now));
-    end
+    end %if
  
 else
 
