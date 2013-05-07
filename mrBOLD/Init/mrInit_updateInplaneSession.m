@@ -1,4 +1,4 @@
-function ok = mrInit_updateInplaneSession()
+function mrInit_updateInplaneSession()
 %
 %
 % USAGE: Takes a session that has already been initialized with an older
@@ -69,11 +69,9 @@ try
     save('./mrSESSION.mat', 'mrSESSION','-append');
     
 catch err
-    ok = 0;
-    warning(sprintf(['There was an error when attempting to update your session.\n'...
-        ,'No changes have been made to your system. Please run the update code again.\n']));
+    warning(['There was an error when attempting to update your session.\n',...
+        'No changes have been made to your system. Please run the update code again.\n']);
     rethrow(err);
 end %try
 
-ok = 1;
 return
