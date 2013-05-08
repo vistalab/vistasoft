@@ -30,6 +30,12 @@ switch param
     case 'examnum'
         s.examNum = val;
         
+    case 'functionalinplanepath'
+        if isempty(varargin), scan = 1;
+        else                  scan = varargin{1};
+        end %if
+        s.functionals(scan).inplanePath= val;
+    
     case 'functionals'
         % We can set either the entire functional structure or just one scan
         if isempty(varargin), s.functionals = val;
@@ -42,6 +48,11 @@ switch param
         
     case 'inplanepath'
         s.inplanes.inplanePath = val;
+        
+    case 'keepframes'
+        if isempty(varargin), s.functionals(:).keepFrames = val;
+        else        s.functionals(varargin{1}).keepFrames = val;
+        end %if
         
     case {'nsamples','nframes'}
         if isempty(varargin), scan = 1;

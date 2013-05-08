@@ -46,8 +46,8 @@ param = sessionMapParameterField(param);
 val = [];
 switch param
     case {'alignment'}
-        if isfield(s,'alignment'), val = s.alignment; 
-        else warning('The field: %s was not found!', param); %TODO: Add this line to all of the choices
+        if isfield(s,'alignment'), val = s.alignment;
+        else warning('The field: %s was not found in the session.', param); %TODO: Add this line to all of the choices
         end
         
     case {'description'}
@@ -61,12 +61,28 @@ switch param
     case {'examnum'}
         if isfield(s, 'examNum'), val = s.examNum; end
         
+    case {'functionalinplanepath'}
+        if checkfields(s, 'functionals','inplanePath')
+            if isempty(varargin), val = s.functionals(:).inplanePath;
+            else val = s.functionals(varargin{1}).inplanePath;
+            end
+        else warning('The field: %s was not found in the session.', param);
+        end
+        
     case {'functionalsslicedim'}
         if checkfields(s, 'functionals','cropSize')
             if isempty(varargin), error(['No scan dim defined when ',...
                     'attempting to get functional slice dimensions.']);
             else val = s.functionals(varargin{1}).cropSize;
             end
+        end
+        
+    case {'functionalvoxelsize'}
+        if checkfields(s, 'functionals','voxelSize')
+            if isempty(varargin), val = s.functionals(:).voxelSize;
+            else val = s.functionals(varargin{1}).voxelSize;
+            end
+        else warning('The field: %s was not found in the session.', param);
         end
         
     case {'functionals'}
@@ -125,14 +141,14 @@ switch param
             loadSession;
             
             mrSESSION = sessionSet(mrSESSION,'Inplane Path', val);
-            saveSession;            
+            saveSession;
         end
-                
+        
     case {'interframetiming'}
         % This is the proportion of a TR that separates each frame
         % acquisition. This is NOT a real number in seconds.
         % sessionGet(mrSESSION,'interframedelta',2)
-
+        
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end

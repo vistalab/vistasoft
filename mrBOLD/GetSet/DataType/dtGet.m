@@ -113,6 +113,7 @@ switch param
             if isempty(varargin), val = dt.scanParams(:).PfileName;
             else val = dt.scanParams(varargin{1}).PfileName;
             end
+        else warning('This parameter: %s, was not found in the datatype.',param);
         end
         
     case {'keepframes'}

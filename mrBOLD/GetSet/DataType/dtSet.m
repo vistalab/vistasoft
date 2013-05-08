@@ -45,13 +45,13 @@ switch param
         end
         
 	case {'inplanepath'}
-        % dt = dtSet(dt,'nFrames',128,scan)
+        % dt = dtSet(dt,'nFrames','/tmp/inplanepath.nii.gz/',scan)
         if isempty(varargin), dt.scanParams(:).inplanePath = val;
         else dt.scanParams(varargin{1}).inplanePath = val;
         end
         
     case {'keepframes'}
-        % dt = dtSet(dt,'nFrames',128,scan)
+        % dt = dtSet(dt,'nFrames',[1 -1],scan)
         if isempty(varargin), dt.scanParams(:).keepFrames = val;
         else dt.scanParams(varargin{1}).keepFrames = val;
         end

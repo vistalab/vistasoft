@@ -6,14 +6,11 @@ function mrInit_updateInplaneSession()
 % is of 2013-03-01 and it no longer saves the Inplane data out to a matlab
 % matrix file.
 %
-% INPUT: paramIn
-% Parameter input that will be stripped of all capitalization as well as
-% whitespace before it is attempted to be translated. If it is not
-% translated, a warning is returned as well as an empty answer.
+% INPUT: N/A, no input is used. As long as the user is in the directory of
+% the session to be migrated, this should work correctly.
 %
-%
-% OUTPUT: ok
-% error code for whether the migration completed successfully
+% OUTPUT: N/A, no output is given. The error handling has been upgraded to
+% use built in matlab try-catch blocks.
 
 % This migration tool takes an anat.mat file that presently exists and
 % makes some assumptions about its orientation. Specifically, it is assumed
@@ -21,10 +18,8 @@ function mrInit_updateInplaneSession()
 % Once this has been found, the migration tool creates a nifti structure
 % for this data matrix.
 
-%We should have access to a mrSESSION as well as an anat.mat
-
 try
-    
+    %TODO: Change this script to use sessionGet
     loadSession;
     mrGlobals;
     
