@@ -3,7 +3,8 @@ function val = viewGet(vw,param,varargin)
 %
 %   val = viewGet(vw,param,varargin{:})
 %
-% Reads the parameters of a view struct.
+% Reads the parameters of a view struct. Lists out all of the possible
+% parameters 
 % Access to these structures should go through this routine and through
 %
 %    viewSet
@@ -221,10 +222,6 @@ function val = viewGet(vw,param,varargin)
 %     'colorbarhandle'
 
 
-% TODO:
-%  We need to have a call data = viewGet(vw,'data','co',roiName);
-%  This would call getCurDataROI or just insert that function in place
-%  here.
 %
 % ras 05/07: replaced all local variable names VOLUME, INPLANE, FLAT to just
 % 'vw'. The previous format was misleading -- the local variables were
@@ -252,6 +249,10 @@ function val = viewGet(vw,param,varargin)
 % single standardized parameter name in the viewGet and viewSet functions.
 % You can put as many aliases as you like in viewMapParameterField.
 %
+% AS: 5/2013: viewGet and viewSet have now been split out into each
+% function to prevent them from getting too long. As well, new
+% functionality has been added for 'viewGet('list')' and 'viewGet('help')'
+%
 % For example:
 %    viewMapParameterField('curdt')
 % and
@@ -263,11 +264,18 @@ function val = viewGet(vw,param,varargin)
 % are equivalent. Hence viewGet and viewSet should have the case 'curdt'.
 % They do not need the case 'Current Data TYPE' or 'currentdatatype'.
 
-if notDefined('vw'), vw = getCurView; end
-if notDefined('param'), error('No parameter defined'); end
+if ~exist('vw','var'), vw = getCurView; end
+if ~exist('param','var'), error('No parameter defined'); end
 
 mrGlobals;
 val = [];
+
+if ischar(vw)
+    %This means that we are using the new functionality to list the
+    %parameter set
+    viewMapParameterField(vw,1); %Using the new functionality
+    return %early since we don't want to go through the rest
+end %if
 
 %Format the parameter as lowercase and without spaces
 param = mrvParamFormat(param);

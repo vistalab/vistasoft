@@ -1,11 +1,14 @@
-function res = viewMapParameterField(paramIn)
+function res = viewMapParameterField(paramIn, specialFunctionFlag)
 % Maps fieldName to a standard format, implementing aliases
 %
-%    res = viewMapParameterField(fieldName);
+%    res = viewMapParameterField(fieldName,[specialFunctionFlag]);
 %
 % Add aliases for viewGet and viewSet.
 %
 % The standard format is lower case with no spaces.
+%
+% The special function flag enables the use of unique keywords such as
+% 'list' and 'help' to perform meta actions.
 %
 % By using this function, we can refer to parameters in clearer text. For
 % example, we can use 'Current Slice Number' to indicate the parameter
@@ -14,7 +17,7 @@ function res = viewMapParameterField(paramIn)
 % Examples:
 %   viewMapParameterField('Current Slice')
 %   viewMapParameterField('Current Data Type')
-
+if ~exist('specialFunctionFlag','var'), specialFunctionFlag = 0; end;
 
 global DictViewTranslate;
 
@@ -475,10 +478,26 @@ if isempty(DictViewTranslate)
     DictViewTranslate('tseriesdir') = 'tseriesdir';
     DictViewTranslate('tseriesdirectory') = 'tseriesdir';
     
-    
 end %if
 
-if DictViewTranslate.isKey(paramIn)
+if specialFunctionFlag
+    if strcmp(paramIn,'list')
+        allKeys = keys(DictViewTranslate);
+        numKeys = numel(allKeys);
+        display('The list of possible keys, in alphabetical order is: ')
+        for i = 1:numKeys
+            display(allKeys{i});
+        end %for
+    elseif strcmp(paramIn,'help')
+        allKeys = keys(DictViewTranslate);
+        numKeys = numel(allKeys);
+        display('The list of possible keys, with help, in alphabetical order is: ')
+        for i = 1:numKeys
+            display([allKeys{i} ': ' viewHelpParameter(allKeys{i})]);
+        end %for
+    end %if    
+    
+elseif DictViewTranslate.isKey(paramIn)
     res = DictViewTranslate(paramIn);
 else
     error('Dict:ViewSplitError', 'The input %s does not appear to be in the dictionary', paramIn);
