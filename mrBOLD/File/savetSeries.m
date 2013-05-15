@@ -27,40 +27,8 @@ if strcmp(viewType,'Inplane')
         mkdir(tseriesdir);
     end
 
-    pathStr = fullfile(tseriesdir,['tSeriesScan',num2str(scan),'Slice',num2str(slice),'.nii.gz']);
+    pathStr = fullfile(tseriesdir,['tSeriesScan',num2str(scan),'.nii.gz']);
     
-    %We now have a path to save the nifti to, let's make a nifti!
-    if ~exist('nii','var')
-        % We have no Nifti, we need to create our own
-        % We can take the data from loadtSeries
-        [~,nii] = loadtSeries(vw,scan,slice);
-        
-        % Now we need to change the data, the dimensions and the filepath
-        % to reflect the new data that was passed in the tSeries
-        
-        % Let's first reshape the data into the proper size
-        
-        sizeDim = viewGet(vw,'Functional Slice Dim');
-        totalSize = [size(tSeries,1),sizeDim,size(tSeries,3)];
-        keepFrames = ones(sizeDim(1), 2);
-        newtSeries = reshape(tSeries,totalSize);
-        newtSeries = permute(newtSeries, [2 3 4 1]); %Put the time at the end
-        %Now let's update the nifti
-        dim = size(newtSeries);
-        nii = niftiSet(nii,'Dim',dim);
-        nii = niftiSet(nii,'Data',newtSeries);
-    end %if
-    
-	nii = niftiSet(nii,'File Path',pathStr);
-
-    %Now we need to add another dimension to the pixdim if it only has 3
-    if numel(size(niftiGet(nii,'Pix Dim'))) < numel(dim)
-        %Add another pixdim
-        nii = niftiSet(nii, 'Pix Dim',[niftiGet(nii,'Pix Dim') 1]);
-    end
-    
-    niftiWrite(nii,pathStr);
-
     %Let's also make sure that the dataTYPES are updated properly
     %First, check if this datatype exists
     %Then, check if this scan exists
@@ -96,6 +64,39 @@ if strcmp(viewType,'Inplane')
         end %for
     end %if
     
+    %We now have a path to save the nifti to, let's make a nifti!
+    if ~exist('nii','var')
+        % We have no Nifti, we need to create our own
+        % We can take the data from loadtSeries
+        [~,nii] = loadtSeries(vw,scan,slice);
+        
+        % Now we need to change the data, the dimensions and the filepath
+        % to reflect the new data that was passed in the tSeries
+        
+        % Let's first reshape the data into the proper size
+        
+        sizeDim = viewGet(vw,'Functional Slice Dim');
+        totalSize = [size(tSeries,1),sizeDim,size(tSeries,3)];
+        keepFrames = zeros(numScans, 2);
+        keepFrames(1:numScans,2) = -1;
+        newtSeries = reshape(tSeries,totalSize);
+        newtSeries = permute(newtSeries, [2 3 4 1]); %Put the time at the end
+        %Now let's update the nifti
+        dim = size(newtSeries);
+        nii = niftiSet(nii,'Dim',dim);
+        nii = niftiSet(nii,'Data',newtSeries);
+    end %if
+    
+	nii = niftiSet(nii,'File Path',pathStr);
+
+    %Now we need to add another dimension to the pixdim if it only has 3
+    if numel(niftiGet(nii,'Pix Dim')) < numel(dim)
+        %Add another pixdim
+        nii = niftiSet(nii, 'Pix Dim',[niftiGet(nii,'Pix Dim') 1]);
+    end
+    
+    niftiWrite(nii,pathStr);
+    
     dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Inplane Path',pathStr,scan);
     dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Size',dim(1:2),scan);
 
@@ -106,6 +107,9 @@ if strcmp(viewType,'Inplane')
     if verbose > 1		% starting to use graded levels of feedback
         fprintf('Saved time series %s. (%s)\n', pathStr, datestr(now));
     end %if
+    
+    %Save the new dataTypes variable back to the overall session.
+    saveSession;
  
 else
 

@@ -77,6 +77,8 @@ switch param
         % the view struct; return blank if it is not loaded).
         %   tseriesScan = viewGet(vw, 'time series scan');
         val = vw.tSeriesScan ;
+        %TODO: Remove the below's use of multiple parameters. Do this for
+        %all of the viewGet files
     case {'tr' 'frameperiod' 'framerate'}
         % Return the scan TR in seconds
         %   tr = viewGet(vw,'tr')

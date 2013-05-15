@@ -1,4 +1,4 @@
-function tSeriesClipFrames(vw,scans,junkFrames,keepFrames);
+function tSeriesClipFrames(vw,scans,junkFrames,keepFrames)
 %
 % tSeriesClipFrames(vw,[scans,junkFrames,keepFrames]);
 %
@@ -34,7 +34,7 @@ if ieNotDefined('scans')
     scans = er_selectScans(vw);
 end
 
-if ieNotDefined('junkFrames') | ieNotDefined('keepFrames')   
+if ieNotDefined('junkFrames') || ieNotDefined('keepFrames')   
     dlg(1).fieldName = 'junkFrames';
     dlg(1).style = 'edit';
     dlg(1).string = 'Skip how many frames from the start of each scan?';
