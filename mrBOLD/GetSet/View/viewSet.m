@@ -150,16 +150,30 @@ function vw = viewSet(vw,param,val,varargin)
 
 
 if notDefined('vw'),  error('No view defined.'); end
-if notDefined('param'), error('No parameter defined'); end
 if notDefined('val'),   val = []; end
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 % Big SWITCH Statement %
 %%%%%%%%%%%%%%%%%%%%%%%%
 % This statement will check for all possible properties,
-% for all view types. I tried to gruop them in a reasonable
-% way.
+% for all view types.
 mrGlobals;
+
+if ischar(vw)
+    %This means that we are using the new functionality to list the
+    %parameter set
+    
+	vw = mrvParamFormat(vw);
+
+    %Check to see if we are asking for just one or all parameters:
+    if ~exist('param','var'), viewMapParameterField(vw, 1);
+    else viewMapParameterField(vw,1,mrvParamFormat(param));
+    end
+ %Using the new functionality
+    return %early since we don't want to go through the rest
+end %if
+
+if notDefined('param'), error('No parameter defined'); end
 
 %Format the parameter as lowercase and without spaces
 param = mrvParamFormat(param);

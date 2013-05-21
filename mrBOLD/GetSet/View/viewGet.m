@@ -265,7 +265,6 @@ function val = viewGet(vw,param,varargin)
 % They do not need the case 'Current Data TYPE' or 'currentdatatype'.
 
 if ~exist('vw','var'), vw = getCurView; end
-if ~exist('param','var'), error('No parameter defined'); end
 
 mrGlobals;
 val = [];
@@ -273,9 +272,18 @@ val = [];
 if ischar(vw)
     %This means that we are using the new functionality to list the
     %parameter set
-    viewMapParameterField(vw,1); %Using the new functionality
+    
+	vw = mrvParamFormat(vw);
+
+    %Check to see if we are asking for just one or all parameters:
+    if ~exist('param','var'), viewMapParameterField(vw, 1);
+    else viewMapParameterField(vw,1,mrvParamFormat(param));
+    end
+ %Using the new functionality
     return %early since we don't want to go through the rest
 end %if
+
+if ~exist('param','var'), error('No parameter defined'); end
 
 %Format the parameter as lowercase and without spaces
 param = mrvParamFormat(param);

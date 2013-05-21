@@ -1,5 +1,5 @@
-function res = viewMapParameterField(paramIn, specialFunctionFlag)
-% Maps fieldName to a standard format, implementing aliases
+function res = viewMapParameterField(paramIn, specialFunctionFlag, paramInSpecial)
+% Maps paramIn to a standard format, implementing aliases
 %
 %    res = viewMapParameterField(fieldName,[specialFunctionFlag]);
 %
@@ -482,18 +482,33 @@ end %if
 
 if specialFunctionFlag
     if strcmp(paramIn,'list')
-        allKeys = keys(DictViewTranslate);
-        numKeys = numel(allKeys);
+        allVals = unique(values(DictViewTranslate));
+        numVals = numel(allVals);
         display('The list of possible keys, in alphabetical order is: ')
-        for i = 1:numKeys
-            display(allKeys{i});
+        for i = 1:numVals
+            display(allVals{i});
         end %for
     elseif strcmp(paramIn,'help')
-        allKeys = keys(DictViewTranslate);
-        numKeys = numel(allKeys);
-        display('The list of possible keys, with help, in alphabetical order is: ')
-        for i = 1:numKeys
-            display([allKeys{i} ': ' viewHelpParameter(allKeys{i})]);
+        if exist('paramInSpecial','var')
+            allVals = cellstr(paramInSpecial);
+        else
+            allVals = unique(values(DictViewTranslate));
+        end %if
+        numVals = numel(allVals);
+        display('The list keys, with help, in alphabetical order is: ')
+        for i = 1:numVals
+            display(['<strong>' allVals{i} '</strong>: ' viewHelpParameter(allVals{i})]);
+        end %for
+    elseif strcmp(paramIn,'type')
+        if exist('paramInSpecial','var')
+            allVals = cellstr(paramInSpecial);
+        else
+            allVals = unique(values(DictViewTranslate));
+        end %if
+        numVals = numel(allVals);
+        display('The list keys, with their type, in alphabetical order is: ')
+        for i = 1:numVals
+            display(['<strong>' allVals{i} '</strong>: ' viewParameterType(allVals{i})]);
         end %for
     end %if    
     
