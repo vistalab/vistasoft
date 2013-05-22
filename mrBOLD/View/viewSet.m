@@ -232,10 +232,10 @@ switch param
         
     case 'curscan'
         %vw = setCurScan(vw,val);
-        view.curScan = val;
+        vw.curScan = val;
         % If we have a GUI open, update it as well:
-        if checkfields(view, 'ui', 'scan'),
-            setSlider(view,view.ui.scan,val,0);
+        if checkfields(vw, 'ui', 'scan'),
+            setSlider(vw,vw.ui.scan,val,0);
         end
         
     case 'datavalindex'
