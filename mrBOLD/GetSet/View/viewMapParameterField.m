@@ -508,7 +508,7 @@ if specialFunctionFlag
         numVals = numel(allVals);
         display('The list keys, with their type, in alphabetical order is: ')
         for i = 1:numVals
-            display(['<strong>' allVals{i} '</strong>: ' viewParameterType(allVals{i})]);
+            display(['<strong>' allVals{i} '</strong>: ' viewParameterType(viewMapParameterSplit(allVals{i}))]);
         end %for
     end %if    
     

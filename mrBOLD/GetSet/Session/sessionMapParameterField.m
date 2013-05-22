@@ -23,19 +23,31 @@ fieldName = mrvParamFormat(fieldName);
 
 global sessionParameterMap
 
+if isempty(sessionParameterMap)
+
 sessionParameterMap = containers.Map;
 
 sessionParameterMap('functionalparameters') = 'functionals';
+sessionParameterMap('functionals') = 'functionals';
 sessionParameterMap('pfilenames') = 'pfilenamecellarray';
+sessionParameterMap('pfilenamecellarray') = 'pfilenamecellarray';
 sessionParameterMap('sliceordering') = 'sliceorder';
+sessionParameterMap('sliceorder') = 'sliceorder';
 sessionParameterMap('numberslices') = 'nslices';
+sessionParameterMap('nslices') = 'nslices';
 sessionParameterMap('referenceslice') = 'refslice';
+sessionParameterMap('refslice') = 'refslice';
 sessionParameterMap('timingreferenceslice') = 'refslice';
 sessionParameterMap('interframedelta') = 'interframetiming';
 sessionParameterMap('timebetweenframes') = 'interframetiming';
 sessionParameterMap('framedt') = 'interframetiming';
+sessionParameterMap('interframetiming') = 'interframetiming';
 sessionParameterMap('nframes') = 'nsamples';
+sessionParameterMap('nsamples') = 'nsamples';
 sessionParameterMap('frameperiod') = 'tr';
+sessionParameterMap('tr') = 'tr';
+
+end %if
 
 
 if sessionParameterMap.isKey(fieldName)

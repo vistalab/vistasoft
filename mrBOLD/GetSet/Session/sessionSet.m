@@ -18,64 +18,64 @@ param = mrvParamFormat(param);
 param = sessionMapParameterField(param);
 
 switch param
-    case 'alignment'
+    case {'alignment'}
         s.alignment =val;
         
-    case 'comments'
+    case {'comments'}
         s.comments = val;
         
-    case 'description'
+    case {'description'}
         s.description = val;
         
-    case 'examnum'
+    case {'examnum'}
         s.examNum = val;
         
-    case 'functionalinplanepath'
+    case {'functionalinplanepath'}
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end %if
         s.functionals(scan).inplanePath= val;
     
-    case 'functionals'
+    case {'functionals'}
         % We can set either the entire functional structure or just one scan
         if isempty(varargin), s.functionals = val;
         else s.functionals(varargin{1}) = val;
         end
         
-    case 'inplane'
+    case {'inplane'}
         s.inplanes = val;
         % Information about the functional scans
         
-    case 'inplanepath'
+    case {'inplanepath'}
         s.inplanes.inplanePath = val;
         
-    case 'keepframes'
+    case {'keepframes'}
         if isempty(varargin), s.functionals(:).keepFrames = val;
         else        s.functionals(varargin{1}).keepFrames = val;
         end %if
         
-    case {'nsamples','nframes'}
+    case {'nsamples'}
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end
         s.functionals(scan).nFrames = val;
         
-    case 'screensavesize'
+    case {'screensavesize'}
         s.screenSaveSize = val;
         
-    case 'sessioncode'
+    case {'sessioncode'}
         s.sessionCode = val;
         
-    case 'sliceorder'
+    case {'sliceorder'}
         if isempty(varargin), scan = 1;
         else scan = varargin{1};
         end
         s.functionals(scan).sliceOrder = val;
         
-    case 'subject'
+    case {'subject'}
         s.subject = val;
         
-    case 'title'
+    case {'title'}
         s.title = val;
         
     otherwise
