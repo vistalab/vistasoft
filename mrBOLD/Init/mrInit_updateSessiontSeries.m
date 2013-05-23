@@ -1,6 +1,5 @@
 function mrInit_updateSessiontSeries()
 %
-%
 % USAGE: Takes a session that has already been initialized with an older
 % version of mrInit and update it to the newest version. This version
 % is of 2013-05-05 and it no longer uses tSeries data in the form of
@@ -11,7 +10,7 @@ function mrInit_updateSessiontSeries()
 %
 % OUTPUT: N/A, no output is given. The error handling has been upgraded to
 % use built in matlab try-catch blocks.
-
+%
 % This migration tool takes a series of folders of tSeries*.mat files and
 % makes some assumptions about their orientation. Specifically, it is assumed
 % that these are already in the normal display format.
@@ -33,18 +32,20 @@ try
     inplaneBasePath = fullfile(pwd,'Inplane');
     
     for dtNum = 1:numel(dataTYPES)
-        if exist(fullfile(inplaneBasePath,dtGet(dataTYPES(dtNum),'Name'),'TSeries','Scan1','tSeries1.mat'),'file');
+        sprintf('Starting dataTYPE number %d', dtNum);
+        tSeriesOutPath = fullfile(inplaneBasePath, dtGet(dataTYPES(dtNum),'Name'));
+        tSeriesInBasePath = fullfile(tSeriesOutPath,'TSeries');
+        
+        if exist(fullfile(tSeriesInBasePath,'Scan1','tSeries1.mat'),'file');
             %Checks to see if there is any inplane tSeries data in this
             %dataTYPE if there is, then does all of the processing
             
-            numScans = numel(sessionGet(mrSESSION,'Functionals'));
+            numScans = dtGet(dataTYPES(dtNum),'N Scans');
             
             keepFrames = zeros(numScans,2);
             
-            tSeriesOutPath = fullfile(inplaneBasePath, dtGet(dataTYPES(dtNum),'Name'));
-            tSeriesInBasePath = fullfile(tSeriesOutPath,'TSeries');
-            
             for scan = 1:numScans
+                sprintf('Starting scan number %d', scan);
                 % For each scan, go through each scan directory, read in all of the
                 % matrix files and then build the data for a nifti from them.
                 numSlices = sessionGet(mrSESSION,'N Slices', scan);
@@ -97,10 +98,11 @@ try
                 save('./mrSESSION.mat', 'dataTYPES','-append');
                 
                 writeFileNifti(nii);
+                sprintf('Finished scan number %d', scan);
             end %for
             
         end %if
-        
+        sprintf('Finished dataTYPE number %d', dtNum);
     end %for
     
 catch err
