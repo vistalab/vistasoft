@@ -23,34 +23,36 @@ loadSession; %Automatically checks if this directory exists and has mrSession
 %and, if not, run the update function
 mrGlobals;
 
+display('Starting a complete session migration...');
+
 try
     if ~isfield(mrSESSION.inplanes,'inplanePath')
         %Has not been updated yet, let's update
         mrInit_updateInplaneSession;
     else
-        disp(sprintf('Inplane session update has already been applied. Will not re-apply.'));
+        disp('Inplane anatomy update has already been applied. Will not re-apply.');
     end %if
     
 catch err
-    error('The Inplane session update has not completed successfully. All changes rolled back. Please check your session.');
+    error('The Inplane anatomy update has not completed successfully. Changes made to it have been rolled back. Please check your session.');
     rethrow(err);
 end %try
 
-disp('Inplane session update has been applied correctly.');
+disp('Inplane anatomy update has been applied correctly.');
 
 try
     if ~isfield(mrSESSION.functionals(1),'keepFrames')
         %Has not been updated yet, let's update
         mrInit_updateSessiontSeries;
     else
-        disp(sprintf('tSeries session update has already been applied. Will not re-apply.'));
+        display('tSeries functionals update has already been applied. Will not re-apply.');
     end %if
 catch err
-    error('The tSeries session update has not completed successfully. Changes just to it have been rolled back. Please check your session.');
+    error('The tSeries functionals update has not completed successfully. Changes just to it have been rolled back. Please check your session.');
     rethrow(err);
 end %try
 
-disp('tSeries session updated has been applied correctly.');
+display('tSeries functionals update has been applied correctly.');
 
-disp('All updates have completed successfully.');
+display('...All updates have completed successfully.');
 return;
