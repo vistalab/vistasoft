@@ -64,8 +64,8 @@ try
     save('./mrSESSION.mat', 'mrSESSION','-append');
     
 catch err
-    warning(['There was an error when attempting to update your session.\n',...
-        'No changes have been made to your system. Please run the update code again.\n']);
+    warning(['There was an error when attempting to update your session.',...
+        'No changes have been made to your system. Please run the update code again.']);
     rethrow(err);
 end %try
 
