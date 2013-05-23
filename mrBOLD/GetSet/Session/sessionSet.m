@@ -18,7 +18,7 @@ if ischar(s)
 	s = mrvParamFormat(s);
 
     %Check to see if we are asking for just one or all parameters:
-    if ~exist('param','var'), viewMapParameterField(s, 1);
+    if ~exist('param','var'), sessionMapParameterField(s, 1);
     else sessionMapParameterField(s,1,mrvParamFormat(param));
     end
  %Using the new functionality

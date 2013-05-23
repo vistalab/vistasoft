@@ -40,13 +40,13 @@ if ischar(s)
     %This means that we are using the new functionality to list the
     %parameter set
     
-	s = mrvParamFormat(s);
-
+    s = mrvParamFormat(s);
+    
     %Check to see if we are asking for just one or all parameters:
-    if ~exist('param','var'), viewMapParameterField(s, 1);
+    if ~exist('param','var'), sessionMapParameterField(s, 1);
     else sessionMapParameterField(s,1,mrvParamFormat(param));
     end
- %Using the new functionality
+    %Using the new functionality
     return %early since we don't want to go through the rest
 end %if
 
@@ -61,7 +61,7 @@ val = [];
 switch param
     case {'alignment'}
         if isfield(s,'alignment'), val = s.alignment;
-        else warning('The field: %s was not found in the session.', param); %TODO: Add this line to all of the choices
+        else error('The field relevant to %s was not found in the session.', param);
         end
         
     case {'description'}
@@ -70,6 +70,7 @@ switch param
     case {'eventdetrend'}
         if checkfields(s,'event','detrendFrames')
             val = s.event.detrendFrames;
+        else error('The field relevant to %s was not found in the session.', param);
         end
         
     case {'examnum'}
@@ -80,7 +81,7 @@ switch param
             if isempty(varargin), val = s.functionals(:).inplanePath;
             else val = s.functionals(varargin{1}).inplanePath;
             end
-        else warning('The field: %s was not found in the session.', param);
+        else error('The field relevant to %s was not found in the session.', param);
         end
         
     case {'functionalsslicedim'}
@@ -89,6 +90,7 @@ switch param
                     'attempting to get functional slice dimensions.']);
             else val = s.functionals(varargin{1}).cropSize;
             end
+        else error('The field relevant to %s was not found in the session.', param);
         end
         
     case {'functionalvoxelsize'}
@@ -96,7 +98,7 @@ switch param
             if isempty(varargin), val = s.functionals(:).voxelSize;
             else val = s.functionals(varargin{1}).voxelSize;
             end
-        else warning('The field: %s was not found in the session.', param);
+        else error('The field relevant to %s was not found in the session.', param);
         end
         
     case {'functionals'}
@@ -106,15 +108,18 @@ switch param
             if isempty(varargin), val = s.functionals;
             else val = s.functionals(varargin{1});
             end
+        else error('The field relevant to %s was not found in the session.', param);
         end
         
     case {'inplane'}
         % pth = sessionGet(s, 'inplane path');
         % Return the structure of the inplanes data
         
-        val = s.inplanes;
+        if isfield(s, 'inplanes'), val = s.inplanes;
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         
-        if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>
+        if isempty(val), warning('Inplane is returning empty'); end %#ok<WNTAG>
         
     case {'inplanepath'}
         % Return the path to the nifti for the
@@ -168,7 +173,10 @@ switch param
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end
-        val = s.functionals(scan).nFrames;
+        if checkfields(s.functionals(scan),'nFrames')
+            val = s.functionals(scan).nFrames;
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         
     case {'nshots'}
         % sessionGet(mrSESSION,'nShots',2)
@@ -178,7 +186,9 @@ switch param
         if checkfields(s.functionals(scan),'reconParams','nshots')
             val = s.functionals(scan).reconParams.nshots;
         else
-            val = 1;
+            val = 1; % NOTE: this means that we are defaulting to a specific
+            % value if the field does not exist. This can be dangerous
+            % as it may introduce bugs. Do we want to change this?
         end
         
     case {'nslices'}
@@ -192,10 +202,11 @@ switch param
         end
         if checkfields(s.functionals(scan),'reconParams','slquant')
             val = s.functionals(scan).reconParams.slquant;
-        else
+        elseif checkfields(s.functionals(scan),'slices')
             % I don't understand slquant and this ... we should use one but
             % not the other.  Which one?
             val = length(s.functionals(scan).slices);
+        else error('The field relevant to %s was not found in the session.', param);
         end
         
     case {'pfilelist'}
@@ -214,22 +225,32 @@ switch param
         nScans = length(s.functionals);
         val = cell(1, nScans);
         for ii=1:nScans
-            val{ii} = s.functionals(ii).PfileName;
-        end
+            if checkfields(s.functionals(ii),'PfileName')
+                val{ii} = s.functionals(ii).PfileName;
+            else error('The field relevant to %s was not found in the session.', param);
+            end %if
+        end %for
         
     case {'refslice'}
         % sessionGet(mrSESSION,'refslice',2)
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end
-        l   = s.functionals(scan).slices;
-        val = mean(l);
+        if checkfields(s.functionals(scan),'slices')
+            l   = s.functionals(scan).slices;
+            val = mean(l);
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         
     case {'screensavesize'}
-        if isfield(s, 'screenSaveSize'), val = s.screenSaveSize; end
+        if isfield(s, 'screenSaveSize'), val = s.screenSaveSize; 
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         
     case {'sessioncode'}
-        if isfield(s,'sessionCode'),  val = s.sessionCode; end;
+        if isfield(s,'sessionCode'),  val = s.sessionCode; 
+        else error('The field relevant to %s was not found in the session.', param);
+        end;
         
     case {'sliceorder'}
         if isempty(varargin), scan = 1;
@@ -242,17 +263,24 @@ switch param
         end
         
     case {'subject'}
-        if isfield(s, 'subject'), val = s.subject; end
+        if isfield(s, 'subject'), val = s.subject; 
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         
     case {'title'}
-        if isfield(s, 'title'), val = s.title; end
+        if isfield(s, 'title'), val = s.title; 
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         
     case {'tr'}
         % sessionGet(mrSESSION,'TR',2)
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end
-        val = s.functionals(scan).framePeriod;
+        if isfield(s.functiionals(scan),'framePeriod')
+            val = s.functionals(scan).framePeriod;
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         % Time series processing parameters for block and event analyses
         
     otherwise

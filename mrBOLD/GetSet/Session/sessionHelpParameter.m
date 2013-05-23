@@ -48,6 +48,7 @@ if isempty(DictSessionHelp)
     DictSessionHelp('pfilelist') = ['Return indices into the functional scans corresponding to the' char(10) ...
         'cell array of pFile names' char(10) ...
         'sessionGet(s,''pFileList'',{''name1'',''pFile2.mag''})'];
+    DictSessionHelp('pfilenamecellarray') = '';
     DictSessionHelp('pfilenames') = '';
     DictSessionHelp('refslice') = '';
     DictSessionHelp('screensavesize') = '';
@@ -55,7 +56,7 @@ if isempty(DictSessionHelp)
     DictSessionHelp('sliceorder') = '';
     DictSessionHelp('subject') = '';
     DictSessionHelp('title') = '';
-    DictSessionHelp('tr') = '';
+    DictSessionHelp('tr') = 'Time series processing parameters for block and event analyses';
     
 end %if
 

@@ -23,43 +23,43 @@ function res = sessionMapParameterField(paramIn, specialFunctionFlag, paramInSpe
 global DictSessionTranslate
 
 if isempty(DictSessionTranslate)
-
-DictSessionTranslate = containers.Map;
-
-DictSessionTranslate('alignment') = 'alignment';
-DictSessionTranslate('description') = 'description';
-DictSessionTranslate('eventdetrend') = 'eventdetrend';
-DictSessionTranslate('examnum') = 'examnum';
-DictSessionTranslate('framedt') = 'interframetiming';
-DictSessionTranslate('frameperiod') = 'tr';
-DictSessionTranslate('functionalinplanepath') = 'functionalinplanepath';
-DictSessionTranslate('functionalparameters') = 'functionals';
-DictSessionTranslate('functionals') = 'functionals';
-DictSessionTranslate('functionalsslicedim') = 'functionalsslicedim';
-DictSessionTranslate('functionalvoxelsize') = 'functionalvoxelsize';
-DictSessionTranslate('inplane') = 'inplane';
-DictSessionTranslate('inplanepath') = 'inplanepath';
-DictSessionTranslate('interframedelta') = 'interframetiming';
-DictSessionTranslate('interframetiming') = 'interframetiming';
-DictSessionTranslate('nframes') = 'nsamples';
-DictSessionTranslate('nsamples') = 'nsamples';
-DictSessionTranslate('nshots') = 'nshots';
-DictSessionTranslate('nslices') = 'nslices';
-DictSessionTranslate('numberslices') = 'nslices';
-DictSessionTranslate('pfilelist') = 'pfilelist';
-DictSessionTranslate('pfilenamecellarray') = 'pfilenamecellarray';
-DictSessionTranslate('pfilenames') = 'pfilenames';
-DictSessionTranslate('referenceslice') = 'refslice';
-DictSessionTranslate('refslice') = 'refslice';
-DictSessionTranslate('screensavesize') = 'screensavesize';
-DictSessionTranslate('sessioncode') = 'sessioncode';
-DictSessionTranslate('sliceorder') = 'sliceorder';
-DictSessionTranslate('sliceordering') = 'sliceorder';
-DictSessionTranslate('subject') = 'subject';
-DictSessionTranslate('timebetweenframes') = 'interframetiming';
-DictSessionTranslate('timingreferenceslice') = 'refslice';
-DictSessionTranslate('title') = 'title';
-DictSessionTranslate('tr') = 'tr';
+    
+    DictSessionTranslate = containers.Map;
+    
+    DictSessionTranslate('alignment') = 'alignment';
+    DictSessionTranslate('description') = 'description';
+    DictSessionTranslate('eventdetrend') = 'eventdetrend';
+    DictSessionTranslate('examnum') = 'examnum';
+    DictSessionTranslate('framedt') = 'interframetiming';
+    DictSessionTranslate('frameperiod') = 'tr';
+    DictSessionTranslate('functionalinplanepath') = 'functionalinplanepath';
+    DictSessionTranslate('functionalparameters') = 'functionals';
+    DictSessionTranslate('functionals') = 'functionals';
+    DictSessionTranslate('functionalsslicedim') = 'functionalsslicedim';
+    DictSessionTranslate('functionalvoxelsize') = 'functionalvoxelsize';
+    DictSessionTranslate('inplane') = 'inplane';
+    DictSessionTranslate('inplanepath') = 'inplanepath';
+    DictSessionTranslate('interframedelta') = 'interframetiming';
+    DictSessionTranslate('interframetiming') = 'interframetiming';
+    DictSessionTranslate('nframes') = 'nsamples';
+    DictSessionTranslate('nsamples') = 'nsamples';
+    DictSessionTranslate('nshots') = 'nshots';
+    DictSessionTranslate('nslices') = 'nslices';
+    DictSessionTranslate('numberslices') = 'nslices';
+    DictSessionTranslate('pfilelist') = 'pfilelist';
+    DictSessionTranslate('pfilenamecellarray') = 'pfilenamecellarray';
+    DictSessionTranslate('pfilenames') = 'pfilenames';
+    DictSessionTranslate('referenceslice') = 'refslice';
+    DictSessionTranslate('refslice') = 'refslice';
+    DictSessionTranslate('screensavesize') = 'screensavesize';
+    DictSessionTranslate('sessioncode') = 'sessioncode';
+    DictSessionTranslate('sliceorder') = 'sliceorder';
+    DictSessionTranslate('sliceordering') = 'sliceorder';
+    DictSessionTranslate('subject') = 'subject';
+    DictSessionTranslate('timebetweenframes') = 'interframetiming';
+    DictSessionTranslate('timingreferenceslice') = 'refslice';
+    DictSessionTranslate('title') = 'title';
+    DictSessionTranslate('tr') = 'tr';
 
 end %if
 
