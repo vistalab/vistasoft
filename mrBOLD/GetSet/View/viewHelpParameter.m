@@ -509,7 +509,6 @@ if DictViewHelp.isKey(paramIn)
     res = DictViewHelp(paramIn);
 else
     error('Dict:ViewHelpError', 'The input %s does not appear to be in the dictionary', paramIn);
-    res = [];
 end %if
 
 return

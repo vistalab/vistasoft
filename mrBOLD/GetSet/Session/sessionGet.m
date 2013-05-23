@@ -33,8 +33,6 @@ function val = sessionGet(s,param,varargin)
 %          description: 'sDesc'
 %
 
-global HOMEDIR;
-
 if notDefined('s'), error('mrSESSION variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
 
@@ -103,11 +101,9 @@ switch param
         if isempty(val), warning('Inplane path not found'); end %#ok<WNTAG>
         
     case {'inplanepath'}
-        % pth = sessionGet(s, 'inplane path');
-        % Return the path to the raw files (e.g., dicoms or nifti) for the
+        % Return the path to the nifti for the
         % inplane anatomy (underlay for the functional data)
-        % This can now be found in the mrSESSION.inplanes.inplanePath
-        % location
+        % pth = sessionGet(s, 'inplane path');
         
         if ~isfield(s.inplanes,'inplanePath')
             %This session has not been updated. Let's warn the user
@@ -187,9 +183,9 @@ switch param
         end
         
     case {'pfilelist'}
-        % sessionGet(s,'pFileList',{'name1','pFile2.mag'})
         % Return indices into the functional scans corresponding to the
         % cell array of pFile names
+        % sessionGet(s,'pFileList',{'name1','pFile2.mag'})
         if isempty(varargin), error('PFile names required');  end
         allPFiles = sessionGet(s,'pFileNames');
         pFiles = varargin{1};

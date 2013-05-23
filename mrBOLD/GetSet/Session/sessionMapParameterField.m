@@ -1,7 +1,7 @@
-function res = sessionMapParameterField(fieldName)
-% Maps fieldName to a standard format, implementing aliases
+function res = sessionMapParameterField(paramIn, specialFunctionFlag, paramInSpecial)
+% Maps paramIn to a standard format, implementing aliases
 %
-%    res = viewMapParameterField(fieldName);
+%    res = viewMapParameterField(paramIn);
 %
 % Add aliases for viewGet and viewSet.
 %
@@ -15,45 +15,80 @@ function res = sessionMapParameterField(fieldName)
 %   sessionMapParameterField('Current Slice')
 %   sessionMapParameterField('Current Data Type')s
 
-%Let's strip the field name first
-fieldName = mrvParamFormat(fieldName);
+%As always, we assume that the input has already been sanitized
 
 %Now, let's create our hard-coded hash, then look it up
 % A hash works like an array, only it maps non-integer keys to values
 
-global sessionParameterMap
+global DictSessionTranslate
 
-if isempty(sessionParameterMap)
+if isempty(DictSessionTranslate)
 
-sessionParameterMap = containers.Map;
+DictSessionTranslate = containers.Map;
 
-sessionParameterMap('functionalparameters') = 'functionals';
-sessionParameterMap('functionals') = 'functionals';
-sessionParameterMap('pfilenames') = 'pfilenamecellarray';
-sessionParameterMap('pfilenamecellarray') = 'pfilenamecellarray';
-sessionParameterMap('sliceordering') = 'sliceorder';
-sessionParameterMap('sliceorder') = 'sliceorder';
-sessionParameterMap('numberslices') = 'nslices';
-sessionParameterMap('nslices') = 'nslices';
-sessionParameterMap('referenceslice') = 'refslice';
-sessionParameterMap('refslice') = 'refslice';
-sessionParameterMap('timingreferenceslice') = 'refslice';
-sessionParameterMap('interframedelta') = 'interframetiming';
-sessionParameterMap('timebetweenframes') = 'interframetiming';
-sessionParameterMap('framedt') = 'interframetiming';
-sessionParameterMap('interframetiming') = 'interframetiming';
-sessionParameterMap('nframes') = 'nsamples';
-sessionParameterMap('nsamples') = 'nsamples';
-sessionParameterMap('frameperiod') = 'tr';
-sessionParameterMap('tr') = 'tr';
+DictSessionTranslate('alignment') = 'alignment';
+DictSessionTranslate('description') = 'description';
+DictSessionTranslate('eventdetrend') = 'eventdetrend';
+DictSessionTranslate('examnum') = 'examnum';
+DictSessionTranslate('framedt') = 'interframetiming';
+DictSessionTranslate('frameperiod') = 'tr';
+DictSessionTranslate('functionalinplanepath') = 'functionalinplanepath';
+DictSessionTranslate('functionalparameters') = 'functionals';
+DictSessionTranslate('functionals') = 'functionals';
+DictSessionTranslate('functionalsslicedim') = 'functionalsslicedim';
+DictSessionTranslate('functionalvoxelsize') = 'functionalvoxelsize';
+DictSessionTranslate('inplane') = 'inplane';
+DictSessionTranslate('inplanepath') = 'inplanepath';
+DictSessionTranslate('interframedelta') = 'interframetiming';
+DictSessionTranslate('interframetiming') = 'interframetiming';
+DictSessionTranslate('nframes') = 'nsamples';
+DictSessionTranslate('nsamples') = 'nsamples';
+DictSessionTranslate('nshots') = 'nshots';
+DictSessionTranslate('nslices') = 'nslices';
+DictSessionTranslate('numberslices') = 'nslices';
+DictSessionTranslate('pfilelist') = 'pfilelist';
+DictSessionTranslate('pfilenamecellarray') = 'pfilenamecellarray';
+DictSessionTranslate('pfilenames') = 'pfilenames';
+DictSessionTranslate('referenceslice') = 'refslice';
+DictSessionTranslate('refslice') = 'refslice';
+DictSessionTranslate('screensavesize') = 'screensavesize';
+DictSessionTranslate('sessioncode') = 'sessioncode';
+DictSessionTranslate('sliceorder') = 'sliceorder';
+DictSessionTranslate('sliceordering') = 'sliceorder';
+DictSessionTranslate('subject') = 'subject';
+DictSessionTranslate('timebetweenframes') = 'interframetiming';
+DictSessionTranslate('timingreferenceslice') = 'refslice';
+DictSessionTranslate('title') = 'title';
+DictSessionTranslate('tr') = 'tr';
 
 end %if
 
 
-if sessionParameterMap.isKey(fieldName)
-    res = sessionParameterMap(fieldName); %This means that it is an alias, look it up
+if specialFunctionFlag
+    if strcmp(paramIn,'list')
+        allVals = unique(values(DictSessionTranslate));
+        numVals = numel(allVals);
+        display('The list of possible keys, in alphabetical order is: ')
+        for i = 1:numVals
+            display(allVals{i});
+        end %for
+    elseif strcmp(paramIn,'help')
+        if exist('paramInSpecial','var')
+            allVals = cellstr(paramInSpecial);
+        else
+            allVals = unique(values(DictSessionTranslate));
+        end %if
+        numVals = numel(allVals);
+        display('The list keys, with help, in alphabetical order is: ')
+        for i = 1:numVals
+            display(['<strong>' allVals{i} '</strong>: ' sessionHelpParameter(allVals{i})]);
+        end %for
+    end %if    
+    
+elseif DictSessionTranslate.isKey(paramIn)
+    res = DictSessionTranslate(paramIn); %This means that it is an alias, look it up
 else
-    res = fieldName; %Assume it was typed in correct and not an alias
+    res = paramIn; %Assume it was typed in correct and not an alias
 end
 
 
