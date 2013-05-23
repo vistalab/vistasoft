@@ -277,7 +277,7 @@ switch param
         if isempty(varargin), scan = 1;
         else                  scan = varargin{1};
         end
-        if isfield(s.functiionals(scan),'framePeriod')
+        if isfield(s.functionals(scan),'framePeriod')
             val = s.functionals(scan).framePeriod;
         else error('The field relevant to %s was not found in the session.', param);
         end

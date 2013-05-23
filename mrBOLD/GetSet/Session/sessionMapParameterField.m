@@ -19,6 +19,7 @@ function res = sessionMapParameterField(paramIn, specialFunctionFlag, paramInSpe
 
 %Now, let's create our hard-coded hash, then look it up
 % A hash works like an array, only it maps non-integer keys to values
+if ~exist('specialFunctionFlag','var'), specialFunctionFlag = 0; end;
 
 global DictSessionTranslate
 
