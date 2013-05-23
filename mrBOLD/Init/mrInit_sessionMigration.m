@@ -34,7 +34,7 @@ try
     end %if
     
 catch err
-    error('The Inplane anatomy update has not completed successfully. Changes made to it have been rolled back. Please check your session.');
+    warning('The Inplane anatomy update has not completed successfully. Changes made to it have been rolled back. Please check your session.');
     rethrow(err);
 end %try
 
@@ -48,7 +48,7 @@ try
         display('tSeries functionals update has already been applied. Will not re-apply.');
     end %if
 catch err
-    error('The tSeries functionals update has not completed successfully. Changes just to it have been rolled back. Please check your session.');
+    warning('The tSeries functionals update has not completed successfully. Changes just to it have been rolled back. Please check your session.');
     rethrow(err);
 end %try
 
