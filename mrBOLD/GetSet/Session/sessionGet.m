@@ -34,6 +34,22 @@ function val = sessionGet(s,param,varargin)
 %
 
 if notDefined('s'), error('mrSESSION variable required'); end
+
+
+if ischar(s)
+    %This means that we are using the new functionality to list the
+    %parameter set
+    
+	s = mrvParamFormat(s);
+
+    %Check to see if we are asking for just one or all parameters:
+    if ~exist('param','var'), viewMapParameterField(s, 1);
+    else sessionMapParameterField(s,1,mrvParamFormat(param));
+    end
+ %Using the new functionality
+    return %early since we don't want to go through the rest
+end %if
+
 if notDefined('param'), error('Parameter field required.'); end
 
 % make lower case and remove spaces
