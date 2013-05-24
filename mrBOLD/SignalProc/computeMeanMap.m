@@ -54,24 +54,36 @@ for iScan = 1:ncScans
     scan = scanList(iScan);
     dims = viewGet(vw, 'sliceDims', scan);
     map{scan} = NaN*ones(dataSize(vw,scan));
-    for slice = sliceList(vw,scan)
-        tSeries = loadtSeries(vw,scan,slice);
-        nValid = sum(isfinite(tSeries));
-        tSeries(isnan(tSeries(:))) = 0;
-
-        % if there is one time point, we will have problems, so duplicate
-        % the data
-        if size(tSeries,1) == 1,
-            tSeries = repmat(tSeries, 3, 1);
-            nValid = sum(isfinite(tSeries));
-        end
-
-        tmp = sum(tSeries) ./ nValid;
-        if strcmp(vw.viewType,'Inplane')
-            map{scan}(:,:,slice) = reshape(tmp,dims);
-        else
-            map{scan}(:,:,slice) = tmp;
-        end
+    switch lower(viewGet(vw, 'viewType'))
+        case 'inplane'
+            % since data in the inplane view is stored as a nifti, we can
+            % get the whole data slab in one call to load tseries rather
+            % than looping over slices.
+            [~, nii] = loadtSeries(vw,scan);
+            tSeries = niftiGet(nii, 'data');
+            timeDim = length(size(tSeries));
+            map{scan} = mean(tSeries, timeDim);
+            
+        otherwise
+            for slice = sliceList(vw,scan)
+                tSeries = loadtSeries(vw,scan,slice);
+                nValid = sum(isfinite(tSeries));
+                tSeries(isnan(tSeries(:))) = 0;
+                
+                % if there is one time point, we will have problems, so duplicate
+                % the data
+                if size(tSeries,1) == 1,
+                    tSeries = repmat(tSeries, 3, 1);
+                    nValid = sum(isfinite(tSeries));
+                end
+                
+                tmp = sum(tSeries) ./ nValid;
+                if strcmp(vw.viewType,'Inplane')
+                    map{scan}(:,:,slice) = reshape(tmp,dims);
+                else
+                    map{scan}(:,:,slice) = tmp;
+                end
+            end
     end
     waitbar(scan/ncScans)
 end
