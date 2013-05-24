@@ -32,7 +32,7 @@ try
     inplaneBasePath = fullfile(pwd,'Inplane');
     
     for dtNum = 1:numel(dataTYPES)
-        sprintf('Starting dataTYPE number %d', dtNum);
+        fprintf('Starting dataTYPE number %d\n', dtNum);
         tSeriesOutPath = fullfile(inplaneBasePath, dtGet(dataTYPES(dtNum),'Name'));
         tSeriesInBasePath = fullfile(tSeriesOutPath,'TSeries');
         
@@ -45,12 +45,12 @@ try
             keepFrames = zeros(numScans,2);
             
             for scan = 1:numScans
-                sprintf('Starting scan number %d', scan);
+                fprintf('Starting scan number %d\n', scan);
                 % For each scan, go through each scan directory, read in all of the
                 % matrix files and then build the data for a nifti from them.
-                numSlices = sessionGet(mrSESSION,'N Slices', scan);
+                numSlices = dtGet(dataTYPES(dtNum),'N Slices', scan);
                 tSeriesInFolder = fullfile(tSeriesInBasePath,['Scan' num2str(scan)]);
-                dimSize = [sessionGet(mrSESSION,'N Frames', scan) sessionGet(mrSESSION,'Functionals Slice Dim', scan) sessionGet(mrSESSION,'N Slices', scan)];
+                dimSize = [dtGet(dataTYPES(dtNum),'N Frames', scan) dtGet(dataTYPES(dtNum),'Func Size', scan) dtGet(dataTYPES(dtNum),'N Slices', scan)];
                 tSeries = zeros(dimSize);
                 for slice = 1:numSlices
                     tSeriesInFile = fullfile(tSeriesInFolder,['tSeries' num2str(slice) '.mat']);
@@ -65,13 +65,15 @@ try
                 freqPhaseSliceDims = [1 2 3];
                 
                 %Create the slice information
+                % We are assuming that the voxels are the same size in all
+                % of the dataTYPES
                 funcVoxel = sessionGet(mrSESSION,'Functional Voxel Size',scan);
                 
                 xform = [[diag(1./funcVoxel); 0 0 0], size(tSeries)'/2];
                 
-                funcVoxel(4) = sessionGet(mrSESSION,'Frame Period',scan);
+                funcVoxel(4) = dtGet(dataTYPES(dtNum),'Frame Period',scan);
                 
-                sliceInfo = [3 0 sessionGet(mrSESSION,'N Slices',scan)-1 funcVoxel(4)];
+                sliceInfo = [3 0 dtGet(dataTYPES(dtNum),'N Slices',scan)-1 funcVoxel(4)];
                 
                 %Build the nifti from the components above
                 nii = niftiCreate('data',tSeries,'qto_xyz',xform,'freq_dim',freqPhaseSliceDims,'slice_code',sliceInfo);
@@ -88,8 +90,8 @@ try
                 
                 nii = niftiSet(nii,'File Path',tSeriesOut);
                 
-                dataTYPES(1) = dtSet(dataTYPES(1),'Inplane Path',tSeriesOut,scan);
-                dataTYPES(1) = dtSet(dataTYPES(1),'Keep Frames', keepFrames, scan);
+                dataTYPES(dtNum) = dtSet(dataTYPES(dtNum),'Inplane Path',tSeriesOut,scan);
+                dataTYPES(dtNum) = dtSet(dataTYPES(dtNum),'Keep Frames', keepFrames, scan);
                 
                 niftiWrite(nii,tSeriesOut);
                 
@@ -98,11 +100,11 @@ try
                 save('./mrSESSION.mat', 'dataTYPES','-append');
                 
                 writeFileNifti(nii);
-                sprintf('Finished scan number %d', scan);
+                fprintf('Finished scan number %d\n', scan)
             end %for
             
         end %if
-        sprintf('Finished dataTYPE number %d', dtNum);
+        fprintf('Finished dataTYPE number %d\n', dtNum)
     end %for
     
 catch err

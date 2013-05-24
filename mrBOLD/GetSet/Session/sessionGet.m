@@ -33,6 +33,8 @@ function val = sessionGet(s,param,varargin)
 %          description: 'sDesc'
 %
 
+%TODO: Fix the comment above
+
 if notDefined('s'), error('mrSESSION variable required'); end
 
 

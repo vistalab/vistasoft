@@ -22,11 +22,14 @@ function val = dtGet(dt,param,varargin)
 %   e = dtGet(dt,'eParams')
 %   aType = dtGet(dt,'aType',1)
 
+%TODO: Fix the comment above to reflect the normal standard.
+
 if notDefined('dt'),    error('dataTYPES parameter required'); end
 if notDefined('param'), error('param required'); end
 val = [];       % Default
 
 param = mrvParamFormat(param);
+%TODO: Add a mapParameterField here
 
 switch param
     case {'analysistype','atype','eventorblock'}
@@ -138,6 +141,9 @@ switch param
     case {'nscans'}
         val = length(dt.scanParams);
         
+    case {'nslices'}
+        tmpVal = dtGet(dt,'Slices');
+        val = length(tmpVal);
         
     case {'parfile'}
         if checkfields(dt,'scanParams','parfile')
