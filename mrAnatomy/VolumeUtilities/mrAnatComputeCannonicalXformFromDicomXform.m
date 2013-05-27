@@ -64,7 +64,7 @@ volXyz = [0,0,0; 1,0,0; 0,1,0; 1,1,0; 0,0,1; 1,0,1; 0,1,1; 1,1,1];
 % that point. 
 
 % pick a big number relative to the volume coordinates
-farpoint = 500;
+farpoint = 10000;
 
 % function handle to compute the distance of each row of a nx3 matrix
 rowNorm = @(x) sqrt(sum(x.*x, 2));
