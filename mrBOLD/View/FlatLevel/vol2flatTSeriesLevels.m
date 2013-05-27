@@ -29,7 +29,7 @@ function flat = vol2flatTSeriesLevels(gray,flat,selectedScans)
 % ras, 8/2004: made to work with flat multi-level view
 
 % Don't do this unless gray is really a gray and flat is really a flat
-if ~strcmp(gray.viewType,'Gray') | ~strcmp(flat.viewType,'Flat')
+if ~strcmp(gray.viewType,'Gray') || ~strcmp(flat.viewType,'Flat')
     myErrorDlg('vol2flatParMap can only be used to transform from gray to flat.');
 end
 
@@ -66,7 +66,7 @@ checkTypes(gray,flat);
 % Mask image for masking the flat map away from where we have data
 % (ras 05/06/04: make it if it's not made ... this is true for
 % hidden flat views):
-if ~isfield(flat.ui,'mask')    flat = makeFlatMask(flat);   end
+if ~isfield(flat.ui,'mask'), flat = makeFlatMask(flat);   end
 mask = flat.ui.mask;
 
 % find the gray levels in the flat view
@@ -90,13 +90,14 @@ for scan = selectedScans
 		tSeries = zeros(size(grayTSeries,1),size(flat.coords{slice},2));
 	
         % Intersect the coords from the gray view and the Flat view.
-		[subCoords grayIndices flatIndices] = ...
+		[subCoords, grayIndices, flatIndices] = ...
             intersectCols(gray.coords,flat.grayCoords{slice});
         
         % Get the data corresponding to flat coords
         tSeries(:,flatIndices) = grayTSeries(:,grayIndices);
                     
         % Save tSeries
+        % Should not be saved since this occurs on a 'flat' view
         savetSeries(tSeries,flat,scan,slice);
     end
 

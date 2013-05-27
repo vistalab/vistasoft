@@ -36,7 +36,8 @@ ptSeries = vw.tSeries;
 if (ieNotDefined('framesToUse'))
     framesToUse=1:size(ptSeries,1);
 end
-
+%TODO: Change the above and below to only be processed if framesToUse is
+%defined, otherwise, pointless to have the below line
 ptSeries=ptSeries(framesToUse,:);
 
 

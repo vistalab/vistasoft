@@ -1,11 +1,11 @@
 function [xformMatrix] = niftiCreateXformFromString(vectorString)
 %
 %Given a vectorString of the orientation, create the transform that will
-%reset to ARS
+%reset to PRS
 
 xformMatrix = zeros(4); %Initialize
 
-%First, let's find out where each of the ARS directions are:
+%First, let's find out where each of the PRS directions are:
 
 tmp = strfind(vectorString,'R');
 tmpVector = zeros(1,4);
@@ -25,19 +25,19 @@ xformMatrix(2,:) = tmpVector; %We can hardcode in the 2 there, since we
 % know that we always want ARS format, which means that R should always be
 % the second row
 
-tmp = strfind(vectorString,'A');
+tmp = strfind(vectorString,'P');
 tmpVector = zeros(1,4);
 
-if (isempty(tmp)) %Means that we probably have a P and not an A
-    tmp = strfind(vectorString,'P');
+if (isempty(tmp)) %Means that we probably have an A and not a P
+    tmp = strfind(vectorString,'A');
     if isempty(tmp) %We have neither? Badly formatted string!
         warning('vista:niftiError', 'Unable to parse the vector string and create the Xform matrix. Returning empty.');
         xformMatrix = zeros(4);
         return
     end
-    tmpVector(tmp(1)) = -1; %Since we are looking at a P
+    tmpVector(tmp(1)) = -1; %Since we are looking at an A
 else
-    tmpVector(tmp(1)) = 1; %Since we are looking at an A
+    tmpVector(tmp(1)) = 1; %Since we are looking at a P
 end
 
 xformMatrix(1,:) = tmpVector;

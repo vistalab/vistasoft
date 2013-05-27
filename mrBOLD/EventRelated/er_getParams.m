@@ -20,34 +20,34 @@ function params = er_getParams(vw,scan,dt)
 % empty, will leave as such (not likely to happen).
 global dataTYPES;
 
-if notDefined('vw'),        vw = getCurView;                    end
-if notDefined('scan'),      scan = viewGet(vw, 'curScan');      end
-if notDefined('dt'),        dt = vw.curDataType;				end
+if notDefined('vw'),        vw = getCurView;                        end
+if notDefined('scan'),      scan = viewGet(vw, 'curScan');          end
+if notDefined('dt'),        dt = viewGet(vw, 'Current Data Type');	end
 
 if ischar(dt), dt = existDataType(dt); end
 
-params = dataTYPES(dt).eventAnalysisParams(scan);
+params = dtGet(dataTYPES(dt),'Event Analysis Params', scan);
 
 defaults = er_defaultParams;
 
-%% set relevant missing parameters to defaults
+% set relevant missing parameters to defaults
 % sets non-existent fields to the values specified by er_defaultParams.
 params = mergeStructures(defaults, params); 
 
-%% set other missing parameters to "best guess"
+% set other missing parameters to "best guess"
 % frame period:
 % this is redundant w/ the scan params, but since
 % I use these event params independent of mrVista and
 % dataTYPES, we'll want it here too:
-if ~isfield(params,'framePeriod')  | isempty(params.framePeriod)
-    params.framePeriod = dataTYPES(dt).scanParams(scan).framePeriod;
+if ~isfield(params,'framePeriod')  || isempty(params.framePeriod)
+    params.framePeriod = dtGet(dataTYPES(dt), 'Frame Period', scan);
 end
 
 % parfiles:
 % this is also redundant w/ the scan params, but is essential
 % for event-related analyses
-if ~isfield(params,'parfiles')  | isempty(params.parfiles)
-    params.parfiles = dataTYPES(dt).scanParams(scan).parfile;
+if ~isfield(params,'parfiles')  || isempty(params.parfiles)
+    params.parfiles = dtGet(dataTYPES(dt), 'Par File', scan); scanParams(scan).parfile;
     
     if ischar(params.parfiles), params.parfiles = {params.parfiles}; end
 end

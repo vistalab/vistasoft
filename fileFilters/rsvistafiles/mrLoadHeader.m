@@ -51,7 +51,7 @@ end
 if isempty(format), format = mrParseFormat(pth); end
 
 
-[p f] = fileparts(pth); %#ok<ASGLU>
+[p, f] = fileparts(pth); %#ok<ASGLU>
 mr = mrCreateEmpty;
 mr.path = pth;
 mr.name = f;

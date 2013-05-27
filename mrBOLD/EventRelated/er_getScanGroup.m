@@ -1,4 +1,4 @@
-function [scans,dt] = er_getScanGroup(vw,scan);
+function [scans,dt] = er_getScanGroup(vw,scan)
 % [scans,dt] = er_getScanGroup(view,scan);
 %
 % Gets the group of scans assigned as a group to the
@@ -17,7 +17,7 @@ if ieNotDefined('scan')
 end
     
 % check if there's a scan group assigned to this scan
-if ~isfield(dataTYPES(cdt).scanParams(scan),'scanGroup') | ...
+if ~isfield(dataTYPES(cdt).scanParams(scan),'scanGroup') || ...
         isempty(dataTYPES(cdt).scanParams(scan).scanGroup)
     er_groupScans(vw);
 end
@@ -25,7 +25,8 @@ end
 % parse the groupScans text into a data type series
 % and a set of scans (e.g. 'Original: 1 2 3'):
 txt = dataTYPES(cdt).scanParams(scan).scanGroup;
-colon = findstr(':',txt);
+%colon = findstr(':',txt); %findstr is obsolete, using strfind instead
+colon = strfind(txt,':');
 dtName = txt(1:colon-1);
 scans = str2num(txt(colon+2:end));
 dt = cellfind({dataTYPES.name}, dtName);
