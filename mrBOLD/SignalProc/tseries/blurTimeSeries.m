@@ -62,12 +62,20 @@ for newScanNum = 1:nScans
 	
 	% Loop through slices
 	nSlices = length(sliceList(view,origScanNum));
+    dimNum = 0;
 	for iSlice = sliceList(view,scanList(1));
 		tSeries = loadtSeries(view,origScanNum,iSlice);
+        dimNum = numel(size(tSeries));
 		tmp = corrDn(tSeries,filt,'circular',[2 1]);
 		result = upConv(tmp,filt,'circular',[2 1]);
-		savetSeries(result,hiddenView,newScanNum,iSlice);
-	end
+		resultFull = cat(dimNum + 1, resultFull, result);
+    end
+    
+    if dimNum == 3
+        resultFull = reshape(resultFull,[1,2,4,3]);
+    end %if
+    
+    savetSeries(resultFull,hiddenView,newScanNum);
 	
 	% update dataTYPES.scanParams so that new scan has the same params as
 	% the orig scan.

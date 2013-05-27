@@ -27,7 +27,7 @@ switch param
             %ni = niftiSetQto(ni, ni.sto_xyz);
             ni = niftiSet(ni,'qto',niftiGet(ni,'sto_xyz'));
         end
-
+        
         dim = niftiGet(ni,'dim');
         qto_ijk = niftiGet(ni,'qto_ijk');
         origin = [qto_ijk(1:3,:)*[0 0 0 1]']';
@@ -41,30 +41,43 @@ switch param
             ni = niftiSet(ni,'qto',inv(affineBuild(t,r,s,k)));
             
         end
+        
     case 'data'
         ni.data = val;
+        
     case 'dim'
         ni.dim = val;
+        
     case 'filepath'
         ni.fname = val;
+        
     case 'freqdim'
         ni.freq_dim = val;
+        
     case 'nifti'
         ni = val; %This means that we are passing in an entire Nifti!
+        
     case 'phasedim'
         ni.phase_dim = val;
+        
     case 'pixdim'
         ni.pixdim = val;
-	case 'qfac'
+        
+    case 'qfac'
         ni.qfac= val;
+        
     case 'qform_code'
         ni.qform_code = val;
-	case 'qoffset_x'
+        
+    case 'qoffset_x'
         ni.qoffset_x = val;
-	case 'qoffset_y'
+        
+    case 'qoffset_y'
         ni.qoffset_y = val;
-	case 'qoffset_z'
+        
+    case 'qoffset_z'
         ni.qoffset_z = val;
+        
     case 'qto'
         xformXyz = val;
         q = matToQuat(xformXyz);
@@ -80,7 +93,7 @@ switch param
         ni = niftiSet(ni,'qfac',q.qfac);
         
         if length(varargin) < 1
-           setStoToo = '';
+            setStoToo = '';
         else
             setStoToo = varargin{1};
         end
@@ -88,29 +101,38 @@ switch param
         if(~isempty(setStoToo)&&setStoToo)
             ni = niftiSet(ni,'sto_xyz',niftiGet(ni,'qto_xyz'));
             ni = niftiSet(ni,'sto_ijk',niftiGet(ni,'qto_ijk'));
-        end        
+        end
         
     case 'qto_ijk'
         ni.qto_ijk = val;
+        
     case 'qto_xyz'
         ni.qto_xyz = val;
-	case 'quatern_b'
+        
+    case 'quatern_b'
         ni.quatern_b = val;
-	case 'quatern_c'
+        
+    case 'quatern_c'
         ni.quatern_c = val;
-	case 'quatern_d'
-        ni.quatern_d = val;    
+        
+    case 'quatern_d'
+        ni.quatern_d = val;
+        
     case 'slicedim'
         ni.slice_dim = val;
+        
     case 'sto_ijk'
         ni.sto_ijk = val;
+        
     case 'sto_xyz'
         ni.sto_xyz = val;
-	case 'voxelsize'
+        
+    case 'voxelsize'
         ni.voxelSize = val;
+        
     otherwise
-        warning('vista:nifti:niftiSet', 'The parameter supplied does not exist. Returning without change.');
-        return
+        error('Unknown parameter %s\n',param);
+        
 end %switch
 
 return

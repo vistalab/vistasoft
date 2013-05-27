@@ -1,4 +1,4 @@
-function pathStr = dataDir(view, dataTYPES)
+function pathStr = dataDir(vw, ~)
 % Directory containing data for a given dataTYPE
 %
 %  pathStr = dataDir(view)
@@ -11,11 +11,9 @@ function pathStr = dataDir(view, dataTYPES)
 % djh, 2/2001
 global HOMEDIR
 if isempty(HOMEDIR), HOMEDIR = pwd; end
-dir = viewGet(view,'subdir');
-dt = viewGet(view,'dtStruct');
-subDir = dtGet(dt,'name');
-% curDataType = viewGet(view,'currentDataType');
-% subDir = dataTYPES(curDataType).name;
+dir = viewGet(vw,'subdir');
+dt = viewGet(vw,'dtStruct');
+subDir = dtGet(dt,'Name');
 pathStr = fullfile(HOMEDIR,dir,subDir);
 if ~exist(pathStr,'dir')
 	pathStr;

@@ -1,4 +1,4 @@
-function tSeries = meanTSeriesFlatLevels(flat,scans,whichLevels);
+function tSeries = meanTSeriesFlatLevels(flat,scans,whichLevels)
 % tSeries = meanTSeriesFlatLevels(flat,[scans],[whichLevels]);
 %
 % For Flat multi-level views:
@@ -12,6 +12,8 @@ function tSeries = meanTSeriesFlatLevels(flat,scans,whichLevels);
 % whichLevels: gray/flat levels to use. Defaults to all available.
 %
 % ras, 08/2004
+mrGlobals;
+
 if ieNotDefined('whichLevels')
     whichLevels = 1:max(flat.numLevels);
 end
@@ -70,7 +72,7 @@ for h = 1:2    % loop across hemispheres
             sliceTSeries = loadtSeries(flat,scan,slice);
                         
             % find the appropriate indices for the subCoords
-            [commonCoords ia ib] = intersectCols(meanCoords,coords{slice});
+            [commonCoords, ia, ib] = intersectCols(meanCoords,coords{slice});
                 
             % error check: all the sub-coords should be containied in
             % mean coords, or else buildFlatLevelCoords was wrong
@@ -103,15 +105,16 @@ for h = 1:2    % loop across hemispheres
         grayCoords{h} = [NaN; NaN; NaN];
         cPath = fullfile(viewDir(flat),'coordsLevels.mat');
         save(cPath,'coords','grayCoords','-append');
-        global FLAT;
+        
         eval(sprintf('%s.coords = coords;',flat.name));
         eval(sprintf('%s.grayCoords = grayCoords;',flat.name));
     end
     
     % Save tSeries
+    % This does not need to be changed since it is using a 'flat' view
 	savetSeries(tSeries,flat,scan,h);
     fprintf('Saved %s flat tSeries for scan %i.\n',hemis{h},scan);
-end
+end %for
 
 
 return

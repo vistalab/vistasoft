@@ -89,7 +89,7 @@ for t=0:(nVols-1)
     
 end
 size(funcVol);
-[y x nSlices nVols]=size(funcVol);
+[y, x, nSlices, nVols]=size(funcVol);
 
 % Now write them out in a different format
 fprintf('\nDone reading data: Writing now...\n');

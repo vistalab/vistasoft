@@ -151,16 +151,16 @@ for thisScan=1:length(scanList)
             
             % Now loop over slices again, saving out the data
             disp('Saving');
-            for thisSlice=1:nSlices
-                thisSliceData=squeeze(dataArray(:,:,:,thisSlice));
-                
-                savetSeries(reshape(thisSliceData,nTR,nx*ny),hiddenView,thisScan,thisSlice);
-            end
+
+            dataArray = permute(dataArray, [1 2 4 3]);
+            
+            savetSeries(dataArray,hiddenView,thisScan);
             
         case 'Gray'
             tSeries = loadtSeries(vw,scanList(thisScan));
             iterlambda = kernelSize_mm;
             tSeries = dhkGraySmooth(vw,tSeries,iterlambda);
+            %This should be fine since we this is a 'gray' view
             savetSeries(tSeries, hiddenView,thisScan,1);
     end
     

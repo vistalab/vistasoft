@@ -3,7 +3,8 @@ function copyScan(sessionDir,dataType,scan)
 % function copyScan(sessionDir,dataType,scan)
 %
 % Copy a scan from a different session.
-% Creates dataType 'Copied' if it doesn't already exist.% 
+% Creates dataType 'Copied' if it doesn't already exist.
+% 
 % sessionDir: path string to the other session
 % dataType, scan: specifies where to find the tSeries within that session
 % 
@@ -54,7 +55,8 @@ s = load(tSeriesPath);
 
 tSeries = NaN*ones([size(s.tSeries,1) size(hiddenView.coords,2)]);
 tSeries(:,ia) = s.tSeries(:,ib);
-
+%This should be able to be used the same as before as the gray view has not
+%yet been updated
 savetSeries(tSeries,hiddenView,newScanNum,1);
 saveSession
 

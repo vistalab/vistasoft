@@ -7,7 +7,7 @@ function gray = ip2volTSeries(inplane,gray,selectedScans,method)
 % gray views must already be open. Loads the inplane tSeries as
 % it goes.
 %
-% Output tSeries matrics are (as usual) nFrames x nVoxels in size
+% Output tSeries matrices are (as usual) nFrames x nVoxels in size
 % where nVoxels is the number of gray voxels that correspond to the
 % inplanes, i.e., size(gray.grayCoords,2).
 %
@@ -134,13 +134,15 @@ for scan = selectedScans
     end;
 
     % Save tSeries
+    % This should not need to be changed to new version because it is only
+    % for the gray view
     savetSeries(tSeries, gray, scan, 1);
     
     % update the waitbar
 	if verbose,   
 		waitbar(find(selectedScans==scan)/nScans, waitHandle);
 	end
-end
+end %for
 
 % close waitbar
 if verbose, close(waitHandle); end

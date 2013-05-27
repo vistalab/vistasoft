@@ -60,16 +60,33 @@ volXyz = [0,0,0; 1,0,0; 0,1,0; 1,1,0; 0,0,1; 1,0,1; 0,1,1; 1,1,1];
 % are left, posterior and inferior. The code below finds the correct 
 % rotation by measuring the distance from each of the 8 corners to a 
 % point in space that is very far to the left, superior and anterior 
-% (-1000,1000,1000). Then, we find which of the 8 corners is closest to
+% (-farpoint,farpoint,farpoint). Then, we find which of the 8 corners is closest to
 % that point. 
-d = sqrt((-1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+
+% pick a big number relative to the volume coordinates
+farpoint = 10000;
+
+% function handle to compute the distance of each row of a nx3 matrix
+rowNorm = @(x) sqrt(sum(x.*x, 2));
+
+% find nearest corner to LAS
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[-1 1 1]));
 las = find(min(d)==d); las = las(1);
-d = sqrt((1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+
+% find nearest corner to RAS
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[1 1 1]));
 ras = find(min(d)==d); ras = ras(1);
-d = sqrt((-1000-volRas(:,1)).^2 + (-1000-volRas(:,2)).^2 + (1000-volRas(:,3)).^2);
+
+% find nearest corner to LPS
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[-1 -1 1]));
 lps = find(min(d)==d); lps = lps(1);
-d = sqrt((-1000-volRas(:,1)).^2 + (1000-volRas(:,2)).^2 + (-1000-volRas(:,3)).^2);
+
+% find nearest corner to LAI
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[-1 1 -1]));
 lai = find(min(d)==d); lai = lai(1);
+
+
+%%
 
 % Now we have the indices into volRas/volXyz of the 4 anatomical 
 % reference points- las, ras, lps and lai. Put them into a 4x4 matrix 

@@ -1,4 +1,4 @@
-function params = er_defaultParams;
+function params = er_defaultParams
 %
 %  params = er_defaultParams;
 %
@@ -43,7 +43,7 @@ params.timeWindow = -8:24;
 params.peakPeriod = 4:14;
 
 % period to use as baseline in t-tests, in seconds
-params.bslPeriod = [-8:0];
+params.bslPeriod = -8:0;
 
 % threshold for significant activations
 params.alpha = 0.05;

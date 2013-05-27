@@ -1,4 +1,4 @@
-function tSeriesClipFrames(vw,scans,junkFrames,keepFrames);
+function tSeriesClipFrames(vw,scans,junkFrames,keepFrames)
 %
 % tSeriesClipFrames(vw,[scans,junkFrames,keepFrames]);
 %
@@ -34,7 +34,7 @@ if ieNotDefined('scans')
     scans = er_selectScans(vw);
 end
 
-if ieNotDefined('junkFrames') | ieNotDefined('keepFrames')   
+if ieNotDefined('junkFrames') || ieNotDefined('keepFrames')   
     dlg(1).fieldName = 'junkFrames';
     dlg(1).style = 'edit';
     dlg(1).string = 'Skip how many frames from the start of each scan?';
@@ -58,11 +58,20 @@ keep = [1:keepFrames] + junkFrames;
 hwait = waitbar(0, 'Clipping Frames from tSeries...');
 
 for scan = scans
+    tSeriesFull = [];
+    dimNum = 0;
     for slice = 1:viewGet(vw, 'NumSlices')
         tSeries = loadtSeries(vw, scan, slice);
         tSeries = tSeries(keep,:);
-        savetSeries(tSeries, vw, scan, slice);
+        dimNum = numel(size(tSeries));
+        tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries); %Combine together
     end
+    
+    if dimNum == 3
+        tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
+    end %if
+    
+    savetSeries(tSeriesFull, vw, scan);
 
     dataTYPES(dataType).scanParams(scan).nFrames = length(keep);
     save mrSESSION dataTYPES -append;
