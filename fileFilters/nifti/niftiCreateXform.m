@@ -28,7 +28,7 @@ end %if
 switch xformType
     case 'inplane'
         [vectorFrom, xform] = niftiCurrentOrientation(nii);
-        if ~strcmp(vectorFrom,'ARS')
+        if ~strcmp(vectorFrom,'PRS')
             %We don't need to change the transform at all
             vectorTo = niftiCreateStringInplane(vectorFrom,sliceDim);
             xform = niftiCreateXformBetweenStrings(vectorFrom,vectorTo);

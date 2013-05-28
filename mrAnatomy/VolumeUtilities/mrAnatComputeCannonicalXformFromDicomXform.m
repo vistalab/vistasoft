@@ -75,38 +75,83 @@ las = find(min(d)==d); las = las(1);
 
 % find nearest corner to RAS
 d = rowNorm(bsxfun(@minus, volRas, farpoint*[1 1 1]));
+d(las) = Inf;
 ras = find(min(d)==d); ras = ras(1);
 
 % find nearest corner to LPS
 d = rowNorm(bsxfun(@minus, volRas, farpoint*[-1 -1 1]));
+d([las ras]) = Inf;
 lps = find(min(d)==d); lps = lps(1);
+
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[1 -1 1]));
+d([las ras lps]) = Inf;
+rps = find(min(d)==d); rps = rps(1);
 
 % find nearest corner to LAI
 d = rowNorm(bsxfun(@minus, volRas, farpoint*[-1 1 -1]));
+d([las ras lps rps]) = Inf;
 lai = find(min(d)==d); lai = lai(1);
 
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[1 1 -1]));
+d([las ras lps rps lai]) = Inf;
+rai = find(min(d)==d); rai = rai(1);
 
-%%
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[-1 -1 -1]));
+d([las ras lps rps lai rai]) = Inf;
+lpi = find(min(d)==d); lpi = lpi(1);
+
+% The last point, rpi, is the only one left:
+d = rowNorm(bsxfun(@minus, volRas, farpoint*[1 -1 -1]));
+d([las ras lps rps lai rai lpi]) = Inf;
+rpi = find(min(d)==d); rpi = rpi(1);
+
 
 % Now we have the indices into volRas/volXyz of the 4 anatomical 
 % reference points- las, ras, lps and lai. Put them into a 4x4 matrix 
 % of homogeneous coordinates.
-volCoords = [volXyz(las,:),1; volXyz(lps,:),1; volXyz(lai,:),1; volXyz(ras,:),1;];
+volCoords = [volXyz(las,:),1; volXyz(ras,:),1; volXyz(lps,:),1; volXyz(rps,:),1; volXyz(lai,:),1; volXyz(rai,:),1; volXyz(lpi,:),1; volXyz(rpi,:),1;];
 
 % Now we define how we *want* things to be be. That is, the x,y,z location 
-% that we'd like for the las, the lps, the lai and the ras (in homogeneous 
-% coords). For example:
-%    stdCoords = [0,0,0,1; 0,-1,0,1; 0,0,-1,1; 1,0,0,1];
-% will map A-P to y axis, L-R to x-axis, and S-I to z-axis with bottom left 
-% corner of slice 1 as the most left, most anterior, most inferior point.
-% If you want a diferent orientation, you should only need to change this line.
-stdCoords = [0,0,0,1; 0,-1,0,1; 0,0,-1,1; 1,0,0,1];
+% that we'd like for the las, the lps, the lai, etc. (in homogeneous 
+% coords). The coords here will map A-P to y axis, L-R to x-axis, and S-I 
+% to z-axis with bottom left corner of slice 1 as the most left, most 
+% anterior, most inferior point. If you want a diferent orientation, you 
+% should only need to change this line.
+stdCoords = [0,0,0,1; 1,0,0,1; 0,1,0,1; 1,1,0,1; 0,0,1,1; 1,0,1,1; 0,1,1,1; 1,1,1,1];
 
 % The following will produce an affine transform matrix that tells us how 
 % to transform to our standard space. To use this xform matrix, do: 
 % stdCoords = img2std*imgCoords (assuming imgCoords is an 4xn array of n 
 % homogeneous coordinates).
 img2std = (volCoords \ stdCoords)';
+
+% In cases where the original orientation is exactly in the middle of where
+% we want to go, img2std will be indterminate (i.e., there are multiple,
+% equally valid, solutions). Here's an ugly hack to just pick one solution
+% and go with it.
+[m,maxind1] = max(abs(img2std(1:3,1)));
+% retain the sign of the winner
+new_val = sign(img2std(maxind1,1));
+% zero-out all the losers
+img2std(1:3,1) = 0;
+img2std(maxind1,2:3) = 0;
+% insert the new value back in
+img2std(maxind1,1) = new_val;
+% repeat for the next column
+[m,maxind2] = max(abs(img2std(1:3,2)));
+new_val = sign(img2std(maxind2,2));
+img2std(1:3,2) = 0;
+img2std(maxind2,3) = 0;
+img2std(maxind2,2) = new_val;
+% and the last one is easy
+maxind3 = setdiff([1 2 3], [maxind1 maxind2]);
+if img2std(maxind3,3)==0
+    % this would be a really degenerate case. But we have to do something
+    % for any xform they throw at us.
+    img2std(maxind3,3) = 1;
+else
+    img2std(maxind3,3) = sign(img2std(maxind3,3));
+end
 
 % Fix the translations so that mirror-flips are achieved by -1 rotations.
 % This obtuse code relies on the fact that our xform is just 0s 1s and -1s.
