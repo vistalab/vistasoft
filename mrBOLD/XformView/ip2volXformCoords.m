@@ -35,7 +35,7 @@ function ipFuncCoords = ip2volXformCoords(gray, inplane, preserveExactValues)
 if ~exist('preserveExactValues', 'var'), preserveExactValues = false; end
 
 % we need mrSESSION for the alignment matrix
-global mrSESSION;
+mrGlobals;
 
 % The gray coords are the integer-valued (y,x,z) volume 
 % coordinates that correspond to the inplanes.  Convert to
@@ -47,7 +47,7 @@ coords  = double([coords; ones(1,nVoxels)]);
 % vol2InplaneXform is the 4x4 homogeneous transform matrix that
 % takes volume (y',x',z',1) coordinates into inplane (y,x,z,1)
 % coordinates.
-vol2InplaneXform = inv(mrSESSION.alignment);
+vol2InplaneXform = inv(sessionGet(mrSESSION,'alignment'));
 
 % We don't care about the last coordinate in (y,x,z,1), so we
 % toss the fourth row of Xform.  Then our outputs will be (y,x,z).

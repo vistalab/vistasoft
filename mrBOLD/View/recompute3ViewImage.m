@@ -39,12 +39,15 @@ if sliceNum > size(vw.anat, sliceOri)
     sliceNum = size(vw.anat, sliceOri);
 end
 
+%TODO: Replace with viewGets once the anat file is no longer written out
 % Get anatomy image
+%This seems to suggest that we are in SAR format. So, the vw.anat data
+%matrix was stored in SAR format, with X being dim2, Y being dim3
 switch sliceOri
     case 1, % axial
         anatIm = squeeze(vw.anat(sliceNum,:,:));
     case 2, % coronal
-        anatIm = squeeze(vw.anat(:,sliceNum,:));
+        anatIm = squeeze(vw.anat(:,sliceNum,:)); 
     case 3, % sagittal
         anatIm = vw.anat(:,:,sliceNum);
 end

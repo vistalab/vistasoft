@@ -15,7 +15,7 @@ if notDefined('scan'), scan = viewGet(view,'curScan'); end
 dt    = viewGet(view,'dtStruct');
 aType = dtGet(dt,'eventOrBlock',scan);
 
-switch aType
+switch aType %TODO: Remove this switch statement. It is unnecessary as it has already been wrapped into dtGet
     case 'event'
         smoothFrames = dtGet(dt,'smoothFrames',scan);
     case 'block'

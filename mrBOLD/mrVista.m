@@ -48,33 +48,28 @@ function [vw, s] = mrVista(windowType, varargin)
 if notDefined('windowType'), windowType = 'inplane'; end
 
 % Define global variables and structures.
-mrGlobals;
+mrGlobals; %Defines mrSESSION and dataTYPES
 evalin('base','mrGlobals');
 
 % Check Matlab version number
 % Change list after testing Matlab upgrades
-expectedMatlabVersion = {'6' '6.1' '6.5' '6.5.1' '6.5.2' '7.0' ...
-                         '7.0.1' '7.0.4' '7.1' '7.2', '7.3', '7.4', '7.5', '7.6','7.7', '7.9', '7.11', '7.13'};  
+expectedMatlabVersion = {'7.7', '7.8', '7.9', '7.10', '7.11', '7.13', '7.14', '8.0'};  
 version = ver('Matlab');
 matlabVersion = version.Version;        
 if ~ismember(matlabVersion, expectedMatlabVersion);    % (matlabVersion ~= expectedMatlabVersion)
-    str = sprintf('Matlab version %s not on supported list (mrVista %s).', ...
+    warning('Matlab version %s not on supported list (mrVista %s).', ...
         matlabVersion, num2str(mrLoadRetVERSION));
-    myWarnDlg(str);
 else
     fprintf('mrVista version: %s\nMatlab version: %s\n',num2str(mrLoadRetVERSION),version.Version);
 end
 
 %% set global variables/properties
-% check if this matlab version has a JAVA bug, and if so, disable java
-% figures:
-javaFigs = mrvJavaFeature;  
 
 % Set HOMEDIR 
 HOMEDIR = pwd; %#ok<NASGU>
 
 % Load mrSESSION structure
-loadSession;
+loadSession; %Requires a mrSESSION.mat file in the current directory called
 
 % allow the user to set the volume anatomy, for volume/gray views
 if ismember(windowType, {'v' 'volume' 'g' 'gray' '3' '3view'}) && ...
@@ -113,8 +108,5 @@ end
 
 %% clean up
 clear expectedMatlabVersion version matlabVersion
-
-% reset Java to the previous state
-mrvJavaFeature(javaFigs);
 
 return;

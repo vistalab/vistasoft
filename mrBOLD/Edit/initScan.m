@@ -65,7 +65,8 @@ if notDefined('src'),
 end
 
 mrGlobals; % introduces global dataTYPES variable
-global GUI % Moved from inside if-statement
+%GUI is already part of mrGlobals
+%global GUI % Moved from inside if-statement
     
 % ensure the data type is specified as a string, and dtNum is
 % the corresponding numeric index, of the target data type:
@@ -83,24 +84,26 @@ else
 	end
 end
 
-%%%%%create the data type if it doesn't already exist
+% Create the data type if it doesn't already exist
 if (dtNum==0) || (dtNum > length(dataTYPES))
     fprintf('Creating data type %s\n', dataType);
     mkdir(viewDir(vw), dataType);
     fprintf('Made directory %s\n', fullfile(viewDir(vw), dataType));
-    dataTYPES(end+1).name = dataType;
-    dtNum = length(dataTYPES);
     
-    % also update data type popups: do this for mrVista 1 and 2 GUIs
-    mrGlobals;
+    %dataTYPES(end+1).name = dataType;
+    %dataTYPES(end+1) = dtSet(dataTYPES(end+1), 'Name', dataType);
+
+    %dtNum = length(dataTYPES);
+    
+    %Create the datatype here
+	dtNum = addDataType(dataType);
+    
+    % also update data type popups: do this for mrVista GUIs
     INPLANE = resetDataTypes(INPLANE, dtNum);
     VOLUME  = resetDataTypes(VOLUME, dtNum);
     FLAT    = resetDataTypes(FLAT, dtNum);
     
-	% select the new data type and scan
-	vw = viewSet(vw, 'curDataType', dtNum);
-
-    if ~isempty(GUI)    % a mrVista 2 session GUI is open
+    if ~isempty(GUI)    % mrVista session GUI is open
         sessionGUI_selectDataType;
     end        
 end
@@ -138,16 +141,25 @@ end
 
 srcScan = src{2};
 
-srcScanParams = srcDt.scanParams(srcScan);
-srcBlockParams = srcDt.blockedAnalysisParams(srcScan);
-srcEventParams = srcDt.eventAnalysisParams(srcScan);
+%srcScanParams = srcDt.scanParams(srcScan);
+srcScanParams = dtGet(srcDt, 'Scan Params', srcScan); 
+%srcBlockParams = srcDt.blockedAnalysisParams(srcScan);
+srcBlockParams = dtGet(srcDt, 'Blocked Analysis Params', srcScan);
+%srcEventParams = srcDt.eventAnalysisParams(srcScan);
+srcEventParams = dtGet(srcDt, 'Event Analysis Params', srcScan);
 
-if checkfields(srcDt, 'retinotopyModelParams')
-	srcRMParams = srcDt.retinotopyModelParams(srcScan);
-end
+%Error check no longer necessary with dtGet
+%if checkfields(srcDt, 'retinotopyModelParams')
+%end
+
+srcRMParams = dtGet(srcDt, 'Retinotopy Model Params', srcScan);
 
 %%%%%copy over params:
 % Copy one field at a time, so we don't get type-mismatch errors.    
+
+%TODO: Change the below to using dtSet and dtGet. Most likely, no longer
+%need to copy over one parameter at a time, but can copy over an entire
+%struct.
 
 % scan params
 for f = fieldnames(srcScanParams)'
@@ -167,7 +179,7 @@ for f = fieldnames(srcEventParams)'
 end
 
 % retinotopy model params (if any are specified)
-if exist('srcRMParams', 'var')
+if exist('srcRMParams', 'var') && isstruct(srcRMParams)
 	for f = fieldnames(srcRMParams)'
 		dataTYPES(dtNum).retinotopyModelParams(scanNum).(f{1}) = ...
 			srcRMParams.(f{1});

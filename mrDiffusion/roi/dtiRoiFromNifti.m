@@ -77,8 +77,8 @@ if notDefined('nifti') || ~exist(nifti,'file')
 end
 
 % Strip off the extension for naming later on
-[p f ~] = fileparts(nifti); 
-[p f ~] = fileparts(fullfile(p,f));
+[p, f, ~] = fileparts(nifti); 
+[p, f, ~] = fileparts(fullfile(p,f));
 
 
 %% Check mask values and set flags
@@ -180,7 +180,7 @@ switch lower(outType)
         end
         
         % Convert indexed locations to I J K coords
-        [I J K] = ind2sub(size(ni.data),inds);
+        [I, J, K] = ind2sub(size(ni.data),inds);
         
         % Now convert I J K coords to ACPC
         acpcCoords = mrAnatXformCoords(ni.qto_xyz, [I J K]);

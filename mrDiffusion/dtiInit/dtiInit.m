@@ -1,47 +1,47 @@
 function [dt6FileName, outBaseDir] = dtiInit(dwRawFileName, t1FileName, dwParams)
 % function [dt6FileName, outBaseDir] = dtiInit([dwRawFileName], [t1FileName], [dwParams])
-% 
+%
 %   A function for running the mrDiffusion pre-processing steps on raw
 %   DWI data. This function replaces dtiRawPreprocess. See:
 %   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing for more
 %   info regarding the pipeline.
-% 
+%
 %   This fucntion will run with the default parameters unless the user
 %   passes in dwParams with alternate parameters. This can be done with a
 %   call to 'dtiInitParams'. See dtiInitParams.m for default parameters.
-% 
+%
 % INPUTS:
 %   dwRawFileName = Raw dti data in nifti format.
 %   twFileName    = T1-weighted anatomical image. By default the diffusion
-%                   data are aligned to this image. You can, however, pass 
-%                   in the string 'MNI' to align the data to the standard 
+%                   data are aligned to this image. You can, however, pass
+%                   in the string 'MNI' to align the data to the standard
 %                   MNI-EPI templte.
 %   dwParams      = This structure is generated using dtiInitParams.m It
-%                   contains all the parameters necessary for running the 
-%                   pipeline. Users should look at the comments there for 
-%                   more information. 
+%                   contains all the parameters necessary for running the
+%                   pipeline. Users should look at the comments there for
+%                   more information.
 %
 % WEB resources:
 %   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
 %   mrvBrowseSVN('dtiInit');
-% 
-% 
-% Example Usage: 
+%
+%
+% Example Usage:
 %       % Using default params
-%       dtiInit 
-%  <or> dtiInit('rawDti.nii.gz','t1.nii.gz') 
-%  
+%       dtiInit
+%  <or> dtiInit('rawDti.nii.gz','t1.nii.gz')
+%
 %       % Using varargin to set specific params
 %       dwParams = dtiInitParams('clobber',1,'phaseEncodeDir',2);
 %       dtiInit('rawDti.nii.gz','t1.nii.gz', dwParams)
 %  <or> dtiInit([],[],dwParams);
-% 
+%
 % See Also:
 %       dtiInitParams.m
-% 
+%
 % (C) Stanford VISTA, 8/2011 [lmp]
-% 
-% 
+%
+%
 %#ok<*ASGLU>
 
 
@@ -57,10 +57,10 @@ disp('Loading raw data...');
 dwRaw = readFileNifti(dwRawFileName);
 
 % By default all processe nifti's will be at the same resolution of the dwi data
-if notDefined('dwParams'); 
-  dwParams         = dtiInitParams; 
+if notDefined('dwParams');
+  dwParams         = dtiInitParams;
   dwParams.dwOutMm = dwRaw.pixdim(1:3);
-end 
+end
 
 % Initialize the structure containing all directory info and file names
 dwDir      = dtiInitDir(dwRawFileName,dwParams);
@@ -90,9 +90,9 @@ fprintf('t1FileName = %s;\n', t1FileName);
 [dwRaw,canXform] = niftiApplyCannonicalXform(dwRaw);
 
 
-%% IV. Make sure there is a valid phase-encode direction 
+%% IV. Make sure there is a valid phase-encode direction
 
-if isempty(dwParams.phaseEncodeDir)  ... 
+if isempty(dwParams.phaseEncodeDir)  ...
        || (dwParams.phaseEncodeDir<1 ...
        ||  dwParams.phaseEncodeDir>3)
     dwRaw.phase_dim = dtiInitPhaseDim(dwRaw.phase_dim);
@@ -121,25 +121,25 @@ bvals = dlmread(dwDir.bvalsFile);
 
 %% VII. Rotate bvecs using Rx or CanXform: * More comments from RFD needed.
 
-if dwParams.rotateBvecsWithRx 
+if dwParams.rotateBvecsWithRx
     bvecXform = affineExtractRotation(dwRaw.qto_xyz);
 else
     bvecXform = eye(3);
 end
 
-if dwParams.rotateBvecsWithCanXform 
+if dwParams.rotateBvecsWithCanXform
     % This was added in because the conditional statement in the next loop
     % this cell was not being met and therefore the xform was not being
     % applied.
     bvecXform = bvecXform * canXform(1:3,1:3);
-    for ii=1:size(bvecs,2) 
+    for ii=1:size(bvecs,2)
         bvecs(:,ii) = bvecXform * bvecs(:,ii);
     end
 end
 % I'm not sure about this condition - it's not met in the rotateCanXform
 % case so the xform is never applied, which seems to be causing problems**
-if all(bvecXform ~= eye(3)) 
-    for ii=1:size(bvecs,2) 
+if all(bvecXform ~= eye(3))
+    for ii=1:size(bvecs,2)
         bvecs(:,ii) = bvecXform * bvecs(:,ii);
     end
 end
@@ -149,18 +149,18 @@ end
 
 % Here we decide if we compute b0. If the user asks to clobber existing
 % files, or if the mean b=0 ~exist dtiInitB0 will return a flag that will
-% compute it in dtiInit. If clobber is set to ask, then we prompt the user. 
+% compute it in dtiInit. If clobber is set to ask, then we prompt the user.
 computeB0 = dtiInitB0(dwParams,dwDir);
 
-% If computeB0 comes back true, do the (mean b=0) computation 
+% If computeB0 comes back true, do the (mean b=0) computation
 if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name); end
 
 
 %% IX. Eddy current correction
 
-% Based on user selected params decide if we do eddy current correction 
+% Based on user selected params decide if we do eddy current correction
 % and resampling. If the ecc is done doResamp will be true.
-[doECC doResamp] = dtiInitEddyCC(dwParams,dwDir,doResamp);
+[doECC, doResamp] = dtiInitEddyCC(dwParams,dwDir,doResamp);
 
 % If doECC comes back true do the eddy current correction
 if doECC
@@ -173,7 +173,7 @@ end
 
 % Based on user selected params decide if we align the raw dwi data to a
 % reference image (t1). If the alignment is computed doResamp will be true.
-[doAlign doResamp] = dtiInitAlign(dwParams,dwDir,doResamp);
+[doAlign, doResamp] = dtiInitAlign(dwParams,dwDir,doResamp);
 
 if doAlign, dtiRawAlignToT1(dwDir.mnB0Name, t1FileName, dwDir.acpcFile); end
 
@@ -182,7 +182,7 @@ if doAlign, dtiRawAlignToT1(dwDir.mnB0Name, t1FileName, dwDir.acpcFile); end
 
 % Based on user selected params and doResamp decide if we are resampling
 % the raw data. If doSample is true and we have computed an alignment or
-% we're clobbering old data we doResampleRaw will be true. 
+% we're clobbering old data we doResampleRaw will be true.
 doResampleRaw = dtiInitResample(dwParams, dwDir, doResamp);
 
 % Applying the dti-to-structural xform and the eddy-current correction
@@ -194,7 +194,7 @@ if doResampleRaw,  dtiRawResample(dwRaw, dwDir.ecFile, dwDir.acpcFile,...
 end
 
 
-%% XII. Reorient and align bvecs 
+%% XII. Reorient and align bvecs
 
 % Check to see if bvecs should be reoriented and reorient if necessary. If
 % the conditions are met then the bvecs are reoriented and the aligned
@@ -205,7 +205,7 @@ dtiInitReorientBvecs(dwParams, dwDir, doResamp, doBvecs, bvecs, bvals);
 %% XIII. Load aligned raw data and clear unaligned raw data
 
 dwRawAligned = readFileNifti(dwDir.dwAlignedRawFile);
-clear dwRaw;  
+clear dwRaw;
 
 
 %% XIV. Bootstrap parameters
@@ -221,8 +221,8 @@ bs.n = dwParams.numBootStrapSamples;
 
 % nUniqueDirs used to name the folder later...
 [bs.permuteMatrix, tmp, nUniqueDirs] = ...
-    dtiBootGetPermMatrix(dlmread(dwDir.bvecsFile),dlmread(dwDir.bvalsFile));  
-                                                      
+    dtiBootGetPermMatrix(dlmread(dwDir.bvecsFile),dlmread(dwDir.bvalsFile));
+
 % We still need an over-determined tensor fit to do residual bootstrap.
 % We'll skip the bootstrap for datasets with fewer than 14 measurements
 % (7 is the minimum for tensor fitting).
@@ -237,15 +237,15 @@ bs.showProgress = false;
 
 %% XV. Name the folder that will contain the dt6.mat file
 
-if isempty(dwParams.dt6BaseName) 
+if isempty(dwParams.dt6BaseName)
     % nUniqueDirs from dtiBootGetPermMatrix
     dwParams.dt6BaseName = fullfile(dwDir.subjectDir,sprintf('dti%02d',nUniqueDirs));
-    if ~dwParams.bsplineInterpFlag 
-        % Using trilinear interpolation 
+    if ~dwParams.bsplineInterpFlag
+        % Using trilinear interpolation
         dwParams.dt6BaseName = [dwParams.dt6BaseName 'trilin'];
     end
 else
-    if isempty(fileparts(dwParams.dt6BaseName)) 
+    if isempty(fileparts(dwParams.dt6BaseName))
         dwParams.dt6BaseName = fullfile(dwDir.subjectDir,dwParams.dt6BaseName);
     end
 end
@@ -263,10 +263,10 @@ switch lower(dwParams.fitMethod)
         dt6FileName{1} = dtiRawFitTensorMex(dwRawAligned, dwDir.alignedBvecsFile,...
             dwDir.alignedBvalsFile, dwParams.dt6BaseName,...
             bs,[], dwParams.fitMethod,[],[],dwParams.clobber);
-        
+
     case {'rt'}
         dt6FileName{1} = dtiRawFitTensorRobust(dwRawAligned, dwDir.alignedBvecsFile,...
-            dwDir.alignedBvalsFile, dwParams.dt6BaseName,[],[],[], ... 
+            dwDir.alignedBvalsFile, dwParams.dt6BaseName,[],[],[], ...
             dwParams.nStep,dwParams.clobber);
 
     case {'rtls','lsrt','all','both','trilinrt'};
@@ -277,7 +277,7 @@ end
 
 %% XVII. Build the dt6.files field and append it to dt6.mat
 
-% Need to handle the case where there is more than one dt6 file. 
+% Need to handle the case where there is more than one dt6 file.
 for dd = 1:numel(dt6FileName)
     dtiInitDt6Files(dt6FileName{dd},dwDir,t1FileName);
 end
@@ -286,11 +286,11 @@ end
 %% XIIX. Check tensors and create t1pdd.png
 
 [pddT1,tmp,mm] = dtiRawCheckTensors(fullfile(dwParams.dt6BaseName,'bin',...
-                                  'tensors.nii.gz'),t1FileName);  
+                                  'tensors.nii.gz'),t1FileName);
 pddT1        = flipdim(permute(pddT1, [2 1 3 4]), 1);
 imSlices     = 1:2:size(pddT1, 3);
 img          = makeMontage3(pddT1, imSlices, mm(1), 0 , [], [], 0);
-imwrite(img, fullfile(dwParams.dt6BaseName, 't1pdd.png'), 'CreationTime',... 
+imwrite(img, fullfile(dwParams.dt6BaseName, 't1pdd.png'), 'CreationTime',...
          now, 'Author', 'mrDiffusion from Stanford University', 'Description',...
          'T1 with PDD overlay');
 

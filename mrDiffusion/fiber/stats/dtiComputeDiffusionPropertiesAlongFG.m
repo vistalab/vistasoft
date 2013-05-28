@@ -31,9 +31,9 @@ function [fa, md, rd, ad, cl, SuperFiber, fgClipped, cp, cs, fgResampled] = ...
 %       fgClipped  - fiber group clipped to the two ROIs
 %       cp         - Weighted Planarity 
 %       cs         - Weighted Sphericity
-%       fgResampled- The fiber group that has been resampled to
-%                    numberOfNodes and each fiber has been reoriented to
-%                    start and end in a consitent location
+%       fgResampled- The fiber group that has been resampled to 
+%                    numberOfNodes and each fiber has been reoriented to 
+%                    start and end in a consitent location  
 %
 % WEB RESOURCES:
 %   mrvBrowseSVN('dtiComputeDiffusionPropertiesAlongFG')
@@ -86,6 +86,8 @@ elseif strcmp(valname,'image')
     ad = nan(numberOfNodes,1);
     rd = nan(numberOfNodes,1);
     cl = nan(numberOfNodes,1);
+    cp = nan(numberOfNodes,1);
+    cs = nan(numberOfNodes,1);
 end
 
 return

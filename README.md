@@ -18,8 +18,9 @@ And in addition:
 - tutorials 
 - external: functions written by others that we use as dependencies.
 
-For documentation, please visit the [lab wiki](http://vistalab.stanford.edu/wiki)
+For documentation, please visit the [lab wiki](http://vistalab.stanford.edu/wiki).
 
 
+For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
 
 (c) Vista lab, Stanford University, 2013. 

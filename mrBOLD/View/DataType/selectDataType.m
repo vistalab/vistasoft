@@ -11,11 +11,8 @@ function vw = selectDataType(vw,n)
 %
 % djh, 1/26/98
 % ras, 01/05: also now allows you to select by name.
+
 global dataTYPES
-% global mrSESSION
-% global INPLANE
-% global VOLUME
-% global FLAT
 
 if ischar(n)
     % find the # of the data type w/ that name
@@ -33,7 +30,7 @@ if ischar(n)
     end
 end
     
-if vw.curDataType ~= n
+if (viewGet(vw, 'Cur Data Type') ~= n)
     vw.curDataType = n;
     vw = clearData(vw);
 end

@@ -40,8 +40,8 @@ vANATOMYPATH = getVAnatomyPath(mrSESSION.subject);
 if ~isfield(inplane,'anat') || isempty(inplane.anat)
     inplane = loadAnat(inplane);
 end
-anat = inplane.anat;
-ipVoxelSize = mrSESSION.inplanes.voxelSize;
+anat = viewGet(inplane,'Anatomy Data');
+ipVoxelSize = viewGet(inplane,'Voxel Size');
 
 vol = double(vol);
 anat = double(anat);

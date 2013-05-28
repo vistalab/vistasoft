@@ -9,10 +9,6 @@ function mv = mv_glmPanel(mv)
 if notDefined('mv'), mv = get(gcf, 'UserData'); end
 if ishandle(mv), mv = get(mv, 'UserData'); end
 
-javaFigs = mrvJavaFeature;
-% javaFigs = feature('javafigures');
-% feature('javafigures', 1);
-
 mv.ui.glmPanel = mrvPanel('right',  .2);
 set(mv.ui.glmPanel,  'BackgroundColor',  'w');
 
@@ -78,8 +74,5 @@ mv.ui.glmToggles = [h1 h2 h3 h4];
 set( get(mv.ui.glmPanel, 'Children'), 'Units', 'normalized' );
 
 mrvPanelToggle(mv.ui.glmPanel,  'off');      
-
-mrvJavaFeature(javaFigs);
-% feature('javafigures', javaFigs);
 
 return

@@ -20,11 +20,11 @@ if isempty(tmp)
     myErrorDlg([fieldname,' is empty']);
 end
 
-if strcmp(vw.viewType,'Volume') || strcmp(vw.viewType,'Gray')
+if strcmp(viewGet(vw,'View Type'),'Volume') || strcmp(viewGet(vw,'View Type'),'Gray')
     volSize = viewSize(vw);
     tmp = tmp{scanNum}(:);
     data = NaN*ones(volSize);
-    volIndices = coords2Indices(vw.coords,volSize);
+    volIndices = coords2Indices(viewGet(vw,'Coords'),volSize);
     data(volIndices) = tmp;
 else
     data = tmp{scanNum};

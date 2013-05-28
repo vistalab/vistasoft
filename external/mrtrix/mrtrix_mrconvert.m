@@ -4,15 +4,11 @@ function [status, results] = mrtrix_mrconvert(orig_data_file, mif_filename, bkgr
 % Example
 % mrtrix_mrconvert('t1.nii.gz', 't1.mif') 
 
-if notDefined('bkgrnd')
-    bkgrnd=false;
-end
-if notDefined('verbose') 
-    verbose=true; 
-end
+if notDefined('bkgrnd'),  bkgrnd  = false;end
+if notDefined('verbose'), verbose = true; end
 
 % First, deal with the possibility that the original data is compressed:
-if orig_data_file(end-1:end) == 'gz'
+if strcmp(  orig_data_file(end-1:end), 'gz')
     % Try uncompressing it with gunzip:
     [status, results] = system(sprintf('gunzip %s', orig_data_file));
     % Need to change the target for conversion:

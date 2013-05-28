@@ -28,7 +28,7 @@ function [finalResNifti, resample_params] = mrAnatResampleToNifti(originalResNif
 %   fname            = fullfile(basedir,'/diffusion/sampleData/upsample_deleteme.nii.gz');
 %   res              = mrAnatResampleToNifti(originalResNifti, finalResNifti,fname)
 %
-% Franco (c) Stanford Vista Team 2012
+% Franco Pestilli (c) Stanford Vista Team 2012
 
 % Load the nifti file if it was not passed is as nifti structure but as a
 % full path.
@@ -59,19 +59,18 @@ bbimg = [1 1 1; finalResNifti.dim(1:3)];
 % Second, we convert the bounding box from image space to mm space.
 bbmm = mrAnatXformCoords(finalResNifti.qto_xyz,bbimg);
 
-bbOimg = [1 1 1; originalResNifti.dim(1:3)];
-
-% Second, we convert the bounding box from image space to mm space.
-bbOmm = mrAnatXformCoords(originalResNifti.qto_xyz,bbOimg);
-
-
 % Third, we reslice the file.
 % mrAnatResliceSpm, takes bounding boxes in mm and interprets them
 % appropriately in the image space by using the information in the xform of
 % the original image and the final resolution in mm.
-finalResNifti.data = int16( mrAnatResliceSpm(double(originalResNifti.data), ...
+finalResNifti.data = mrAnatResliceSpm(double(originalResNifti.data), ...
                                          inv(originalResNifti.qto_xyz), ...
-                                         bbOmm,outmm,resample_params,0) );
+                                         bbmm,outmm,resample_params,0);
+                                     
+% mrAnatResliceSpm only hadles doubles. Here we change back the data to its
+% original class.
+dataClass = class(originalResNifti.data);
+eval(sprintf('finalResNifti.data = %s( finalResNifti.data );',dataClass))
 
 % Make sure all the fields in the output file are matched to the input
 % file. Except for the fields relative to the image size, those shoudl be
@@ -101,7 +100,6 @@ if ~notDefined('fname')
   niftiWrite(finalResNifti);
 end
 
-keyboard
 end
 
 %------------------------------%

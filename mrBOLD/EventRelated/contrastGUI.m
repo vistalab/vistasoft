@@ -1,6 +1,6 @@
-function view = contrastGUI(view, flag)
+function vw = contrastGUI(vw, flag)
 %
-% view = contrastGUI([view=cur view])
+% vw = contrastGUI([vw=cur view])
 %
 % Dialog to set parameters for a contrast map.
 %
@@ -28,18 +28,18 @@ if exist('flag','var')
         case 1,     num = get(gcbo,'UserData');  setControlCond(s, num);
         case 2,     num = get(gcbo,'UserData');  setActiveCond(s, num);
         case 3,     setSaveNameUI(s);
-        case 4,     view = callComputeContrastMap(s, view);
+        case 4,     vw = callComputeContrastMap(s, vw);
         otherwise,  error('Illegal flag entered as third param.')
     end
 
     return
 end
 
-if notDefined('view'),  view = getCurView;  end
+if notDefined('vw'),  vw = getCurView;  end
 
 
 %% open the figure
-s = openFig(view);
+s = openFig(vw);
 
 %% append an 'Advanced Options' params
 advancedOptionsPanel(s);
@@ -51,20 +51,11 @@ return
 
 
 %% /---------------------------------------------------------------------/ %
-function s = openFig(view)
+function s = openFig(vw)
 % s = openFig(stim);
 % creates the interface window and returns the GUI structure s.
 
-% first, deal with the ever-troublesome JAVA:
-% javaFigs = feature('javafigures');
-% if ispref('VISTA', 'javaOn') 
-%     feature('javafigures', getpref('VISTA', 'javaOn'));
-% else
-%     feature('javafigures', 0);
-% end
-javaFigs = mrvJavaFeature;
-
-stim = er_concatParfiles(view);
+stim = er_concatParfiles(vw);
 nConds = length(stim.condNums);
 winHeight = (30 * nConds) + 180; % do this in pixels, 30 pix per condition row
 winWidth = 450;
@@ -83,7 +74,7 @@ uicontrol('Style','text','String',tittxt,...
     'Units','Normalized', ...
     'Position',[10/winWidth (winHeight-30)/winHeight 430/winWidth 30/winHeight]);
 
-uicontrol('Style', 'text', 'String', annotation(view),...
+uicontrol('Style', 'text', 'String', annotation(vw),...
     'FontName','Helvetica','FontSize',16,'FontWeight','bold',...
     'HorizontalAlignment','center',...
     'ForegroundColor', fgColor, 'BackgroundColor', bgColor,...
@@ -124,7 +115,7 @@ for i = 1:nConds
 end
 
 % make control checkboxes for each cond
-cbstr = sprintf('contrastGUI(%s, 1);', view.name);
+cbstr = sprintf('contrastGUI(%s, 1);', vw.name);
 for i = 1:nConds
     ypos = (winHeight - 90 -  30*i)/winHeight;
     s.controlHandles(i) = uicontrol('Style','checkbox','Value',0,...
@@ -155,7 +146,7 @@ for i = 1:nConds
 end
 
 % make active checkboxes for each cond
-cbstr = sprintf('contrastGUI(%s, 2);', view.name);
+cbstr = sprintf('contrastGUI(%s, 2);', vw.name);
 for i = 1:nConds
     ypos = (winHeight - 90 -  30*i)/winHeight;
     s.activeHandles(i) = uicontrol('Style','check','Value',0,...
@@ -175,7 +166,7 @@ for i = 1:nConds
 end
 
 % make button to set save file path
-cbstr = sprintf('contrastGUI(%s, 3);', view.name);
+cbstr = sprintf('contrastGUI(%s, 3);', vw.name);
 s.setPathHandle = uicontrol('Style', 'pushbutton', 'String', 'Name:',...
     'FontName', 'Helvetica', 'FontSize',12,...
     'ForegroundColor', 'k', 'BackgroundColor', [.8 .8 .8],...
@@ -192,7 +183,7 @@ s.saveHandle = uicontrol('Style', 'edit', 'String', 'V ',...
     'Position', [120/winWidth 20/winHeight 210/winWidth 30/winHeight]);
 
 % make 'GO' button
-cbstr = sprintf('%s = contrastGUI(%s, 4);',view.name, view.name);
+cbstr = sprintf('%s = contrastGUI(%s, 4);',vw.name, vw.name);
 s.goHandle = uicontrol('Style','pushbutton', 'String', 'GO',...
     'FontName', 'Helvetica', 'FontSize', 24, 'FontWeight', 'bold',...
     'ForegroundColor',[1 1 1],'BackgroundColor',[.1 .7 .1],...
@@ -205,9 +196,6 @@ s.goHandle = uicontrol('Style','pushbutton', 'String', 'GO',...
 s.condNames = stim.condNames;
 s.condNums = stim.condNums;
 set(gcf, 'UserData', s);
-
-%feature('javafigures', javaFigs);
-mrvJavaFeature(javaFigs);
 
 return
 % /---------------------------------------------------------------------/ %
@@ -222,15 +210,6 @@ function s = advancedOptionsPanel(s)
 % such as setting the type of statistical test (F or T), the
 % units of the resulting map (-log(p), T, F, p, ces, etc), and
 % whether to activate the weights edit controls.
-
-% first, deal with the ever-troublesome JAVA:
-% javaFigs = feature('javafigures');
-% if ispref('VISTA', 'javaOn') 
-%     feature('javafigures', getpref('VISTA', 'javaOn'));
-% else
-%     feature('javafigures', 0);
-% end
-javaFig = mrvJavaFeature;
 
 s.optsPanel = mrvPanel('below', .25);
 
@@ -289,9 +268,6 @@ s.panelToggle = uicontrol('Style', 'pushbutton', ...
 
 % update userdata of GUI to include this info
 set(gcf, 'UserData', s);
-
-mrvJavaFeature(javaFig);
-% feature('javafigures', javaFigs);
 
 return
 % /---------------------------------------------------------------------/ %
@@ -517,7 +493,7 @@ return
 
 
 % /---------------------------------------------------------------------/ %
-function view = callComputeContrastMap(s, view)
+function vw = callComputeContrastMap(s, vw)
 % callback for the big 'GO' button; this takes the UI info
 % contained in the s struct, and calls the computeContrastMap
 % function:
@@ -538,8 +514,8 @@ units = unitList{ get(s.unitPopup, 'Value') };
 
 saveName = get(s.saveHandle,'String');
 if isempty(findstr(filesep,saveName)) % check that absolute path not specified
-    %     savePath = fullfile(dataDir(view),['contrastMap_' saveName]);
-    savePath = fullfile(dataDir(view),saveName);
+    %     savePath = fullfile(dataDir(vw),['contrastMap_' saveName]);
+    savePath = fullfile(dataDir(vw),saveName);
 else
     savePath = saveName;
 end
@@ -547,7 +523,7 @@ end
 condNums = get(gcbo,'UserData');
 
 % to do: use weights vector
-view = computeContrastMap2(view, active, control, saveName, ...
+vw = computeContrastMap2(vw, active, control, saveName, ...
                            'test', test, 'mapUnits', units);
 
 close(hgui);

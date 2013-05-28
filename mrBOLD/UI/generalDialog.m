@@ -109,8 +109,6 @@ function [resp, ok] = generalDialog(dlg, title, figPos)
 % ras, 05/16/08: added 'number' style.
 if notDefined('title'),    title = 'mrVista';         end
 
-javaFigs = mrvJavaFeature;
-
 resp = [];
 ok = 0;
 
@@ -424,8 +422,6 @@ end
 % close the figure
 close(hfig);
 
-% re-set java figures feature to what it was before
-mrvJavaFeature(javaFigs);
 
 return
 % /-------------------------------------------------------------/ %

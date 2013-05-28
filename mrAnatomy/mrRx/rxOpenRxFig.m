@@ -1,11 +1,10 @@
-function rx = rxOpenRxFig(rx);
+function rx = rxOpenRxFig(rx)
 % rx = rxOpenRxFig(rx);
 %
 % Open a window for viewing the prescription
 % on the non-transformed volume.
 %
 % ras 02/05.
-javaFigs = mrvJavaFeature;
 
 rx.ui.rxFig = figure('Color', 'w',...
                       'Name', 'mrRx Prescription on Volume',...
@@ -65,7 +64,5 @@ uimenu(h, 'Label', 'Reset Zoom', 'Accelerator', 'R', 'Callback', 'zoom out');
 % let the user toggle the regular figure menus      
 addFigMenuToggle(h);
 
-      
-mrvJavaFeature(javaFigs);
 
 return

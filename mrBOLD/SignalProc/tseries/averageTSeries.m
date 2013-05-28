@@ -31,16 +31,13 @@ if notDefined('annotation'),
 end
  
 if notDefined('scanList') || isequal(scanList, 'dialog')
-	[scanList typeName annotation] = averageTSeriesGUI(vw, scanList, typeName, annotation); 
+	[scanList, typeName, annotation] = averageTSeriesGUI(vw, scanList, typeName, annotation); 
 end
-  
-% create the new data type if it doesn't already exist
-%if ~existDataType(typeName),      addDataType(typeName);         end
 
 checkScans(vw, scanList);
 
 % Open a hidden vw and set its dataType to 'Averages'
-switch vw.viewType
+switch viewGet(vw, 'View Type')
     case 'Inplane'
         hiddenView = initHiddenInplane;
     case 'Volume'
@@ -48,15 +45,17 @@ switch vw.viewType
     case 'Gray'
         hiddenView = initHiddenGray;
     case 'Flat'
-        hiddenView = initHiddenFlat(viewDir(vw));
+        hiddenView = initHiddenFlat(viewGet(vw,'View Directory'));
 end
 
 
 % Set dataTYPES.scanParams so that new average scan has the same params as
 % the 1st scan on scanList.
 src = {vw.curDataType scanList(1)};
-[hiddenView newScanNum ndataType] = initScan(hiddenView, typeName, [], src);
-dataTYPES(ndataType).scanParams(newScanNum).annotation = annotation;
+[hiddenView, newScanNum, ndataType] = initScan(hiddenView, typeName, [], src);
+%dataTYPES(ndataType).scanParams(newScanNum).annotation = annotation;
+dataTYPES(ndataType) = dtSet(dataTYPES(ndataType), 'Annotation', annotation, ...
+    newScanNum);
 hiddenView = selectDataType(hiddenView, typeName);
 
 saveSession
@@ -76,12 +75,14 @@ nAvg = length(scanList);
 % *** check that all scans have the same slices
 waitHandle = waitbar(0, 'Averaging tSeries.  Please wait...');
 nSlices = length(sliceList(vw, scanList(1)));
+tSeriesAvgFull = []; %Initialize
 for iSlice = sliceList(vw, scanList(1));
     % For each slice...
     % disp(['Averaging scans for slice ',  int2str(iSlice)])
     for iAvg=1:nAvg
         iScan = scanList(iAvg);
         tSeries = loadtSeries(vw,  iScan,  iSlice);
+        dimNum = length(size(tSeries)); %Can handle 2 and 3D tSeries
         bad = isnan(tSeries);
         tSeries(bad) = 0;
         if iAvg > 1;
@@ -94,9 +95,17 @@ for iSlice = sliceList(vw, scanList(1));
     end
     tSeriesAvg = tSeriesAvg ./ nValid;
     tSeriesAvg(nValid == 0) = NaN;
-    savetSeries(tSeriesAvg, hiddenView, newScanNum, iSlice);
+    tSeriesAvgFull = cat(dimNum + 1, tSeriesAvgFull, tSeriesAvg); %Combine together
     waitbar(iSlice/nSlices);
-end
+end %for
+% Now we need to reshape to have slices be the 3rd dimension. But only if we
+% have a total of 4 dimensions now, i.e. dimNum == 3
+
+if dimNum == 3
+    tSeriesAvgFull = permute(tSeriesAvgFull,[1,2,4,3]);
+end %if
+
+savetSeries(tSeriesAvgFull, hiddenView, newScanNum);
 close(waitHandle);
 
 verbose = prefsVerboseCheck;  % only pop up if we prefer it
@@ -144,8 +153,8 @@ return;
 
 
 % /-----------------------------------------------------------/ %
-function [scans typeName str] = averageTSeriesGUI(vw, scans, typeName, str)
-%% Dialog to get the scan selection and type name for averageTSeries
+function [scans, typeName, str] = averageTSeriesGUI(vw, scans, typeName, str)
+% Dialog to get the scan selection and type name for averageTSeries
 for ii = 1:viewGet(vw, 'numScans')
 	scanList{ii} = sprintf('(%i) %s', ii, annotation(vw, ii));
 end
@@ -168,7 +177,7 @@ dlg(end).value = str;
 
 resp = generalDialog(dlg, 'Average Time Series');
 
-[ignore, scans] = intersect(scanList, resp.scans);
+[~, scans] = intersect(scanList, resp.scans);
 typeName = resp.typeName;
 str = resp.annotation;
 
