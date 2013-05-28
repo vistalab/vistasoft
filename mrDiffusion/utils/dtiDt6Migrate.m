@@ -25,6 +25,7 @@ function dtiDt6Migrate
 dt6NewDir = pwd;
 subDir    = fileparts(dt6NewDir);
 
+% FIX FIX MAke sure we are updateing the t
 % (1) Load the dt6 file:
 load('dt6.mat')
 
