@@ -58,7 +58,10 @@ try
                     tSeriesIn = reshape(tSeriesIn.tSeries, dimSize(1:3));
                     tSeries(:,:,:,slice) = tSeriesIn;
                 end %for
-                tSeries = permute(tSeries,[2 3 4 1]); %Standard format: freq phase slice time
+                tSeries = permute(tSeries,[3 2 4 1]); %Standard format: freq phase slice time
+                %Note: this needed to be changed to reflect the fact that
+                %MATLAB stores values row, column, etc. and not column,
+                %row,
                 
                 %Create the freq, phase and slice dimensions, assuming that we are in
                 %standard format
@@ -86,7 +89,7 @@ try
                 
                 mrSESSION = sessionSet(mrSESSION,'Keep Frames',keepFrames, scan);
                 
-                tSeriesOut = fullfile(tSeriesOutPath,['tSeriesScan' num2str(scan) '.nii.gz']);
+                tSeriesOut = fullfile(tSeriesInBasePath,['tSeriesScan' num2str(scan) '.nii.gz']);
                 
                 nii = niftiSet(nii,'File Path',tSeriesOut);
                 
