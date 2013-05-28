@@ -32,9 +32,6 @@ imgCorners = [1 1 1 1; imDim(1) 1 1 1; 1 imDim(2) 1 1; imDim(1) imDim(2) 1 1; ..
 volRas = xform*imgCorners';
 volRas = volRas(1:3,:)';
 
-extPtValue = 100 * max(max(abs(volRas)));
-extPtPos = extPtValue;
-extPtNeg = -1 * extPtValue;
 
 % Now we need to find the correct rotation & slice reordering to bring 
 % volXyz into our standard space. We do this by finding the most right, 
@@ -49,14 +46,47 @@ extPtNeg = -1 * extPtValue;
 % largest value in VolRas. 
 % Then, we find which of the 8 corners is closest to
 % that point. 
-d = sqrt((extPtNeg-volRas(:,1)).^2 + (extPtPos-volRas(:,2)).^2 + (extPtPos-volRas(:,3)).^2);
+extPtValue = 100 * max(max(abs(volRas)));
+
+% function handle to compute the distance of each row of a nx3 matrix
+rowNorm = @(x) sqrt(sum(x.*x, 2));
+
+% find nearest corner to LAS
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 1 1]));
 las = find(min(d)==d); las = las(1);
-d = sqrt((extPtPos-volRas(:,1)).^2 + (extPtPos-volRas(:,2)).^2 + (extPtPos-volRas(:,3)).^2);
+
+% find nearest corner to RAS
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 1 1]));
+d(las) = Inf;
 ras = find(min(d)==d); ras = ras(1);
-d = sqrt((extPtNeg-volRas(:,1)).^2 + (extPtNeg-volRas(:,2)).^2 + (extPtPos-volRas(:,3)).^2);
+
+% find nearest corner to LPS
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 -1 1]));
+d([las ras]) = Inf;
 lps = find(min(d)==d); lps = lps(1);
-d = sqrt((extPtNeg-volRas(:,1)).^2 + (extPtPos-volRas(:,2)).^2 + (extPtNeg-volRas(:,3)).^2);
+
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 -1 1]));
+d([las ras lps]) = Inf;
+rps = find(min(d)==d); rps = rps(1);
+
+% find nearest corner to LAI
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 1 -1]));
+d([las ras lps rps]) = Inf;
 lai = find(min(d)==d); lai = lai(1);
+
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 1 -1]));
+d([las ras lps rps lai]) = Inf;
+rai = find(min(d)==d); rai = rai(1);
+
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 -1 -1]));
+d([las ras lps rps lai rai]) = Inf;
+lpi = find(min(d)==d); lpi = lpi(1);
+
+% The last point, rpi, is the only one left:
+d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 -1 -1]));
+d([las ras lps rps lai rai lpi]) = Inf;
+rpi = find(min(d)==d); rpi = rpi(1);
+
 
 % The same volRas image corners represented with 0,1:
 volXyz = [0,0,0; 1,0,0; 0,1,0; 1,1,0; 0,0,1; 1,0,1; 0,1,1; 1,1,1];

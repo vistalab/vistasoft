@@ -124,7 +124,7 @@ for iScan = 1:nScans
     tSeries = zeros(size(ts));
     numPixels = size(tSeries,2);
     dimNum = numel(size(ts));
-    tSeriesFull = zeros([size(ts) slices]);
+    tSeriesFull = zeros([size(ts) length(slices)]);
 	if verbose > 1,    waitHandle = waitbar(0,'Saving tSeries...');	end
     for slice=slices
         if verbose > 1, waitbar(slice/nSlices);  end
