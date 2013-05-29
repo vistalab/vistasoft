@@ -44,8 +44,7 @@ volRas = volRas(1:3,:)';
 % Originally, this was (-1000,1000,1000), however, to make this no longer 
 % arbitrary, this was changed to be 2 orders of magnitude larger than the
 % largest value in VolRas. 
-% Then, we find which of the 8 corners is closest to
-% that point. 
+% Then, we find which of the 8 corners is closest to that point. 
 extPtValue = 100 * max(max(abs(volRas)));
 
 % function handle to compute the distance of each row of a nx3 matrix
@@ -111,38 +110,31 @@ ras = 4;
 % LAS - LPS > 0
 % LAS - LAI > 0
 
+%% Find the direction of L-R, A-P, S-I
+
+% Get LR dimension (1,2,or 3) and direction (-1 or 1)
 tmp = volCoords(ras,:) - volCoords(las,:);
-%Find the direction of L-R, A-P, S-I
 RLcol = find(tmp);
 RLcol = RLcol(1); %Since an array was previously returned
 RLdir = sign(tmp(RLcol)); %Get the direction of it as well
+
+% Get AP dimension (1,2,or 3) and direction (-1 or 1)
 tmp = volCoords(las,:) - volCoords(lps,:);
 APcol = find(tmp);
 APcol = APcol(1);
 APdir = sign(tmp(APcol)); %Get the direction of it as well
+
+% Get SI dimension (1,2,or 3) and direction (-1 or 1)
 tmp = volCoords(las,:) - volCoords(lai,:);
 SIcol = find(tmp);
 SIcol = SIcol(1);
 SIdir = sign(tmp(SIcol)); %Get the direction of it as well
 
+
 %Now to figure out what string should appear at each location
-if (RLdir > 0)
-    vectorString(RLcol) = 'R';
-else
-    vectorString(RLcol) = 'L';
-end
-
-if (APdir > 0)
-    vectorString(APcol) = 'A';
-else
-    vectorString(APcol) = 'P';
-end
-
-if (SIdir > 0)
-    vectorString(SIcol) = 'S';
-else
-    vectorString(SIcol) = 'I';
-end
+if RLdir > 0, vectorString(RLcol) = 'R'; else vectorString(RLcol) = 'L'; end
+if APdir > 0, vectorString(APcol) = 'A'; else vectorString(APcol) = 'P'; end
+if SIdir > 0, vectorString(SIcol) = 'S'; else vectorString(SIcol) = 'I'; end
 
 orientationMatrix = niftiCreateXformFromString(vectorString);
 
