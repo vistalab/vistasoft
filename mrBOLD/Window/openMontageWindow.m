@@ -157,7 +157,7 @@ INPLANE{s} = helpMenu(INPLANE{s}, 'Inplane');
 INPLANE{s} = loadAnat(INPLANE{s}, sessionGet(mrSESSION,'Inplane Path'));
 
 % Test to make sure that the session has been updated:
-if ~isfield(mrSESSION.functionals(1),'keepFrames')
+if ~strcmp(sessionGet(mrSESSION,'Version'),'2.1')
     %The session has not been updated to include the new functional data
     %Let's warn the user
     error('This session has not been upgraded to the most recent version. Please run mrInit_sessionMigration to update your session.');

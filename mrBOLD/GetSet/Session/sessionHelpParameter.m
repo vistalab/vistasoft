@@ -57,6 +57,7 @@ if isempty(DictSessionHelp)
     DictSessionHelp('subject') = '';
     DictSessionHelp('title') = '';
     DictSessionHelp('tr') = 'Time series processing parameters for block and event analyses';
+    DictSessionHelp('version') = '';
     
 end %if
 

@@ -93,6 +93,9 @@ switch param
     case {'title'}
         s.title = val;
         
+    case {'version'}
+        s.mrVistaVersion = val;
+        
     otherwise
         error('Unknown parameter %s\n',param);
         
