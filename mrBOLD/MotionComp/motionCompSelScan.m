@@ -17,12 +17,12 @@ function vw = motionCompSelScan(vw, typeName, scanList, baseFrame, nSmooth, base
 %               for sequential  motion compensation, first between- and
 %               then within-scans)
 %
+mrGlobals;
 
 if notDefined('typeName'),      typeName = dataTypeOverwriteCheck('MotionComp'); end
 if notDefined('scanList'),      scanList = selectScans(vw);     end
 if notDefined('vw'),            vw       = getSelectedInplane;  end
 if notDefined('baseScan'),      baseScan = [];                  end
-mrGlobals;
 
 if notDefined('baseFrame') || notDefined('nSmooth')
 	% Prompt user for smoothing and baseFrames:
