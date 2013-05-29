@@ -33,58 +33,47 @@ volRas = xform*imgCorners';
 volRas = volRas(1:3,:)';
 
 
-% Now we need to find the correct rotation & slice reordering to bring 
-% volXyz into our standard space. We do this by finding the most right, 
-% most anterior, and most superior point (ras), the most left, most 
-% anterior, and most superior point (las), etc. for the current volume 
-% orientation. Note that the NIFTI convention is that negative values 
-% are left, posterior and inferior. The code below finds the correct 
-% rotation by measuring the distance from each of the 8 corners to a 
-% point in space that is very far to the left, superior and anterior. 
-% Originally, this was (-1000,1000,1000), however, to make this no longer 
+% Now we need to find the correct rotation & slice reordering to bring
+% volXyz into our standard space. We do this by identifying 4 corners of
+% the slab: LAS (the most left, most anterior, and most superior point),
+% RAS, LPS, AND LAI for the current volume orientation. Note that the NIFTI
+% convention is that negative values are left, posterior and inferior. The
+% code below finds the correct rotation by measuring the distance from each
+% of the 8 corners to a point in space that is very far to the left,
+% superior and anterior*. This gives us LAS. We then constrain the search
+% for the three other corners (RAS, LPS, LAI) to the three corners are
+% topologically adjacent to LAS. 
+%
+% *Originally, this was (-1000,1000,1000), however, to make this no longer
 % arbitrary, this was changed to be 2 orders of magnitude larger than the
-% largest value in VolRas. 
-% Then, we find which of the 8 corners is closest to that point. 
+% largest value in VolRas. Then, we find which of the 8 corners is closest
+% to that point.
 extPtValue = 100 * max(max(abs(volRas)));
 
-% function handle to compute the distance of each row of a nx3 matrix
+% function handle to compute the norm of each row of a nx3 matrix
 rowNorm = @(x) sqrt(sum(x.*x, 2));
 
 % find nearest corner to LAS
 d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 1 1]));
-las = find(min(d)==d); las = las(1);
+las = find(min(d)==d, 1);
+
+% Find the 3 corners which are topologically adjacent to LAS. this amounts
+% to the three corners of imgCoords which differ by the LAS corners in
+% exactly one coordinate;
+neighbors = find(sum(bsxfun(@eq, imgCorners,  imgCorners(las,:)),2) == 3);
+volRas = volRas(neighbors,:);
 
 % find nearest corner to RAS
 d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 1 1]));
-d(las) = Inf;
-ras = find(min(d)==d); ras = ras(1);
+ras = find(min(d)==d, 1); ras = neighbors(ras);
 
 % find nearest corner to LPS
 d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 -1 1]));
-d([las ras]) = Inf;
-lps = find(min(d)==d); lps = lps(1);
-
-d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 -1 1]));
-d([las ras lps]) = Inf;
-rps = find(min(d)==d); rps = rps(1);
+lps = find(min(d)==d,1); lps  = neighbors(lps);
 
 % find nearest corner to LAI
 d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 1 -1]));
-d([las ras lps rps]) = Inf;
-lai = find(min(d)==d); lai = lai(1);
-
-d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 1 -1]));
-d([las ras lps rps lai]) = Inf;
-rai = find(min(d)==d); rai = rai(1);
-
-d = rowNorm(bsxfun(@minus, volRas, extPtValue*[-1 -1 -1]));
-d([las ras lps rps lai rai]) = Inf;
-lpi = find(min(d)==d); lpi = lpi(1);
-
-% The last point, rpi, is the only one left:
-d = rowNorm(bsxfun(@minus, volRas, extPtValue*[1 -1 -1]));
-d([las ras lps rps lai rai lpi]) = Inf;
-rpi = find(min(d)==d); rpi = rpi(1);
+lai = find(min(d)==d,1); lai  = neighbors(lai);
 
 
 % The same volRas image corners represented with 0,1:
@@ -139,9 +128,3 @@ if SIdir > 0, vectorString(SIcol) = 'S'; else vectorString(SIcol) = 'I'; end
 orientationMatrix = niftiCreateXformFromString(vectorString);
 
 return
-
-
-
-
-
-
