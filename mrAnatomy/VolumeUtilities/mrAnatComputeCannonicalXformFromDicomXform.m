@@ -117,7 +117,8 @@ volCoords = [volXyz(las,:),1; volXyz(ras,:),1; volXyz(lps,:),1; volXyz(rps,:),1;
 % to z-axis with bottom left corner of slice 1 as the most left, most 
 % anterior, most inferior point. If you want a diferent orientation, you 
 % should only need to change this line.
-stdCoords = [0,0,0,1; 1,0,0,1; 0,1,0,1; 1,1,0,1; 0,0,1,1; 1,0,1,1; 0,1,1,1; 1,1,1,1];
+% NIFTI convention is that negative values are left, posterior and inferior.
+stdCoords = [-1,1,1,2; 1,1,1,2; -1,-1,1,2; 1,-1,1,2; -1,1,-1,2; 1,1,-1,2; -1,-1,-1,2; 1,-1,-1,2] / 2;
 
 % The following will produce an affine transform matrix that tells us how 
 % to transform to our standard space. To use this xform matrix, do: 
