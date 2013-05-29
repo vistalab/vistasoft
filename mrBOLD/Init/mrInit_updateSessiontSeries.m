@@ -98,6 +98,8 @@ try
                 
                 niftiWrite(nii,tSeriesOut);
                 
+                mrSESSION = sessionSet(mrSESSION,'Version','2.1');
+                
                 %Update the session variables
                 save('./mrSESSION.mat', 'mrSESSION','-append');
                 save('./mrSESSION.mat', 'dataTYPES','-append');

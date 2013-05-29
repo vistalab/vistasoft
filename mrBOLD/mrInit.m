@@ -2,7 +2,7 @@ function ok = mrInit(varargin)
 % Initialize a mrVista session. Replacement for mrInitRet, mrvInit and
 % mrInit2.  Moved from mrRSTools (formerly mrVista2).
 %
-% USAGE: mrInit should be called when the current directory is the one 
+% USAGE: mrInit should be called when the current directory is the one
 % you wish to initialize. It can be called one of three ways:
 %
 %	(1) Interactively: type 'mrInit' without arguments, and a series of
@@ -10,12 +10,12 @@ function ok = mrInit(varargin)
 %
 %	(2) With a params struct: mrInit(params) will initialize without user
 %		feedback. params is a struct with fields described below.
-%	
+%
 %	(3) mrInit('param', [value], 'param', [value]...) will also initialize
 %		without user feedback. The 'param' strings are fields in the param
 %		structs, the values are the value for that parameters. Any
-%		non-specicified parameters will use the default values. 
-%  
+%		non-specicified parameters will use the default values.
+%
 %
 % INPUTS:
 %   functionals: path string, or cell array of path strings, to the input
@@ -27,7 +27,7 @@ function ok = mrInit(varargin)
 %   Defaults to 'Raw/Anatomy/Inplane/I*.dcm' (again consistent w/ Lucas
 %   Center conventions.) Can be any format readable by mrLoad.
 %
-%   params: structure which specifies the organization of the 'Original' 
+%   params: structure which specifies the organization of the 'Original'
 %   data type in the new session. See mrInitDefaultParams for a full
 %   description of the parameters. mrInitGUI calls a series of dialogs to
 %   get these parameters interactively.
@@ -47,21 +47,21 @@ function ok = mrInit(varargin)
 %           more robust format, like anat.nii.gz (NIFTI) or anat.img
 %           (ANALYZE).
 %           * Original/: 'data directory' for the Original data type.
-%               * Original/TSeries/: directory for time series data from the 
+%               * Original/TSeries/: directory for time series data from the
 %                 functionals. Again, this is an older format: each scan
 %                 has a directory ('/Scan2/'), and contains one MATLAB file
-%                 for each slice ('tSeries4.mat'), which has the variable 
-%                 'tSeries', format [nFrames x nVoxelsInSlice]. 
+%                 for each slice ('tSeries4.mat'), which has the variable
+%                 'tSeries', format [nFrames x nVoxelsInSlice].
 %           * If running motion compensation, will also create new data
 %           types: 'MotionComp' for within-scan, and 'BwScansMotionComp'
 %           for between scan. If running both, you can choose to do either
 %           between or within-scan first, then the other on top of that.
 %           (You may want to remove the intermediate within-scan data type
 %           to save space, if it looks like things went well.)
-%       
+%
 %   Also returns the variable ok, which is 1 if everything succeeded and 0
 %   otherwise.
-%             
+%
 % EXAMPLE:
 %	Suppose we have a session with four functional files, named 'func1.img'
 %	to 'func4.img', and an inplane file, 'inplane.img'. All files are
@@ -79,13 +79,13 @@ function ok = mrInit(varargin)
 % This code is intended to improve upon mrInitRet, addressing a few
 % concerns:
 %
-% (1) More input file neutral. While mrInitRet was largely built to use 
+% (1) More input file neutral. While mrInitRet was largely built to use
 %     Lucas Center P.mag files, mrInit is intended to allow any files
-%     readable by the mrVista 2 mrLoad functions. Specifically, 
-%     ANALYZE files are supported. Also, it's no longer required that 
+%     readable by the mrVista 2 mrLoad functions. Specifically,
+%     ANALYZE files are supported. Also, it's no longer required that
 %     you have the Inplane files be DICOM files in Raw/Anatomy/Inplane.
 %     Although consistent naming is recommended, the input anatomy file can
-%     also be any format or location.    
+%     also be any format or location.
 %
 % (2) Scriptable. mrInitRet provided a nice 'wizard' of dialogs, but was
 %     extremely hard to automate. This code is intended to be more modular,
@@ -93,7 +93,7 @@ function ok = mrInit(varargin)
 %     argument is not provided, it will provide a set of dialogs (mrInitGUI)
 %     to get them. But otherwise, it runs without further input from the
 %     user.
-%  
+%
 % (3) Saves more info from the header files. Things like the corners of the
 %     inplane in scanner coordinates were not extracted previously, making
 %     it difficult to e.g. label left from right. These are now saved in
@@ -102,8 +102,8 @@ function ok = mrInit(varargin)
 % (4) Free of several of the bugs that have been cropping up lately, e.g.
 %     in EditSession.
 %
-% (5) Run Motion Compensation / Slice Timing Correction at the front end, 
-%    so you can leave a session intitializing and have it also do these 
+% (5) Run Motion Compensation / Slice Timing Correction at the front end,
+%    so you can leave a session intitializing and have it also do these
 %    steps overnight.
 % ras, 07/23/07: debugged / slight overhaul to be cleaner, rely more on
 % mrLoad and mrSave to actually set the mrSESSION fields.
@@ -114,52 +114,52 @@ function ok = mrInit(varargin)
 % Modified by DY on 09/2008 to allow for within then between or between
 % then within MC. Changed comments here and in mrInitDefaultParams.m to
 % reflect this. Email DY if you would like to see an example wrapper script
-% that sets all params. 
+% that sets all params.
 
 %%%%% (0) ensure all input parameters are specified
-if nargin==0		
-	% get params interactively
+if nargin==0
+    % get params interactively
     [params, ok] = mrInitGUI;
-	if ~ok, disp('mrInit Aborted.'); return; end
-	
+    if ~ok, disp('mrInit Aborted.'); return; end
+    
 elseif length(varargin)==1 && isstruct(varargin{1})
-	% params struct entered
-	params = mrInitDefaultParams;
-	params = mergeStructures(params, varargin{1});
-	
+    % params struct entered
+    params = mrInitDefaultParams;
+    params = mergeStructures(params, varargin{1});
+    
 else
-	params = mrInitDefaultParams;
-	
-	% param/value pairs specified -- parse
-	for i = 1:2:length(varargin)
-		params.(varargin{i}) = varargin{i+1};
-	end
-	
+    params = mrInitDefaultParams;
+    
+    % param/value pairs specified -- parse
+    for i = 1:2:length(varargin)
+        params.(varargin{i}) = varargin{i+1};
+    end
+    
 end
-        
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (1) cd to session dir; init empty session %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 params.startTime = datestr(now);
 fprintf('***** [%s] Initializing Session %s ***** (%s)\n', mfilename, ...
-        params.sessionCode, params.startTime);
-ensureDirExists(params.sessionDir);	
+    params.sessionCode, params.startTime);
+ensureDirExists(params.sessionDir);
 callingDir = pwd;
 cd(params.sessionDir);
 
 mrGlobals; %Declared here since we want HOMEDIR to be sessPath
 
 initEmptySession; %Replace this save and then load of mrSESSION with that variable simply passed
-                    % from one to the other
+% from one to the other
 load mrSESSION mrSESSION dataTYPES
 mrSESSION = sessionSet(mrSESSION,'description', params.description);
 mrSESSION = sessionSet(mrSESSION,'sessionCode',params.sessionCode);
 mrSESSION = sessionSet(mrSESSION,'subject',params.subject);
 mrSESSION = sessionSet(mrSESSION,'comments',params.comments);
 mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane); %Populates the mrSESSION inplane path var
+mrSESSION = sessionSet(mrSESSION,'Version','2.1');
 
-
-save mrSESSION mrSESSION -append; 
+save mrSESSION mrSESSION -append;
 save mrInit_params params   % stash the params in case we crash
 
 
@@ -197,6 +197,11 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
             %Put keepFrames into func so that we can save it into mrSESSION
             func.keepFrames = params.keepFrames;
+        else
+            %We will need to create keepFrames if it doesn't exist
+            keepFrames = zeros(length(params.functionals),2);
+            keepFrames(:,2) = -1; %By default, skip 0 initial frames, keep the
+            func.keepFrames = keepFrames;
         end
         
         % assign annotation if it's provided
@@ -215,7 +220,7 @@ end
 
 
 fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
-		mfilename, datestr(now));
+    mfilename, datestr(now));
 
 %%%%%%%%%%%%%%%%%%%%%%%
 % (5)  pre-processing %
@@ -227,22 +232,22 @@ INPLANE{1} = initHiddenInplane;
 
 % assign coherence analysis parameters
 for s = cellfind(params.coParams)
-	coParams = params.coParams{s};
-	for f = fieldnames(coParams)'
-		dataTYPES.blockedAnalysisParams(s).(f{1}) = coParams.(f{1});
-	end	
+    coParams = params.coParams{s};
+    for f = fieldnames(coParams)'
+        dataTYPES.blockedAnalysisParams(s).(f{1}) = coParams.(f{1});
+    end
 end
 
 % assign GLM analysis parameters
 for scan = cellfind(params.glmParams)
-	er_setParams(INPLANE{1}, params.glmParams{scan}, scan);
+    er_setParams(INPLANE{1}, params.glmParams{scan}, scan);
 end
 
 
 % slice timing correction
 if params.sliceTimingCorrection==1
     INPLANE{1} = AdjustSliceTiming(INPLANE{1}, 0);
-	INPLANE{1} = selectDataType(INPLANE{1}, 'Timed');
+    INPLANE{1} = selectDataType(INPLANE{1}, 'Timed');
 end
 
 % motion compensation
@@ -254,50 +259,50 @@ if params.motionComp > 1
             hI = initHiddenInplane(newDataType);
             [INPLANE{1}, ~] = betweenScanMotComp(INPLANE{1}, hI, params.motionCompRefScan);
             INPLANE{1} = selectDataType(INPLANE{1}, newDataType);
-			
+            
         case 2, % within scans only
             INPLANE{1} = motionCompSelScan(INPLANE{1}, 'MotionComp', ...
-										[], params.motionCompRefFrame);
+                [], params.motionCompRefFrame);
             
         case 3, % both between and within scans
             motionCompNestaresFull(INPLANE{1}, [], ...
-									params.motionCompRefScan, ...
-									params.motionCompRefFrame);
+                params.motionCompRefScan, ...
+                params.motionCompRefFrame);
             INPLANE{1} = selectDataType(INPLANE{1}, 'MotionComp');
-
+            
         case 4, % both between and within scans
             motionCompNestaresWithin1st(INPLANE{1}, [], params.motionCompRefScan, params.motionCompRefFrame);
             mcdtName=['MotionComp_RefScan' num2str(params.motionCompRefScan)];
             INPLANE{1} = selectDataType(INPLANE{1}, mcdtName);
-
+            
     end
 end
-    
+
 % group scans, assign parfiles, apply GLM
 for scan = cellfind(params.parfile)
-	er_assignParfilesToScans(INPLANE{1}, scan, params.parfile(scan));
+    er_assignParfilesToScans(INPLANE{1}, scan, params.parfile(scan));
 end
 
 if ~isempty(params.scanGroups)
-	for ii = 1:length(params.scanGroups)
-		INPLANE{1} = er_groupScans(INPLANE{1}, params.scanGroups{ii}, 2);
-
-		if params.applyGlm==1
-			glmParams = er_getParams(INPLANE{1}, params.scanGroups{ii}(1));
-			applyGlm(INPLANE{1}, [], params.scanGroups{ii}, glmParams);
-		end
-	end	
+    for ii = 1:length(params.scanGroups)
+        INPLANE{1} = er_groupScans(INPLANE{1}, params.scanGroups{ii}, 2);
+        
+        if params.applyGlm==1
+            glmParams = er_getParams(INPLANE{1}, params.scanGroups{ii}(1));
+            applyGlm(INPLANE{1}, [], params.scanGroups{ii}, glmParams);
+        end
+    end
 end
 
 % apply coherence analysis
 if any(params.applyCorAnal > 0)
-	INPLANE{1} = computeCorAnal(INPLANE{1}, params.applyCorAnal, 1);
+    INPLANE{1} = computeCorAnal(INPLANE{1}, params.applyCorAnal, 1);
 end
 
 % All tasks are now complete
-saveSession;	
+saveSession;
 fprintf('***** [%s] Finished Initializing Session %s (%s)*****\n', ...
-		mfilename, mrSESSION.sessionCode, datestr(now));
+    mfilename, mrSESSION.sessionCode, datestr(now));
 mrvCleanWorkspace;
 ok = 1;
 
@@ -325,13 +330,13 @@ f.totalFrames = mr.dims(4);
 
 f.firstName = '';  f.lastName = '';
 if checkfields(mr, 'info', 'subject')
-	sp = strfind(' ', mr.info.subject);
-	if ~isempty(sp) % space in name
-		f.firstName = mr.info.subject( 1:(sp(1)-1) );
-		f.lastName = mr.info.subject( (sp(1)+1):end );
-	else
-		f.firstName = mr.info.subject;
-	end
+    sp = strfind(' ', mr.info.subject);
+    if ~isempty(sp) % space in name
+        f.firstName = mr.info.subject( 1:(sp(1)-1) );
+        f.lastName = mr.info.subject( (sp(1)+1):end );
+    else
+        f.firstName = mr.info.subject;
+    end
 end
 
 f.date = ''; f.time = '';
@@ -348,14 +353,14 @@ f.voxelSize = mr.voxelSize(1:3);
 f.effectiveResolution = mr.voxelSize(1:3);
 f.keepFrames = mr.keepFrames; %Keep Frames will now be udpated in both mrSESSION and dataTYPES
 if checkfields(mr, 'info', 'effectiveResolution')
-	f.effectiveResolution = mr.info.effectiveResolution;
+    f.effectiveResolution = mr.info.effectiveResolution;
 end
 f.framePeriod = mr.voxelSize(4);
 f.reconParams = mr.hdr;
 
 if scan==1
     mrSESSION = sessionSet(mrSESSION, 'Functionals', f);
-	%mrSESSION.functionals = f;
+    %mrSESSION.functionals = f;
 else
     mrSESSION = sessionSet(mrSESSION, 'Functionals', ...
         mergeStructures(sessionGet(mrSESSION, 'Functionals', scan-1), f), scan);
@@ -364,14 +369,14 @@ end
 % Default params, initializing the parameters in dataTYPES
 
 
-% Copy one field at a time, so we don't get type-mismatch errors.    
+% Copy one field at a time, so we don't get type-mismatch errors.
 
 % scan params
 srcScanParams = scanParamsDefaults(mrSESSION, scan, mr.name);
 for f = fieldnames(srcScanParams)'
     dataTYPES(1).scanParams(scan).(f{1}) = srcScanParams.(f{1});
 end
-    
+
 % blocked analysis params
 srcBlockParams = blockedAnalysisDefaults;
 for f = fieldnames(srcBlockParams)'

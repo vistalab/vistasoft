@@ -284,6 +284,11 @@ switch param
         else error('The field relevant to %s was not found in the session.', param);
         end
         % Time series processing parameters for block and event analyses
+
+    case {'version'}
+        if isfield(s, 'mrVistaVersion'), val = s.mrVistaVersion; 
+        else error('The field relevant to %s was not found in the session.', param);
+        end
         
     otherwise
         error('Unknown parameter %s',param);
