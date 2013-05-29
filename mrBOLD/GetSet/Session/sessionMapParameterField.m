@@ -61,6 +61,7 @@ if isempty(DictSessionTranslate)
     DictSessionTranslate('timingreferenceslice') = 'refslice';
     DictSessionTranslate('title') = 'title';
     DictSessionTranslate('tr') = 'tr';
+    DictSessionTranslate('version') = 'version';
 
 end %if
 
