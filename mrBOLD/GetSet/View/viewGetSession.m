@@ -132,7 +132,7 @@ switch param
         if dataType==0
             error('Invalid data type specified: %i', dataType);
         end
-        val = length(dataTYPES(dataType).scanParams);
+        val = length(dataTYPES(dataType).scanParams); %TODO: Use dtGet
     case 'nslices'
         % Return the number of slices in the current view struct
         %   nslices = viewGet(vw, 'Number of Slices');

@@ -1,5 +1,5 @@
-function scanList = selectScans(view,title,scanDir)
-% scanList = selectScans(view,[title],[scanDir]);
+function scanList = selectScans(vw,title,~)
+% scanList = selectScans(vw,[title],[scanDir]);
 %
 %   Gather a list of scans available in Inplane/TSeries
 %   and query the user for a sub-selection.
@@ -22,39 +22,15 @@ function scanList = selectScans(view,title,scanDir)
 % 11/3/04, JL, make scanDir really optional
 
 if ~exist('title','var'), title = 'Choose scans'; end;
-if ~exist('scanDir','var'), scanDir = tSeriesDir(view,0); end;
+%if ~exist('scanDir','var'), scanDir = tSeriesDir(vw,0); end;
+%We will no longer use scanDir
 
-scanList = [];
-[nFiles, fileNames] = countDirs('Scan*',scanDir);
-nameInds = [];
+scanNum = viewGet(vw,'N Scans');
 
-for i=1:nFiles
-  name = fileNames{i};
-  nChar = length(name);
-  if nChar > 4
-    if strcmp(name(1:4), 'Scan');
-      % Get the scan numbers from the scan names:
-      scanList = [scanList, str2num(name(5:nChar))];
-      nameInds = [nameInds, i];
-    end
-  end
-end
-
-nScans = length(scanList);
-
-%Check for zero:
-if nScans == 0
-  myErrorDlg('No scans found!');
-  return
-end
-
-scanNames = fileNames(nameInds);
-% Sort the scans by number:
-[scanList, iSort] = sort(scanList);
-scanNames = scanNames(iSort);
+scanList = 1:scanNum;
 
 % Which scans to analyze?
-iSel = buttondlg(title, scanNames);
-scanList = scanList(find(iSel));
+iSel = buttondlg(title, scanList);
+scanList = scanList(iSel);
 
 return;
