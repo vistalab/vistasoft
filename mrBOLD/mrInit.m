@@ -217,7 +217,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
     end
     
 end
-
+saveSession;
 
 fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
     mfilename, datestr(now));
@@ -350,7 +350,7 @@ else
     endDroppedFrames = mr.keepFrames(scan,2);
 end %if
 totalDroppedFrames = (mr.dims(4) - endDroppedFrames) + mr.keepFrames(scan,1);
-f.nFrames = mr.dims(4) - endDroppedFrames;
+f.nFrames = mr.dims(4) - totalDroppedFrames;
 f.slices =  1:mr.dims(3);
 f.fullSize = mr.dims(1:2);
 f.cropSize = mr.dims(1:2);
