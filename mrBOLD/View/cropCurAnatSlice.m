@@ -11,8 +11,7 @@ if ieNotDefined('curSlice')
 	% Get curSlice from ui
 	curSlice = viewGet(vw, 'Current Slice');
 end
-%TODO: Replace this with viewGet
-dims = viewSize(vw);
+dims = viewGet(vw,'Size');
 
 switch viewGet(vw,'View Type')
 

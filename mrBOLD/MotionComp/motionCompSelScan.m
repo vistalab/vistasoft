@@ -35,8 +35,7 @@ if notDefined('baseFrame') || notDefined('nSmooth')
 end
 % record the data type from the source (pre-correction) data
 srcDt = vw.curDataType;
-%TODO: Use viewGet instead
-
+%TODO: Replace with viewGet
 
 %% open a figure for the motion estimate report
 h_report = figure;
