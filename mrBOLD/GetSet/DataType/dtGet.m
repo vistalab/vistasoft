@@ -138,6 +138,9 @@ switch param
             end
         end
         
+        %Now we need to apply keepFrames to this number
+        
+        
     case {'nscans'}
         val = length(dt.scanParams);
         

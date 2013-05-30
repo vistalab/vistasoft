@@ -29,8 +29,13 @@ scanNum = viewGet(vw,'N Scans');
 
 scanList = 1:scanNum;
 
+scanNames = cell(length(scanList),1);
+for i=scanList
+    scanNames{i} = num2str(i); 
+end
+
 % Which scans to analyze?
-iSel = buttondlg(title, scanList);
-scanList = scanList(iSel);
+iSel = buttondlg(title, scanNames);
+scanList = scanList(find(iSel));
 
 return;
