@@ -172,7 +172,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
     
     for scan = 1:length(params.functionals)
         
-        funcPath = mrGet(params.functionals{scan}, 'filename');
+        func.path = mrGet(params.functionals{scan}, 'filename');
         
         %We will need to replace this code with something that adds the paths to
         %the session variable and then performs these data processes on-the-fly
@@ -183,7 +183,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         %Read in the nifti to the tS struct, then apply the same transform as
         %the inplane data. Then, transfer the necessary components to the
         %local func struct.
-        tS = niftiRead(funcPath);
+        tS = niftiRead(func.path);
         tS = niftiApplyAndCreateXform(tS,'Inplane');
         %Need to move over:
         %Data
@@ -217,7 +217,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
     end
     
 end
-saveSession;
+
 
 fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
     mfilename, datestr(now));
