@@ -172,7 +172,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
     
     for scan = 1:length(params.functionals)
         
-        funcPath = mrGet(params.functionals{scan}, 'filename');
+        func.path = mrGet(params.functionals{scan}, 'filename');
         
         %We will need to replace this code with something that adds the paths to
         %the session variable and then performs these data processes on-the-fly
@@ -183,7 +183,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         %Read in the nifti to the tS struct, then apply the same transform as
         %the inplane data. Then, transfer the necessary components to the
         %local func struct.
-        tS = niftiRead(funcPath);
+        tS = niftiRead(func.path);
         tS = niftiApplyAndCreateXform(tS,'Inplane');
         %Need to move over:
         %Data
@@ -345,12 +345,12 @@ if checkfields(mr, 'info', 'time'), f.time = mr.info.time; end
 
 f.junkFirstFrames = 0; %This always appears to be 0. perhaps remove it?
 if mr.keepFrames(scan,2) == -1
-    endDroppedFrames = 0;
+    remainingFrames = mr.dims(4);
 else
-    endDroppedFrames = mr.keepFrames(scan,2);
+    remainingFrames = mr.keepFrames(scan,2);
 end %if
-totalDroppedFrames = (mr.dims(4) - endDroppedFrames) + mr.keepFrames(scan,1);
-f.nFrames = mr.dims(4) - endDroppedFrames;
+totalDroppedFrames = (mr.dims(4) - remainingFrames) + mr.keepFrames(scan,1);
+f.nFrames = mr.dims(4) - totalDroppedFrames;
 f.slices =  1:mr.dims(3);
 f.fullSize = mr.dims(1:2);
 f.cropSize = mr.dims(1:2);
