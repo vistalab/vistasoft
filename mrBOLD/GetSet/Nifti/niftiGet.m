@@ -83,6 +83,9 @@ switch param
             warning('vista:niftiError', 'No number of slices defined information found in nifti. Returning empty');
             val = [];
         end
+        if val == 0
+            error('vista:niftiError', 'The number of slices are not properly defined in this nifti. Please ensure that slice_start and slice_end are non-zero.');
+        end
         
     case 'phasedim'
         if isfield(ni, 'phase_dim')

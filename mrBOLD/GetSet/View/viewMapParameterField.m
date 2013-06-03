@@ -477,6 +477,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('anatomyslicedimension') = 'anatslicedim';
     DictViewTranslate('tseriesdir') = 'tseriesdir';
     DictViewTranslate('tseriesdirectory') = 'tseriesdir';
+    DictViewTranslate('graycoords') = 'graycoords';
+    
     
 end %if
 

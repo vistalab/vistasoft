@@ -58,19 +58,6 @@ switch param
         if max(val(:)) > 1, val = val ./ 255;               end
         vw.ui.phMode.cmap((nGrays+1):end,:) = val ;
         
-    case 'cmap'
-        % RFBEDIT: Adding flexibility for hidden views
-        nGrays      = viewGet(vw, 'curnumgrays');
-        displayMode = viewGet(vw, 'displayMode');
-        
-        % allow transposed version (3 x n) instead of usual matlab cmap order (n x 3)
-        if size(val, 2) > 3 && size(val, 1)==3,	val = val'; end
-        if max(val(:)) > 1, val = val ./ 255;		end
-        
-        displayMode = [displayMode 'Mode'];
-        vw.ui.(displayMode).cmap(nGrays+1:end,:) = val;
-        vw.ui.(displayMode).name = 'user';
-        
     case 'locs'
         % cursor location as [axi cor sag]
         vw.loc = val;
