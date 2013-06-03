@@ -109,6 +109,7 @@ if isempty(DictViewSplit)
     DictViewSplit('nslices') =  'session';
     DictViewSplit('refreshfn') = 'session';
     DictViewSplit('sessionname') =  'session';
+    DictViewSplit('size')   =  'session';
     DictViewSplit('subdir') =  'session';
     DictViewSplit('subject') =  'session';
     DictViewSplit('viewtype') =  'session';
@@ -185,7 +186,6 @@ end %if
 if DictViewSplit.isKey(paramIn)
     splitParam = DictViewSplit(paramIn);
 else
-    splitParam = '';
     error('Dict:ViewSplitError', 'The input %s does not appear to be in the split dictionary.', paramIn);
 end
 

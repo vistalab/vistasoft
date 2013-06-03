@@ -39,8 +39,7 @@ if isempty(DictViewHeadings)
     DictViewHeadings('flat') = 'Flat-related properties';
     DictViewHeadings('ui') = 'UI properties';
     DictViewHeadings('em') = 'EM / General-Gray-related properties';
-    DictViewHeadings('colorbar') = 'Colorbar-Related Params';
-    
+    DictViewHeadings('colorbar') = 'Colorbar-Related Params';    
     
 end %if
 

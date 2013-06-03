@@ -1,6 +1,5 @@
 function [xform] = niftiCreateXform(nii,xformType)
-%First create then apply a specified transform onto the supplied nifti
-%struct.
+%First create a specified transform onto the supplied nifti struct.
 %
 % USAGE
 %  nii = readNifti(niftiFullPath);

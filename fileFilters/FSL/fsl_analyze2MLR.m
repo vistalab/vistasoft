@@ -88,9 +88,12 @@ disp(tSerDir)
 % We have to populate the dataTYPES structure
 % for the new dataTYPE with reasonable numbers
 
+curDt = viewGet(vw,'Cur Dt');
+
 for thisScan=1:nScansToProcess
     %TODO: Change these to use dtGet and dtSet
-    dataTYPES(vw.curDataType).scanParams(thisScan)=dataTYPES(1).scanParams(1);
+    dataTYPES(curDt) = dtSet(dataTYPES(curDt),'Scan Params',dtGet(dataTYPES(1),'Scan Params'),thisScan);
+    %dataTYPES(vw.curDataType).scanParams(thisScan)=dataTYPES(1).scanParams(1);
     dataTYPES(vw.curDataType).scanParams(thisScan).annotation=['From original scan ',int2str(scansToProcess(thisScan))];
     dataTYPES(vw.curDataType).blockedAnalysisParams(thisScan)=dataTYPES(1).blockedAnalysisParams(1);
     dataTYPES(vw.curDataType).eventAnalysisParams(thisScan)=dataTYPES(1).eventAnalysisParams(1);

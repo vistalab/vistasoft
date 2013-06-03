@@ -217,8 +217,6 @@ mrSessPath = fullfile(pth, 'mrSESSION.mat');
 if ~exist(mrSessPath, 'file')
 	initEmptySession;    
 end
-%TODO: Think about removing this since we are already calling mrGlobals above
-%load(mrSessPath, 'mrSESSION', 'dataTYPES');
 
 % set header info in mrSESSION.functionals, dataTYPES.scanParmas
 if notDefined('scan'), scan = length(mrSESSION.functionals) + 1; end %#ok<NODEF>
