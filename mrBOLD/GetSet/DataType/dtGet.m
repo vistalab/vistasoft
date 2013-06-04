@@ -3,6 +3,18 @@ function val = dtGet(dt,param,varargin)
 %
 %   val = dtGet(dt,param,varargin)
 %
+% USAGE
+%  val = dtGet(dataTYPES(1),'atype');
+%
+% INPUTS
+%  dataTYPES struct - one member of the dataTYPES struct array
+%  param - String parameter specifying the value to get 
+%
+% RETURNS
+%  Value (or values) stored in dataTYPES or calculated from values stored
+%  in dataTYPES
+%
+%
 % dataTYPES is a global structure, paralleling mrSESSION in some ways. The
 % dataTYPES structure contains a great deal of information about the scans.
 % This information includes scanning parameters as well as specific
@@ -21,8 +33,10 @@ function val = dtGet(dt,param,varargin)
 %   b = dtGet(dt,'bParams')
 %   e = dtGet(dt,'eParams')
 %   aType = dtGet(dt,'aType',1)
-
-%TODO: Fix the comment above to reflect the normal standard.
+%
+%
+%
+% Copyright Stanford VistaLab 2013
 
 if notDefined('dt'),    error('dataTYPES parameter required'); end
 if notDefined('param'), error('param required'); end
