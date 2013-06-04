@@ -1,4 +1,4 @@
-function newTypeNum = addDataType(dataTypeName);    
+function newTypeNum = addDataType(dataTypeName)
 % newTypeNum = addDataType(dataTypeName);
 %
 % Add a new dataType to mrSESSION.  Then, update the UI for
@@ -18,14 +18,15 @@ if existDataType(dataTypeName)
     myErrorDlg(['Data type ',dataTypeName,' already exists.']);
 end
 newTypeNum = length(dataTYPES)+1;
-dataTYPES(newTypeNum).name = ''; %Must initialize some value.
-%dataTYPES(newTypeNum) = struct('name',''); %TODO: Figure out a more robust
-%way to add another struct to the struct array, I don't like just setting
-%the name to something.
+
+dataTYPES(newTypeNum).name = '';
+%This should initialize the new dataTYPES struct with the name field and
+%nothing else
 dataTYPES(newTypeNum) = dtSet(dataTYPES(newTypeNum), 'name', dataTypeName);
+
 saveSession;
 
-% Loop through the open views, reselecting their curDataType to update the popups 
+% Loop through the open views, reselecting their curDataType to update the popups
 INPLANE = resetDataTypes(INPLANE);
 VOLUME = resetDataTypes(VOLUME);
 FLAT = resetDataTypes(FLAT);

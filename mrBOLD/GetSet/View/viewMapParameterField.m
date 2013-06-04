@@ -478,7 +478,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('tseriesdir') = 'tseriesdir';
     DictViewTranslate('tseriesdirectory') = 'tseriesdir';
     DictViewTranslate('graycoords') = 'graycoords';
-    
+    DictViewTranslate('size')           = 'size';
     
 end %if
 

@@ -502,6 +502,7 @@ if isempty(DictViewHelp)
         DictViewHelp('spatialgrid') = '';
         DictViewHelp('spatialgrad') = '';
         DictViewHelp('uiimage') = '';
+        DictViewHelp('size') = '';
     
 end %if
 

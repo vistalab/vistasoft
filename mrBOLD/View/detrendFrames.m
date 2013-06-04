@@ -1,4 +1,4 @@
-function smoothFrames = detrendFrames(view,scan)
+function smoothFrames = detrendFrames(vw,scan)
 % Number of frames used for the detrending (smoothing?) calculation 
 %
 %    smoothFrames = detrendFrames(view,[scan])
@@ -10,19 +10,12 @@ function smoothFrames = detrendFrames(view,scan)
 %   viewGet(view,'detrendFrames',scan)
 %
 
-if notDefined('scan'), scan = viewGet(view,'curScan'); end
+if notDefined('scan'), scan = viewGet(vw,'curScan'); end
 
-dt    = viewGet(view,'dtStruct');
+dt    = viewGet(vw,'dtStruct');
 aType = dtGet(dt,'eventOrBlock',scan);
 
-switch aType %TODO: Remove this switch statement. It is unnecessary as it has already been wrapped into dtGet
-    case 'event'
-        smoothFrames = dtGet(dt,'smoothFrames',scan);
-    case 'block'
-        smoothFrames = dtGet(dt,'smoothFrames',scan,view);
-    otherwise
-        error('Unknown analysis %s\n',aType);
-end
+smoothFrames = dtGet(dt,'smoothFrames',scan,vw);
 
 return;
 
