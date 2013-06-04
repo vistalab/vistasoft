@@ -15,7 +15,7 @@ function vw = initHiddenInplane(dataType,scan,roi)
 % ras, 06/05, ensures session is loaded, 
 % mrGlobals is run; can specify data type,
 % scan, and roi at outset.
-% ras, 02/06: disbaled the notice that this was being initialized.
+% ras, 02/06: disabled the notice that this was being initialized.
 % I've found it a bit distracting; just a preference...
 
 if ~exist('dataType','var') || isempty(dataType)
@@ -64,6 +64,9 @@ end
 
 % Initialize curScan
 vw.curScan = scan;
+
+% Load Anatomy of this view
+vw = loadAnat(vw);
 
 % load any ROIs specified
 

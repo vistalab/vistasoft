@@ -21,7 +21,15 @@ switch param
     
     case 'anatomy'
         % Return the anatomical underlay image.
-        val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Data');
+        
+        switch viewGet(vw,'View Type')
+            case 'Inplane'
+                val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Data');
+            otherwise
+                val = vw.anat;
+        end
+        
+        
     case 'anatomymap'
         % Return the colormap for the anatomical underlay image.
         %   anataomyMap = viewGet(vw, 'Anatomy Map');
@@ -83,7 +91,7 @@ switch param
     case 'mmpervox'
         % Return the size of a voxel in mm
         %   mmPerVox = viewGet(vw, 'mm per voxel');
-        switch vw.viewType
+        switch viewGet(vw,'View Type')
             case 'Inplane'
                 val = niftiGet(viewGet(vw,'anat nifti'),'Pix Dim');
             case {'Volume' 'Gray' 'generalGray'}
