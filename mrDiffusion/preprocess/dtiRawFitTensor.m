@@ -4,7 +4,7 @@ function dt6FileName = dtiRawFitTensor(dwRaw, bvecs, bvals, outBaseName, bs, fit
 % dt6FileName = dtiRawFitTensor([dwRaw=uigetfile],
 % [bvecsFile=uigetfile], [bvalsFile=uigetfile], [outBaseDir=uigetdir],
 % [bootstrapParams=[]], [fitMethod='ls'], [brainMask=''],
-% [adcUnits=dtiGuessAdcUnits], [xformToAcPc=dwRaw.qto_xyz])
+% [adcUnits=dtiGuessDiffusivityUnits], [xformToAcPc=dwRaw.qto_xyz])
 %
 % The tensors are returned in [Dxx Dyy Dzz Dxy Dxz Dyz] format and are
 % saved in a dt6 file outBaseName 'dt6.mat'.
