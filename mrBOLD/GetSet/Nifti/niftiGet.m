@@ -82,8 +82,7 @@ switch param
         else
             error('vista:niftiError', 'No number of slices defined information found in nifti. Returning empty');
         end
-        if val == 0
-            warning('No slice end and slice start information has been found. Defaulting to dim(sliceDim) instead.');
+        if ni.slice_end == 0 || ni.slice_start == 0
             %First, let's try to use slicedim on the 'dim' field
             dims = niftiGet(ni,'Dim');
             sliceDim = niftiGet(ni,'Slice Dim');
