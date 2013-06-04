@@ -205,7 +205,7 @@ if anatFlag==1
     % make an overlay, indexing into the rows of cmap
     clipVals = min(M(:)) + funcClip .* (max(M(:))-min(M(:)));
     overlay  = uint8(rescale2(M, clipVals, [0 numColors]));
-    if ~isequal(dataSize(vw,1),viewSize(vw))
+    if ~isequal(dataSize(vw,1),viewGet(vw,'Size'))
         
         % adjust zoom to be of view size again, not data size
         rsFactor  = upSampleFactor(vw,scans(1));

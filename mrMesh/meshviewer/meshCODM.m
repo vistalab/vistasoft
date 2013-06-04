@@ -169,7 +169,7 @@ if(dataScale~=1) data = data.*dataScale; end
 dataMaskIndices = unique(dataMaskIndices);
 
 if(clusterThresh>0)
-    sz = viewSize(vw);
+    sz = viewGet(vw,'Size');
     maskVol = false(sz);
     maskCoords = vw.coords(:,dataMaskIndices);
     maskVol(sub2ind(sz,maskCoords(1,:),maskCoords(2,:),maskCoords(3,:))) = true;

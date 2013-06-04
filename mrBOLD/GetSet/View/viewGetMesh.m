@@ -96,7 +96,7 @@ switch param
         pos = viewGet(vw, 'Cursor Position');
         
         if ~isempty(pos),			% infer from sagittal position (high=right, low=left)
-            vs = viewSize(vw);
+            vs = viewGet(vw,'Size');
             if (pos(3) < vs(3)/2),	hemi = 'Left';
             else					hemi = 'Right';
             end

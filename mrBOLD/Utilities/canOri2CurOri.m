@@ -1,4 +1,4 @@
-function newCoords = canOri2CurOri(view, coords, ori)
+function newCoords = canOri2CurOri(vw, coords, ori)
 %
 % newCoords = canOri2CurOri(view, coords, <ori=cur slice orientation>)
 %
@@ -10,8 +10,8 @@ function newCoords = canOri2CurOri(view, coords, ori)
 % djh and baw, 7/98
 % ras, 04/05, deals w/ radiological conventions
 if notDefined('ori'), 
-    if ismember(view.viewType, {'Volume' 'Gray'})
-        ori = getCurSliceOri(view); 
+    if ismember(vw.viewType, {'Volume' 'Gray'})
+        ori = getCurSliceOri(vw); 
     else
         ori = 1;
     end
@@ -19,25 +19,25 @@ end
 
 newCoords = [];
 if ~isempty(coords)
-    if strcmp(view.viewType,'Volume') | strcmp(view.viewType,'Gray')
-        dims = viewSize(view);
+    if strcmp(viewGet(vw,'View Type'),'Volume') || strcmp(viewGet(vw,'View Type'),'Gray')
+        dims = viewGet(vw,'Size');
         
         % allow for the L/R flip option, which lets you
         % view the anatomy in radiological units (to match the
         % GE software conventions)
-        if checkfields(view, 'ui', 'flipLR') & view.ui.flipLR==1
+        if checkfields(vw, 'ui', 'flipLR') && vw.ui.flipLR==1
             coords(3,:) = dims(3) - coords(3,:);
         end
         
         switch ori
             case 1, % axial slice
                 newCoords = coords([2 3 1],:);
-                if isfield(view.ui,'flipLR') & view.ui.flipLR==1
+                if isfield(vw.ui,'flipLR') && vw.ui.flipLR==1
                     newCoords(2,:) = dims(3) - newCoords(2,:);
                 end
             case 2, % coronal slice
                 newCoords = coords([1 3 2],:);
-                if isfield(view.ui,'flipLR') & view.ui.flipLR==1
+                if isfield(vw.ui,'flipLR') && vw.ui.flipLR==1
                     newCoords(2,:) = dims(3) - newCoords(2,:);
                 end
             case 3, % sagittal slice

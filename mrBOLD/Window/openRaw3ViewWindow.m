@@ -77,7 +77,7 @@ VOLUME{s}.curDataType = 1;
 VOLUME{s}.curScan = 1;
 
 % Initialize location in volume space
-dims = viewSize(VOLUME{s});
+dims = viewGet(VOLUME{s},'Size');
 VOLUME{s}.loc = round(dims./2);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

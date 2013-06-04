@@ -48,7 +48,7 @@ if ~exist('zoom','var') || isempty(zoom),
 		zoom = viewGet(vw,'zoom');
         %Old: vw.ui.zoom;
 	else
-		dims = viewSize(vw);
+		dims = viewGet(vw,'Size');
 		zoom = [1 dims(2) 1 dims(1)];
 	end
 end
