@@ -1,4 +1,4 @@
-function [view xform] = importInplaneScans(view, srcSession, srcDt, srcScans, tgtDt, manualAlign);
+function [vw, xform] = importInplaneScans(vw, srcSession, srcDt, srcScans, tgtDt, manualAlign);
 % Import time series, maps, corAnals, and param maps from a source
 % session into the current session, saving interpolated functionals in the 
 % Inplane view of the target time series.
@@ -56,7 +56,7 @@ function [view xform] = importInplaneScans(view, srcSession, srcDt, srcScans, tg
 mrGlobals; % declares global mrSESSION variable
 if isempty(mrSESSION), loadSession; end
 
-if notDefined('view'),  view = getSelectedGray;      end
+if notDefined('vw'),  vw = getSelectedGray;      end
 
 if notDefined('srcSession')
     studyDir = fileparts(HOMEDIR);
@@ -116,7 +116,7 @@ if notDefined('tgtDt')
     dlg(1).style = 'popup';
     dlg(1).string = 'Target Data Type for imported scans?';
     dlg(1).list = {dataTYPES.name 'New Data Type (named below)'};
-    dlg(1).value = view.curDataType;
+    dlg(1).value = vw.curDataType;
 
     dlg(2).fieldName = 'newDtName';
     dlg(2).style = 'edit';
@@ -152,7 +152,7 @@ xform = inv(xformTgt) * xformSrc;
 
 %% do the manual alignment step if requested
 if manualAlign == 1
-	xform = importInplanes_getManualAlign(view, xform, srcSession, src, tgtDt);
+	xform = importInplanes_getManualAlign(vw, xform, srcSession, src, tgtDt);
 end
 
 
@@ -185,7 +185,7 @@ srcFuncSize = [src.mrSESSION.functionals(1).cropSize srcNSlices];
 srcAnatSize = [src.mrSESSION.inplanes.cropSize srcNSlices];
 
 tgtFuncSize = dataSize(V, 1);
-tgtAnatSize = viewSize(V);
+tgtAnatSize = viewGet(V,'Size');
 				
 srcRes = src.mrSESSION.inplanes.voxelSize;
 tgtRes = mrSESSION.inplanes.voxelSize;
@@ -218,7 +218,7 @@ else
 	resampXform = inv(shift) * resampXform * shift;
 	
 	% xform tgt coords into source anat space
-	[Y X Z] = meshgrid(1:tgtAnatSize(2), 1:tgtAnatSize(1), 1:tgtAnatSize(3));
+	[Y, X, Z] = meshgrid(1:tgtAnatSize(2), 1:tgtAnatSize(1), 1:tgtAnatSize(3));
 	tgtCoords = [Y(:) X(:) Z(:) ones(size(X(:), 1), 1)]';  
 	clear X Y Z
 	
@@ -232,7 +232,7 @@ end
 
 %% (3) get mean map from the source session
 meanMapFile = fullfile(srcSession, 'Inplane', 'Original', 'meanMap.mat');
-if ~exist(meanMapFile)
+if ~exist('meanMapFile','file')
 	cd(HOMEDIR);
 	callingDir = pwd;
 	
@@ -262,7 +262,7 @@ shift = [eye(3) -tgtAnatSize([2 1 3])' ./ 2; 0 0 0 1];
 resampXform = inv(shift) * resampXform * shift;
 
 % xform tgt coords into source anat space
-[Y X Z] = meshgrid(1:tgtAnatSize(2), 1:tgtAnatSize(1), 1:tgtAnatSize(3));
+[Y, X, Z] = meshgrid(1:tgtAnatSize(2), 1:tgtAnatSize(1), 1:tgtAnatSize(3));
 tgtCoords = [Y(:) X(:) Z(:) ones(size(X(:), 1), 1)]';  
 clear X Y Z
 
@@ -280,7 +280,7 @@ ipTgt = anat;
 
 % (5) get resampled mean map from the target session
 meanMapFile = fullfile(HOMEDIR, 'Inplane', 'Original', 'meanMap.mat');
-if ~exist(meanMapFile)
+if ~exist('meanMapFile','file')
 	computeMeanMap(initHiddenInplane('Original'), 0, 1);
 end	
 load(meanMapFile, 'map');

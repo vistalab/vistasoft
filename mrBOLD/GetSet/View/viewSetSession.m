@@ -58,7 +58,7 @@ switch param
                 set(vw.ui.slice.labelHandle, 'String', str);
                 
             case {'Volume', 'Gray'}
-                volSize = viewSize(vw);
+                volSize = viewGet(vw,'Size');
                 sliceOri=getCurSliceOri(vw);
                 sliceNum=clip(val,1,volSize(sliceOri));
                 set(vw.ui.sliceNumFields(sliceOri), 'String',num2str(sliceNum));

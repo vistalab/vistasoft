@@ -1,4 +1,4 @@
-function view = getVolCoords(view, rootDir)
+function vw = getVolCoords(vw, rootDir)
 %
 % view = getVolCoords(view);
 %
@@ -30,12 +30,12 @@ function view = getVolCoords(view, rootDir)
 global mrSESSION 
 global HOMEDIR
 
-if ~strcmp(view.viewType,'Volume') & ~strcmp(view.viewType,'Gray')
+if ~strcmp(viewGet(vw,'View Type'),'Volume') && ~strcmp(viewGet(vw,'View Type'),'Gray')
   myErrorDlg('getVolCoords only for Volume view.');
 end
 
 if ~exist('rootDir', 'var'), rootDir = HOMEDIR; end
-pathStr = fullfile(rootDir, view.viewType, 'coords');
+pathStr = fullfile(rootDir, vw.viewType, 'coords');
 
 if ~exist(fileparts(pathStr), 'dir')
     mkdir(fileparts(pathStr));
@@ -47,7 +47,7 @@ if check4File(pathStr)
   % Load 'em
   %
   load(pathStr);
-  view.coords = coords;
+  vw.coords = coords;
 
 else
 
@@ -71,8 +71,7 @@ else
   %     The function viewSize does not return the dimensions in the desired
   %     order because it does not apply the function mrAnatRotateAnalyze.
   %     Also, let's use viewGet calls when we can.
-  % % volSize = viewSize(view);
-  volSize = viewGet(view, 'Anat Size');
+  volSize = viewGet(vw, 'Anat Size');
   ipView = initHiddenInplane;
   inplaneSize = viewGet(ipView,'Anat Size');
 
@@ -110,7 +109,7 @@ else
 
   % Fill coords slot
   %
-  view.coords = coords;
+  vw.coords = coords;
   
   % Save to file
   %

@@ -77,7 +77,7 @@ case {'Volume','Gray'}
     % Find indices of the appropriate VOLUME.coords, make the image,
     % and a 2xN array of image coordinates (where N is the
     % number of VOLUME.coords in the slice).
-    volSize = viewSize(vw);
+    volSize = viewGet(vw,'Size');
     
     switch orientation
     case 1 

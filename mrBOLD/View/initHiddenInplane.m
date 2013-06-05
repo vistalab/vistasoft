@@ -33,18 +33,20 @@ evalin('base','mrGlobals');
 evalin('base','HOMEDIR = pwd;');
 evalin('base','loadSession');
 
+%Initialize the view
+vw = struct();
 %TODO: Make all of the below use viewSets
-vw.name     ='hidden';
-vw.viewType ='Inplane';
-vw.subdir   ='Inplane';
+vw = viewSet(vw,'name','hidden');
+vw = viewSet(vw,'viewType','Inplane');
+vw = viewSet(vw,'subdir','Inplane');
 
 % Initialize slots for co, amp, and ph
-vw.co       = [];
-vw.amp      = [];
-vw.ph       = [];
-vw.map      = [];
-vw.mapName  = '';
-vw.mapUnits = '';
+vw = viewSet(vw,'co',[]);
+vw = viewSet(vw,'amp',[]);
+vw = viewSet(vw,'ph',[]);
+vw = viewSet(vw,'map',[]);
+vw = viewSet(vw,'mapName','');
+vw = viewSet(vw,'mapUnits','');
 
 % Initialize slots for tSeries
 vw.tSeries      = [];

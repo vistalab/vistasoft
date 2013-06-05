@@ -1,4 +1,4 @@
-function [h, montage] = showROISlices(view, ori, lineWidth);
+function [h, montage] = showROISlices(vw, ori, lineWidth);
 % [h montage] = showROISlices(view, [ori=get from view], [lineWidth=1.5]);
 %
 % make a mosaic image (w/ handle h) of
@@ -8,13 +8,13 @@ function [h, montage] = showROISlices(view, ori, lineWidth);
 % Currently Volume/Gray view specific.
 %
 % ras 11/22/04.
-if notDefined('view'),    view = getCurView;            end
-if notDefined('ori'),    ori = getCurSliceOri(view);    end
+if notDefined('vw'),    vw = getCurView;            end
+if notDefined('ori'),    ori = getCurSliceOri(vw);    end
 if notDefined('lineWidth'),    lineWidth = 1.5;         end
 
-viewType = viewGet(view,'viewType');
+viewType = viewGet(vw,'viewType');
 
-if ~isequal(viewType,'Gray') & ~isequal(viewType,'Volume')
+if ~isequal(viewType,'Gray') && ~isequal(viewType,'Volume')
     fprintf('Sorry, currently volume/gray specific now...\n');
     return
 end
@@ -23,31 +23,31 @@ end
 montage = [];
 
 % get selected roi
-rois = viewGet(view,'rois');
-selRoi = viewGet(view,'selectedROI');
+rois = viewGet(vw,'rois');
+selRoi = viewGet(vw,'selectedROI');
 roi = rois(selRoi);
 coords = roi.coords;
     
 % get display mode info from view
-displayMode = viewGet(view,'displayMode');
-modeInfo = viewGet(view,[displayMode 'Mode']);
+displayMode = viewGet(vw,'displayMode');
+modeInfo = viewGet(vw,[displayMode 'Mode']);
 nColors = modeInfo.numColors + modeInfo.numGrays;
-if ~isequal(displayMode, 'anat') & isempty(view.map) & isempty(view.ph)
-    modeInfo = view.ui.anatMode;
+if ~isequal(displayMode, 'anat') & isempty(vw.map) & isempty(vw.ph)
+    modeInfo = vw.ui.anatMode;
     nColors = modeInfo.numGrays;
 end
 
 
 % figure out which slices it belongs to, depending on
 % orientation
-coords = canOri2CurOri(view,coords);
+coords = canOri2CurOri(vw,coords);
 slices = unique(round(coords(3,:)));
 nSlices = length(slices);
 
 % other needed params
-dims = viewSize(view);
-if view.ui.showROIs ~= 0        % ROI drawing prefs
-    prefs.method = 2 - (view.ui.showROIs<0);
+dims = viewGet(vw,'Size');
+if vw.ui.showROIs ~= 0        % ROI drawing prefs
+    prefs.method = 2 - (vw.ui.showROIs<0);
     prefs.lineWidth = lineWidth;
     prefs.color = roi.color;
 end
@@ -57,17 +57,17 @@ ncols = ceil(sqrt(nSlices));
 nrows = ceil(nSlices/ncols);
 
 % get zoom range
-if isfield(view.ui,'zoom')
+if isfield(vw.ui,'zoom')
     switch ori
         case 1, % axial
-            xrng = view.ui.zoom(3,:);
-            yrng = view.ui.zoom(2,:);
+            xrng = vw.ui.zoom(3,:);
+            yrng = vw.ui.zoom(2,:);
         case 2, % coronal
-            xrng = view.ui.zoom(3,:);
-            yrng = view.ui.zoom(1,:);
+            xrng = vw.ui.zoom(3,:);
+            yrng = vw.ui.zoom(1,:);
         case 3, % sagittal
-            xrng = view.ui.zoom(2,:);
-            yrng = view.ui.zoom(1,:);
+            xrng = vw.ui.zoom(2,:);
+            yrng = vw.ui.zoom(1,:);
     end
     
 else
@@ -92,9 +92,9 @@ for row = 1:nrows
         ind = (row-1)*ncols + col;        
         
         if ind <= nSlices
-            [view im] = recompute3ViewImage(view, slices(ind), ori);
+            [vw, im] = recompute3ViewImage(vw, slices(ind), ori);
 
-            if isfield(view.ui,'flipLR') & view.ui.flipLR==1 & ori < 3
+            if isfield(vw.ui,'flipLR') && vw.ui.flipLR==1 & ori < 3
                 im = fliplr(im);
             end
 
@@ -105,7 +105,7 @@ for row = 1:nrows
             imagesc(im, [1 nColors]); axis image; axis off;
             
             % draw ROIs if selected
-            if view.ui.showROIs ~= 0
+            if vw.ui.showROIs ~= 0
                 ok = find(coords(3,:)==slices(ind));
                 outline(coords(1:2,ok), prefs);
             end
@@ -128,7 +128,7 @@ for row = 1:nrows
                     dY = {'I' ' \leftrightarrow ' 'S'};   
             end
             
-            if checkfields(view, 'ui', 'flipLR') & view.ui.flipLR==1 & ori<3
+            if checkfields(vw, 'ui', 'flipLR') && vw.ui.flipLR==1 && ori<3
                 dX = fliplr(dX);
             end
             

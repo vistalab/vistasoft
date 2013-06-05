@@ -12,13 +12,13 @@ function volume= ip2volSpatialGradient(inplane,volume)
 %
 % djh, 2/2001
 
-global mrSESSION;
+mrGlobals;
 
 % Don't do this unless inplane is really an inplane and volume is really a volume
-if ~strcmp(inplane.viewType,'Inplane')
+if ~strcmp(viewGet(inplane,'viewType'),'Inplane')
     myErrorDlg('ip2volParMap can only be used to transform from inplane to volume/gray.');
 end
-if ~strcmp(volume.viewType,'Volume') & ~strcmp(volume.viewType,'Gray')
+if ~strcmp(viewGet(volume,'View Type'),'Volume') && ~strcmp(viewGet(volume,'viewType'),'Gray')
     myErrorDlg('ip2volParMap can only be used to transform from inplane to volume/gray.');
 end
 
@@ -35,7 +35,7 @@ end
 
 % Check that dataType is the same for both views. If not, doesn't make sense to do the xform.
 % because for example the two dataTypes may have a different number of scans.
-[inplane volume] = checkTypes(inplane, volume);
+[inplane, volume] = checkTypes(inplane, volume);
 
 % Compute the transformed coordinates (i.e., where does each gray node fall in the inplanes).
 % The logic here is copied from ip2volCorAnal.
@@ -44,7 +44,7 @@ coords = [volume.coords; ones(1,nVoxels)];
 vol2InplaneXform = inv(mrSESSION.alignment);
 vol2InplaneXform = vol2InplaneXform(1:3,:);
 coordsXformed = vol2InplaneXform*coords;
-n = viewSize(inplane) ./ size(inplane.spatialGrad);
+n = viewGet(inplane,'Size') ./ size(inplane.spatialGrad);
 if n(1) ~= n(2)
     disp('Warning! upSampling is different in x and y');
 else

@@ -1,4 +1,4 @@
-function view = computeB0DirectionMap(view, rawFile, lineROIpoint);
+function vw = computeB0DirectionMap(vw, rawFile, lineROIpoint);
 % Compute a map which reflects the coordinate along the scanner Z axis,
 % parallel to tbe B0 field.
 %
@@ -34,15 +34,15 @@ function view = computeB0DirectionMap(view, rawFile, lineROIpoint);
 if notDefined('lineROIpoint'),  lineROIpoint = [];  end
 if ~exist('rawFile', 'var'),    rawFile = [];       end
 
-scannerXform = viewGet(view, 'scannerXform', rawFile);
+scannerXform = viewGet(vw, 'scannerXform', rawFile);
 
 %% compute the map values
 % initalize an empty map -- the data will go in the first slot
-map = cell(1, numScans(view));
+map = cell(1, numScans(vw));
 
 % create a coordinate grid in the inplane space
-sDims = viewSize(view);
-[X Y Z] = meshgrid(1:sDims(2), 1:sDims(1), 1:sDims(3));
+sDims = viewGet(vw,'Size');
+[X, Y, Z] = meshgrid(1:sDims(2), 1:sDims(1), 1:sDims(3));
 ipCoords = [Y(:) X(:) Z(:) ones(size(X(:)))]';
 
 % transform these inplane coordinates into scanner space
@@ -53,8 +53,8 @@ map{1} = reshape(scannerCoords(3,:), sDims);
 
 %% save the map
 mapName = 'Scanner Z Coordinate';
-view = setParameterMap(view, map, mapName);
-saveParameterMap(view);
+vw = setParameterMap(vw, map, mapName);
+saveParameterMap(vw);
 
 
 %% create the ROI if an anchor point is provided
@@ -63,11 +63,11 @@ saveParameterMap(view);
 if ~isempty(lineROIpoint)
 	if isequal(lineROIpoint, -1)
 		% center of cur ROI
-		roi = view.ROIs(view.selectedROI);
+		roi = vw.ROIs(vw.selectedROI);
 		lineROIpoint = mean(roi.coords, 2);
 	end
 	
-	if length(lineROIpoint) ~= 3 & numel(lineROIpoint) ~= 3
+	if length(lineROIpoint) ~= 3 && numel(lineROIpoint) ~= 3
 		error('Line ROI point requires a 3-element vector [row, slice, col].')
 	end
 	
@@ -80,7 +80,7 @@ if ~isempty(lineROIpoint)
 	zRange = minmax(scannerCoords(3,:));
 	zRange = zRange(1):zRange(2);
 	nPoints = length(zRange);
-	[xx yy zz] = meshgrid(anchor(2), anchor(1), zRange);
+	[xx, yy, zz] = meshgrid(anchor(2), anchor(1), zRange);
 	
 	% xform the scanner (xx, yy, zz) points into inplane ROI coordinates
 	roiCoords = inv(scannerXform) * [yy(:) xx(:) zz(:) ones(nPoints, 1)]';
@@ -92,11 +92,11 @@ if ~isempty(lineROIpoint)
 	ROI.coords = round(roiCoords(1:3,:));
 	ROI.comments = ['Created by ' mfilename '.'];
 	
-	view = addROI(view, ROI, 1);
+	vw = addROI(vw, ROI, 1);
 end
 
 
-view = refreshScreen(view);
+vw = refreshScreen(vw);
 
 return
 

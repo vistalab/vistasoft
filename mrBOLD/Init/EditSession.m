@@ -12,9 +12,6 @@ function [mrSESSION,ok] = EditSession(mrSESSION,editable)
 % within the functionals struct array field. Various other fields
 % are displayed for informational purposes.
 %
-% TODO:  mrSESSION needs to be treated with more respect.  We need a
-% sessionGet() and sessionSet() and sessionCreate() functions.  We need to
-% touch mrSESSION only through those functions
 
 if ~exist('editable','var'), editable = 1; end
 
