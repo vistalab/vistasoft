@@ -9,10 +9,7 @@ function fs_autosegmentToITK(subjID, t1, skipRecon, resample_type)
 % INPUTS:
 %   subjID: directory name in which freesurfer stores outputs
 %   t1:     file name (with complete path) of t1 used for segmentation.
-%                TODO: Currently a single NIFTI is expected by this script.
-%                Freesurfer is more flexible so the scipt could be improved
-%                by allowing multiplte T1s or one or more directories of
-%                DICOMs.
+%
 %   skipRecon: boolean. If true, then we regenerate a t1 class file (nifti)
 %       `       from the already complete freesurfer segementation, without
 %               re-doing the freesurfer segmentation. [default = false]
