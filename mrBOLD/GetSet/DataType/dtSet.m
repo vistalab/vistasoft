@@ -1,7 +1,19 @@
 function dt = dtSet(dt,param,val,varargin)
-% Set value from dataTYPES structure
+% Set value in the dataTYPES structure
 %
 %   dt = dtSet(dt,param,val,varargin)
+%
+% USAGE
+%  val = dtGet(dataTYPES(1),'atype',newValue);
+%
+% INPUTS
+%  dataTYPES struct - one member of the dataTYPES struct array
+%  param - String parameter specifying the value to set
+%  val - The new value that will be set
+%
+% RETURNS
+%  Value (or values) stored in dataTYPES or calculated from values stored
+%  in dataTYPES
 %
 % dataTYPES is a global structure, paralleling mrSESSION in some ways. The
 % dataTYPES structure contains a great deal of information about the scans.

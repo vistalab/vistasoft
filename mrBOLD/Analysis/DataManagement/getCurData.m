@@ -21,7 +21,7 @@ if isempty(tmp)
 end
 
 if strcmp(viewGet(vw,'View Type'),'Volume') || strcmp(viewGet(vw,'View Type'),'Gray')
-    volSize = viewSize(vw);
+    volSize = viewGet(vw,'Size');
     tmp = tmp{scanNum}(:);
     data = NaN*ones(volSize);
     volIndices = coords2Indices(viewGet(vw,'Coords'),volSize);

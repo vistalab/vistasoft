@@ -34,12 +34,12 @@ end
 % Slice num fields
 width = .1;
 height = .05;
-bot= .01;sz= viewSize(vw);
+bot= .01;sz= viewGet(vw,'Size');
 for b = 1:3
   left = .25*(b-1) + .2;
   % Callback:
   %   sliceNum=str2num(get(vw.ui.sliceNumFields(b),'String'));
-  %   volSize=viewSize(vw);
+  %   volSize=viewGet(vw,'Size');
   %   sliceNum=clip(sliceNum,1,volSize(b));
   %   set(vw.ui.sliceNumFields(b),'String',num2str(sliceNum));
   %   clear sliceNum volSize;
@@ -47,7 +47,7 @@ for b = 1:3
   bstr=num2str(b);
   callbackStr = ...
       ['sliceNum=str2num(get(',vw.name,'.ui.sliceNumFields(',bstr,'),''String'')); '...
-	  'volSize=viewSize(',vw.name,'); ',...
+	  'volSize=viewGet(',vw.name,',''Size''); ',...
 	  'sliceNum=clip(sliceNum,1,volSize(',bstr,')); '...
 	  'set(',vw.name,'.ui.sliceNumFields(',bstr,'),''String'',num2str(sliceNum)); '...
 	  'clear sliceNum volSize; ',...

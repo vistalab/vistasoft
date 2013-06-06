@@ -23,10 +23,6 @@ mrSESSION.inplanes.inplanePath = '';
 
 dataTYPES.name = 'Original';
 
-%TODO: Decide if we want to save vANATOMYPATH as well, and if we don't,
-%then remove it from this call
-vANATOMYPATH = '';
-
 save mrSESSION mrSESSION dataTYPES
 
 return

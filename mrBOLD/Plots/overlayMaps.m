@@ -1,4 +1,4 @@
-function overlayMaps(view,map1,map2,anatFlag,map1Name,map2Name);
+function overlayMaps(vw,map1,map2,anatFlag,map1Name,map2Name)
 %
 % overlayMaps(view,map1,map2,[anatFlag],[map1Name,map2Name]);
 %
@@ -31,17 +31,17 @@ end
 
 if anatFlag==1    
     % initialize anatomy
-	viewType = viewGet(view,'viewType');
+	viewType = viewGet(vw,'viewType');
 	switch viewType
         case {'Inplane','Flat'}, 
-            nSlices = numSlices(view); 
+            nSlices = numSlices(vw); 
             for i = 1:nSlices
-                bg(:,:,i) = recomputeAnatImage(view,[],i);
+                bg(:,:,i) = recomputeAnatImage(vw,[],i);
             end
             
         case {'Volume','Gray'}, 
-            bg = viewGet(view,'anat');
-            ori = getCurSliceOri(view);
+            bg = viewGet(vw,'anat');
+            ori = getCurSliceOri(vw);
             if ori==1, % permute to axial view 
                 bg = permute(bg,[2 3 1]);
             elseif ori==2, % permute to coronal view
@@ -52,7 +52,7 @@ if anatFlag==1
     % resize overlay volumes to be same size as bg
     switch viewType
         case {'Inplane'},
-            vs = viewSize(view);
+            vs = viewGet(vw,'Size');
             for i = 1:vs(3)
                 tmp1(:,:,i) = imresize(map1(:,:,i),[vs(1) vs(2)]);
                 tmp2(:,:,i) = imresize(map2(:,:,i),[vs(1) vs(2)]);
@@ -60,7 +60,7 @@ if anatFlag==1
             map1 = tmp1; map2 = tmp2; clear tmp1 tmp2;
             
         case {'Volume','Gray','volume3View'},
-            coords = canOri2CurOri(view,view.coords);
+            coords = canOri2CurOri(vw,vw.coords);
             ind = sub2ind(size(bg),coords(1,:),coords(2,:),coords(3,:));
             
             tmp1 = zeros(size(bg));
@@ -73,7 +73,7 @@ if anatFlag==1
             map2 = tmp2;
             clear tmp2;       
             
-            if isfield(view.ui,'flipLR') & view.ui.flipLR==1
+            if isfield(vw.ui,'flipLR') & vw.ui.flipLR==1
                 map1 = flipdim(map1,2);
                 map2 = flipdim(map2,2);
                 bg = flipdim(bg,2);
@@ -89,7 +89,7 @@ if anatFlag==1
     end
     
     % apply a zoom, if specified in ui 
-    ui = viewGet(view,'ui');
+    ui = viewGet(vw,'ui');
     if isfield(ui,'zoom')
         switch viewType
             case {'Inplane','Flat'},

@@ -1,6 +1,20 @@
 function val = niftiGet(ni,param,varargin)
-% Get data from various nifti data structures
 %
+% Get a value from a nifti structure
+%
+%   val = niftiGet(nii,param,varargin)
+%
+% USAGE
+%  val = niftiGet(nii,'Data');
+%
+% INPUTS
+%  Nifti struct - The structure read in by niftiRead
+%  param - String parameter specifying the value to retrieve
+%
+% RETURNS
+%  Value (or values) stored in the nifti or calculated from values stored
+%  in the nifti
+
 
 if notDefined('ni'), error('Nifti data structure variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
