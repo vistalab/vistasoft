@@ -139,17 +139,40 @@ switch param
         
         val = s.inplanes.inplanePath;
         
-        if ~exist(val,'file')
-            %We cannot find the file, let's ask the user to 'browse' for it
-            warning('The file that has been specified in the inplane path does not exist. Please select a new file.');
-            dlgTitle = 'Select inplane nifti to open...';
-            [val,pthName] = uigetfile({'*.nii.gz', 'gzipped nifti (*.nii.gz)';'*.nii', 'nifti (*.nii)'},dlgTitle);
-            if isempty(val), error('Inplane path not found'); end
-            val = fullfile(pthName,val);
+        toSave = 0;
+        mrGlobals;
+        
+        if iscell(val)
+            valCell = val;
+            val = '';
+
+            for i = 1:length(valCell)
+                val = fullfile(val,valCell{i});
+            end %for
+        else
+            if ~exist(val,'file')
+                %We cannot find the file, let's ask the user to 'browse' for it
+                warning('The file that has been specified in the inplane path does not exist. Please select a new file.');
+                dlgTitle = 'Select inplane nifti to open...';
+                [val,pthName] = uigetfile({'*.nii.gz', 'gzipped nifti (*.nii.gz)';'*.nii', 'nifti (*.nii)'},dlgTitle);
+                if isempty(val), error('Inplane path not found'); end
+                val = fullfile(pthName,val);
+            end
             
+            val = relativepath(val,HOMEDIR);
+            [~, valCell] = regexp(val,filesep, 'match', 'split');
+            
+            toSave = 1;
+            
+        end %if
+        
+        %Reset val
+
+
+        if (toSave)
             % We need to also ensure that we save down this new path to the
             % session:
-            mrGlobals;
+
             loadSession;
             
             mrSESSION = sessionSet(mrSESSION,'Inplane Path', val);
