@@ -72,7 +72,7 @@ switch param
         if (iscell(val))
             s.inplanes.inplanePath = val;
         else %Means that it is a string
-            if strcmp(val(1),filesep) %TODO: This does not work in windows
+            if strcmp(val(1),filesep) || ispc
                 %Absolute path
                 val = relativepath(val,HOMEDIR);
             end %if

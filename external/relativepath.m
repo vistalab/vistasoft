@@ -54,7 +54,7 @@ end
 
 % Remove level by level, as long as both are equal:
 while  ~isempty(act_path_cell) &&   ~isempty(tgt_path_cell)
-    if  isequal( act_path_cell{1}, tgt_path_cell{1} )
+    if  isequal( act_path_cell{2}, tgt_path_cell{2} )
         act_path_cell(1) = [];
         tgt_path_cell(1) = [];
     else
