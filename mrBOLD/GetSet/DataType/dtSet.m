@@ -56,8 +56,17 @@ switch param
         else dt.eventAnalysisParams(varargin{1}) = val;
         end
         
-	case {'inplanepath'}
+    case {'inplanepath'}
         % dt = dtSet(dt,'nFrames','/tmp/inplanepath.nii.gz/',scan)
+        if (~iscell(val))
+            %Means that it is a string
+            if strcmpi(val(1),filesep) || ispc
+                %Absolute path
+                val = relativepath(val,HOMEDIR);
+            end %if
+            [~,val] = regexp(val,filesep, 'match', 'split');
+        end %if
+        
         if isempty(varargin), dt.scanParams(:).inplanePath = val;
         else dt.scanParams(varargin{1}).inplanePath = val;
         end

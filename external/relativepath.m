@@ -47,14 +47,14 @@ tgt_path_cell = pathparts(tgt_path);
 % If volumes are different, return absolute path:
 if  isempty(act_path_cell)   ||   isempty(tgt_path_cell)
     return  % rel_path = ''
-elseif  ~isequal( act_path_cell{1} , tgt_path_cell{1} )
+elseif  ~isequal( act_path_cell{2} , tgt_path_cell{2} )
     rel_path = tgt_path;
     return
 end
 
 % Remove level by level, as long as both are equal:
 while  ~isempty(act_path_cell) &&   ~isempty(tgt_path_cell)
-    if  isequal( act_path_cell{2}, tgt_path_cell{2} )
+    if  isequal( act_path_cell{1}, tgt_path_cell{1} )
         act_path_cell(1) = [];
         tgt_path_cell(1) = [];
     else
