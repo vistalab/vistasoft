@@ -38,6 +38,8 @@ function val = dtGet(dt,param,varargin)
 %
 % Copyright Stanford VistaLab 2013
 
+mrGlobals;
+
 if notDefined('dt'),    error('dataTYPES parameter required'); end
 if notDefined('param'), error('param required'); end
 val = [];       % Default
@@ -150,7 +152,6 @@ switch param
                 val = fullfile(pthName,val);
             end
             
-            val = relativepath(val,HOMEDIR);
             [~, valCell] = regexp(val,filesep, 'match', 'split');
             
             % We need to also ensure that we save down this new path to the

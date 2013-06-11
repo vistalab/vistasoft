@@ -29,6 +29,8 @@ function dt = dtSet(dt,param,val,varargin)
 %     retinotopyModelParams: [1x1 struct]  (Optional)
 %
 
+mrGlobals;
+
 if notDefined('dt'), error('dataTYPES parameter required'); end
 if notDefined('param'), error('param required'); end
 
@@ -60,10 +62,6 @@ switch param
         % dt = dtSet(dt,'nFrames','/tmp/inplanepath.nii.gz/',scan)
         if (~iscell(val))
             %Means that it is a string
-            if strcmpi(val(1),filesep) || ispc
-                %Absolute path
-                val = relativepath(val,HOMEDIR);
-            end %if
             [~,val] = regexp(val,filesep, 'match', 'split');
         end %if
         

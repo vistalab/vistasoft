@@ -159,7 +159,6 @@ switch param
                 val = fullfile(pthName,val);
             end
             
-            val = relativepath(val,HOMEDIR);
             [~, valCell] = regexp(val,filesep, 'match', 'split');
             
             toSave = 1;

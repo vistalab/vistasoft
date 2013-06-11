@@ -159,7 +159,7 @@ mrSESSION = sessionSet(mrSESSION,'comments',params.comments);
 
 ensureDirExists(fullfile(params.sessionDir,'Inplane'));
 
-localFileName = fullfile(params.sessionDir,'Inplane','InplaneNifti.nii.gz');
+localFileName = fullfile('Inplane','InplaneNifti.nii.gz');
 
 copyfile(params.inplane,localFileName);
 
@@ -183,7 +183,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         
         oldFileName = mrGet(params.functionals{scan}, 'filename');
         
-        localFileName = fullfile(params.sessionDir,'Inplane','Original','TSeries',['TSeriesScan' scan '.nii.gz']);
+        localFileName = fullfile('Inplane','Original','TSeries',['TSeriesScan' num2str(scan) '.nii.gz']);
         
         copyfile(oldFileName,localFileName);
         
