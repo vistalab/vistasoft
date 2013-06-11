@@ -29,6 +29,8 @@ function dt = dtSet(dt,param,val,varargin)
 %     retinotopyModelParams: [1x1 struct]  (Optional)
 %
 
+mrGlobals;
+
 if notDefined('dt'), error('dataTYPES parameter required'); end
 if notDefined('param'), error('param required'); end
 
@@ -56,8 +58,13 @@ switch param
         else dt.eventAnalysisParams(varargin{1}) = val;
         end
         
-	case {'inplanepath'}
+    case {'inplanepath'}
         % dt = dtSet(dt,'nFrames','/tmp/inplanepath.nii.gz/',scan)
+        if (~iscell(val))
+            %Means that it is a string
+            [~,val] = regexp(val,filesep, 'match', 'split');
+        end %if
+        
         if isempty(varargin), dt.scanParams(:).inplanePath = val;
         else dt.scanParams(varargin{1}).inplanePath = val;
         end

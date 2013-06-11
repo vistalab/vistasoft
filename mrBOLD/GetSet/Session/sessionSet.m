@@ -9,6 +9,8 @@ function s = sessionSet(s,param,val,varargin)
 %   mrSESSION = sessionSet(mrSESSION,'sliceOrder',[ 3 1 5 4 2],scan);
 %
 
+mrGlobals;
+
 if notDefined('s'), error('mrSESSION variable required'); end
 
 if ischar(s)
@@ -62,7 +64,16 @@ switch param
         % Information about the functional scans
         
     case {'inplanepath'}
-        s.inplanes.inplanePath = val;
+        % Assume we get a string path in
+        % Then check if absolute or relative (i.e. if it starts with
+        % nothing or a period, it is relative)
+        % Finally, save the path as a cell array split on filesep
+        
+        if (iscell(val))
+            s.inplanes.inplanePath = val;
+        else %Means that it is a string
+            [~,s.inplanes.inplanePath] = regexp(val,filesep, 'match', 'split');
+        end %if
         
     case {'keepframes'}
         if isempty(varargin), s.functionals(:).keepFrames = val;

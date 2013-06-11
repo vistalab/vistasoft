@@ -156,7 +156,14 @@ mrSESSION = sessionSet(mrSESSION,'description', params.description);
 mrSESSION = sessionSet(mrSESSION,'sessionCode',params.sessionCode);
 mrSESSION = sessionSet(mrSESSION,'subject',params.subject);
 mrSESSION = sessionSet(mrSESSION,'comments',params.comments);
-mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane); %Populates the mrSESSION inplane path var
+
+ensureDirExists(fullfile(params.sessionDir,'Inplane'));
+
+localFileName = fullfile('Inplane','InplaneNifti.nii.gz');
+
+copyfile(params.inplane,localFileName);
+
+mrSESSION = sessionSet(mrSESSION,'Inplane Path',localFileName); %Populates the mrSESSION inplane path var
 mrSESSION = sessionSet(mrSESSION,'Version','2.1');
 
 save mrSESSION mrSESSION -append;
@@ -170,9 +177,17 @@ save mrInit_params params   % stash the params in case we crash
 if isfield(params,'functionals') && ~isempty(params.functionals)
     func = mrLoadHeader(params.functionals{1});
     
+    ensureDirExists(fullfile(params.sessionDir,'Inplane','Original','TSeries'));
+    
     for scan = 1:length(params.functionals)
         
-        func.path = mrGet(params.functionals{scan}, 'filename');
+        oldFileName = mrGet(params.functionals{scan}, 'filename');
+        
+        localFileName = fullfile('Inplane','Original','TSeries',['TSeriesScan' num2str(scan) '.nii.gz']);
+        
+        copyfile(oldFileName,localFileName);
+        
+        func.path = localFileName;
         
         %We will need to replace this code with something that adds the paths to
         %the session variable and then performs these data processes on-the-fly
