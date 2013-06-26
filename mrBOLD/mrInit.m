@@ -344,17 +344,20 @@ if checkfields(mr, 'info', 'date'), f.date = mr.info.date; end
 if checkfields(mr, 'info', 'time'), f.time = mr.info.time; end
 
 f.junkFirstFrames = 0; %This always appears to be 0. perhaps remove it?
-if mr.keepFrames(scan,2) == -1
-    remainingFrames = mr.dims(4);
+
+if mr.keepFrames(scan,2) == -1, 
+    % if 2nd column of keepframes is -1, keep all frames after drop frames
+    nFrames = mr.dims(4) - mr.keepFrames(scan,1);   
 else
-    remainingFrames = mr.keepFrames(scan,2);
-end %if
-totalDroppedFrames = (mr.dims(4) - remainingFrames) + mr.keepFrames(scan,1);
-f.nFrames = mr.dims(4) - totalDroppedFrames;
-f.slices =  1:mr.dims(3);
-f.fullSize = mr.dims(1:2);
-f.cropSize = mr.dims(1:2);
-f.crop = [1 1; mr.dims(1:2)];
+    % if 2nd column of keepframes is +n, keep n frames after drop frames
+    nFrames = mr.keepFrames(scan,2); 
+end
+    
+f.nFrames   = nFrames;
+f.slices    =  1:mr.dims(3);
+f.fullSize  = mr.dims(1:2);
+f.cropSize  = mr.dims(1:2);
+f.crop      = [1 1; mr.dims(1:2)];
 f.voxelSize = mr.voxelSize(1:3);
 f.effectiveResolution = mr.voxelSize(1:3);
 f.keepFrames = mr.keepFrames; %Keep Frames will now be udpated in both mrSESSION and dataTYPES
