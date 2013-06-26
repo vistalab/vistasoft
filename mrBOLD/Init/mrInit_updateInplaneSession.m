@@ -23,7 +23,7 @@ try
     loadSession;
     mrGlobals;
     
-    inplanePath = fullfile(pwd,'Inplane/anat.mat');
+    inplanePath = fullfile(pwd,'Inplane', 'anat.mat');
     
     inplaneAnat = load(inplanePath);
     inplaneAnat.anat = permute(inplaneAnat.anat,[2 1 3]);
@@ -45,14 +45,14 @@ try
     %However, this does not create the proper pix dims, so let's fix that
     nii = niftiSet(nii,'Pix dim',mrSESSION.inplanes.voxelSize);
     
-    fileName = fullfile(pwd,'Inplane/inplaneNifti.nii.gz');
+    fileName = fullfile(pwd,'Inplane', 'inplaneNifti.nii.gz');
     
     nii = niftiSet(nii,'File Path',fileName);
     
-    writeFileNifti(nii);
+    niftiWrite(nii);
     
     %Before we reset mrSESSION, let's save a backup
-    copyfile('./mrSESSION.mat','./mrSESSION_inplaneMigrationBackup.mat');
+    copyfile('mrSESSION.mat','mrSESSION_inplaneMigrationBackup.mat');
         
     %Reset mrSESSION.inplanes:
     fieldNames = fieldnames(sessionGet(mrSESSION,'Inplane'));
@@ -61,7 +61,7 @@ try
     
     mrSESSION = sessionSet(mrSESSION,'Inplane Path',fileName);
     
-    save('./mrSESSION.mat', 'mrSESSION','-append');
+    save('mrSESSION.mat', 'mrSESSION','-append');
     
 catch err
     warning(['There was an error when attempting to update your session.',...
