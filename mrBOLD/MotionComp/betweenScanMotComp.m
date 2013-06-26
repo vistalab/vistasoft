@@ -100,7 +100,7 @@ for iScan = 1:nScans
             if verbose > 1, waitbar(frame/nFrames);  end
             % warp the volume putting an edge of 1 voxel around to avoid lost data
             volSeries(:,:,:,frame) = warpAffine3(volSeries(:,:,:,frame), M, NaN, 1);
-		end
+        end
 		if verbose > 1
 	        close(waitHandle)
 		end
