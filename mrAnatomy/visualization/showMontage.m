@@ -25,17 +25,22 @@ if(exist('crop','var') && ~isempty(crop))
     imVol = imVol(crop(1,1):crop(1,2),:,:);
     imVol = imVol(:,crop(2,1):crop(2,2),:);
 end
-if(~exist('numCols','var'))
-  numCols = [];
-end
+if(~exist('numCols','var')), numCols = []; end
+
 if(~exist('figNum','var'))
-    figH = figure;
+    if exist('mrvNewGraphWin','file')
+        figH = mrvNewGraphWin;
+    else
+        figH = figure;
+    end
 else
     figH = figure(figNum);
 end
+
 if(~exist('flip','var') || isempty(flip))
     flip = 'none';
 end
+
 if(strcmpi(flip(1),'a'))
     imVol = flipdim(permute(imVol,[2 1 3 4]),1);
 end
@@ -45,10 +50,7 @@ m = makeMontage(imVol,slices,[],numCols);
 imagesc(m);
 axis image;
 cbH = colorbar;
-if(nargout<2)
-    clear m;
-end
-if(nargout<1)
-    clear figH;
-end
+
+if(nargout<2),   clear m;    end
+if(nargout<1),   clear figH; end
 return;
