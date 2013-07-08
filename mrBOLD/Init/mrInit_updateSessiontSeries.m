@@ -24,7 +24,7 @@ try
     mrGlobals;
     
     %Before we reset mrSESSION, let's save a backup
-    copyfile('./mrSESSION.mat','./mrSESSION_tSeriesMigrationBackup.mat');
+    copyfile('mrSESSION.mat','mrSESSION_tSeriesMigrationBackup.mat');
     
     %Now that we have the number of scans, we know how many tSeries nifti
     %files we will need to create
@@ -101,8 +101,8 @@ try
                 mrSESSION = sessionSet(mrSESSION,'Version','2.1');
                 
                 %Update the session variables
-                save('./mrSESSION.mat', 'mrSESSION','-append');
-                save('./mrSESSION.mat', 'dataTYPES','-append');
+                save('mrSESSION.mat', 'mrSESSION','-append');
+                save('mrSESSION.mat', 'dataTYPES','-append');
                 
                 writeFileNifti(nii);
                 fprintf('Finished scan number %d\n', scan)
