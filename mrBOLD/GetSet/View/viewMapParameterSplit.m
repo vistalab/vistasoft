@@ -34,6 +34,7 @@ if isempty(DictViewSplit)
     DictViewSplit('cmap') =  'colorbar';
     DictViewSplit('cmapcolor') =  'colorbar';
     DictViewSplit('cmapgrayscale') =  'colorbar';
+    DictViewSplit('cmapmode') =  'colorbar';
     DictViewSplit('twparams') =  'colorbar';
     DictViewSplit('analysisdomain') =  'em';
     DictViewSplit('datavalindex') =  'em';
