@@ -418,6 +418,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('curcmap') = 'cmap';
     DictViewTranslate('currentcmap') = 'cmap';
     DictViewTranslate('overlaycmap') = 'cmap';
+    DictViewTranslate('cmapmode') = 'cmapmode';
+    DictViewTranslate('colormapmode') = 'cmapmode';
     DictViewTranslate('anatomymap') = 'anatomymap';
     DictViewTranslate('anatomycolormap') = 'anatomymap';
     DictViewTranslate('anatmap') = 'anatomymap';
