@@ -285,7 +285,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('leftclassfilename') = 'leftclassfile';
     DictViewTranslate('rightclassfile') = 'rightclassfile';
     DictViewTranslate('rightclassfilename') = 'rightclassfile';
-    DictViewTranslate('leftgrayfile') = 'leftgrayfile';
+	DictViewTranslate('classdata') = 'classdata';
+	DictViewTranslate('leftgrayfile') = 'leftgrayfile';
     DictViewTranslate('leftgrayfilename') = 'leftgrayfile';
     DictViewTranslate('leftpath') = 'leftgrayfile';
     DictViewTranslate('flatleftpath') = 'leftgrayfile';
