@@ -201,15 +201,40 @@ else
 	end
     class.header.version = 2;
     class.header.minor = 0;
-    % Flip voxel order to conform the vAnatomy spec
-    % NOTE: this assumes that the nifti data are in the cannonical axial
-    % orientation. If they might not be, call niftiAppyCannonicalXform.
-    % The cannonical NFTI dim order is [X Y Z], but class file format is 
-    % [Y Z X], so we permute. (Note that vAnatomy is [Z Y X]. Go figure.
-    % We also need to flip Z and Y.
-    tmp = flipdim(flipdim(permute(uint8(ni.data),[2 3 1]),1),2);
+	
+	% 	%The following is the old way, which didn't call
+	% 	%niftiApplyCannonicalXform
+	%
+	%     % Flip voxel order to conform the vAnatomy spec
+	%     % NOTE: this assumes that the nifti data are in the cannonical axial
+	%     % orientation. If they might not be, call niftiAppyCannonicalXform.
+	%     % The cannonical NFTI dim order is [X Y Z], but class file format is
+	%     % [Y Z X], so we permute. (Note that vAnatomy is [Z Y X]. Go figure.
+	%     % We also need to flip Z and Y.
+	%     %tmp = flipdim(flipdim(permute(uint8(ni.data),[2 3 1]),1),2);
+	% 	%tmp = permute(uint8(ni.data),[2 3 1]);
+
+	%Need to unify the handling of class files with the new handling of
+	%of volume anatomy. This code should handle class nifti's the same way
+	%volume anatomy nifti's are handled.
+	%BUT!! with the added fun of going from [X Y Z] to [Y X Z]
+	% Because latter in the code calls to the gray nodes (3xn matrix)
+	% permute indices, assuming [y x z] addressing. 
+    % I would think at some point this should get sorted. 
+	% JMA
+	ni = niftiApplyCannonicalXform(ni);
+    %mrAnatRotatAnalyze does a permute [ 3 2 1], then a flipdim(data,2),
+    %flipdim(data,1)
+	tmp = mrAnatRotateAnalyze(uint8(ni.data));	
+    
+	tmp = permute(uint8(tmp),[2 1 3]);
+	%So now, w.r.t. the nifti we are [-2 -3 1]
+    %probably should have better code to keep track of this. 
+    
     class.data = zeros(size(tmp),'uint8')+class.type.unknown;
     class.data(tmp==labels.CSF) = class.type.csf;
+	
+	
     if(lower(hemisphere(1))=='r' || hemisphere(1)==1)
         class.data(tmp==labels.rightWhite) = class.type.white;
         class.data(tmp==labels.rightGray) = class.type.gray;
@@ -225,14 +250,22 @@ else
     allLabels = struct2cell(labels); allLabels = [allLabels{:}];
     otherLabels = tmp>max(allLabels);
     class.data(otherLabels) = tmp(otherLabels)-min(tmp(otherLabels(:))) + class.type.other;
+    
     class.header.xsize = ni.dim(2);
     class.header.ysize = ni.dim(3);
     class.header.zsize = ni.dim(1);
+    	
     class.header.voi = [1 class.header.xsize 1 class.header.ysize 1 class.header.zsize];
     class.header.params = 'ITKGray';
-    class.header.mmPerVox = ni.pixdim(1:3);
-    class.header.qto_xyz = ni.qto_xyz;
+    class.header.mmPerVox = ni.pixdim([2 3 1]);
+    %This qto_xyz is INCORRECT it correpsonds to the canonically oriented
+    %nifti, before the permute flip contortions.
+    %I'm not sure what this field gets used for, so I'm not changing it yet
+    %It seems kinda dangerous to me though.
+    %JMA
+	class.header.qto_xyz = ni.qto_xyz;
 	mmPerVox = ni.pixdim([2,3,1]);
+
 end
 
 return;
