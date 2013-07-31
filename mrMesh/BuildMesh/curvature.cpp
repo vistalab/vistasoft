@@ -188,8 +188,15 @@ vtkPolyData* BuildVtkPolyDataTriangles(int nVertices, int nTriangles, Vertex *pV
 	}
 	for (int iT = 0; iT < nTriangles; iT++)
 	{
+        //VV
+        vtkIdType vtkTriplet[3];
+        vtkTriplet[0] = pTriangles[iT].v[0];
+        vtkTriplet[1] = pTriangles[iT].v[1];
+        vtkTriplet[2] = pTriangles[iT].v[2];
+        pPolys->InsertNextCell((vtkIdType) 3, vtkTriplet);
+        
 		//pPolys->InsertNextCell(3, pTriangles[iT].v);
-        pPolys->InsertNextCell((vtkIdType) 3, (vtkIdType*) pTriangles[iT].v);
+        //pPolys->InsertNextCell((vtkIdType) 3, (vtkIdType*) pTriangles[iT].v);
 	}
 	
 	pPD->SetPoints(pPoints);

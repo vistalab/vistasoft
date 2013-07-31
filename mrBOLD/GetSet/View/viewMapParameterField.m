@@ -280,11 +280,13 @@ if isempty(DictViewTranslate)
     DictViewTranslate('classfilename') = 'classfilename';
     DictViewTranslate('classfile') = 'classfilename';
     DictViewTranslate('classpath') = 'classfilename';
+    DictViewTranslate('classdata') = 'classdata';
     DictViewTranslate('leftclassfile') = 'leftclassfile';
     DictViewTranslate('leftclassfilename') = 'leftclassfile';
     DictViewTranslate('rightclassfile') = 'rightclassfile';
     DictViewTranslate('rightclassfilename') = 'rightclassfile';
-    DictViewTranslate('leftgrayfile') = 'leftgrayfile';
+	DictViewTranslate('classdata') = 'classdata';
+	DictViewTranslate('leftgrayfile') = 'leftgrayfile';
     DictViewTranslate('leftgrayfilename') = 'leftgrayfile';
     DictViewTranslate('leftpath') = 'leftgrayfile';
     DictViewTranslate('flatleftpath') = 'leftgrayfile';
@@ -418,6 +420,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('curcmap') = 'cmap';
     DictViewTranslate('currentcmap') = 'cmap';
     DictViewTranslate('overlaycmap') = 'cmap';
+    DictViewTranslate('cmapmode') = 'cmapmode';
+    DictViewTranslate('colormapmode') = 'cmapmode';
     DictViewTranslate('anatomymap') = 'anatomymap';
     DictViewTranslate('anatomycolormap') = 'anatomymap';
     DictViewTranslate('anatmap') = 'anatomymap';

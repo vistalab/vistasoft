@@ -140,6 +140,7 @@ Triangle* CreateTrianglesFromMxArray(mxArray* mxTriangles)
 
 	double* pT = mxGetPr(mxTriangles);
 
+
 	for (int iT = 0; iT<nTriangles; iT++) {
 		pTriangles[iT].v[0] = (int) pT[0];
 		pTriangles[iT].v[1] = (int) pT[1];
@@ -153,6 +154,8 @@ Triangle* CreateTrianglesFromMxArray(mxArray* mxTriangles)
 
 vtkPolyData* BuildVtkPolyDataTriangles(int nVertices, int nTriangles, Vertex *pVertices, Triangle *pTriangles)
 {
+    
+  
 	vtkPolyData		*pPD		= NULL;
 	vtkPoints		*pPoints	= NULL;
 	vtkCellArray	*pPolys		= NULL;
@@ -177,7 +180,9 @@ vtkPolyData* BuildVtkPolyDataTriangles(int nVertices, int nTriangles, Vertex *pV
 	pColors->Allocate(3*nVertices);
 
 	pPolys->EstimateSize(nTriangles, 3);
-
+    
+    
+    
 	for (int iV = 0; iV < nVertices; iV++)
 	{
 		pPoints->SetPoint(iV, pVertices[iV].vCoord);
@@ -186,16 +191,30 @@ vtkPolyData* BuildVtkPolyDataTriangles(int nVertices, int nTriangles, Vertex *pV
 		for (int iC=0; iC<3; iC++)
 			pColors->InsertComponent(iV, iC, pVertices[iV].cColor[iC]);
 	}
-	for (int iT = 0; iT < nTriangles; iT++)
+
+//     Debug output for diagnosing 64bit/32bit idType errors
+//     char cStr[256] = "";
+//    sprintf( cStr, "vtkIdType %d int %d", sizeof( vtkIdType), sizeof ( int));
+//     mexWarnMsgTxt(cStr);
+    
+    for (int iT = 0; iT < nTriangles; iT++)
 	{
-		//pPolys->InsertNextCell(3, pTriangles[iT].v);
-        pPolys->InsertNextCell((vtkIdType) 3, (vtkIdType*) pTriangles[iT].v);
+        // This code fixes a unsafe cast that assumed vkIdType was a 32bit int
+		// VV & JMA
+        vtkIdType vtkTriplet[3];
+        vtkTriplet[0] = pTriangles[iT].v[0];
+        vtkTriplet[1] = pTriangles[iT].v[1];
+        vtkTriplet[2] = pTriangles[iT].v[2];
+        pPolys->InsertNextCell((vtkIdType) 3, vtkTriplet);
+                
 	}
 	
-	pPD->SetPoints(pPoints);
-	pPD->GetPointData()->SetNormals(pNormals);
-	pPD->GetPointData()->SetScalars(pColors);
-	pPD->SetPolys(pPolys);
+       
+	
+    pPD->SetPoints(pPoints);
+    pPD->GetPointData()->SetNormals(pNormals);
+    pPD->GetPointData()->SetScalars(pColors);
+    pPD->SetPolys(pPolys);
 
 	return pPD;
 }
@@ -294,16 +313,20 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	Triangle* pTriangles = CreateTrianglesFromMxArray(mxTriangles);
 	int nTriangles = mxGetN(mxTriangles);
 	
+    
+    
 	vtkPolyData *pVTKMesh = BuildVtkPolyDataTriangles(nVertices, nTriangles, pVertices, pTriangles);
 
 	CVTKFilter* filter = new CVTKFilter();
 	filter->UpdateParameters((mxArray*) prhs[0]);    
 	
+
     if (!filter->Smooth(pVTKMesh))
 		mexErrMsgTxt("Error when smoothing the mesh");
 
 	if (!filter->BuildNormals(pVTKMesh))
 		mexErrMsgTxt("Error when building the normals");
+
  
     if (!VtkToArrays(pVTKMesh, pVertices, pTriangles))
 		mexErrMsgTxt("Error when returning the output");
