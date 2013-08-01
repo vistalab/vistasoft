@@ -47,7 +47,8 @@ end
 % this is also redundant w/ the scan params, but is essential
 % for event-related analyses
 if ~isfield(params,'parfiles')  || isempty(params.parfiles)
-    params.parfiles = dtGet(dataTYPES(dt), 'Par File', scan); scanParams(scan).parfile;
+    params.parfiles = dtGet(dataTYPES(dt), 'Par File', scan); 
+%     scanParams(scan).parfile;
     
     if ischar(params.parfiles), params.parfiles = {params.parfiles}; end
 end
