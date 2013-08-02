@@ -7,6 +7,12 @@ function fgArray = fg2Array(fg)
 %
 % (c) Stanford Vista Team 2012
 
+% First check if the fiber group already is an array
+if length(fg) > 1 || ~isfield(fg, 'subgroupNames')
+    fgArray = fg;
+    return
+end
+
 nGroups = fgGet(fg,'nGroups');
 
 % Suppose that there is an empty subgroup, we have to make sure that we
