@@ -89,7 +89,6 @@ if OK==1
 	params.functionals = get(hFunctionals, 'String');
 	params.vAnatomy = get(hVAnatomy, 'String');
 	params.doDescription = get(hAnalysis(1), 'Value');
-	params.doCrop = get(hAnalysis(2), 'Value');
 	params.doSkipFrames = get(hAnalysis(3), 'Value');
 	params.doAnalParams = get(hAnalysis(4), 'Value');
 	params.doPreprocessing = get(hAnalysis(5), 'Value');	
