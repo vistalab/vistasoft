@@ -8,6 +8,8 @@ function vw = AdjustSliceTiming(vw, scans, typeName, slices)
 %           scans = 0, adjust all of the scans
 % typeName: The function creates a new dataTYPE containing the new data.  
 %           The default typeName is 'Timed'
+% slices:   Array of integers - the slices to correct. 
+%           Default is 1:viewGet('numSlices')
 %
 % Example:
 %   junk = AdjustSliceTiming(INPLANE{1}, 1, [], []);
