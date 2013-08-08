@@ -246,12 +246,11 @@ end
 
 % slice timing correction
 if params.sliceTimingCorrection==1
-    if isfield(params, sliceOrder)
-        slices = params.sliceOrder;
-    else
-        slices = []; % Default behavior assumes 1:nSlices
+    if isfield(params, 'sliceOrder') 
+        mrSESSION = sessionSet(mrSESSION, 'sliceorder', params.sliceOrder);
+        saveSession;
     end
-    INPLANE{1} = AdjustSliceTiming(INPLANE{1}, 0, [], slices);
+    INPLANE{1} = AdjustSliceTiming(INPLANE{1}, 0);
     INPLANE{1} = selectDataType(INPLANE{1}, 'Timed');
 end
 
