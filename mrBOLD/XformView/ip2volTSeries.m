@@ -67,8 +67,8 @@ nVoxels = size(gray.coords,2);
 
 % open waitbar
 verbose = prefsVerboseCheck;
-if verbose, 
-	waitHandle = waitbar(0, 'Interpolating tSeries.  Please wait...');
+if verbose,
+    waitHandle = waitbar(0, 'Interpolating tSeries.  Please wait...');
 end
 
 
@@ -81,10 +81,10 @@ ipCoords = ip2volXformCoords(gray, inplane, true);
 
 % Loop through the scans
 for scan = selectedScans
-
+    
     % Scale and round the grayCoords
     fprintf('Xforming scan %i ...\n',scan);
-
+    
     % only round for nearest neighbor interpolation
     switch method,
         case 'nearest', ipCoords=round(ipCoords);
@@ -95,53 +95,33 @@ for scan = selectedScans
     end
     
     nFrames = viewGet(gray,'numFrames',scan);
-
+    
     % Reset to NaNs
     tSeries = repmat(single(NaN), [nFrames nVoxels]);
-    slices = sliceList(inplane,scan);
     
-    % Loop through slices, loading the inplane tSeries and
-    % transforming it.
-    switch method,
-        % nearest neighbor interpolation [default]
-        case 'nearest',
-            for slice = slices
-                inplaneTSeries = loadtSeries(inplane,scan,slice);
-                grayIndices = find(ipCoords(3,:)==slice);
-                if ~isempty(grayIndices)
-                    ipIndices = sub2ind(viewGet(inplane, 'sliceDims', scan),...
-                        ipCoords(1,grayIndices),ipCoords(2,grayIndices));
-                    tSeries(:,grayIndices) = inplaneTSeries(:,ipIndices);
-                end
-            end
-
-        % trilinear interpolation
-        case 'linear',
-            funcData = tSeries4D(inplane, scan);
-            
-            for frame = 1:nFrames
-                subData = double(funcData(:,:,:,frame));
-                tSeries(frame,:) = interp3(subData, ...
-                                          ipCoords(2,:), ...
-                                          ipCoords(1,:), ...
-                                          ipCoords(3,:), ...
-                                          method);
-            end
-
-            % other
-        otherwise,
-            fprintf('Unknown interpolation method: %s\n',method);
-    end;
-
+    
+    [~,nii] = loadtSeries(inplane,scan);
+    funcData = niftiGet(nii, 'data');
+    
+    for frame = 1:nFrames
+        subData = double(funcData(:,:,:,frame));
+        tSeries(frame,:) = interp3(subData, ...
+            ipCoords(2,:), ...
+            ipCoords(1,:), ...
+            ipCoords(3,:), ...
+            method);
+    end
+    
+    
     % Save tSeries
     % This should not need to be changed to new version because it is only
     % for the gray view
     savetSeries(tSeries, gray, scan, 1);
     
     % update the waitbar
-	if verbose,   
-		waitbar(find(selectedScans==scan)/nScans, waitHandle);
-	end
+    if verbose,
+        waitbar(find(selectedScans==scan)/nScans, waitHandle);
+    end
 end %for
 
 % close waitbar
