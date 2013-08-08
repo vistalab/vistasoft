@@ -52,10 +52,10 @@ if(strcmpi(e,'.gz'))
    gunzip(fullfile(tmpDir,strcat(f,e)));
    tmpFileName = fullfile(tmpDir, f);
    tmpFile = true;
-   nii = load_nii(tmpFileName, volumesToLoad);
+   nii = load_untouch_nii(tmpFileName, volumesToLoad);
 else
    tmpFile = false;
-   nii = load_nii(fileName, volumesToLoad);
+   nii = load_untouch_nii(fileName, volumesToLoad);
 end
 
 % We then transform the nifti structure to our version.
