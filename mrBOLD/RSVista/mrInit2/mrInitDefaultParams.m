@@ -59,7 +59,7 @@ function params = mrInitDefaultParams
 %    coParams: {1 x nScans} cell array of coherence anaysis ("blocked analysis
 %			params" in the outdated nomenclature) parameters for each scan.
 %			Will only assign these to scans for which the cell is nonempty. 
-%			Use initCoParams and initCoParamsGUI to initialize and edit 
+%			Use coParamsDefault and coParamsEdit to initialize and edit 
 %			these parameters. Default empty: don't assign any parameters.
 %
 %	glmParams: {1 x nScans} cell array of GLM analysis parameters
