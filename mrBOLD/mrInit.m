@@ -246,7 +246,13 @@ end
 
 % slice timing correction
 if params.sliceTimingCorrection==1
-    INPLANE{1} = AdjustSliceTiming(INPLANE{1}, 0);
+    if isfield(params, sliceOrder)
+        slices = params.sliceOrder; 
+    else
+        slices = []; % Default behavior assumes 1:nSlices
+    end
+    INPLANE{1} = AdjustSliceTiming(INPLANE{1}, 0, [], slices);
+    
     INPLANE{1} = selectDataType(INPLANE{1}, 'Timed');
 end
 
@@ -269,7 +275,6 @@ if params.motionComp > 1
                 params.motionCompRefScan, ...
                 params.motionCompRefFrame);
             INPLANE{1} = selectDataType(INPLANE{1}, 'MotionComp');
-            
         case 4, % both between and within scans
             motionCompNestaresWithin1st(INPLANE{1}, [], params.motionCompRefScan, params.motionCompRefFrame);
             mcdtName=['MotionComp_RefScan' num2str(params.motionCompRefScan)];
