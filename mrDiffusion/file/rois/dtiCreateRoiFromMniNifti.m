@@ -1,4 +1,4 @@
-function [RoiFileName, invDef, roiMask]=dtiCreateRoiFromMniNifti(dt6File, ROI_img_file, invDef, saveFlag, roiNum)
+function [RoiFileName, invDef, roiMask]=dtiCreateRoiFromMniNifti(dt6File, ROI_img_file, invDef, saveFlag, roiNum, showFigs)
 %Creates an ROI file in individual space from a NIFTI file with ROI in MNI space. 
 %
 % [RoiFileName, invDef, roiMask]=dtiCreateRoiFromMniNifti(dt6File, ROI_img_file, [invDef], [saveFlag=false], [roiNum])
@@ -13,6 +13,7 @@ function [RoiFileName, invDef, roiMask]=dtiCreateRoiFromMniNifti(dt6File, ROI_im
 % saveFlag          Save the ROI? True of false
 % roiNum            The number that corresponds to the desired ROI in the
 %                   image
+% showFigs          Whether to show figures displaying the normalization
 % Output:           The new ROI is in individual (same as dt6) space. 
 %                   The new ROI is saved in folder "ROIs" which is 
 %                   located in the same dir as input dt6.  
@@ -48,6 +49,10 @@ function [RoiFileName, invDef, roiMask]=dtiCreateRoiFromMniNifti(dt6File, ROI_im
 
 %% Check the inputs
 %
+
+if notDefined('showFigs')
+    showFigs = false;
+end
 if notDefined('dt6File')
     dt6File = mrvSelectFile('r','*.mat','Select dt6.mat file.');
 end
@@ -83,17 +88,19 @@ if computeNorm
     
     [sn, Vtemplate, invDef] = mrAnatComputeSpmSpatialNorm(dt.b0, dt.xformToAcpc, template);
     
-    % Check the normalization
-    mm        = diag(chol(Vtemplate.mat(1:3,1:3)'*Vtemplate.mat(1:3,1:3)))';
-    %bb       = mrAnatXformCoords(Vtemplate.mat,[1 1 1; Vtemplate.dim]);
-    bb        = mrAnatXformCoords(Vtemplate.mat,[1 1 1; Vtemplate.dim(1:3)]);
-    b0        = mrAnatHistogramClip(double(dt.b0),0.3,0.99);
-    b0_sn     = mrAnatResliceSpm(b0, sn, bb, mm, [1 1 1 0 0 0], 0);
-    
-    tedge     = bwperim(Vtemplate.dat>50&Vtemplate.dat<170);
-    im        = uint8(round(b0_sn*255));
-    im(tedge) = 255;
-    showMontage(im);
+    % Check the normalization and show figures if desired
+    if showFigs == 1
+        mm        = diag(chol(Vtemplate.mat(1:3,1:3)'*Vtemplate.mat(1:3,1:3)))';
+        %bb       = mrAnatXformCoords(Vtemplate.mat,[1 1 1; Vtemplate.dim]);
+        bb        = mrAnatXformCoords(Vtemplate.mat,[1 1 1; Vtemplate.dim(1:3)]);
+        b0        = mrAnatHistogramClip(double(dt.b0),0.3,0.99);
+        b0_sn     = mrAnatResliceSpm(b0, sn, bb, mm, [1 1 1 0 0 0], 0);
+        
+        tedge     = bwperim(Vtemplate.dat>50&Vtemplate.dat<170);
+        im        = uint8(round(b0_sn*255));
+        im(tedge) = 255;
+        showMontage(im);
+    end
 end
 
 
