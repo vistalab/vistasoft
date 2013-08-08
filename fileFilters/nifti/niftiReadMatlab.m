@@ -22,7 +22,7 @@ function nii = niftiReadMatlab(fileName, volumesToLoad)
 %
 % (c) Stanford Vista 2012
 
-if(~exist('volumesToLoad','var') || volumesToLoad==-1)
+if notDefined('volumesToLoad') || volumesToLoad==-1
     volumesToLoad = [];
 end
 
@@ -37,13 +37,13 @@ if(strcmpi(e,'.gz'))
    gunzip(fullfile(tmpDir,strcat(f,e)));
    tmpFileName = fullfile(tmpDir, f);
    tmpFile = true;
-   nii = load_nii(tmpFileName, volumesToLoad);
+   nii = load_untouch_nii(tmpFileName, volumesToLoad);
 else
    tmpFile = false;
-   nii = load_nii(fileName, volumesToLoad);
+   nii = load_untouch_nii(fileName, volumesToLoad);
 end
 
-% Transform into VISTASOFT nift-1 structure
+% Transform into VISTASOFT nifti-1 structure
 nii = niftiNi2Vista(nii);
 
 % Delete the temporary file created

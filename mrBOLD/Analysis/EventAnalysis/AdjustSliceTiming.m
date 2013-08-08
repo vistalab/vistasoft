@@ -8,6 +8,8 @@ function vw = AdjustSliceTiming(vw, scans, typeName, slices)
 %           scans = 0, adjust all of the scans
 % typeName: The function creates a new dataTYPE containing the new data.  
 %           The default typeName is 'Timed'
+% slices:   Array of integers - the slices to correct. 
+%           Default is 1:viewGet('numSlices')
 %
 % Example:
 %   junk = AdjustSliceTiming(INPLANE{1}, 1, [], []);
@@ -48,6 +50,7 @@ tsDir = viewGet(hiddenView,'tSeriesDir',1);
 deltaFrame = sessionGet(mrSESSION,'interFrameTiming',scans(1));
 refSlice   = sessionGet(mrSESSION,'refSlice',scans(1));
 sliceOrder = sessionGet(mrSESSION,'sliceOrder',scans(1));
+
 if isempty(sliceOrder)
     % GUI to  get the slice ordering from the user
     % sliceOrder = [ 2 4 6 8 1 3 5 7 9 10 11 12 14 16 18 20 13 15 17 19];

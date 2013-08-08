@@ -16,7 +16,6 @@ function [params ok] = mrInitGUI
 % presented, if the user requests, to do the following:
 %   * enter descriptions of the session and scans, and additional comments
 %     about scanning (mrInitGUI_description);
-%   * crop the inplanes and functionals (mrInitGUI_crop);
 %   * set traveling-wave / event analysis parameters
 %     (mrInitGUI_analParams);
 %   * specify preprocessing steps, such as motion compensation, time slice
@@ -49,21 +48,6 @@ function [params ok] = mrInitGUI
 %     subject: subject name. Default: get from inplane header.
 % 
 %     description: description of session. Default: empty.
-% 
-%     crop: [2 x 2] matrix specifying the location in the INPLANE
-%           anatomies from which to take data. Format is 
-%           [x1 y1
-%            x2 y2]. 
-%           mrInit2 will take data from the inplanes in the range
-%           anat(y1:y2, x1:x2, :). (Remember rows are the Y axis and
-%           columns are the X axis.) Will also find the corresponding
-%           region of the functionals, and take only that subset. Note
-%           that if the functionals are lower resolution than the
-%           inplanes, and the crop values provided turn out to not
-%           specify an integer number of functional voxels, the code
-%           will round it out, such that both the inplane and
-%           functionals are cropped for an integer number of voxels.
-%           If omitted, will ask the user to crop in a dialog.
 % 
 %    annotations: {1 x nScans} cell array of strings specifying the
 %           initial annotation for each scan. (This is displayed at the top in
@@ -111,15 +95,11 @@ if params.doDescription==1
     params = mrInitGUI_description(params);
 end
 
+% if specified, clip temporal frames
 if params.doSkipFrames==1
     params = mrInitGUI_skipFrames(params);
 end
 
-
-% if specified, set crop 
-if params.doCrop==1
-    params = mrInitGUI_crop(params);
-end
 
 % if specified, assign analysis parameters
 if params.doAnalParams==1
