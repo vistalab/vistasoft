@@ -136,7 +136,7 @@ if(~exist('dwRaw','var')||isempty(dwRaw))
 end
 if(ischar(dwRaw))
     % dwRaw can be a path to the file or the file itself
-    [dataDir,inBaseName] = fileparts(dwRaw.fname);
+    [dataDir,inBaseName] = fileparts(dwRaw);
 else
     [dataDir,inBaseName] = fileparts(dwRaw.fname);
 end
