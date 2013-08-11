@@ -59,7 +59,7 @@ argG = [' -g ' gmROIFile];
 argM = [' -m ' wmROIFile];
 argT = [' --ten ' tensorsFile];
 argGroupSize = ' -v 2';
-b0 = readFileNifti(b0File);
+b0 = niftiRead(b0File);
 argSubSize = [' -s 0,' num2str(b0.dim(1)-1) ',0,' num2str(b0.dim(2)-1) ',0,' num2str(b0.dim(3)-1)];
 argW = ' -w 0';
 argDiameter = [' --diameter ' num2str(max(g_radius)*2)];
@@ -68,7 +68,7 @@ argFractionFile = [' --fraction ' fracGoldFile];
 cmd = ['trueError' argR argD_GS argVal argVec arg0 argG argM argT argGroupSize argSubSize argW argDiameter argFractionFile];
 %disp(cmd);
 [s,r] = system(cmd);
-fracG = readFileNifti(fracGoldFile);
+fracG = niftiRead(fracGoldFile);
 
 % Search for the right radius to compare the selection to the gold
 argD_SS = [' -d ' fullfile(tempFiberDir,'ss_0.SBfloat')];
@@ -83,7 +83,7 @@ for rr=1:length(vR)
     cmd = ['trueError' argR argD_SS argVal argVec arg0 argG argM argT argGroupSize argSubSize argW argDiameter argFractionFile];
     %disp(cmd);
     [s,r] = system(cmd);
-    ni = readFileNifti(fracFile);
+    ni = niftiRead(fracFile);
     fracImgs(:,:,:,rr) = ni.data;
     %E(rr) = sum(abs(ni.data(:)-fracG.data(:)))/sum(fracG.data(:)) * 100;
     E(rr) = abs((sum(ni.data(:))-sum(fracG.data(:)))/sum(fracG.data(:)) * 100);

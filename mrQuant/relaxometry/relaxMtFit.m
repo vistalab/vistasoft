@@ -42,31 +42,31 @@ end
 
 disp(['Loading data from ' dataDir '...']);
 
-ni = readFileNifti(fullfile(dataDir,'T1.nii.gz'));
+ni = niftiRead(fullfile(dataDir,'T1.nii.gz'));
 T1 = ni.data;
 xform = ni.qto_xyz;
 clear ni;
 nz = T1>0;
 
 if(exist(fullfile(dataDir,'brainMask.nii.gz'),'file'))
-  ni = readFileNifti(fullfile(dataDir,'brainMask.nii.gz'));
+  ni = niftiRead(fullfile(dataDir,'brainMask.nii.gz'));
   brainMask = ni.data==1;
   clear ni;
 else
   brainMask = nz;
 end
 
-%ni = readFileNifti(fullfile(dataDir,'PD.nii.gz'));
+%ni = niftiRead(fullfile(dataDir,'PD.nii.gz'));
 %PD = ni.data;
 
-ni = readFileNifti(fullfile(dataDir,'S0.nii.gz'));
+ni = niftiRead(fullfile(dataDir,'S0.nii.gz'));
 S0 = ni.data;
 clear ni;
 
 d = dir(fullfile(dataDir,'MT_*.nii.gz'));
 delta = zeros(1,length(d));
 for(ii=1:length(d))
-  ni = readFileNifti(fullfile(dataDir,d(ii).name));
+  ni = niftiRead(fullfile(dataDir,d(ii).name));
   MT(:,:,:,ii) = ni.data;
   clear ni;
   % TODO: fix this crude hack. Maybe store offset freqs in nifti header?

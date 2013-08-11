@@ -54,7 +54,7 @@ end
 
 % Load the difusion data
 disp('Loading raw data...');
-dwRaw = readFileNifti(dwRawFileName);
+dwRaw = niftiRead(dwRawFileName);
 
 % By default all processe nifti's will be at the same resolution of the dwi data
 if notDefined('dwParams'); 
@@ -204,7 +204,7 @@ dtiInitReorientBvecs(dwParams, dwDir, doResamp, doBvecs, bvecs, bvals);
 
 %% XIII. Load aligned raw data and clear unaligned raw data
 
-dwRawAligned = readFileNifti(dwDir.dwAlignedRawFile);
+dwRawAligned = niftiRead(dwDir.dwAlignedRawFile);
 clear dwRaw;  
 
 

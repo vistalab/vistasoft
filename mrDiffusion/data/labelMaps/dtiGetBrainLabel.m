@@ -40,7 +40,7 @@ if(isempty(mapNum))
 end
 
 if(isempty(labelMaps.maps)||isempty(labelMaps.maps{mapNum}))
-    labelMaps.maps{mapNum} = readFileNifti(fullfile(labelMaps.mapDir, [labelType '.nii.gz']));
+    labelMaps.maps{mapNum} = niftiRead(fullfile(labelMaps.mapDir, [labelType '.nii.gz']));
     tmp = readTab(fullfile(labelMaps.mapDir, [labelType '.txt']),',',false);
     % FIXME- make this more robust
     labelMaps.maps{mapNum}.labelTxt = tmp(:,2);
@@ -74,8 +74,8 @@ return
 
 
 % To get labels for an individual brain:
-mni = readFileNifti('/home/bob/cvs/VISTASOFT/mrDiffusion/templates/MNI_T1.nii.gz');
-t1 = readFileNifti('/biac3/wandell4/data/reading_longitude/dti_adults/as050307/bin/backgrounds/t1.nii.gz');
+mni = niftiRead('/home/bob/cvs/VISTASOFT/mrDiffusion/templates/MNI_T1.nii.gz');
+t1 = niftiRead('/biac3/wandell4/data/reading_longitude/dti_adults/as050307/bin/backgrounds/t1.nii.gz');
 % Compute the spatial normalization (maps template voxels to image voxels)
 sn = mrAnatComputeSpmSpatialNorm(double(t1.data), t1.qto_xyz, mni);
 % Invert the spatial norm to map image voxels to template voxels
@@ -93,7 +93,7 @@ lutFile = '/biac3/wandell4/data/reading_longitude/dti_adults/as050307/MNI_coordL
 dtiWriteNiftiWrapper(tmp,sn.VF.mat,lutFile,1,'',intentName,intentCode);
 
 % To use the transform:
-ni = readFileNifti(lutFile);
+ni = niftiRead(lutFile);
 xform.coordLUT = ni.data;
 xform.inMat = ni.qto_ijk;
 t1AcpcCoords = [5 -90 -4]; 

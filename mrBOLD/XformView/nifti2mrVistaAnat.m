@@ -14,7 +14,7 @@ function anat = nifti2mrVistaAnat(ni)
 % Check format of input argument
 if isnumeric(ni) || islogical(ni), data = ni; end
 if isstruct(ni), data = ni.data; end
-if ischar(ni), foo = readFileNifti(ni); data = foo.data; clear foo; end
+if ischar(ni), foo = niftiRead(ni); data = foo.data; clear foo; end
 
 % Permute 
 anat = permute(data, [3 2 1]);

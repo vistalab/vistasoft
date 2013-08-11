@@ -197,7 +197,7 @@ if(0)
     outDir = 'analysis_BR90_girls_20080508';
     d = dir(fullfile(outDir,'vec_f-test_*df.nii.gz'));
     df = sscanf(d.name,'vec_f-test_%d,%ddf.nii.gz');
-    ni = readFileNifti(fullfile(outDir,d.name));
+    ni = niftiRead(fullfile(outDir,d.name));
     Timg = double(ni.data);
     mask = Timg~=0;
     T = Timg(mask(:));

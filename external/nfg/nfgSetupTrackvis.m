@@ -40,7 +40,7 @@ grad = load(nfgGradFile,'-ascii');
 bvals = grad(:,4)/bValFactor;
 bvecs = grad(:,1:3)';
 % Get the data
-data = readFileNifti(noisyImg);
+data = niftiRead(noisyImg);
 
 % Get b0 to the front of the data
 bvals = bvals(:)';

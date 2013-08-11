@@ -20,7 +20,7 @@ if( ieNotDefined('outCaminoFilename') )
     outCaminoFilename = fullfile(pathstr,[name '.B' outDataType]);
 end
 
-ni_img = readFileNifti(inNiftiFilename);
+ni_img = niftiRead(inNiftiFilename);
 % put the 4th dimension in front if its there if scalar
 % volume this does nothing
 d = shiftdim(ni_img.data,3);

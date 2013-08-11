@@ -42,7 +42,7 @@ end
 logMean = true;
 
 disp(['Loading raw data ' dwRawFile '...']);
-dwRaw = readFileNifti(dwRawFile);
+dwRaw = niftiRead(dwRawFile);
 nvols = size(dwRaw.data,4);
 dtMm = dwRaw.pixdim(1:3);
   

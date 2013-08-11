@@ -11,7 +11,7 @@ niftiOutput=[niftiInput(1:end-7) 'thr'  num2str(minImgValue) 'cluster' num2str(m
 end
 
 
-a=readFileNifti(niftiInput); 
+a=niftiRead(niftiInput); 
 [roisimg]=dtiSplitRois(a.data, minImgValue, minClusterSize); 
 a.data=roisimg;
 a.fname= niftiOutput;

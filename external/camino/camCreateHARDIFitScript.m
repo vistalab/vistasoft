@@ -18,7 +18,7 @@ if ieNotDefined('bgthresh')
     bgthresh = 200;
 end
 % Volumetric information
-raw = readFileNifti(raw_filename);
+raw = niftiRead(raw_filename);
 vol_dim = raw.dim;
 xd = vol_dim(1);
 yd = vol_dim(2);

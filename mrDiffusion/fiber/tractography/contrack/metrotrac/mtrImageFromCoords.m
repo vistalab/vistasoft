@@ -14,7 +14,7 @@ function [vol] = mtrImageFromCoords(coords1, coords2, volExFile, volOutFile)
 
 
 % Load vol file to get AcPc xform
-vol = readFileNifti(volExFile);
+vol = niftiRead(volExFile);
 xformFrom = vol.qto_ijk;
 
 % Set the volume structure for output now

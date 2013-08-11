@@ -3,9 +3,9 @@ function [wmProb,faErr,mdErr,eigVal] = dtiFindWhiteMatter(eigVal,b0,xformToAcpc)
 %  wmProb = dtiFindWhiteMatter(dt6_or_eigVals,b0,[xformToAcpc])
 %
 % Example usage:
-% b0=readFileNifti('dti06/bin/b0.nii.gz');
+% b0=niftiRead('dti06/bin/b0.nii.gz');
 % b0 = double(b0.data);
-% dt6=readFileNifti('dti06/bin/tensors.nii.gz');
+% dt6=niftiRead('dti06/bin/tensors.nii.gz');
 % dt6 = double(squeeze(dt6.data(:,:,:,1,[1 3 6 2 4 5])));
 % wmProb = dtiFindWhiteMatter(dt6,b0);
 % dtiWriteNiftiWrapper(uint8(round(wmProb*255)),xformToAcpc,'dti06/bin/wmProb.nii.gz',1./255) 
@@ -61,7 +61,7 @@ mdErr(mdErr>1) = 1;
 mdErr(isnan(mdErr)) = 1;
 
 %% Compute location prior from a template
-%locPriorNi = readFileNifti(templateFile);
+%locPriorNi = niftiRead(templateFile);
 sz = size(faErr);
 %xf = locPriorNi.qto_ijk*xform;
 %[sampZ,sampY] = meshgrid([1:sz(2)],[1:sz(1)]);

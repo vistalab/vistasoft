@@ -78,7 +78,7 @@ end
 
 % Common BlueMatter Parameters
 argGroupSize = ' -v 2';
-b0 = readFileNifti(b0File);
+b0 = niftiRead(b0File);
 argSubSize = [' -s 0,' num2str(b0.dim(1)-1) ',0,' num2str(b0.dim(2)-1) ',0,' num2str(b0.dim(3)-1)];
 argDatabase = [' -d ' dbFile];
 

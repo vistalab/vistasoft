@@ -7,7 +7,7 @@ function [RoiFileName, invDef, roiMask]=dtiCreateRoiFromMniNifti(dt6File, ROI_im
 % dt6File           A path to a subject's dt6.mat file
 % ROI_img_file      Path to a nifti image ROI file with your ROI in MNI
 %                   space. You can also input the already loaded image (see
-%                   readFileNifti).
+%                   niftiRead).
 % invDef            Previously computed invDef normalization parameters. If
 %                   none is passed in they will be recomputed.
 % saveFlag          Save the ROI? True of false
@@ -109,7 +109,7 @@ end
 % If the ROI_img_file is a path to an image then load the file. Otherwise
 % assume that the image was already loaded and input into the function
 if ischar(ROI_img_file)
-    ROIimg          = readFileNifti(ROI_img_file);
+    ROIimg          = niftiRead(ROI_img_file);
     % name the roi based on the file name
     roiname = prefix(ROI_img_file, 'short');
 else

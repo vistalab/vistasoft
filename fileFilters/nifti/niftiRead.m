@@ -1,7 +1,7 @@
 function ni = niftiRead(fileName, volumesToLoad)
 % Matlab wrapper to call the mex readFileNifti
 %
-%   niftiImage = niftiRead(fileName)
+%   niftiImage = readFileNifti(fileName)
 %
 % Reads a NIFTI image and populates a structure that should resemble the
 % NIFTI 1 standard 
@@ -20,9 +20,6 @@ function ni = niftiRead(fileName, volumesToLoad)
 %  ni = niftiRead(niFile);  
 %
 % Copyright, Vista Team Stanford, 2011
-
-% We are testing niftiReadMatlab.  Not sure we need it yet.  By we, I mean
-% Franco.
 
 % This normally calls the mex file for your system
 if ~exist('fileName','var') || isempty(fileName)

@@ -1,8 +1,8 @@
 electrodeSize = 3;
-electrodeNi = readFileNifti('t1_class_gray_electrodeCenters.nii.gz'); %'Segmentations/ct_seg_electrodes.nii.gz');
-classNi = readFileNifti('t1_class.nii.gz'); %'Segmentations/t1_average_manualSeg.nii.gz');
+electrodeNi = niftiRead('t1_class_gray_electrodeCenters.nii.gz'); %'Segmentations/ct_seg_electrodes.nii.gz');
+classNi = niftiRead('t1_class.nii.gz'); %'Segmentations/t1_average_manualSeg.nii.gz');
 labels = mrGrayReadLabels('t1_class_gray_electrodeCenters.lbl'); %'Segmentations/ct_seg_electrodes.lbl');
-t1Ni = readFileNifti('t1_aligned.nii.gz'); %'t1_average.nii.gz');
+t1Ni = niftiRead('t1_aligned.nii.gz'); %'t1_average.nii.gz');
 % Force the xform to be the same as the t1. (ITKGray doesn't set the xform
 % correctly when you create a new segmentation.)
 electrodeNi = niftiSetQto(electrodeNi,t1Ni.qto_xyz);

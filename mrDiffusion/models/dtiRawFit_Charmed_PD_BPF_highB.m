@@ -85,8 +85,8 @@ function dt6FileName = dtiRawFit_Charmed_PD_BPF_highB(dwRaw, bvecs, bvals, outBa
 % f = 'raw/dti_g13_b800_aligned.'; out = 'dti06rt';
 % dtiRawFitTensor([f 'nii.gz'], [f 'bvecs'], [f 'bvals'], out, [], 'rt');
 % % Show outlier count as an overlay on the b0:
-% aNi = readFileNifti(fullfile(out,'bin','b0.nii.gz'));
-% oNi = readFileNifti(fullfile(out,'bin','outliers.nii.gz'));
+% aNi = niftiRead(fullfile(out,'bin','b0.nii.gz'));
+% oNi = niftiRead(fullfile(out,'bin','outliers.nii.gz'));
 % aIm = mrAnatHistogramClip(double(aNi.data),0.4,0.98);
 % oIm = double(sum(oNi.data,4));
 % mrAnatOverlayMontage(oIm, oNi.qto_xyz, aIm, aNi.qto_xyz, autumn(256), [1 10], [-34:2:62],[],3,1,false);
@@ -183,7 +183,7 @@ disp(['data will be saved to ' outBaseName '.']);
 if(ischar(dwRaw))
     % dwRaw can be a path to the file or the file itself
     disp(['Loading raw data ' dwRaw '...']);
-    dwRaw = readFileNifti(dwRaw);
+    dwRaw = niftiRead(dwRaw);
     weLoadedRaw = true;
 else
     weLoadedRaw = false;
@@ -867,8 +867,8 @@ numBV_Vols=length(normal_b);
             dtiWriteNiftiWrapper(outliers, xformToAcPc, fullfile(ppBinDir,files.outliers), 1, desc, 'outlier mask');
             %Create summary image of outliers.nii.gz that can be viewed as an image
             % when loaded into DTIfiberUI.
-            %outlierImage=readFileNifti(fullfile(pBinDir,files.outliers));
-            outlierImage=readFileNifti(files.outliers);
+            %outlierImage=niftiRead(fullfile(pBinDir,files.outliers));
+            outlierImage=niftiRead(files.outliers);
             outlierImage.data=sum(outlierImage.data,4);
             outlierImage.fname = fullfile(ppBinDir,pBinDir,'outlier_sum_image.nii.gz');
             writeFileNifti(outlierImage);

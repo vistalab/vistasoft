@@ -198,12 +198,12 @@ readerTypeInd = strmatch('Type of Reader',bdColNames);
 goodReaders = bd(:,readerTypeInd)'>=0;
 goodSubs=[1:length(f)];
 
-ni = readFileNifti(fullfile('/silver/scr1/mniWarpAnalysis/data/',[sc{1} '_FA_sn.nii.gz']));
+ni = niftiRead(fullfile('/silver/scr1/mniWarpAnalysis/data/',[sc{1} '_FA_sn.nii.gz']));
 xform = ni.qto_xyz;
 fa = zeros([size(ni.data),N]);
 fa(:,:,:,1) = ni.data;
 for(ii=2:N)
-   ni = readFileNifti(fullfile('/silver/scr1/mniWarpAnalysis/data/',[sc{ii} '_FA_sn.nii.gz']));
+   ni = niftiRead(fullfile('/silver/scr1/mniWarpAnalysis/data/',[sc{ii} '_FA_sn.nii.gz']));
    fa(:,:,:,ii) = ni.data;
 end
 

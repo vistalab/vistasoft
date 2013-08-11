@@ -16,7 +16,7 @@ end
 
 if(~isstruct(classNi))
     try
-        classNi = readFileNifti(classNi);
+        classNi = niftiRead(classNi);
     catch ME
         warning(ME.message);
         disp(sptintf('[%s]: Cannot load class file %s.', mfilename, classNi));

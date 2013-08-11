@@ -1,20 +1,20 @@
 %% Load quantitative maps
-% hlf_am=readFileNifti('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/HLF_F.nii.gz');
-% T1_am=readFileNifti('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/T1_LFit_F.nii.gz');
-% hWf_am=readFileNifti('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/T1fh_F.nii.gz');
-% PD_am=readFileNifti('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/PDcorected_F.nii.gz');
+% hlf_am=niftiRead('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/HLF_F.nii.gz');
+% T1_am=niftiRead('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/T1_LFit_F.nii.gz');
+% hWf_am=niftiRead('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/T1fh_F.nii.gz');
+% PD_am=niftiRead('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/amlin_2mms1/PDcorected_F.nii.gz');
 % %load dt6
 dt=dtiLoadDt6('/biac3/wandell4/data/reading_longitude/dti_adults/am090121/dti06trilinrt/dt6')
 % %load white matter mask
-% mask_am=readFileNifti('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/am1_5lin_2mms/T1_class2mm.nii.gz');
+% mask_am=niftiRead('/biac3/wandell5/data/relaxometry/100405HLF3T/anal/am1_5lin_2mms/T1_class2mm.nii.gz');
 
 path='/biac3/wandell5/data/relaxometry/100405HLF3T/anal/am1_5lin_2mms/';
 
-hlf_am=readFileNifti([path 'HLF_F.nii.gz']);
-T1_am=readFileNifti([path 'T1_LFit_F.nii.gz']);
-hWf_am=readFileNifti([path 'T1fh_F.nii.gz']);
-PD_am=readFileNifti([path 'Wf_F.nii.gz']);
-mask_am=readFileNifti([path 'T1_class2mm.nii.gz']);
+hlf_am=niftiRead([path 'HLF_F.nii.gz']);
+T1_am=niftiRead([path 'T1_LFit_F.nii.gz']);
+hWf_am=niftiRead([path 'T1fh_F.nii.gz']);
+PD_am=niftiRead([path 'Wf_F.nii.gz']);
+mask_am=niftiRead([path 'T1_class2mm.nii.gz']);
 
 %% Resample to dti resolution
 maskR= mrAnatResliceSpm(double(mask_am.data),inv(mask_am.qto_xyz),dt.bb,dt.mmPerVoxel,1);

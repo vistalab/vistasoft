@@ -20,7 +20,7 @@ if notDefined('hemisphere'), hemisphere = 'left'; end
 if notDefined('numGrayLayers'), numGrayLayers = 0; end
 if notDefined('inflateFlag'), inflateFlag = 0; end
 
-classNi = readFileNifti(NiftiClassFile);
+classNi = niftiRead(NiftiClassFile);
 class   = readClassFile(classNi,0,0,hemisphere);
 [nodes,edges,classData] = mrgGrowGray(class,numGrayLayers);
 
@@ -49,7 +49,7 @@ writeClassFile(class,'right.Class');
 
 NiftiClassFile='/biac2/wandell2/data/anatomy/dougherty/t1_class.nii.gz';
 hemisphere='left'
-classNi = readFileNifti(NiftiClassFile);
+classNi = niftiRead(NiftiClassFile);
 class = readClassFile(classNi,0,0,hemisphere);
 [nodes,edges,classData] = mrgGrowGray(class,3);
 wm = uint8( (classData.data == classData.type.white) | (classData.data == classData.type.gray));

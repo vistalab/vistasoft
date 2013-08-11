@@ -20,7 +20,7 @@ function [wm, gm, csf] = mrAnatSpmSegment(vol, xformVol2Physical, templateFileNa
 %
 % eg.
 % [f,p] = uigetfile('*.nii*','Select a NIFTI t1 volume...');
-% ni = readFileNifti(fullfile(p,f));
+% ni = niftiRead(fullfile(p,f));
 % [wm, gm, csf] = mrAnatSpmSegment(ni.data,ni.qto_xyz,'MNIT1');
 % dots = strfind(f,'.'); fn = f(1:dots(1)-1);
 % dtiWriteNiftiWrapper(wm,ni.qto_xyz,fullfile(p,[fn '_wm']),1,'wm probability');

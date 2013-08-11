@@ -55,11 +55,11 @@ wmProb = dtiCleanImageMask(wmProb,0,0);
 % the directory was created), we take off the first part of the path in the
 % dt6struct.files field. 
 inds=strfind(dt6struct.files.faStd,'/'); inds=min(inds);
-fa=readFileNifti(dt6struct.files.faStd(inds+1:end));
+fa=niftiRead(dt6struct.files.faStd(inds+1:end));
 inds=strfind(dt6struct.files.mdStd,'/'); inds=min(inds);
-md=readFileNifti(dt6struct.files.mdStd(inds+1:end));
+md=niftiRead(dt6struct.files.mdStd(inds+1:end));
 inds=strfind(dt6struct.files.pddDisp,'/'); inds=min(inds);
-pdd=readFileNifti(dt6struct.files.pddDisp(inds+1:end));
+pdd=niftiRead(dt6struct.files.pddDisp(inds+1:end));
 wm_fa=fa.data(wmProb);
 wm_md=md.data(wmProb);
 wm_pdd=pdd.data(wmProb);

@@ -92,7 +92,7 @@ mdErr(mdErr>1) = 1;
 mdErr(isnan(mdErr)) = 1;
 
 %% Compute location prior from a template
-ccLocPriorNi = readFileNifti(templateFile);
+ccLocPriorNi = niftiRead(templateFile);
 sz = size(faErr);
 xf = ccLocPriorNi.qto_ijk*xform;
 [sampZ,sampY] = meshgrid(1:sz(2),1:sz(1));

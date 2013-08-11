@@ -84,7 +84,7 @@ disp(['NIFTI classification will be saved in ' outFileName]);
 % Allow t1NiftiFile and mrGrayClassFile to be passed as either filenames or
 % structs that have already been loaded from file.
 if(~isstruct(t1NiftiFile))
-    t1NiftiFile = readFileNifti(t1NiftiFile);
+    t1NiftiFile = niftiRead(t1NiftiFile);
 end
 
 [vAnat,vAnatMm] = readVolAnat(vAnatFile);

@@ -104,7 +104,7 @@ spm_defaults; global defaults;
 defaults.analyze.flip = 0;
 
 if(strcmpi(t1Type,'.nii')||strcmpi(t1Type,'.gz'))
-    ni = readFileNifti(t1.analyzeFname);
+    ni = niftiRead(t1.analyzeFname);
     t1.cannonical_img = ni.data;
     t1.cannonical_mmPerVox = ni.pixdim;
     t1.acpcXform = ni.qto_xyz;

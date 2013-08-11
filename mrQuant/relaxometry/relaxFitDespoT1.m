@@ -251,11 +251,11 @@ end
 
 if(0)
 % compare wm/gm
-wm = readFileNifti('whiteMatterMask.nii.gz');
+wm = niftiRead('whiteMatterMask.nii.gz');
 wm = uint8(wm.data);
 wm(wm==3) = 16;
 wm(wm==1) = 48;
-t1=readFileNifti('T1.nii.gz');
+t1=niftiRead('T1.nii.gz');
 v=uint8(wm); v(v>0)=16; 
 gm_nodes = grow_gray(v,5);
 gm = zeros(size(v));

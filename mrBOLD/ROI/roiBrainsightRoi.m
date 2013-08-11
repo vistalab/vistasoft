@@ -35,8 +35,8 @@ if notDefined('t1')
 end
 
 
-roi = readFileNifti(roi);
-t1 = readFileNifti(t1);
+roi = niftiRead(roi);
+t1 = niftiRead(t1);
 
 roi.data = uint16(roi.data);
 

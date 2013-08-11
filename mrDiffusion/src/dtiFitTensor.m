@@ -21,7 +21,7 @@ function dtiFitTensor()
 %  bn = '/biac3/wandell4/data/reading_longitude/dti_y1/ar040522/raw/rawDti';
 % 
 % Examples:
-%  dwRaw = readFileNifti([bn '.nii.gz']);
+%  dwRaw = niftiRead([bn '.nii.gz']);
 %  sz = size(dwRaw.data);
 %  d = double(dwRaw.data);
 %  bvecs = dlmread([bn '.bvecs']);
