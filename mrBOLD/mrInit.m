@@ -250,7 +250,7 @@ if params.sliceTimingCorrection==1
         mrSESSION = sessionSet(mrSESSION, 'sliceorder', params.sliceOrder);
         saveSession;
     end
-    INPLANE{1} = AdjustSliceTiming(INPLANE{1}, length(sessionGet(mrSESSION, 'functionals')));
+    INPLANE{1} = AdjustSliceTiming(INPLANE{1}, 1:length(sessionGet(mrSESSION, 'functionals')));
     INPLANE{1} = selectDataType(INPLANE{1}, 'Timed');
 end
 
