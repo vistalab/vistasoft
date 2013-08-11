@@ -32,17 +32,25 @@ if exist('fName','var'),  ni.fname = fName; end
 [p f e] = fileparts(ni.fname);
 if isempty(e), ni.fname = fullfile(p,[f '.nii.gz']); end
 
+%% Deal with old VISTASOFT nifti structures.
+if isfield(ni,'data')
+  % This is likely to be a old VISTASOFT nifti-1 structure, see
+  % niftiVista2ni.m
+  if notDefined('fileName'), fileName = ni.fname;end
+  ni = niftiVista2ni(ni);
+end
 
-%% Write using a function that depends on the nifti data type field 
-% Files are written out in a format complaint with the NIFTI-1 file type.
-% Jimmy Shen's code and VISTASOFT code can read these files.
-% But, the mex file we have only handle one data type: int16.
-% switch ni.data_type
-%     case  niftiClass2DataType('int16')
-%         writeFileNifti(ni);   % Fast, mex-file
-%     otherwise
-        niftiWriteMatlab(ni);
-% end
+%% Save the file to disk using Shen's code.
+if notDefined('fileName'), error('File name necessary to save a NIFTI-1 structure to file.');end
+[p,n,e] = fileparts(fileName);
+if isempty(e), n = sprintf('%s.nii',n);end
+save_nii(ni,fullfile(p,n));
+
+%% Zip the file
+gzip(fullfile(p,n));
+
+%% Delete the unzipped file created by save_nii.m:
+delete(fullfile(p,n));
 
 
 end
