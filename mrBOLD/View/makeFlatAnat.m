@@ -63,7 +63,8 @@ for h=1:2
         
         if (checkML7)
             disp('Matlab 7 or higher detected..');            
-            anat(:,:,h) = griddata(x,y,z,xi,yi,'linear',{'QJ'});
+            %anat(:,:,h) = griddata(x,y,z,xi,yi,'linear',{'QJ'});
+            anat(:,:,h) = griddata(x,y,z,xi,yi,'linear');
         else         
             anat(:,:,h) = griddata(x,y,z,xi,yi,'linear');
         end
