@@ -10,7 +10,9 @@ fibers = dtiFiberTracker(dt6, seedPoints, mmPerVox, trackAlgo, interpAlgo, stepS
 %
 % mmPerVox: 3x1 array specifying the mmPerVox in (X,Y,Z)
 %
-% Tracking algorithm: 0=FACT Euler, 1=FACT RK4, 2=TEND Euler, 3=TEND RK4
+% Tracking algorithm: 0=STT Euler, 1=STT RK4, 2=TEND Euler, 3=TEND RK4
+%                     The default method '1' most closely resembles the STT algorithm described in Basser et. al., (2000), 
+%                     In Vivo Fiber Tractography Using DT-MRI Data, MRM.  It uses a Runge-Kutta path-integral method. 
 %
 % Interpolation type: 0=nearest neighbor, 1=tri-linear
 %
