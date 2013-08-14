@@ -1,4 +1,4 @@
-function [mexFiles cFiles status params] = mrvCompile(deleteOldFiles, findCFiles)
+function [mexFiles cFiles status params] = mrvCompile(deleteOldFiles)
 % Compile all MEX files in VISTASOFT for a given MATLAB installation.
 % 
 % [mexFiles cFiles status params] = mrvCompile([deleteOldFiles=0], [findCFiles=0]);
@@ -13,11 +13,6 @@ function [mexFiles cFiles status params] = mrvCompile(deleteOldFiles, findCFiles
 %	with the new compiled code. Delete at your own risk. [default 0, don't
 %	delete.]
 %
-%	findCFiles: flag to search through the VISTASOFT repository for all C
-%	files. By default this is 0, since a list of C files (as of October
-%	2008) is hard-coded into this function. However, if someone has added
-%	new C files, this flag will direct the code to search for them and add
-%	them to the compile list.
 %	
 % OUTPUTS:
 %	mexFiles: cell array of paths to each compiled mex file. Empty if the
@@ -51,14 +46,13 @@ function [mexFiles cFiles status params] = mrvCompile(deleteOldFiles, findCFiles
 % (c) Stanford VISTA Team 2008
 
 if notDefined('deleteOldFiles'),	deleteOldFiles = 0;		end
-if notDefined('findCFiles'),		findCFiles = 0;			end
 
 % determine parameters that will affect compiling
 % this includes OS, architecture, MATLAB version, ...?
 params = getInstallationParams;
 
 % get a list of the C files to compile
-cFiles = getCFileList(findCFiles, params.rootPath);
+cFiles = defaultCFileList;
 
 % clean old files if necessary
 if deleteOldFiles==1
@@ -71,29 +65,7 @@ params = checkMexSetup(params);
 % Main part: compile all files
 [mexFiles, status, params] = compileCFiles(cFiles, params);
 
-return
-% /--------------------------------------------------------------/ %
 
-
-
-% /--------------------------------------------------------------/ %
-function cFiles = getCFileList(findCFiles, rootPath)
-% return a cell array of paths to *.c source files. 
-% If findCFiles==1, do a recursive search to generate this list. Otherwise,
-% use a preset list.
-if findCFiles==1
-	% recursive search: not yet implemented
-	error('Find C files not yet impelemented.');
-else
-	cFiles = defaultCFileList;
-	% append each path to the location of the root VISTASOFT repository:
-	for ii = 1:length(cFiles)
-		cFiles{ii} = fullfile(rootPath, cFiles{ii});
-        if(~isempty(strfind(cFiles{ii},';')))
-           cFiles{ii} = strrep(cFiles{ii}, ';', [' ' rootPath filesep]);
-        end
-	end
-end
 return
 % /--------------------------------------------------------------/ %
 

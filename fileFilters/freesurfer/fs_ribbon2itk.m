@@ -131,7 +131,7 @@ eval(str)
 %   unlabeled:    0 => 0 (if fillWithCSF == 0) or 1 (if fillWithCSF == 1)          
 
 % read in the nifti
-ni = readFileNifti(outfile);
+ni = niftiRead(outfile);
 
 % check that we have the expected values in the ribbon file
 vals = sort(unique(ni.data(:)));

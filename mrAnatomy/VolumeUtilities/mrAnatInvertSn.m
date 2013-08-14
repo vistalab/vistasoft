@@ -23,7 +23,7 @@ function [defX,defY,defZ] = mrAnatInvertSn(sn, mm, bb)
 % tmp = reshape(coordLUT,[size(defX) 1 3]);
 % dtiWriteNiftiWrapper(tmp, qto_xyz, lutFile, 1, '', intentName, intentCode);
 % % To use the LUT to find the MNI coordiante of an ac-pc coordinate:
-% ni = readFileNifti(lutFile);
+% ni = niftiRead(lutFile);
 % snLUT.coordLUT = squeeze(ni.data(:,:,:,1,:))
 % snLUT.inMat = ni.qto_ijk;
 % curPosSs = mrAnatXformCoords(snLUT, acpcCoord);

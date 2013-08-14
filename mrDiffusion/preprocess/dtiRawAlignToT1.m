@@ -81,7 +81,7 @@ end
 
 if(ischar(b0File))
     disp(['Loading b0 data ' b0File '...']);
-    b0File = readFileNifti(b0File);
+    b0File = niftiRead(b0File);
 end
 
 
@@ -103,7 +103,7 @@ else
 end
 
 if(ischar(t1))
-    t1 = readFileNifti(t1);
+    t1 = niftiRead(t1);
 end
 
 target.uint8 = uint8(round(mrAnatHistogramClip(double(t1.data),0.50,0.995)*255));
@@ -117,7 +117,7 @@ else
   error('Requires that t1 qform_code>0 OR sform_code>0.');
 end
 if(~isempty(t1MaskFile))
-  brainMask = readFileNifti(t1MaskFile);
+  brainMask = niftiRead(t1MaskFile);
   target.uint8(~brainMask.data) = 0;
   clear brainMask;
 end

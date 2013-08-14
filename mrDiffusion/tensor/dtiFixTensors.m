@@ -23,7 +23,7 @@ function dtiFixTensors(tensorFile, outFile)
 % than microns^2/msec)
 minVal = 1e-6;
 
-ni = readFileNifti(tensorFile);
+ni = niftiRead(tensorFile);
 dt6 = double(squeeze(ni.data(:,:,:,1,[1 3 6 2 4 5])));
 [eigVec,eigVal] = dtiEig(dt6);
 mask = repmat(all(eigVal==0,4),[1 1 1 3]);

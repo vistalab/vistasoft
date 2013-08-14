@@ -65,7 +65,7 @@ for ii=1:numImages
 end
 
 % Load the first image (the image to align)
-ni = readFileNifti(fileNameList{1});
+ni = niftiRead(fileNameList{1});
 ni = niftiApplyCannonicalXform(ni);
 refDescrip = ni.descrip;
 
@@ -82,7 +82,7 @@ if(ischar(storedAnatomy))
     [p,f,e] = fileparts(storedAnatomy); %#ok<*ASGLU>
     disp(['Aligning reference image to the template image in ' f '...']);
     if(strcmpi(e,'.nii')||strcmpi(e,'.gz'))
-        tmp = readFileNifti(storedAnatomy);
+        tmp = niftiRead(storedAnatomy);
         img = tmp.data;
         acpcXform = tmp.qto_xyz;
         mmPerVox = tmp.pixdim(1:3);
@@ -203,9 +203,9 @@ for ii=1:numImages
 
     else
         startInd = 1;
-        % ni = readFileNifti(fileNameList{ii});
+        % ni = niftiRead(fileNameList{ii});
         % ni = niftiApplyCannonicalXform(ni);                
-        ni = readFileNifti(fileNameList{ii});                  
+        ni = niftiRead(fileNameList{ii});                  
         refDescrip = ni.descrip;
     end
 

@@ -9,7 +9,7 @@
 %% Use a modern NIFTI class file (suggested)
 dataDir     = mrvDataRootPath;
 fName       = fullfile(dataDir, 'anatomy', 'anatomyNIFTI','t1_class.nii.gz');
-niftiImage  = readFileNifti(fName, []);  % Read just the header
+niftiImage  = niftiRead(fName, []);  % Read just the header
 mmPerVox    = niftiImage.pixdim;         % Get the pixel size
 
 % Run the build code, perform smoothing/coloring

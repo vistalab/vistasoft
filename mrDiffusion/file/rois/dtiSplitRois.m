@@ -26,7 +26,7 @@ mask=img>minImgValue;
 return;
 
 %To transform an image file to a file with blobs use
-a=readFileNifti('dmn.nii.gz'); 
+a=niftiRead('dmn.nii.gz'); 
 [roisimg, labels]=dtiSplitRois(a.data, 5, 1.96);
 a.data=roisimg;
 a.fname='dmn_blobs.nii.gz'; 

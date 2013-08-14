@@ -14,7 +14,7 @@ function mtrTrackVis2PDB(volFile, trkFile, pdbFile)
 
 
 % Load vol file to get AcPc xform
-vol = readFileNifti(volFile);
+vol = niftiRead(volFile);
 xformTo = vol.qto_xyz;
 xformFrom = abs(vol.qto_ijk);
 xformFrom(1:3,4)=0;

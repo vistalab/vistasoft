@@ -83,7 +83,7 @@ end
 % check whether t1 is [1 1 1] (freesurfer standard resolution). if not we
 % need to resample the segmentation.
 
-ni  = readFileNifti(t1);
+ni  = niftiRead(t1);
 res = ni.pixdim;
 if any(abs(res(1:3) - [1 1 1]) > .000001), 
     resampleSeg = true;

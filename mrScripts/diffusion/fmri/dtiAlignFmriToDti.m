@@ -39,7 +39,7 @@ if(~exist(ipFile,'file'))
   if(isnumeric(f)) error('user cancelled.'); end
   ipFile = fullfile(p,f);
 end
-inplane = readFileNifti(ipFile);
+inplane = niftiRead(ipFile);
 %handles = guidata(gcf);
 % The nifti q-form goes converts voxel space to ac-pc space, but we want
 % voxel to t1-anat, so we undo the ac-pc part.
@@ -70,7 +70,7 @@ niFile = fullfile(p,f);
 [f,p] = uigetfile('*.mat','Select the dt6 file...',fileparts(p));
 if(isnumeric(f)) error('user cancelled.'); end
 dt6File = fullfile(p,f);
-ni = readFileNifti(niFile);
+ni = niftiRead(niFile);
 dt = load(dt6File, 'anat','t1NormParams');
 
 sn = dt.t1NormParams(2).sn;

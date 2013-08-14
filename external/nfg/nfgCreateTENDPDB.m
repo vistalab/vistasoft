@@ -35,7 +35,7 @@ opts.seedVoxelOffsets = 0.5;
 
 % Create ROI from WM mask that has high enough FA
 disp(['Creating WM ROI with FA > ' num2str(faThresh) ' ...']);
-wm = readFileNifti(wmROIFile);
+wm = niftiRead(wmROIFile);
 dt = dtiLoadDt6(dtFile);
 fa = dtiComputeFA(dt.dt6);
 fa(fa>1) = 1; fa(fa<0) = 0;

@@ -8,7 +8,7 @@ function [ctr, xformToAcpc, img_mask] = ctrROIMaskFile(p, ctr)
 
 % Get dimensions for mask image
 b0File = fullfile(p.dt6Dir,'bin','b0.nii.gz');
-ni = readFileNifti(b0File);
+ni = niftiRead(b0File);
 xformToAcpc = ni.qto_xyz;
 img_mask = zeros(size(ni.data));
 clear ni;

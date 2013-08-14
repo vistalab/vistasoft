@@ -41,11 +41,11 @@ catch
     disp('Compiling dtiJointHist.c FAILED...');
 end
 
-cd(fileparts(which('readFileNifti.c')));
+cd(fileparts(which('niftiRead.c')));
 disp('Compiling read/writeFileNifti ...');
 try
-    mex readFileNifti.c nifti1_io.c znzlib.c zlib/adler32.c zlib/compress.c zlib/crc32.c zlib/deflate.c zlib/gzio.c zlib/infback.c zlib/inffast.c zlib/inflate.c zlib/inftrees.c zlib/trees.c zlib/zutil.c
-    mexFiles{end+1} = ['readFileNifti.' mexext];
+    mex niftiRead.c nifti1_io.c znzlib.c zlib/adler32.c zlib/compress.c zlib/crc32.c zlib/deflate.c zlib/gzio.c zlib/infback.c zlib/inffast.c zlib/inflate.c zlib/inftrees.c zlib/trees.c zlib/zutil.c
+    mexFiles{end+1} = ['niftiRead.' mexext];
     mex writeFileNifti.c nifti1_io.c znzlib.c zlib/adler32.c zlib/compress.c zlib/crc32.c zlib/deflate.c zlib/gzio.c zlib/infback.c zlib/inffast.c zlib/inflate.c zlib/inftrees.c zlib/trees.c zlib/zutil.c
     mexFiles{end+1} = ['writeFileNifti.' mexext];
 catch
@@ -154,7 +154,7 @@ end
 
 return;
 
-% /home/bob/svn/vistasoft/trunk/fileFilters/nifti/readFileNifti.mexa64
+% /home/bob/svn/vistasoft/trunk/fileFilters/nifti/niftiRead.mexa64
 % /home/bob/svn/vistasoft/trunk/fileFilters/nifti/matToQuat.mexa64
 % /home/bob/svn/vistasoft/trunk/fileFilters/nifti/writeFileNifti.mexa64
 % /home/bob/svn/vistasoft/trunk/mrAlign/regInplanes.mexa64

@@ -10,7 +10,7 @@ end
 
 % SPM doesn't know how to read gzipped niftis, so we'll load NIFTIs ourselves
 if(ischar(fname)&&~isempty(strfind(fname,'.nii')))
-    fname = readFileNifti(fname);
+    fname = niftiRead(fname);
 end
 
 

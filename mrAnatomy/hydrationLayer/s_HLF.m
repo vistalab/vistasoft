@@ -34,7 +34,7 @@ else
     outDir = dataDir;
     % Load all the series in the struct 's'
     s = dicomLoadAllSeries(rawDir);
-    ref = readFileNifti(refIm);
+    ref = niftiRead(refIm);
     %mmPerVox = ref.pixdim(1:3);
     mmPerVox = [0.9 0.9 0.9];
     % Align all the series to this subject's reference volume
@@ -87,7 +87,7 @@ if(~exist(fullfile(outDir,'b1.nii.gz')))
     b1Map = relaxFitDespoT1(s, brainMask);
     dtiWriteNiftiWrapper(single(b1Map), xform, fullfile(outDir,'b1.nii.gz'));
 else
-    ni = readFileNifti(fullfile(outDir,'b1.nii.gz'));
+    ni = niftiRead(fullfile(outDir,'b1.nii.gz'));
     b1Map = double(ni.data);
 end
 

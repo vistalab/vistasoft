@@ -190,9 +190,9 @@ hold off
 
 % Plotting distribution on the sphere for Behrens Data
 wDir = 'c:\cygwin\home\sherbond\data\bg040719\dti06\bin';
-ni = readFileNifti(fullfile(wDir,'merged_thsamples.nii.gz')); % Switch theta and phi
+ni = niftiRead(fullfile(wDir,'merged_thsamples.nii.gz')); % Switch theta and phi
 phVec = squeeze(ni.data(26,31,38,:));
-ni = readFileNifti(fullfile(wDir,'merged_phsamples.nii.gz'));
+ni = niftiRead(fullfile(wDir,'merged_phsamples.nii.gz'));
 thVec = squeeze(ni.data(26,31,38,:));
 vecs = [cos(thVec).*sin(phVec), sin(thVec).*sin(phVec), cos(phVec)]';
 S = zeros(3,3);
@@ -213,7 +213,7 @@ xlabel('x');
 ylabel('y');
 zlabel('z');
 % Get my direction distribution based on fibers chosen
-ni = readFileNifti(fullfile(wDir,'pdf.nii.gz'));
+ni = niftiRead(fullfile(wDir,'pdf.nii.gz'));
 pdfData = squeeze(ni.data(26,31,38,:));
 Cl = pdfData(12);
 l2 = pdfData(13);
@@ -230,7 +230,7 @@ hold off
 
 % Load tensor and draw as ellipsoid
 figure;
-ni = readFileNifti(fullfile(wDir,'tensors.nii.gz'));
+ni = niftiRead(fullfile(wDir,'tensors.nii.gz'));
 %tensor = squeeze(ni.data(26,31,38,1,:));
 tensor = squeeze(ni.data(41,45,41,1,:));
 D = [tensor(1), tensor(2), tensor(4);
@@ -321,7 +321,7 @@ dtiWriteNiftiWrapper(img,M,'meanB0_2.nii.gz');
 % read in nifti image and write out camino data
 fileRootName = 'meanB0';
 datatype = 'double'; %float or double
-ni = readFileNifti([fileRootName '.nii.gz']);
+ni = niftiRead([fileRootName '.nii.gz']);
 % put the 4th dimension in front if its there if scalar
 % volume this does nothing
 d = shiftdim(ni.data,3);
@@ -352,7 +352,7 @@ fwrite(fid,d(:),datatype); fclose(fid);
 
 % This method seems to work better, why??
 cd c:\cygwin\home\sherbond\experiments\dtiBootstrap
-ni = readFileNifti('lns0.nii.gz');
+ni = niftiRead('lns0.nii.gz');
 img_lns0 = ni.data;
 img_subs0 = exp(img_lns0(9:33,12:54,26));
 sigma = std(img_subs0(:))/0.655 % sigma = 62
@@ -433,14 +433,14 @@ M = eye(4); M(1,1)=2; M(2,2)=2;M(3,3)=2;
 dtiWriteNiftiWrapper(img_d,M,'dtconst_temp.nii.gz');
 
 % Strip the PDF data out of the fit
-ni = readFileNifti('dtconst_temp.nii.gz');
+ni = niftiRead('dtconst_temp.nii.gz');
 M = eye(4); M(1,1)=2; M(2,2)=2;M(3,3)=2;
 NCr = size(ni.data,4);
 NCw = 12;
 dtiWriteNiftiWrapper(ni.data(:,:,:,NCr-NCw+1:end),M,'pdf_const.nii.gz');
 
 % Fitting non-PD tensors
-ni = readFileNifti('mho_dti_ec.nii.gz');
+ni = niftiRead('mho_dti_ec.nii.gz');
 S = squeeze(ni.data(65,86,16,:));
 clear ni;
 scheme = load('mho.scheme');
@@ -534,7 +534,7 @@ fathresh = 2;
 roi = dtiReadRoi(fullfile('ROIs',roiFile));
 dt = load(dtFile,'xformToAcPc');
 roi.coords = mrAnatXformCoords(inv(dt.xformToAcPc), roi.coords);
-ni = readFileNifti('bin\backgrounds\fa.nii.gz');
+ni = niftiRead('bin\backgrounds\fa.nii.gz');
 img_mask = zeros(size(ni.data));
 for ii = 1:size(roi.coords,1)
     if(ni.data(round(roi.coords(ii,1)),round(roi.coords(ii,2)),round(roi.coords(ii,3))) <= fathresh)
@@ -548,9 +548,9 @@ roi.coords = mrAnatXformCoords(dt.xformToAcPc, roi.coords);
 mtr = mtrSet(mtr,'roi',roi.coords,1,'coords');
 mtrSave(mtr,fullfile('bin\metrotrac\',paramsFile),dt.xformToAcPc);
 % and update the mask image that contains both ROIs
-ni = readFileNifti(fullfile('bin\metrotrac\',roiMaskFile));
+ni = niftiRead(fullfile('bin\metrotrac\',roiMaskFile));
 img_one = ni.data;
-ni = readFileNifti(fullfile('bin\metrotrac\',roiOtherMaskFile));
+ni = niftiRead(fullfile('bin\metrotrac\',roiOtherMaskFile));
 img_two = ni.data;
 img_both = img_one | img_two;
 dtiWriteNiftiWrapper(uint8(img_both),dt.xformToAcPc,fullfile('bin\metrotrac\',bothMaskFile));
@@ -580,7 +580,7 @@ fclose(fid);
 
 % Calculate westin shapes from eigenvalue image
 cd c:\cygwin\home\sherbond\experiments\dtiBootstrap\
-ni = readFileNifti('eigcnls.nii.gz');
+ni = niftiRead('eigcnls.nii.gz');
 img_eig = ni.data(:,:,:,1:4:end);
 img_ishape = zeros(size(img_eig(:,:,:,1:2)));
 for z = 1:size(img_eig,3)
@@ -596,9 +596,9 @@ dtiWriteNiftiWrapper(img_ishape,M,'shapes.nii.gz');
 
 % Add shape indices to pdf image, remove log_A
 cd c:\cygwin\home\sherbond\experiments\dtiBootstrap\
-ni = readFileNifti('pdf.nii.gz');
+ni = niftiRead('pdf.nii.gz');
 img_pdf = ni.data;
-ni = readFileNifti('shapes.nii.gz');
+ni = niftiRead('shapes.nii.gz');
 img_shapes = ni.data;
 img_pdf(:,:,:,12:13) = img_shapes;
 M = eye(4); M(1,1)=2; M(2,2)=2;M(3,3)=2;
@@ -606,16 +606,16 @@ dtiWriteNiftiWrapper(img_pdf,M,'pdfshapes.nii.gz');
 
 % Lets examine distributions based on shapes
 %cd c:\cygwin\home\sherbond\images\me050126\
-ni = readFileNifti(fullfile('bin','pdf.nii.gz'));
+ni = niftiRead(fullfile('bin','pdf.nii.gz'));
 img_k1 = ni.data(:,:,:,10);
 img_k2 = ni.data(:,:,:,11);
 img_cl = ni.data(:,:,:,12);
 img_cp = ni.data(:,:,:,13);
 img_cs = 1 - (img_cl + img_cp);
-ni = readFileNifti(fullfile('bin','backgrounds','fa.nii.gz'));
+ni = niftiRead(fullfile('bin','backgrounds','fa.nii.gz'));
 img_fa = ni.data;
 % Making a white matter mask
-ni = readFileNifti(fullfile('bin','wmMask.nii.gz'));
+ni = niftiRead(fullfile('bin','wmMask.nii.gz'));
 img_wm = ni.data;
 ind_throwaway = ~img_wm | -img_k2 < 1;
 favec = img_fa(~ind_throwaway);
@@ -714,9 +714,9 @@ dtiWriteNiftiWrapper(img_d(:,:,:,9:end),M,'pdf.nii.gz');
 
 % Making a white matter mask
 cd c:\cygwin\home\sherbond\images\as050307\
-ni = readFileNifti('bin\backgrounds\fa.nii.gz');
+ni = niftiRead('bin\backgrounds\fa.nii.gz');
 img_fa = ni.data;
-ni = readFileNifti('bin\backgrounds\b0.nii.gz');
+ni = niftiRead('bin\backgrounds\b0.nii.gz');
 img_b0 = ni.data;
 M = ni.qto_xyz;
 clear ni;
@@ -743,7 +743,7 @@ fgFile = 'bin\metrotrac\paths_sub_good.dat';
 pdfFile = 'bin\pdf.nii.gz';
 
 % Load pdf data
-ni = readFileNifti(pdfFile);
+ni = niftiRead(pdfFile);
 
 % Import the resulting fiber group
 fg = dtiLoadMetrotracPaths(fgFile,ni.qto_xyz);
@@ -985,7 +985,7 @@ disp(['min: ' num2str(min([left_occipital_dist(:); right_occipital_dist(:)]))]);
 
 % % Write out anatomy image in a format that SurfRelax can read
 % cd ../../t1/;
-% ni = readFileNifti('rfd_t1anat.nii.gz');
+% ni = niftiRead('rfd_t1anat.nii.gz');
 % % ni.qform_code=0;
 % % ni.fname = 'anat_forSR.nii.gz';
 % % writeFileNifti(ni);
@@ -1038,8 +1038,8 @@ mrmSaveOffFile(msh,fullfile(subjDir, 'anatomy', 'left','test.off'));
 
 
 % To get AAL and MNI labels
-mni = readFileNifti('/home/sherbond/src/VISTASOFT/mrDiffusion/templates/MNI_T1.nii.gz');
-t1 = readFileNifti('/teal/scr1/dti/cortexModelling/rfd040630/t1/t1.nii.gz');
+mni = niftiRead('/home/sherbond/src/VISTASOFT/mrDiffusion/templates/MNI_T1.nii.gz');
+t1 = niftiRead('/teal/scr1/dti/cortexModelling/rfd040630/t1/t1.nii.gz');
 % Compute the spatial normalization (maps template voxels to image voxels)
 sn = mrAnatComputeSpmSpatialNorm(double(t1.data), t1.qto_xyz, mni);
 % Invert the spatial norm to map image voxels to template voxels
@@ -1057,7 +1057,7 @@ lutFile = '/teal/scr1/dti/cortexModelling/rfd040630/MNI_coordLUT.nii.gz';
 dtiWriteNiftiWrapper(tmp,sn.VF.mat,lutFile,1,'',intentName,intentCode);
 
 % To use the transform:
-ni = readFileNifti(lutFile);
+ni = niftiRead(lutFile);
 xform.coordLUT = ni.data;
 xform.inMat = ni.qto_ijk;
 t1AcpcCoords = [-15.0, -41.0, 52.0]; 
@@ -1119,14 +1119,14 @@ cgFile = 'connGraph20070821';
 cg = load(fullfile(subjDir,'anatomy',cgFile));
 xform = cg.xformVAnatToAcpc;
 % Create empty image for output
-ni = readFileNifti(fullfile(subjDir,'t1','t1.nii.gz'));
+ni = niftiRead(fullfile(subjDir,'t1','t1.nii.gz'));
 
 
 
 
 % Flip x-axis on nifti image
 fname = 'lor_fdt_paths.nii.gz';
-ni = readFileNifti(fname);
+ni = niftiRead(fname);
 if length(size(ni.data)) == 3
     ni.data = ni.data(end:-1:1,:,:);
 elseif length(size(ni.data)) == 4
@@ -1183,7 +1183,7 @@ cd(ogDir);
 bedpostDir = '/teal/scr1/dti/probtrack_compare/md040714/fdt.bedpost';
 fdtpathsFile = fullfile(bedpostDir,'rmt-cc-hemBound','fdt_paths.nii.gz');
 xNum = 41;
-ni = readFileNifti(fdtpathsFile);
+ni = niftiRead(fdtpathsFile);
 slice = squeeze(ni.data(xNum,:,:));
 [y,z] = ind2sub(size(slice),find(slice>10));
 x = ones(size(y))*xNum;
@@ -1214,7 +1214,7 @@ fclose(fid);
 %partParentDir = 'C:\cygwin\home\sherbond\data\md040714\fdt.bedpost';
 partParentDir = '/teal/scr1/dti/probtrack_compare/md040714/fdt.bedpost';
 outFile = fullfile('splSimple','splSimple2.mat');
-ni = readFileNifti(fullfile(partParentDir,'mean_fsamples.nii.gz'));
+ni = niftiRead(fullfile(partParentDir,'mean_fsamples.nii.gz'));
 xform = ni.qto_xyz;
 partDirs = dir(fullfile(partParentDir,'particle*'));
 fg = [];
@@ -1260,7 +1260,7 @@ fiberDir = fullfile(subjDir,'fibers','conTrack');
 xFile = 'lorX1Mask.nii.gz';
 countThresh = 20;
 fg = mtrImportFibers(fullfile(fiberDir,'resampL_kSmooth_18_kLength_0_kMidSD_0.175.pdb'),eye(4));
-niWay = readFileNifti(fullfile(binDir,'lorWayMask.nii.gz'));
+niWay = niftiRead(fullfile(binDir,'lorWayMask.nii.gz'));
 fdImg = dtiComputeFiberDensityNoGUI(fg, niWay.qto_xyz, size(niWay.data), 1, 0, 0);
 fdImg(fdImg<countThresh) = 0;
 fdImg(fdImg>0) = 1;
@@ -1323,7 +1323,7 @@ cgGenBrodPermPart(permFileName,partFileName);
 % Load camino tracks and save them as mrDiffusion FG (only endpoints and
 % length of the path though)
 subjDir = 'C:\cygwin\home\sherbond\data\rfd040630';
-niT1 = readFileNifti(fullfile(subjDir,'t1','t1.nii.gz'));
+niT1 = niftiRead(fullfile(subjDir,'t1','t1.nii.gz'));
 fgRoot = 'lHem10IConnected1';
 camFile = fullfile(subjDir,'camino','tracks',[fgRoot '.Bfloat']);
 fg = mtrImportFibers(camFile,inv(niT1.qto_xyz),0);
@@ -1442,9 +1442,9 @@ nEarlyAntSteps = 20;
 for ss = 3:length(subjDirs)
     curDir = fullfile(wDir,subjDirs{ss});
     % Load some diffusion data
-    niWMProb = readFileNifti(fullfile(curDir,'dti06','bin','wmProb.nii.gz'));
+    niWMProb = niftiRead(fullfile(curDir,'dti06','bin','wmProb.nii.gz'));
     xformToAcpcDTI = niWMProb.qto_xyz;
-    %niT1 = readFileNifti(fullfile(curDir,'t1','t1.nii.gz'));
+    %niT1 = niftiRead(fullfile(curDir,'t1','t1.nii.gz'));
     xformFromMmToAcpc = xformToAcpcDTI;
     xformFromMmToAcpc(1,1)=1; xformFromMmToAcpc(2,2)=1; xformFromMmToAcpc(3,3)=1;
     % For left (hh==1) and right (hh==2)
@@ -1641,7 +1641,7 @@ ylim([-20 20]);
 
 tenfile1 = 'tensors.nii.gz';
 tenfile2 = 'tensorsFlip.nii.gz';
-ni = readFileNifti(tenfile1);
+ni = niftiRead(tenfile1);
 % We convert from the 5d, lower-tri row order NIFTI tensor format
 % (Dxx Dxy Dyy Dxz Dyz Dzz) to our 4d tensor format
 % (Dxx Dyy Dzz Dxy Dxz Dyz).
@@ -1656,7 +1656,7 @@ ni.fname = tenfile2;
 writeFileNifti(ni);
 
 % Avg the raw file down to independent parts
-ni = readFileNifti('dti_g13_b800_aligned.nii.gz');
+ni = niftiRead('dti_g13_b800_aligned.nii.gz');
 bvals = load('dti_g13_b800_aligned.bvals','-ascii');
 bvecs = load('dti_g13_b800_aligned.bvecs','-ascii');
 ni.fname = 'dti_g13_b800_aligned_avg.nii.gz';
@@ -1682,7 +1682,7 @@ fprintf(fid, '%1.3f ', avg_bvecs(3,:)); fclose(fid);
 cvdir = 'cv_train40';
 fileRoot = 'dti_g86_b900_aligned';
 nD = 43;
-ni = readFileNifti([fileRoot '.nii.gz']);
+ni = niftiRead([fileRoot '.nii.gz']);
 raw = ni.data;
 bvals = load([fileRoot '.bvals'],'-ascii');
 bvecs = load([fileRoot '.bvecs'],'-ascii');
@@ -1714,9 +1714,9 @@ rawDir = '/Users/sherbond/data/mho070519/raw';
 pDir = '/Users/sherbond/data/mho070519/dti06/fibers/pids_modelLHnewvol2_d0.2';
 binDir = '/Users/sherbond/data/mho070519/dti06/bin';
 
-vol = readFileNifti(fullfile(binDir,'b0.nii.gz'));
-raw = readFileNifti(fullfile(rawDir,'dti_g13_b800_aligned_avg.nii.gz'));
-p = readFileNifti(fullfile(pDir,'p.nii.gz'));
+vol = niftiRead(fullfile(binDir,'b0.nii.gz'));
+raw = niftiRead(fullfile(rawDir,'dti_g13_b800_aligned_avg.nii.gz'));
+p = niftiRead(fullfile(pDir,'p.nii.gz'));
 
 X = 24;
 for ll=2:2:13
@@ -1737,9 +1737,9 @@ alg = 'T7233';
 w = 0;
 d = 0.1;
 cd(['pids_lh' alg '_w' num2str(w) '_d' num2str(d)]);
-e = readFileNifti('e.nii.gz');
-f = readFileNifti('f.nii.gz');
-d = readFileNifti('d.nii.gz');
+e = niftiRead('e.nii.gz');
+f = niftiRead('f.nii.gz');
+d = niftiRead('d.nii.gz');
 mean(f.data(vox))
 mean(e.data(vox))
 cd('..');
@@ -1747,7 +1747,7 @@ cd('..');
 % Create WM mask and GM mask from ROI file for FascTrack
 wmFile = 'roiLeftTP.nii.gz';
 gmFile = 'gmLeftTP.nii.gz';
-niWM = readFileNifti(wmFile);
+niWM = niftiRead(wmFile);
 niGM = niWM;
 niGM.fname = gmFile;
 niGM.data = zeros(size(niGM.data));
@@ -1803,7 +1803,7 @@ sum(vFee)
 rootFilename = 'dwi_noisy';
 bvals = load([rootFilename '.bvals'],'-ascii');
 bvecs = load([rootFilename '.bvecs'],'-ascii');
-data = readFileNifti([rootFilename '.nii.gz']);
+data = niftiRead([rootFilename '.nii.gz']);
 
 % Get b0 to the front of the data
 bvecs = cat(2, bvecs(:,bvals==0), bvecs(:,bvals~=0));
@@ -1821,7 +1821,7 @@ imgFilenameRoot = 'recon_out_file_max';
 imgFilenameIn = [imgFilenameRoot '.nii'];
 imgFilenameOut = [imgFilenameRoot '_2up.nii'];
 upFactor = 2;
-img = readFileNifti(imgFilenameIn);
+img = niftiRead(imgFilenameIn);
 img.fname = imgFilenameOut;
 m = img.qto_xyz;
 m(1:3,1:3) = m(1:3,1:3)/upFactor;
@@ -1842,8 +1842,8 @@ img.data = newdata;
 writeFileNifti(img);
 
 % Read one image ROI into the format of another
-niIn = readFileNifti('t1_class.nii.gz');
-niOut = readFileNifti('../dti30/bin/b0.nii.gz');
+niIn = niftiRead('t1_class.nii.gz');
+niOut = niftiRead('../dti30/bin/b0.nii.gz');
 niOut.fname = 'b0_locc.nii.gz';
 niIn.data(niIn.data~=3) = 0;
 niIn.data(niIn.data>0) = 1;
@@ -1867,7 +1867,7 @@ writeFileNifti(niOut);
 
 
 loccROI = dtiReadRoi('locc.mat');
-b0 = readFileNifti('../bin/b0.nii.gz');
+b0 = niftiRead('../bin/b0.nii.gz');
 imgCoords = mrAnatXformCoords(b0.qto_ijk, loccROI.coords);
 b0.fname = 'locc.nii.gz';
 b0.data(:) = 0;
@@ -1887,7 +1887,7 @@ fprintf(fid, '%1.4f ', bvecs(2,:)); fprintf(fid, '\n');
 fprintf(fid, '%1.4f ', bvecs(3,:)); fclose(fid);
 
 % Label points on sphere surface as GM for NFG phantom
-vol = readFileNifti('b0.nii.gz');
+vol = niftiRead('b0.nii.gz');
 gm = vol; gm.fname = 'gm.nii.gz';
 wm = vol; wm.fname = 'wm.nii.gz';
 gm.data(:) = 0;
@@ -1909,7 +1909,7 @@ writeFileNifti(wm);
 writeFileNifti(gm);
 
 % Create left and right Occ masks for jw
-seg = readFileNifti('seg.nii.gz');
+seg = niftiRead('seg.nii.gz');
 seg.data(:,28:end,:)=0;
 seg.data(:,28,:) = 2;
 lgm = seg;
@@ -1935,7 +1935,7 @@ writeFileNifti(lwm);
 writeFileNifti(rgm);
 writeFileNifti(rwm);
 
-seg = readFileNifti('seg.nii.gz');
+seg = niftiRead('seg.nii.gz');
 seg.data(:,31:end,:)=0;
 seg.data(seg.data>0)=1;
 lwmTrk = seg;
@@ -1957,14 +1957,14 @@ legend(['Gold', projType(:)']);
 % XXX I had to look at the image to manually find the x,y translation magic
 % numbers!!
 % Fix ITKGRAY OFFSET
-t1 = readFileNifti('t1.nii.gz');
-t1_wm = readFileNifti('t1_mtl.nii.gz');
+t1 = niftiRead('t1.nii.gz');
+t1_wm = niftiRead('t1_mtl.nii.gz');
 t1_wm = niftiSetQto(t1_wm,t1.qto_xyz,true);
 t1_wm.fname = 't1_mtl.nii.gz';
 t1_wm.data = circshift(t1_wm.data,[5 -1 0]);
 writeFileNifti(t1_wm);
 
-t1_wm = readFileNifti('t1_mtl.nii.gz');
+t1_wm = niftiRead('t1_mtl.nii.gz');
 %origin = (size(t1_wm.data)+1)/2;
 %xform = inv([diag(1./mmPerVox), origin'; [0 0 0 1]]);
 

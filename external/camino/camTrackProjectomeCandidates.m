@@ -33,7 +33,7 @@ if ~notDefined('notseed_filename')
     
     if ~notDefined('ends_filename')
         
-        ends = readFileNifti(ends_filename);
+        ends = niftiRead(ends_filename);
         
         if max(ends.data(:)>1)
             cmd3 = sprintf('procstreamlines -inputfile %s -mintractlength %f -noresample -endpointfile %s -outputfile %s',t2_filename, min_track_length, ends_filename, cdb_filename);

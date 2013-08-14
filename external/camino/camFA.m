@@ -46,7 +46,7 @@ elseif 0
     display(cmd);
     system(cmd,'-echo');
     
-    raw = readFileNifti(raw_nifti_filename);
+    raw = niftiRead(raw_nifti_filename);
 
     camVoxel2Image( fa_bdouble_filename, fa_nifti_filename, 'double', ...
                     raw.qto_xyz, 1, raw.dim(1:3) );

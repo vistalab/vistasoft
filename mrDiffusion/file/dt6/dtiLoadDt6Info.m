@@ -85,7 +85,7 @@ else
    % brain mask saved in the dt6 file. 
    bmFile = fullfile(dataDir,'dtBrainMask.nii.gz');
    if(exist(bmFile,'file'))
-       ni = readFileNifti(bmFile);
+       ni = niftiRead(bmFile);
        if(isfield(dt6Struct,'dtBrainMask')&&~isempty(dt6Struct.dtBrainMask))
            disp(['Over-riding brain mask with explicit mask in ' bmFile '.']);
        end

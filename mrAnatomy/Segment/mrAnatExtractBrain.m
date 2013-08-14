@@ -17,7 +17,7 @@ function [brainMask,checkSlices] = mrAnatExtractBrain(img, mmPerVox, betLevel, o
 % you'll get a cell array.
 %
 % img can be a string, in which case it is assumed to be a NIFTI filename.
-% or, it can be a NIFTI struct (as from readFileNifti). In both cases,
+% or, it can be a NIFTI struct (as from niftiRead). In both cases,
 % mmPerVox is ignored and instead gleaned from the NIFTI header. 
 %
 % If no output arguments are captured, the brain mask is saved in the same
@@ -44,7 +44,7 @@ if(isstruct(img))
     img = ni.data;
 elseif(ischar(img))
     % It's a nifti filename
-    ni = readFileNifti(img);
+    ni = niftiRead(img);
     mmPerVox = ni.pixdim;
 elseif(nargout==0)
     error('If you pass in raw image data, you must capture at least one output!');
@@ -116,7 +116,7 @@ end
 
 %% Manage outputs, but not sure about the logic here.
 if(nargout>0)
-    tmp = readFileNifti(betOut);
+    tmp = niftiRead(betOut);
     brainMask{ii} = logical(tmp.data);
     if(nargout>1)
         slices = [1:3:size(brainMask{ii},3)-6];
@@ -154,7 +154,7 @@ betLevel = 0.45;
 for(ii=1:length(subDirs))
     t1 = fullfile(bd,subDirs{ii},'t1','t1');
     if(exist([t1 '.nii.gz'],'file'))
-        t1Ni = readFileNifti([t1 '.nii.gz']);
+        t1Ni = niftiRead([t1 '.nii.gz']);
         [brainMask,checkSlices] = mrAnatExtractBrain(t1Ni.data, t1Ni.pixdim, betLevel);
         figure(99); image(checkSlices); axis image tight off;
         dtiWriteNiftiWrapper(uint8(brainMask), t1Ni.qto_xyz, [t1 '_mask.nii.gz']);
@@ -166,7 +166,7 @@ end
 outFile = 'brainVolumes.txt';
 fid = fopen(outFile,'wt');
 for(ii=1:length(subDirs))
-    %t1Mask = readFileNifti(fullfile(bd,subDirs{ii},'t1','t1_mask.nii.gz'));
+    %t1Mask = niftiRead(fullfile(bd,subDirs{ii},'t1','t1_mask.nii.gz'));
     %ccPerPixel = prod(t1Mask.pixdim(1:3))/1000;
     %brainVolumeCc(ii) = numel(find(t1Mask.data)) * ccPerPixel;
     fprintf(fid,'%s\t%0.1f\n',subDirs{ii},brainVolumeCc(ii));

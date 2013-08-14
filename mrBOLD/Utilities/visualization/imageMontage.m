@@ -29,7 +29,7 @@ function montage = imageMontage(images, nrows, ncols)
 %
 % Example
 %  niFileName = fullfile(mrvDataRootPath,'anatomy','anatomyNIFTI','t1.nii.gz');
-%  anat = readFileNifti(niFileName);
+%  anat = niftiRead(niFileName);
 %  montage = imageMontage(anat.data);
 %  imshow(montage)
 %

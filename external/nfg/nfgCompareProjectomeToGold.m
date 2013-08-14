@@ -57,7 +57,7 @@ end
 % bundle + the voxel resolution.  Ideally we would like the distance to be the radius of the gold
 % plus the radius of the projectome, but we don't know the radii for all
 % projectome estimates
-vol = readFileNifti(volExFile);
+vol = niftiRead(volExFile);
 dThresh = max(vol.pixdim) + 2*max(g_radius);
 
 % Compare Gold to the Projectome
