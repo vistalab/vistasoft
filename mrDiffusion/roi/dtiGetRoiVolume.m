@@ -17,7 +17,7 @@ if(~exist('roi','var') || isempty(roi))
 end
 if(~exist('t1','var') || isempty(t1))
   dd = pwd;
-  t1 = readFileNifti(mrvSelectFile([],'*.nii.gz','Select T1 Nifti',dd));
+  t1 = niftiRead(mrvSelectFile([],'*.nii.gz','Select T1 Nifti',dd));
 end
 if(~exist('dt','var') || isempty(t1))
   dd = pwd;

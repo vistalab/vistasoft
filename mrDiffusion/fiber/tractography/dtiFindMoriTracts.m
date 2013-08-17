@@ -191,7 +191,7 @@ end
 
 % Load the Mori atlas maps and the corresponding label files
 % ldir = fileparts(which('dtiGetBrainlabel.m'));
-moriTracts = readFileNifti(fullfile(tdir, Atlas));
+moriTracts = niftiRead(fullfile(tdir, Atlas));
 % 15 is a subregion of 19 and 16 a subregion of 20. To better separate them,
 % we subtract 19 from 15 and 20 from 16.
 moriTracts.data(:,:,:,15) = moriTracts.data(:,:,:,15)-moriTracts.data(:,:,:,19);

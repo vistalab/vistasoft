@@ -257,7 +257,7 @@ return
 % We then append the name (in a hacky way) and save it out.
 function f_smoothAndSaveRoi(outName,smoothKernel,sk)
  fprintf('Smoothing ROI with a %smm Kernel...\n',smoothKernel);
-    ni = readFileNifti(outName);
+    ni = niftiRead(outName);
     ni.data = dtiCleanImageMask(ni.data,sk);
     % Handle the naming. Move the .nii.gz off the end and replace it.
     l = length(outName);

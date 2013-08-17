@@ -61,7 +61,7 @@ for bb=1:20
         for rr=1:length(vR)
             % Run error calculation for each radii
             disp(' '); disp(['Calculating for raidus ' num2str(vR(rr)) ' ...']);
-            b0 = readFileNifti(b0File);
+            b0 = niftiRead(b0File);
             fLambda = 0;
             fDiameter = vR(rr)*2;
             argSubSize = [' -s 0,' num2str(b0.dim(1)-1) ',0,' num2str(b0.dim(2)-1) ',0,' num2str(b0.dim(3)-1)];
@@ -80,7 +80,7 @@ for bb=1:20
             disp(cmdError);
             [s,r] = system(cmdError);
             % Get BlueMatter volume calculation
-            f = readFileNifti(fFile);
+            f = niftiRead(fFile);
             volBM(rr) = volBM(rr)+sum(f.data(:));
             % Get gold volume calculation
             volG(rr) = volG(rr)+volBundle(fg.fibers,vR(rr));

@@ -60,7 +60,7 @@ if ismember(ext, {'.nii', '.gz'})
     if ~exist(vANATOMYPATH, 'file')
         warning('vANATOMYPATH not found. Not using vANAT header') %#ok<WNTAG>
     else
-        ni       = readFileNifti(vANATOMYPATH);
+        ni       = niftiRead(vANATOMYPATH);
         ni.fname = fname;
         ni.data  = data;
         ni.scl_slope  = 1; % this appears to be necessary for the file to be readable in freesurfer

@@ -1,7 +1,7 @@
 bn = '/biac3/wandell4/data/reading_longitude/dti_y4/zs070717/raw/dti_g13_b800';
 bn = '/biac3/wandell4/data/reading_longitude/dti_y4/zs070717/raw/dti_g87_b800';
 
-dwRaw = readFileNifti([bn '.nii.gz']);
+dwRaw = niftiRead([bn '.nii.gz']);
 sz = size(dwRaw.data);
 d = single(dwRaw.data);
 clear dwRaw;

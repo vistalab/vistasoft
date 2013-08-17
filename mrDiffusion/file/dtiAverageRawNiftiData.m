@@ -11,7 +11,7 @@ gradsFile = '/usr/local/dti/diffusion_grads/dwepi.65.grads';
 
 figs = false;
 
-ni = readFileNifti(inData);
+ni = niftiRead(inData);
 sz = size(ni.data);
 nVols = sz(4);
 %xform = dtiFiniteStrainDecompose(ni.qto_ijk);

@@ -52,7 +52,7 @@ function fg = dtiCreateQuenchStats(fg, statFiberName, statPointName, perPoint, i
 %
 %   Image Stat:
 %       fg = mtrImportFibers('fibers.pdb');
-%       fa_img = readFileNifti('faMap.nii.gz');
+%       fa_img = niftiRead('faMap.nii.gz');
 %       fg = dtiCreateQuenchStats(fg,'FA_avg','FA', 1, fa_img, 'avg'); 
 %     OR...
 %       h = guidata(gcf); fa_img = h.bg(1,2,3 or 5);

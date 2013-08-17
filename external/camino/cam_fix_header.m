@@ -5,8 +5,8 @@ if ieNotDefined('file_out')
 end
 
 %% Load image files
-ni_fix = readFileNifti(file_to_fix);
-ni_src = readFileNifti(file_to_src);
+ni_fix = niftiRead(file_to_fix);
+ni_src = niftiRead(file_to_src);
 
 %% Fix image header
 dtiWriteNiftiWrapper(ni_fix.data, ni_src.qto_xyz, file_out);

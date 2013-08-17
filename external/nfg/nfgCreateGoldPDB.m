@@ -28,7 +28,7 @@ save(goldInfoFile,'strand_info');
 % Sanity check to make sure all gold standard fibers end within GM mask
 if bSanityCheck
     disp('Performing sanity check on gold fibers ...');
-    gm = readFileNifti(gmROIFile);
+    gm = niftiRead(gmROIFile);
     [vol] = nfgFibers2ROIImage(fg,volExFile);
     imgCheck = vol.data;
     imgCheck(gm.data>0)=0;

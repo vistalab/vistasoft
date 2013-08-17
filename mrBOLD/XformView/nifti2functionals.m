@@ -55,10 +55,10 @@ parameterMap = cell(1);
 [p fname] = fileparts(fname); %#ok<ASGLU>
 
 % read a nifti file with map to be converted
-ni = readFileNifti(mappth);
+ni = niftiRead(mappth);
 
 % read the associated t1 nifti
-t1  = readFileNifti(t1pth);
+t1  = niftiRead(t1pth);
 
 
 % **********************

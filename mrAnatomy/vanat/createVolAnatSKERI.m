@@ -73,7 +73,7 @@ elseif any(strcmpi(ext,{'.nii','.gz'}))
 % 	img = flipdim(img,1);
 % 	img = flipdim(img,2);
 
-	nii = readFileNifti(imgPathName);
+	nii = niftiRead(imgPathName);
 	mmPerPix = nii.pixdim;
 	img = double(nii.data);
 	
@@ -115,7 +115,7 @@ elseif any(strcmpi(ext,{'.nii','.gz'}))
 
 % elseif(strcmp(ext,'.gz') | strcmp(ext,'.nii'))
 elseif strcmp(ext,'.gz')
-    ni = readFileNifti(imgPathName);
+    ni = niftiRead(imgPathName);
     img = permute(double(ni.data),[3,2,1]);
     mmPerPix = [ni.pixdim(3),ni.pixdim(2),ni.pixdim(1)];
     for(jj=1:size(img,3))

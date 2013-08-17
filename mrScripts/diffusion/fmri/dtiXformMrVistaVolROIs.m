@@ -36,7 +36,7 @@ if (~isfield(dt6,'xformVAnatToAcpc') || isempty(dt6.xformVAnatToAcpc))
         [vAnatomyData,vAnatMm] = readVolAnat(vAnatomy); % Get VAnatomy
         % Get t1.nii.gz info
         subjDir=fileparts(fileparts(dt6file));
-        ni = readFileNifti(fullfile(subjDir,dt6.files.t1));
+        ni = niftiRead(fullfile(subjDir,dt6.files.t1));
         dtiAcpcXform = ni.qto_xyz;
         dtiT1 = double(ni.data);
         mmPerVox = ni.pixdim;

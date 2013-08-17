@@ -38,7 +38,7 @@ function [bvecs,bvals] = dtiRawBuildBvecs(nVols, xform, gradsFile, bval, outBase
 %   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
 %
 % EXAMPLE USAGE:
-%   dwRaw = readFileNifti('rawDti.nii.gz');
+%   dwRaw = niftiRead('rawDti.nii.gz');
 %   nVols = size(dwRaw.data,4);
 %   xform = affineExtractRotation(dwRaw.qto_ijk);
 %   [bvecs,bvals] = dtiRawBuildBvecs(nVols, xform, gradsFile, bval, 'rawDti')

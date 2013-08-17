@@ -33,10 +33,10 @@ numSubs=0;
 %image is modified rather than creating a nifti from scratch
 tdir = fullfile(fileparts(which('mrDiffusion.m')), 'templates');
 if subSpace==1
-    ref=readFileNifti(fullfile('/biac3/wandell4/data/reading_longitude/dti_adults/rfd070508/dti06trilinrt','bin','b0.nii.gz'));
+    ref=niftiRead(fullfile('/biac3/wandell4/data/reading_longitude/dti_adults/rfd070508/dti06trilinrt','bin','b0.nii.gz'));
 else
     refImage = fullfile(tdir,'MNI_EPI.nii.gz');
-    ref = readFileNifti(refImage);
+    ref = niftiRead(refImage);
 end
 
 %% If you want the map output in the native space of a single supbject then

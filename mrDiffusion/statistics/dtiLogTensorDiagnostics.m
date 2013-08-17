@@ -93,8 +93,8 @@ end
 % Get the measurement noise error on mean diffusivity
 % For FA, a better index of variability might be the beta distribution
 binDir = '/biac3/wandell4/data/reading_longitude/dti_y4/mn070907/dti06/bin';
-mdStd = readFileNifti(fullfile(binDir,'mdStd.nii.gz'));
-pddDisp = readFileNifti(fullfile(binDir,'pddDispersion.nii.gz'));
+mdStd = niftiRead(fullfile(binDir,'mdStd.nii.gz'));
+pddDisp = niftiRead(fullfile(binDir,'pddDispersion.nii.gz'));
 
 AV = std(sDt6(:,:),1,2)'
 MV = mdStd.data(s(1),s(2),s(3))*3

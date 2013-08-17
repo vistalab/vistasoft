@@ -14,7 +14,7 @@ function dt6 = dtiMakeDt6FromFsl(b0FileName, t1FileName, outPathName, autoAlign)
 % 2006.04.27 RFD: adapted it for the Phillips data at MUSC. The old version
 % (customized for data from U Washington) is now saved as
 % dtiMakeDt6FromFsl_UW.
-% 2006.06.12 DLA: temporary workaround for a bug in readFileNifti (ignoring
+% 2006.06.12 DLA: temporary workaround for a bug in niftiRead (ignoring
 % the offset field of Analyze files.)
 % 2006.11.28 RFD: reset default mmDt to [2 2 2] (was [1 1 1]), more
 % stringent checking for crazy b0 qto xform matrices, brain mask is now
@@ -37,7 +37,7 @@ if ~exist('b0FileName','var') | isempty(b0FileName)
     b0FileName = fullfile(p, f);
     disp(b0FileName);
 end
-b0 = readFileNifti(b0FileName);
+b0 = niftiRead(b0FileName);
 % Fix ill-specified quaternion xforms so that they do something reasonable.
 flipDti = 0;
 flipVecs = [0 0 0];
@@ -69,10 +69,10 @@ if ~exist('t1FileName','var')
 end
 if(~isempty(t1FileName))
   if(strcmpi(t1FileName(end-1:end),'gz'))
-    t1 = readFileNifti(t1FileName);
+    t1 = niftiRead(t1FileName);
   else
-    % should just use readFileNifti here, but there is a bug in 
-    % readFileNifti that causes it to ignore the offset in Analyze
+    % should just use niftiRead here, but there is a bug in 
+    % niftiRead that causes it to ignore the offset in Analyze
     % format. So we use loadAnalyze here explicitly, as a temporary
     % fix.
     % - dla and rfd
@@ -81,7 +81,7 @@ if(~isempty(t1FileName))
     origin = -hdr.mat(1:3,4);
     t1.qto_ijk = [diag(t1.pixdim),origin+0.5;[0 0 0 1]];
     t1.qto_xyz = inv(t1.qto_ijk);
-    % t1 = readFileNifti(t1FileName);
+    % t1 = niftiRead(t1FileName);
     % Fix ill-specified quaternion xforms so that they do something reasonable.
     if(all(t1.qto_ijk(1:3,4) == [0 0 0]'))
         sz = size(t1.data);
@@ -155,12 +155,12 @@ end
 eigVal = zeros([size(b0.data) 3]);
 eigVec = zeros([size(b0.data) 3 3]);
 for(ii=1:3)
-    tmp = readFileNifti(fullfile(datapath, [basename 'L' num2str(ii) '.nii.gz']));
+    tmp = niftiRead(fullfile(datapath, [basename 'L' num2str(ii) '.nii.gz']));
     if(flipDti) tmp.data = flipdim(tmp.data,1); end
     eigVal(:,:,:,ii) = double(tmp.data);
 end
 for(ii=1:3)
-    tmp = readFileNifti(fullfile(datapath, [basename 'V' num2str(ii) '.nii.gz']));
+    tmp = niftiRead(fullfile(datapath, [basename 'V' num2str(ii) '.nii.gz']));
     if(flipDti) tmp.data = flipdim(tmp.data,1); end
     eigVec(:,:,:,:,ii) = double(tmp.data);
     if(any(flipVecs))
