@@ -18,8 +18,8 @@ if  ~exist('overlayClipRng', 'var') || isempty(overlayClipRng)
     overlayClipRng=    [4 8];
 end
     
-a=readFileNifti(funcNifti); 
-b=readFileNifti(anatNifti); 
+a=niftiRead(funcNifti); 
+b=niftiRead(anatNifti); 
 
 [imgRgb, overlayImg, overlayMask, anatImage]=mrAnatOverlayMontage(double(a.data), a.qto_xyz, double(b.data), b.qto_xyz, autumn(256), overlayClipRng, [-30:2:50], [], [], [], [], [], [], [], Inf);
 

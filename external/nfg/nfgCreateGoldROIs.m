@@ -15,7 +15,7 @@ gmROIFile = nfgGetName('gmROIFile',phantomDir);
 wmROIFile = nfgGetName('wmROIFile',phantomDir);
 
 % Create sphere gray and white matter ROIs as all NFG phantoms are spheres
-vol = readFileNifti(volExFile);
+vol = niftiRead(volExFile);
 gm = vol; gm.fname = gmROIFile;
 wm = vol; wm.fname = wmROIFile;
 gm.data(:) = 0;

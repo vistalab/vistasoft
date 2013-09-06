@@ -19,7 +19,7 @@ end
 
 if(ischar(brainMask))
     % It's a nifti file
-    brainMask = readFileNifti(brainMask);
+    brainMask = niftiRead(brainMask);
 end
 
 mm = brainMask.pixdim(1:3);

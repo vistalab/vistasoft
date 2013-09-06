@@ -10,14 +10,14 @@ function mr = mrReadNifti(pth)
 % ras 07/02/05. 
 mr = mrCreateEmpty;
 
-% note 08/2008: the readFileNifti MEX file doesn't work for some
+% note 08/2008: the niftiRead MEX file doesn't work for some
 % combinations of operating system / MATLAB version / CPU. Try a couple of
 % things:
 try
-	mr.hdr = readFileNifti(pth);
+	mr.hdr = niftiRead(pth);
 catch ME
     warning(ME.identifier, ME.message);
-	error(['[%s]: The MEX file "readFileNifti" is not working on this ' ...
+	error(['[%s]: The MEX file "niftiRead" is not working on this ' ...
              'MATLAB version'], mfilename);
 	  
 end

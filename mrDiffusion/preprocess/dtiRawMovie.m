@@ -41,7 +41,7 @@ else
 end
 if(ischar(dwRaw))
     disp(['Loading raw data ' dwRaw '...']);
-    dwRaw = readFileNifti(dwRaw);
+    dwRaw = niftiRead(dwRaw);
 end
 
 sz = size(dwRaw.data);

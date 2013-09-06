@@ -72,7 +72,7 @@ end
 
 if(~isempty(refImg))
     if(ischar(refImg))
-        refImg = readFileNifti(refImg);
+        refImg = niftiRead(refImg);
     end
     disp(['Aligning first image to the template image in ' refImg.fname '...']);
     img = double(refImg.data);

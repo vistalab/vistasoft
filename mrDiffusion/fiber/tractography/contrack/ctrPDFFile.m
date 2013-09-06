@@ -25,7 +25,7 @@ switch readNiftiFiles
 
     % Default ctrInit GUI action, read nifti files from subject's bin
     case 1
-        niTensors  = readFileNifti(fullfile(p.dt6Dir,'bin','tensors.nii.gz'));
+        niTensors  = niftiRead(fullfile(p.dt6Dir,'bin','tensors.nii.gz'));
         imgTensors = double(squeeze(niTensors.data(:,:,:,1,[1 3 6 2 4 5])));
         % Convert dispersion to Watson concentration parameter. We test to check
         % whether the PDD is in degrees or radian format
@@ -34,7 +34,7 @@ switch readNiftiFiles
             warning('File bin/pddDispersion.nii.gz does not exist!!')
             fprintf('To generate this file you must bootstrap the tensor fitting\n')
         end
-        niPDDD = readFileNifti(fullfile(p.dt6Dir,'bin','pddDispersion.nii.gz'));
+        niPDDD = niftiRead(fullfile(p.dt6Dir,'bin','pddDispersion.nii.gz'));
         if(max(niPDDD.data(:))>2*pi)
             imgPDDC = - 1 ./ sin(double(niPDDD.data).*pi./180).^2; % Degrees
         else
@@ -46,7 +46,7 @@ switch readNiftiFiles
 
         %  NOT ctrInit: Use info from altp input struct, as in createNoDataPDF.m
     case 0
-        niPDF = readFileNifti(fullfile(p.dt6Dir,'bin','pdf.nii.gz'));
+        niPDF = niftiRead(fullfile(p.dt6Dir,'bin','pdf.nii.gz'));
         imgTensors=altp.dt6;
         imgPDDC=altp.eig1Concentration;
         pdfFile= fullfile(p.dt6Dir,'bin',altp.pdfName);
@@ -56,7 +56,7 @@ end
 
 
 % A brain mask from the tensor fitting
-niBM   = readFileNifti(fullfile(p.dt6Dir,'bin','brainMask.nii.gz'));
+niBM   = niftiRead(fullfile(p.dt6Dir,'bin','brainMask.nii.gz'));
 
 % Compute eigenvalues of the tensors
 [eigVec, eigVal] = dtiEig(imgTensors);

@@ -19,7 +19,7 @@ if ~exist('niftiT1','var')
     [f, p]   = uigetfile({'*.nii.gz';'*.*'}, 'Please choose a T1 Nifti File', pwd);
     niftiT1 = fullfile(p,f);
     if(isnumeric(f)); disp('User canceled.'); return; end
-    ni = readFileNifti(niftiT1);
+    ni = niftiRead(niftiT1);
 end
 
 if isstruct(niftiT1); ni = niftiT1; end

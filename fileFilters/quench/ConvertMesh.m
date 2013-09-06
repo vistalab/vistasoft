@@ -28,7 +28,7 @@ scale = 0.9;%1.3;
 
 % Read input files
 [vAnatomy,vAnatMm] = readVolAnat(vAnatMatFileName);
-ni = readFileNifti(niftiFileName);
+ni = niftiRead(niftiFileName);
 msh = mrmReadMeshFile(meshMatFileName);
 
 xformVAnatToAcpc = dtiXformVanatCompute(double(ni.data), ni.qto_xyz, vAnatomy, vAnatMm);

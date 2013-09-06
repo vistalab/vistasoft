@@ -17,7 +17,7 @@
 #endif
 #include "nifti1.h"                  /*** NIFTI-1 header specification ***/
 
-#include "../zlib/znzlib.h"
+#include "znzlib.h"
 
 /*=================*/
 #ifdef  __cplusplus

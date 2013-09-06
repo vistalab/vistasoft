@@ -24,7 +24,7 @@ for ss = 1:length(subjVec)
             disp('Density file does not exist, creating it ...');
             mtrComputeManyFiberDensities(subjDir,pathsFile,threshVec);
         end
-        niL = readFileNifti(densityFile);
+        niL = niftiRead(densityFile);
 
         fgDir = fullfile(subjDir,'conTrack/resamp_RMT');
         disp(['cd ' fgDir]);
@@ -34,7 +34,7 @@ for ss = 1:length(subjVec)
         if isempty(f)
             mtrComputeManyFiberDensities(subjDir,pathsFile,threshVec);
         end
-        niR = readFileNifti(densityFile);
+        niR = niftiRead(densityFile);
 
         imgComb = double(niL.data>0) + double(niR.data>0)*2;
         disp(['Writing ' fullfile(subjDir,imageDir,combFile) ' ...']);

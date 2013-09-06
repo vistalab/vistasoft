@@ -29,7 +29,7 @@ function ni = niftiCreate(varargin)
 %
 % Copyright Stanford team, mrVista, 2011
 
-%% These fields are the ones used in the m-file readFileNifti
+%% These fields are the ones used in the m-file niftiRead
 
 % Initialize the VISTASOFT nifti structure with default parameters. 
 ni = niftiStructure;

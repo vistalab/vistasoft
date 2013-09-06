@@ -55,7 +55,7 @@ end
 % disp('Labelling cortex vertices...');
 % % Get labels for all mesh vertices
 % % To use the transform:
-% ni = readFileNifti(mniLutFile);
+% ni = niftiRead(mniLutFile);
 % xform.coordLUT = ni.data;
 % xform.inMat = ni.qto_ijk;
 % % Mesh is stored in VAnat space for visualization

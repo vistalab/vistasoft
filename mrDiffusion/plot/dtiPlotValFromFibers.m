@@ -35,7 +35,7 @@ function fgData = dtiPlotValFromFibers(dt6,fg,xform,valName,interpMethod,numStep
 %    % load dt6 data
 %    subjDir = 'C:\cygwin\home\sherbond\data\dla050311';
 %    dt = load(fullfile(subjDir,'dti06','dt6.mat'));
-%    pddD = readFileNifti(fullfile(subjDir,dt.files.pddDisp));
+%    pddD = niftiRead(fullfile(subjDir,dt.files.pddDisp));
 %    xformToAcpc = pddD.qto_xyz;
 %    pddD = pddD.data;
 % 

@@ -6,7 +6,7 @@ function sl = mrAnatXformGetSlices(xform, acpcSlices, sliceDim)
 % ac-pc slices.
 %
 % E.g.:
-% ni = readFileNifti('/path/to/brain.nii.gz');
+% ni = niftiRead('/path/to/brain.nii.gz');
 % acpcSlices = [40:2:60];
 % sl = mrAnatGetSliceIndices(inv(ni.qto_xyz), acpcSlices, 3);
 % showMontage(ni.data, sl);

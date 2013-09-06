@@ -93,7 +93,7 @@ function dwParams = dtiInitParams(varargin)
 %                IF you are using robust tensor fitting you must decide how
 %                to calculate the image noise. The default is to use the
 %                corner of the image but if the corner of the image is
-%                padded with zeros then you should use the 'bo' method
+%                padded with zeros then you should use the 'b0' method
 %                which calculates the noise baseed on the std of the b=0
 %                image.
 % 

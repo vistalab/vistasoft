@@ -166,7 +166,7 @@ else
     if nfg>1
         fg = dtiFiberGroupToFgArray(fg);
     end
-    t1 = readFileNifti(dt.files.t1);
+    t1 = niftiRead(dt.files.t1);
     
     for iF=1:length(fg)
         [fdImg(:, :, :, iF)] = dtiComputeFiberDensityNoGUI(fg, t1.qto_xyz, t1.dim, 0, iF);

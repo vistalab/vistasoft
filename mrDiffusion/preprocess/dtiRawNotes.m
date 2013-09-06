@@ -18,7 +18,7 @@ for(ii=1:length(d))
 	  disp(['ERROR: t1 not found- skipping t1 for ' d(ii).name '.']);
 	else
 	  disp(['Processing t1 for ' d(ii).name '...']);
-	  t1 = readFileNifti(t1Fn);
+	  t1 = niftiRead(t1Fn);
 	  Vsrc.uint8 = uint8(mrAnatHistogramClip(double(t1.data), 0.4, 0.99)*255+0.5);
 	  Vsrc.mat = t1.qto_xyz;
 	  x = spm_coreg(Vdst,Vsrc,estParams);
@@ -36,7 +36,7 @@ for(ii=1:length(d))
 	  disp(['ERROR: dti dir not found- skipping tensors for ' d(ii).name '.']);
 	else
 	  disp(['Processing tensors for ' d(ii).name '...']);
-	  b0 = readFileNifti(fullfile(dtiFn,'b0.nii.gz'));
+	  b0 = niftiRead(fullfile(dtiFn,'b0.nii.gz'));
 	  Vsrc.uint8 = uint8(mrAnatHistogramClip(double(b0.data), 0.4, 0.99)*255+0.5);
 	  Vsrc.mat = b0.qto_xyz;
 	  clear b0;
@@ -48,7 +48,7 @@ for(ii=1:length(d))
 		% o=mrAnatXformCoords(inv(xf),[0 0 0]); imagesc(b0.data(:,:,o(3))); axis image; colormap gray; hold on; plot(o(2),o(1),'ro'); hold off
 		tf = dir(fullfile(dtiFn,'*.nii.gz'));
 		for(jj=1:length(tf))
-		   ni = readFileNifti(fullfile(dtiFn,tf(jj).name));
+		   ni = niftiRead(fullfile(dtiFn,tf(jj).name));
 		   if(all(ni.qto_xyz(:)==Vsrc.mat(:)))
 			 disp(['  Fixing xform in ' tf(jj).name '...']);
 			 ni = niftiSetQto(ni, xf);
@@ -86,7 +86,7 @@ for(ii=1:length(d2))
   y2T1Fn = fullfile(d2Dir,y2sc,'t1','t1.nii.gz');
   y2DtFn = fullfile(d2Dir,y2sc,'dti06','bin');
   if(exist(y1T1Fn,'file'))
-	ni = readFileNifti(y1T1Fn);
+	ni = niftiRead(y1T1Fn);
 	Vdst.uint8 = uint8(mrAnatHistogramClip(double(ni.data), 0.4, 0.99)*255+0.5);
 	Vdst.mat = ni.qto_xyz;
 	clear ni;
@@ -94,7 +94,7 @@ for(ii=1:length(d2))
 	  disp(['ERROR: t1 not found- skipping t1 for ' y2sc '.']);
 	else
 	  disp(['Processing t1 for ' y2sc '...']);
-	  ni = readFileNifti(y2T1Fn);
+	  ni = niftiRead(y2T1Fn);
 	  Vsrc.uint8 = uint8(mrAnatHistogramClip(double(ni.data), 0.4, 0.99)*255+0.5);
 	  Vsrc.mat = ni.qto_xyz;
 	  x = spm_coreg(Vdst,Vsrc,estParams);
@@ -112,7 +112,7 @@ for(ii=1:length(d2))
 	  disp(['ERROR: dti bin dir not found- skipping tensors for ' y2sc '.']);
 	else
 	  disp(['Processing tensors for ' y2sc '...']);
-	  b0 = readFileNifti(fullfile(y2DtFn,'b0.nii.gz'));
+	  b0 = niftiRead(fullfile(y2DtFn,'b0.nii.gz'));
 	  Vsrc.uint8 = uint8(mrAnatHistogramClip(double(b0.data), 0.4, 0.99)*255+0.5);
 	  Vsrc.mat = b0.qto_xyz;
 	  clear b0;
@@ -124,7 +124,7 @@ for(ii=1:length(d2))
 		% o=mrAnatXformCoords(inv(xf),[0 0 0]); imagesc(b0.data(:,:,o(3))); axis image; colormap gray; hold on; plot(o(2),o(1),'ro'); hold off
 		tf = dir(fullfile(y2DtFn,'*.nii.gz'));
 		for(jj=1:length(tf))
-		   ni = readFileNifti(fullfile(y2DtFn,tf(jj).name));
+		   ni = niftiRead(fullfile(y2DtFn,tf(jj).name));
 		   if(all(ni.qto_xyz(:)==Vsrc.mat(:)))
 			 disp(['  Fixing xform in ' tf(jj).name '...']);
 			 ni = niftiSetQto(ni, xf);
@@ -142,7 +142,7 @@ end
 %
 % Making an fMRI movie:
 %
-ni = readFileNifti('214_visual_mcf.nii.gz');
+ni = niftiRead('214_visual_mcf.nii.gz');
 sliceNum = 10;
 sz = size(ni.data);
 ni.data = uint8(mrAnatHistogramClip(single(ni.data),0.4,0.99)*255);
@@ -190,7 +190,7 @@ for(ii=1:length(d))
    if(exist(binDir,'dir')&&exist(t1,'file')&&~exist(bkDir))
       disp(['Processing ' d(ii).name '...']);
       mkdir(bkDir);
-      ni = readFileNifti(t1);
+      ni = niftiRead(t1);
       ni.data = single(mrAnatHistogramClip(double(ni.data),0.4,0.99));
       ni.fname = fullfile(bkDir,'t1.nii.gz');
       writeFileNifti(ni);

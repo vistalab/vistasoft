@@ -29,7 +29,7 @@ if ~exist('b0FileName','var') | isempty(b0FileName)
     b0FileName = fullfile(p, f);
     disp(b0FileName);
 end
-b0 = readFileNifti(b0FileName);
+b0 = niftiRead(b0FileName);
 % Fix ill-specified quaternion xforms so that they do something reasonable.
 if(all(b0.qto_ijk(1:3,4) == [0 0 0]') | any(b0.qto_ijk(1:3,4)>1000))
     % *** HACK! [0.95 1.1 0.7] is near the ac for one data set
@@ -57,7 +57,7 @@ if ~exist('t1FileName','var')
     end
 end
 if(~isempty(t1FileName))
-    t1 = readFileNifti(t1FileName);
+    t1 = niftiRead(t1FileName);
     % Fix ill-specified quaternion xforms so that they do something reasonable.
     if(all(t1.qto_ijk(1:3,4) == [0 0 0]'))
         sz = size(t1.data);
@@ -128,12 +128,12 @@ end
 eigVal = zeros([size(b0.data) 3]);
 eigVec = zeros([size(b0.data) 3 3]);
 for(ii=1:3)
-    tmp = readFileNifti(fullfile(datapath, [basename 'L' num2str(ii) '.nii.gz']));
+    tmp = niftiRead(fullfile(datapath, [basename 'L' num2str(ii) '.nii.gz']));
     if(flipDti) tmp.data = flipdim(tmp.data,1); end
     eigVal(:,:,:,ii) = double(tmp.data);
 end
 for(ii=1:3)
-    tmp = readFileNifti(fullfile(datapath, [basename 'V' num2str(ii) '.nii.gz']));
+    tmp = niftiRead(fullfile(datapath, [basename 'V' num2str(ii) '.nii.gz']));
     if(flipDti) tmp.data = flipdim(tmp.data,1); end
     eigVec(:,:,:,:,ii) = double(tmp.data);
     %eigVec(:,:,:,2,ii) = -eigVec(:,:,:,2,ii);

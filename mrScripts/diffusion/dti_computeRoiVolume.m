@@ -40,7 +40,7 @@ for ii=1:length(subs)
 
         disp(['Processing ' subDir '...']);
 
-        t1 = readFileNifti(fullfile(subDir,'t1','t1.nii.gz'));
+        t1 = niftiRead(fullfile(subDir,'t1','t1.nii.gz'));
         dt = dtiLoadDt6(dt6);
         s.subjectName = sub.name;
         [path s.imgName] = fileparts(t1.fname);

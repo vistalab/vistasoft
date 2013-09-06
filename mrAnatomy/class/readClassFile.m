@@ -195,7 +195,7 @@ else
       end
 	end
 	if(~isstruct(filename))
-	  ni = readFileNifti(filename);
+	  ni = niftiRead(filename);
 	else
 	  ni = filename;
 	end

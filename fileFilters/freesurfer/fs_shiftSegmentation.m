@@ -16,7 +16,7 @@ function fs_shiftSegmentation(segImage, outImage,shiftsize)
 %            fs_shiftSegmentation(segImage, outImage,shiftsize)
 
 % read in the segmentation nifit file
-im=readFileNifti(segImage);
+im=niftiRead(segImage);
 
 % shift the data in the file
 im.data=circshift(im.data,shiftsize);

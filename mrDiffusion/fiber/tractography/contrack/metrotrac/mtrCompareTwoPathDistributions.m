@@ -34,7 +34,7 @@ else
     % Load density image
     msg = sprintf('Loading %s ...',densityFilename);
     disp(msg);
-    ni = readFileNifti(densityFilename);
+    ni = niftiRead(densityFilename);
     fd1Img = ni.data;
 end
     
@@ -70,7 +70,7 @@ else
     % Load density image
     msg = sprintf('Loading %s ...',densityFilename);
     disp(msg);
-    ni = readFileNifti(densityFilename);
+    ni = niftiRead(densityFilename);
     fd2Img = ni.data;
 end
 

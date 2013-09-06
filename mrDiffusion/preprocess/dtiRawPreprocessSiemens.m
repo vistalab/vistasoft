@@ -117,7 +117,7 @@ alignedBvalsFile = [outBaseDir '.bvals'];
 dwAlignedRawFile = [outBaseDir '.nii.gz'];
 
 disp('loading raw data...');
-dwRaw = readFileNifti(dwRawFileName);
+dwRaw = niftiRead(dwRawFileName);
 oldPhaseDim = dwRaw.phase_dim;
 % For the Siemens data niftified via dcm2nii, the sto contains the correct
 % xform. (*** Need to figure this out ***)
@@ -327,7 +327,7 @@ else
 end
 
 clear dwRaw;
-dwRawAligned = readFileNifti(dwAlignedRawFile);
+dwRawAligned = niftiRead(dwAlignedRawFile);
 
 bs.n = numBootStrapSamples;
 %bs.maxMem = maxMemoryToUse;
@@ -500,7 +500,7 @@ end
 fprintf('Found %d tensor files- fixing them...\n',n);
 for(ii=1:n)
     disp(['Fixing ' fn{ii} '...']);
-    ni = readFileNifti(fn{ii});
+    ni = niftiRead(fn{ii});
     % convert upper-tri, row-order convention (Dxx Dxy Dxz Dyy Dyz Dzz) to
     % lower-tri (Dxx Dxy Dyy Dxz Dyz Dzz).
     ni.data = ni.data(:,:,:,:,[1 2 4 3 5 6]);
@@ -534,7 +534,7 @@ for(ii=1:length(d))
         if(~exist(dwFn,'file'))
             fprintf('%s does not exist.\n',dwFn);
         else
-            dwRaw = readFileNifti(dwFn,[]);
+            dwRaw = niftiRead(dwFn,[]);
             fprintf('%s: dims = [%d %d %d %d];\n',dwFn,dwRaw.dim);
         end
     end

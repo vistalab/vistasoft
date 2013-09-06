@@ -41,7 +41,7 @@ if(~exist('mm','var')||isempty(mm))
 end
 
 if(ischar(maskFile) && exist(maskFile,'file'))
-    maskFile = readFileNifti(maskFile);
+    maskFile = niftiRead(maskFile);
 end
 if(isstruct(maskFile))
     mask = maskFile.data;
@@ -64,7 +64,7 @@ fa(fa<0) = 0; fa(fa>1) = 1;
 
 if(ischar(t1))
     if(exist(t1,'file'))
-        t1 = readFileNifti(t1);
+        t1 = niftiRead(t1);
     else
         error(['no t1 file "' t1 '".']);
     end

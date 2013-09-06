@@ -49,8 +49,8 @@ if(~exist('roi2LabelVal','var')) || isempty(roi2LabelVal)
 end
 
 % Read in the nifti files
-roi1 = readFileNifti(roi1);
-roi2 = readFileNifti(roi2);
+roi1 = niftiRead(roi1);
+roi2 = niftiRead(roi2);
 if roi1.pixdim==roi1.pixdim
     mmPerVoxel = roi1.pixdim; % Dimensions of the t1 image
 else error('ROI dimensions must agree');

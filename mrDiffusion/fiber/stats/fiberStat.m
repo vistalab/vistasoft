@@ -21,13 +21,13 @@ for j=1:1%2 %1.5T or 3T anatomy
             path=path3;
         end;
         %%% load maps  %%%
-        hlf=readFileNifti([path '/HLF_F.nii.gz']);
-        t1=readFileNifti([path '/T1_LFit_F.nii.gz']);
-        T1hWf=readFileNifti([path '/T1fh_F.nii.gz']);
-        wf=readFileNifti([path '/Wf_F.nii.gz']);
+        hlf=niftiRead([path '/HLF_F.nii.gz']);
+        t1=niftiRead([path '/T1_LFit_F.nii.gz']);
+        T1hWf=niftiRead([path '/T1fh_F.nii.gz']);
+        wf=niftiRead([path '/Wf_F.nii.gz']);
         dt = dtiLoadDt6(fullfile(dtDirs{i},'dt6'));
-        bpf=readFileNifti(fullfile(BPFDirs{i},'f.nii.gz'));
-       Class=readFileNifti([path15 '/T1_class2mm.nii.gz']);
+        bpf=niftiRead(fullfile(BPFDirs{i},'f.nii.gz'));
+       Class=niftiRead([path15 '/T1_class2mm.nii.gz']);
        
 %        t1=t1.data;
 %        hlf=hlf.data;

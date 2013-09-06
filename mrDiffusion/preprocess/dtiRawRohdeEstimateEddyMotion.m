@@ -54,7 +54,7 @@ if(~exist('mnB0','var')||isempty(mnB0))
 end
 if(ischar(mnB0))
   disp(['Loading b0 data ' mnB0 '...']);
-  mnB0 = readFileNifti(mnB0);
+  mnB0 = niftiRead(mnB0);
 end
 
 % Check output file
@@ -68,7 +68,7 @@ end
 
 if(ischar(dwRaw))
   disp(['Loading raw data ' dwRaw '...']);
-  dwRaw = readFileNifti(dwRaw);
+  dwRaw = niftiRead(dwRaw);
 end
 
 sz = size(dwRaw.data);

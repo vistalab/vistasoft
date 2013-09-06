@@ -45,7 +45,7 @@ end
 
 if(ischar(dwRaw))
     disp(['Loading raw data ' dwRaw '...']);
-    dwRaw = readFileNifti(dwRaw);
+    dwRaw = niftiRead(dwRaw);
 end
 
 if(dwRaw.qform_code>0)

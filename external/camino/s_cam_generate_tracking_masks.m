@@ -14,10 +14,10 @@ for ff = 1:length(files_to_interp)
 end
 
 %% Load all reinterpolated data
-ni_seg = readFileNifti(fullfile(mask_dir,seg_filename));
-ni_var = readFileNifti(fullfile(mask_dir,var_map_filename));
-ni_ecc = readFileNifti(fullfile(mask_dir,ecc_map_filename));
-ni_rois = readFileNifti(fullfile(mask_dir,roi_map_filename));
+ni_seg = niftiRead(fullfile(mask_dir,seg_filename));
+ni_var = niftiRead(fullfile(mask_dir,var_map_filename));
+ni_ecc = niftiRead(fullfile(mask_dir,ecc_map_filename));
+ni_rois = niftiRead(fullfile(mask_dir,roi_map_filename));
 
 %% Gray Matter Mask
 % RH
@@ -102,7 +102,7 @@ writeFileNifti(ni_exit);
 % RH
 ni_occ = ni_seg;
 ni_occ.fname = fullfile(mask_dir,'occ_rh_mask.nii.gz');
-ni_gm = readFileNifti(fullfile(mask_dir,'gm_rh.nii.gz'));
+ni_gm = niftiRead(fullfile(mask_dir,'gm_rh.nii.gz'));
 % Grab only right hemisphere GM and WM
 ni_occ.data(ni_seg.data~=6 & ni_seg.data~=4) = 0;
 ni_occ.data(ni_occ.data>0) = 1;
@@ -116,7 +116,7 @@ writeFileNifti(ni_occ);
 % LH
 ni_occ = ni_seg;
 ni_occ.fname = fullfile(mask_dir,'occ_lh_mask.nii.gz');
-ni_gm = readFileNifti(fullfile(mask_dir,'gm_lh.nii.gz'));
+ni_gm = niftiRead(fullfile(mask_dir,'gm_lh.nii.gz'));
 % Grab only left hemisphere GM and WM
 ni_occ.data(ni_seg.data~=5 & ni_seg.data~=3) = 0;
 ni_occ.data(ni_occ.data>0) = 1;
@@ -128,22 +128,22 @@ ni_occ.data(:,occ_exit+1:end,:)=0;
 writeFileNifti(ni_occ);
 
 %% Create a background mask in native diffusion space
-%ni_b0 = readFileNifti(fullfile(dti_dir,b0_filename));
+%ni_b0 = niftiRead(fullfile(dti_dir,b0_filename));
 %lowres_pixdim = ni_b0.pixdim;
 %camAlignImageToDTI( fullfile(dti_dir,b0_filename), fullfile(mask_dir,'occ_rh_mask.nii.gz'), fullfile(mask_dir,'bgmask_rh.nii.gz'), lowres_pixdim);
 %camAlignImageToDTI( fullfile(dti_dir,b0_filename), fullfile(mask_dir,'occ_lh_mask.nii.gz'), fullfile(mask_dir,'bgmask_lh.nii.gz'), lowres_pixdim);
 
 %% Define outside occ lobe for exclusion purposes
 % RH
-ni_occ = readFileNifti( fullfile(mask_dir,'occ_rh_mask.nii.gz') );
-ni_not_occ = readFileNifti(fullfile(mask_dir,'occ_rh_mask.nii.gz'));
+ni_occ = niftiRead( fullfile(mask_dir,'occ_rh_mask.nii.gz') );
+ni_not_occ = niftiRead(fullfile(mask_dir,'occ_rh_mask.nii.gz'));
 ni_not_occ.fname = fullfile(mask_dir,'not_occ_rh_mask.nii.gz');
 ni_not_occ.data(ni_occ.data==0) = 1;
 ni_not_occ.data(ni_occ.data==1) = 0;
 writeFileNifti(ni_not_occ);
 % LH
-ni_occ = readFileNifti( fullfile(mask_dir,'occ_lh_mask.nii.gz') );
-ni_not_occ = readFileNifti(fullfile(mask_dir,'occ_lh_mask.nii.gz'));
+ni_occ = niftiRead( fullfile(mask_dir,'occ_lh_mask.nii.gz') );
+ni_not_occ = niftiRead(fullfile(mask_dir,'occ_lh_mask.nii.gz'));
 ni_not_occ.fname = fullfile(mask_dir,'not_occ_lh_mask.nii.gz');
 ni_not_occ.data(ni_occ.data==0) = 1;
 ni_not_occ.data(ni_occ.data==1) = 0;
@@ -151,9 +151,9 @@ writeFileNifti(ni_not_occ);
 
 %% Image that defines the occipital exit plane and GM as two ROIs
 % RH
-ni_occ_exit = readFileNifti(fullfile(mask_dir,'wm_rh_exit.nii.gz'));
+ni_occ_exit = niftiRead(fullfile(mask_dir,'wm_rh_exit.nii.gz'));
 ni_occ_exit.fname = fullfile(mask_dir,'occ_rh_exit.nii.gz');
-ni_gm = readFileNifti(fullfile(mask_dir,'gm_rh.nii.gz'));
+ni_gm = niftiRead(fullfile(mask_dir,'gm_rh.nii.gz'));
 ni_occ_exit.data(ni_gm.data>0) = 2;
 writeFileNifti(ni_occ_exit);
 % Now the mask
@@ -163,9 +163,9 @@ ni_occ_exit_mask.data(ni_occ_exit_mask.data>0) = 1;
 writeFileNifti(ni_occ_exit_mask);
 
 % LH
-ni_occ_exit = readFileNifti(fullfile(mask_dir,'wm_lh_exit.nii.gz'));
+ni_occ_exit = niftiRead(fullfile(mask_dir,'wm_lh_exit.nii.gz'));
 ni_occ_exit.fname = fullfile(mask_dir,'occ_lh_exit.nii.gz');
-ni_gm = readFileNifti(fullfile(mask_dir,'gm_lh.nii.gz'));
+ni_gm = niftiRead(fullfile(mask_dir,'gm_lh.nii.gz'));
 ni_occ_exit.data(ni_gm.data>0) = 2;
 writeFileNifti(ni_occ_exit);
 % Now the mask
@@ -208,7 +208,7 @@ dtiWriteNiftiWrapper(data_nov1,ni_rois.qto_xyz,filename);
 % Ecc Ventral
 var = 0.2;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%.2f.nii.gz',ecc_atlas_root,var_atlas_root,var));
-ecc = readFileNifti(filename);
+ecc = niftiRead(filename);
 ecc.data(data==0) = 0;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%s_%.2f.nii.gz',roi_ventral_atlas_root,ecc_atlas_root,var_atlas_root,var));
 dtiWriteNiftiWrapper(ecc.data,ecc.qto_xyz,filename);
@@ -229,7 +229,7 @@ dtiWriteNiftiWrapper(data_nov1,ni_rois.qto_xyz,filename);
 % Ecc Dorsal
 var = 0.2;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%.2f.nii.gz',ecc_atlas_root,var_atlas_root,var));
-ecc = readFileNifti(filename);
+ecc = niftiRead(filename);
 ecc.data(data==0) = 0;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%s_%.2f.nii.gz',roi_dorsal_atlas_root,ecc_atlas_root,var_atlas_root,var));
 dtiWriteNiftiWrapper(ecc.data,ecc.qto_xyz,filename);
@@ -246,7 +246,7 @@ dtiWriteNiftiWrapper(data,ni_rois.qto_xyz,filename);
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%.2f.nii.gz',ecc_atlas_root,var_atlas_root,var));
 % C1 ECC
 var = 0.2;
-ecc = readFileNifti(filename);
+ecc = niftiRead(filename);
 ecc.data(data==0) = 0;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%s_%.2f.nii.gz',roi_c1_atlas_root,ecc_atlas_root,var_atlas_root,var));
 dtiWriteNiftiWrapper(ecc.data,ecc.qto_xyz,filename);
@@ -261,7 +261,7 @@ dtiWriteNiftiWrapper(data,ni_rois.qto_xyz,filename);
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%.2f.nii.gz',ecc_atlas_root,var_atlas_root,var));
 % CMT ECC
 var = 0.2;
-ecc = readFileNifti(filename);
+ecc = niftiRead(filename);
 ecc.data(data==0) = 0;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%s_%.2f.nii.gz',roi_cmt_atlas_root,ecc_atlas_root,var_atlas_root,var));
 dtiWriteNiftiWrapper(ecc.data,ecc.qto_xyz,filename);
@@ -276,7 +276,7 @@ dtiWriteNiftiWrapper(data,ni_rois.qto_xyz,filename);
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%.2f.nii.gz',ecc_atlas_root,var_atlas_root,var));
 % CVO ECC
 var = 0.2;
-ecc = readFileNifti(filename);
+ecc = niftiRead(filename);
 ecc.data(data==0) = 0;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%s_%.2f.nii.gz',roi_cvo_atlas_root,ecc_atlas_root,var_atlas_root,var));
 dtiWriteNiftiWrapper(ecc.data,ecc.qto_xyz,filename);
@@ -291,7 +291,7 @@ dtiWriteNiftiWrapper(data,ni_rois.qto_xyz,filename);
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%.2f.nii.gz',ecc_atlas_root,var_atlas_root,var));
 % cv3ab ECC
 var = 0.2;
-ecc = readFileNifti(filename);
+ecc = niftiRead(filename);
 ecc.data(data==0) = 0;
 filename = fullfile(mask_dir,sprintf('atlas_%s_%s_%s_%.2f.nii.gz',roi_cv3ab_atlas_root,ecc_atlas_root,var_atlas_root,var));
 dtiWriteNiftiWrapper(ecc.data,ecc.qto_xyz,filename);
@@ -305,13 +305,13 @@ for hh = 1:2
     hem = hem_names{hh};
     % Load exit wm
     filename = fullfile(mask_dir,sprintf('wm_%s_exit.nii.gz',hem));
-    ni = readFileNifti(filename);
+    ni = niftiRead(filename);
     num_vox_exit = sum(ni.data(:)>0);
     % Go through each variance explained level
     for vv = 1:length(var_thresh)
         var = var_thresh(vv);
         filename = fullfile(mask_dir,sprintf('%s_%s_%d_%s_%.2f_%s.nii.gz',cbs_root,hem,num_tracks,var_atlas_root,var,lbl_post));
-        ni = readFileNifti(filename);
+        ni = niftiRead(filename);
         exit_data(hh,vv) = sum(ni.data(:)>0) / num_vox_exit;
     end
 end

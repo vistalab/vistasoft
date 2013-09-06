@@ -23,7 +23,7 @@ for(jj=1:length(baseDir))
 	  disp(['Skipping ' subCodes{ii} '...']);
 	else
 	  fprintf('Processing %s (%d of %d)...\n', files{ii}, ii, length(doThese));
-	  t1 = readFileNifti([files{ii} '.nii.gz']);
+	  t1 = niftiRead([files{ii} '.nii.gz']);
 	  slices = [1:3:t1.dim(3)-6];
 	  im = double(makeMontage(t1.data, slices));
 	  clear t1;
@@ -34,7 +34,7 @@ for(jj=1:length(baseDir))
 		betCmd = [bet ' ' files{ii} ' ' outName ' -mnf ' betF{jj}];
 		disp(['   running BET: ' betCmd '...']);
 		unix(['export FSLOUTPUTTYPE=NIFTI_GZ ; ' betCmd]);
-		mask = readFileNifti([outName '_mask.nii.gz']);
+		mask = niftiRead([outName '_mask.nii.gz']);
 		mask = logical(makeMontage(mask.data, slices));
 		skull = im; skull(mask) = 0;
 		brain = im; brain(~mask) = 0;

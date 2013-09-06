@@ -9,8 +9,8 @@ function camAlignImageToDTI(dti_ref_filename,high_res_filename,output_filename,p
 
 
 % Experiment with xform
-ni_src = readFileNifti(high_res_filename);
-ni_ref = readFileNifti(dti_ref_filename);
+ni_src = niftiRead(high_res_filename);
+ni_ref = niftiRead(dti_ref_filename);
 
 ref_dim = ni_ref.dim(1:3);
 ref_pixdim = ni_ref.pixdim(1:3);

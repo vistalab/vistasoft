@@ -55,7 +55,7 @@ roiFile = [roiFile ext];
 pdfFile = 'pdf.nii.gz';
 nMinNodes = 5;
 nMaxNodes = 300;
-vol = readFileNifti(volExFile);
+vol = niftiRead(volExFile);
 fStepSizeMm = min(vol.pixdim)/2;
 nfgWriteConTrackParams(ctrparamsFile, binDir, wmFile, roiFile, pdfFile, nMinNodes, nMaxNodes, fStepSizeMm);
 

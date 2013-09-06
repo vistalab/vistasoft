@@ -68,18 +68,18 @@ if(isfield(dt6Struct,'files'))   % Test whether new dt6 stye
     dt.adcUnits = '';
 
     clear ni;
-    ni = readFileNifti(dt6Struct.files.b0);
+    ni = niftiRead(dt6Struct.files.b0);
     ni.data(isnan(ni.data)) = 0;
     dt.b0 = ni.data;
 
     clear ni;
-    ni = readFileNifti(dt6Struct.files.brainMask);
+    ni = niftiRead(dt6Struct.files.brainMask);
     dt.brainMask = ni.data;
 
     if(loadT1 && isfield(dt6Struct.files,'t1'))
         t1Fname = dt6Struct.files.t1;
         if(exist(t1Fname,'file'))
-            ni = readFileNifti(t1Fname);
+            ni = niftiRead(t1Fname);
             t1.img = ni.data;
             t1.xformToAcpc = ni.qto_xyz;
             t1.mmPerVoxel = ni.pixdim(1:3);
@@ -87,7 +87,7 @@ if(isfield(dt6Struct,'files'))   % Test whether new dt6 stye
             % try another level up
             t1Fname = dt6Struct.files.t1;
             if(exist(t1Fname,'file'))
-                ni = readFileNifti(t1Fname);
+                ni = niftiRead(t1Fname);
                 t1.img = ni.data;
                 t1.xformToAcpc = ni.qto_xyz;
                 t1.mmPerVoxel = ni.pixdim(1:3);
@@ -101,7 +101,7 @@ if(isfield(dt6Struct,'files'))   % Test whether new dt6 stye
 		  t1MaskName = fullfile(fileparts(t1Fname),'t1_brain_mask.nii.gz');
 		end
         if(exist(t1MaskName,'file'))
-            ni = readFileNifti(t1MaskName);
+            ni = niftiRead(t1MaskName);
             t1.brainMask = ni.data;
             t1.brainMaskXform = ni.qto_xyz;
         end

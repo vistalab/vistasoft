@@ -118,7 +118,7 @@ if bGenBoot
     dtiWriteNiftiWrapper(img_b0,xformToAcPc,fullfile('bin','b0.nii.gz'));
     clear rawAligned;
 else
-    nib0 = readFileNifti(fullfile('bin','b0.nii.gz'));
+    nib0 = niftiRead(fullfile('bin','b0.nii.gz'));
     img_b0 = nib0.data;
     xformToAcPc = nib0.qto_xyz;
     mmPerVox = nib0.pixdim(1:3);
@@ -192,7 +192,7 @@ if bGenBoot
 
 else
     disp('Using previously generated pdf.nii.gz');
-    ni = readFileNifti(fullfile('bin','tensors.nii.gz'));
+    ni = niftiRead(fullfile('bin','tensors.nii.gz'));
     img_ten = ni.data;
     [eigVec, eigVal] = dtiSplitTensor(img_ten);
     [img_fa,img_md] = dtiComputeFA(eigVal);
@@ -205,7 +205,7 @@ end
 % Generate and write white matter mask file
 bUseT1 = 0;
 if bUseT1
-    ni = readFileNifti(fullfile('bin','t1.nii.gz'));
+    ni = niftiRead(fullfile('bin','t1.nii.gz'));
     disp('Please wait while calculating white matter from T1 image, this can take a few minutes ...');
     [wm, gm, csf] = mrAnatSpmSegment(ni.data,ni.qto_xyz,'MNIT1');
     bb = [-size(wm)/2; size(wm)/2-1];

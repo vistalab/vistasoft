@@ -47,14 +47,14 @@ function ccVec = computeConvergenceMatrix(sampleSizeVec,fgFilename,subjDir,thres
 
 % Load necessary info
 dt6 = load(fullfile(subjDir,'dt6.mat'),'xformToAcPc');
-ni = readFileNifti(fullfile(subjDir,'bin','t1.nii.gz'));
+ni = niftiRead(fullfile(subjDir,'bin','t1.nii.gz'));
 img_t1 = ni.data;
 imSize = size(img_t1);
 mmPerVoxel = [1 1 1];
 xformT1ImgToAcPc = ni.qto_xyz;
 clear ni;
 
-ni = readFileNifti(fullfile(subjDir,'bin','wmMask.nii.gz'));
+ni = niftiRead(fullfile(subjDir,'bin','wmMask.nii.gz'));
 img_wm = interp3(ni.data,'nearest');
 clear ni;
 
@@ -118,7 +118,7 @@ for gg = sampleSizeVec
     else
         % Load the density image
         disp(['Loading density image ' densityFilename ' ...']);
-        ni = readFileNifti(densityFilename);
+        ni = niftiRead(densityFilename);
         fdImg = ni.data;
     end
     % Limit to white matter and binarize

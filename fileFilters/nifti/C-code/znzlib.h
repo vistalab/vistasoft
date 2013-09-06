@@ -20,7 +20,7 @@ znzlib.h  (zipped or non-zipped library)
 
 This library provides an interface to both compressed (gzip/zlib) and
 uncompressed (normal) file IO.  The functions are written to have the
-same interface as the standard file IO functions.  
+same interface as the standard file IO functions.
 
 To use this library instead of normal file IO, the following changes
 are required:
@@ -30,12 +30,11 @@ are required:
  - add a third parameter to all calls to znzopen (previously fopen)
    that specifies whether to use compression (1) or not (0)
  - use znz_isnull rather than any (pointer == NULL) comparisons in the code
- 
+
 NB: seeks for writable files with compression are quite restricted
 
 */
 
-#define HAVE_ZLIB
 
 /*=================*/
 #ifdef  __cplusplus
@@ -48,10 +47,21 @@ extern "C" {
 #include <string.h>
 #include <stdarg.h>
 
-#ifdef HAVE_ZLIB 
+/* include optional check for HAVE_FDOPEN here, from deleted config.h:
+
+   uncomment the following line if fdopen() exists for your compiler and
+   compiler options
+*/
+/* #define HAVE_FDOPEN */
+
+
+#ifdef HAVE_ZLIB
+#if defined(ITKZLIB) && !defined(ITK_USE_SYSTEM_ZLIB)
+#include "itk_zlib.h"
+#else
 #include "zlib.h"
 #endif
-
+#endif
 
 struct znzptr {
   int withz;
@@ -70,7 +80,7 @@ typedef struct znzptr * znzFile;
 #define znz_isnull(f) ((f) == NULL)
 #define znzclose(f)   Xznzclose(&(f))
 
-/* Note extra argument (use_compression) where 
+/* Note extra argument (use_compression) where
    use_compression==0 is no compression
    use_compression!=0 uses zlib (gzip) compression
 */
@@ -83,7 +93,7 @@ int Xznzclose(znzFile * file);
 
 size_t znzread(void* buf, size_t size, size_t nmemb, znzFile file);
 
-size_t znzwrite(void* buf, size_t size, size_t nmemb, znzFile file);
+size_t znzwrite(const void* buf, size_t size, size_t nmemb, znzFile file);
 
 long znzseek(znzFile file, long offset, int whence);
 
@@ -91,7 +101,7 @@ int znzrewind(znzFile stream);
 
 long znztell(znzFile file);
 
-int znzputs(char *str, znzFile file);
+int znzputs(const char *str, znzFile file);
 
 char * znzgets(char* str, int size, znzFile file);
 

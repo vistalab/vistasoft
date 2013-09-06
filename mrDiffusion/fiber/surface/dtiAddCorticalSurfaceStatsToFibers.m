@@ -25,8 +25,8 @@ function dtiAddCorticalSurfaceStatsToFibers(PDBFileName,retVarFileName,retMapFil
 if ieNotDefined('localStatsName'); localStatsName = 'CorticalSurfaceStats'; end
 
 % Get stats
-ret = readFileNifti(retMapFileName);
-retVar = readFileNifti(retVarFileName);
+ret = niftiRead(retMapFileName);
+retVar = niftiRead(retVarFileName);
 % Limit consideration by some variance explained
 %var_mode = mode(retVar.data(:));
 var_thresh=0.3;
