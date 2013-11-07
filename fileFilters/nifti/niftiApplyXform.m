@@ -22,7 +22,7 @@ function [nii] = niftiApplyXform(nii,xform)
 xformLocal = xform(1:3,1:3);
 
 if(all(all(xformLocal == eye(3))))
-    fprintf('The transform does not need to be applied. Returning nifti without change.');
+    fprintf('The transform does not need to be applied. Returning nifti without change.\n');
     return %No need to do the rest of the calculations
 end %if
 
