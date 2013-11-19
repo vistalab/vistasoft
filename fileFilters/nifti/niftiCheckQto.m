@@ -34,13 +34,13 @@ if(isfield(ni,'data')&&~isempty(ni.data))
     % sanity-check ni.dim
     sz = size(ni.data);
     if(any(ni.dim(1:3)~=sz(1:3)))
-        fprintf('[%s] NIFTI volume dim wrong- setting it to the actual data size.',mfilename);
+        fprintf('[%s] NIFTI volume dim wrong- setting it to the actual data size.\n',mfilename);
         ni.dim(1:3) = sz(1:3);
     end
 end
 
 if(ni.qform_code==0 && ni.sform_code~=0)
-    fprintf('[%s] ni.qform_code is zero and sform_code ~=0. Setting ni.qto_* from ni.sto_*...',mfilename);
+    fprintf('[%s] ni.qform_code is zero and sform_code ~=0. Setting ni.qto_* from ni.sto_*...\n',mfilename);
     ni = niftiSetQto(ni, ni.sto_xyz);
 end
 
