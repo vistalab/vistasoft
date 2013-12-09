@@ -33,6 +33,9 @@ if(gmmFlag)
     rh = median(r);
     CSq = 1.4826 * median(abs(r-rh));
     w = 1./(rSq+CSq);
+    % Weights should be normalized to the mean weight (pg. 1089):
+    w = w/mean(w);
+    
 else
     w = 1./sigmaSq;
 end
