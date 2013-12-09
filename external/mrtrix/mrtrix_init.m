@@ -45,7 +45,7 @@ function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
 % Bob, Ariel & Franco (c) Stanford Vista Team 2012
 
 % Loading the dt file containing all the paths to the fiels we need.
-dt_info = load(dt6);
+dt_info = dtiLoadDt6(dt6);
 
 % Strip the file names out of the dt6 strings. 
 dwRawFile    = dt_info.files.alignedDwRaw;
