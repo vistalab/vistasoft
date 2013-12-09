@@ -370,7 +370,8 @@ clear logData;
 tic;
 
 % Options for fminsearch optimization
-options    = optimset('Display', 'off', 'MaxIter', 100);
+options    = optimset('Display', 'off', 'MaxIter', 100,...
+                      'Algorithm','levenberg-marquardt');
 sigmaSq    = sigma.^2;
 voxPerStep = ceil(nvox/nstep);
 
@@ -383,23 +384,24 @@ for jj=1:nstep
             % Use a nonlinear search to compute the tensor fit to the data.
             % dtiRawTensorErr computes the difference between the tensor
             % and the data
-            [x, resnorm] = fminsearch(@(x) dtiRawTensorErr(x, data(:,ii), ...
-                X, sigmaSq, false), A(:,ii), options);
+            [x, resnorm] = lsqnonlin(@(x) dtiRawTensorErr(x, data(:,ii), ...
+                X, sigmaSq, false), A(:,ii), [], [], options);
             
             residuals = data(:,ii)-exp(X*x);
             
             % If any residuals are more than 3 standard deviations from the
             % model prediction then redo the search downweigting that point
-            if(any(residuals>=sigma*3))
-                x = fminsearch(@(x) dtiRawTensorErr(x, data(:,ii), X, ...
-                    sigmaSq, true), A(:,ii), options);
+            if(any(abs(residuals)>=sigma*3))
+                x = lsqnonlin(@(x) dtiRawTensorErr(x, data(:,ii), X, ...
+                    sigmaSq, true), A(:,ii), [], [], options);
                 
                 residuals      = data(:,ii)-exp(X*x);
-                o              = residuals>sigma*3;
+                o              = abs(residuals)>sigma*3;
                 outliers(:,ii) = o;
                 
-                [x, resnorm] = fminsearch(@(x) dtiRawTensorErr(x,...
-                    data(~o,ii), X(~o,:), sigmaSq, false), A(:,ii), options);
+                [x, resnorm] = lsqnonlin(@(x) dtiRawTensorErr(x,...
+                    data(~o,ii), X(~o,:), sigmaSq, false), A(:,ii), [], [], ...
+                    options);
             end
             A(:,ii) = x;
             gof(ii) = int16(round(resnorm));
