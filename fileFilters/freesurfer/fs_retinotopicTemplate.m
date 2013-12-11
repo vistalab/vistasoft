@@ -58,7 +58,8 @@ for map_idx = 1:length(maps)
     template = fullfile(vistaRootPath, 'fileFilters', 'freesurfer', ...
         sprintf('mh.V1.%stmp.sym.mgh', maps{map_idx}));
     for hemi_idx = 1:length(hemis)
-        tmp_file = tempname;
+        file_root = fullfile(out_path, sprintf('%s_%s_%s', subject, ...
+                             hemis{hemi_idx} , maps{map_idx}));
         % These commands differ slightly for the two hemispheres (xhemi):
         if strcmp(hemis{hemi_idx}, 'lh')
             % If the registration file is not there, we'll have to make it:
@@ -73,7 +74,7 @@ for map_idx = 1:length(maps)
             end
             cmd_str2 = ['mri_surf2surf --srcsubject fsaverage_sym --trgsubject ' ...
                 sprintf('%s --sval %s --tval ', subject, template) ...
-                sprintf('%s.mgh --hemi lh', tmp_file)];
+                sprintf('%s.mgh --hemi lh', file_root)];
         else
             if ~(exist(fullfile(subjects_dir, subject, ...
                     'xhemi/surf/lh.fsaverage_sym.sphere.reg'), 'file') == 2)
@@ -87,22 +88,21 @@ for map_idx = 1:length(maps)
             end
             cmd_str2 = ['mri_surf2surf --srcsubject fsaverage_sym --trgsubject ' ...
                 sprintf('%s/xhemi --sval %s --tval ', subject, template) ...
-                sprintf('%s.mgh --srcsurfreg sphere.reg --trgsurfreg ', tmp_file, subject) ...
+                sprintf('%s.mgh --srcsurfreg sphere.reg --trgsurfreg ', file_root, subject) ...
                 'fsaverage_sym.sphere.reg --hemi lh'];
         end
         syscall(cmd_str1);
         syscall(cmd_str2);
         
         
-        cmd_str = [sprintf('mri_surf2vol --surfval %s.mgh --projfrac 1 ', tmp_file) ...
-            sprintf('--identity %s --o %s.mgz --hemi %s ', subject, tmp_file, hemis{hemi_idx}) ...
+        cmd_str = [sprintf('mri_surf2vol --surfval %s.mgh --projfrac 1 ', file_root) ...
+            sprintf('--identity %s --o %s.mgz --hemi %s ', subject, file_root, hemis{hemi_idx}) ...
             sprintf('--template %s/%s/mri/orig.mgz', subjects_dir, subject)];
         syscall(cmd_str);
         
         % Convert to volume:
-        outfile = fullfile(out_path, sprintf('%s_%s_%s.nii', subject, ...
-            hemis{hemi_idx} , maps{map_idx}));
-        cmd_str = [sprintf('mri_convert  %s.mgz ', tmp_file), outfile];
+        outfile = [file_root '.nii']; 
+        cmd_str = [sprintf('mri_convert  %s.mgz ', file_root), outfile];
         syscall(cmd_str);
         gzip(outfile);
         delete(outfile);
