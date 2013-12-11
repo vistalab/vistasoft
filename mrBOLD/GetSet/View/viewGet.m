@@ -52,6 +52,8 @@ function val = viewGet(vw,param,varargin)
 %     'cothresh'
 %     'phwin'
 %     'spatialgrad'
+%     'ncycles'
+%     'framestouse'
 %
 %     ------------------------------------------------------------------
 %     -- colorbar-related params ---------------------------------------
@@ -126,7 +128,6 @@ function val = viewGet(vw,param,varargin)
 %     'tseriesscan'
 %     'tr'
 %     'nframes'
-%     'ncycles'
 %
 %     ------------------------------------------------------------------
 %     --  Retinotopy/pRF Model related properties ----------------------

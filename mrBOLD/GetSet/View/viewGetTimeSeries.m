@@ -102,27 +102,7 @@ switch param
             scan = varargin{1};
         end
         dt  = viewGet(vw, 'dtStruct');
-        val = [dt.scanParams(scan).nFrames];
-        
-    case 'ncycles'
-        % Return the number of cycles in the current or specified scan
-        % (assuming scan is set up for coranal).
-        %   nycles = viewGet(vw,'ncycles')
-        %   scan = 1; nycles = viewGet(vw,'ncycles', scan)
-        if isempty(varargin) || isempty(varargin{1})
-            scan = viewGet(vw, 'CurScan');
-        else
-            scan = varargin{1};
-        end
-        curDT = viewGet(vw,'curdt');
-        blockParms = dtGet(dataTYPES(curDT),'bparms',scan);
-        % There are some issues with event and block that we need to figure out
-        % here.
-        
-        if isfield(blockParms,'nCycles'), val = blockParms.nCycles;
-        else                              val = 1;
-        end
-        
+        val = [dt.scanParams(scan).nFrames];              
         
     otherwise
         error('Unknown viewGet parameter');

@@ -67,7 +67,6 @@ if isempty(DictViewSplit)
     DictViewSplit('recomputev2gmap') =  'mesh';
     DictViewSplit('rightclassfile') =  'mesh';
     DictViewSplit('rightgrayfile') =  'mesh';
-    DictViewSplit('framestouse') =  'retinotopy';
     DictViewSplit('rmcurrent') =  'retinotopy';
     DictViewSplit('rmfile') =  'retinotopy';
     DictViewSplit('rmhrf') =  'retinotopy';
@@ -117,7 +116,6 @@ if isempty(DictViewSplit)
     DictViewSplit('datasize') =  'timeseries';
     DictViewSplit('dim') =  'timeseries';
     DictViewSplit('functionalslicedim') = 'timeseries';
-    DictViewSplit('ncycles') =  'timeseries';
     DictViewSplit('nframes') =  'timeseries';
     DictViewSplit('tr') =  'timeseries';
     DictViewSplit('tseries') =  'timeseries';
@@ -138,6 +136,8 @@ if isempty(DictViewSplit)
     DictViewSplit('scanco') =  'travelingwave';
     DictViewSplit('scanph') =  'travelingwave';
     DictViewSplit('spatialgrad') =  'travelingwave';
+    DictViewSplit('framestouse') =  'travelingwave';
+    DictViewSplit('ncycles') =  'travelingwave';    
     DictViewSplit('amplitudemode') =  'ui';
     DictViewSplit('anatomymode') =  'ui';
     DictViewSplit('cbarrange') = 'ui';

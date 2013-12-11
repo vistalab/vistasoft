@@ -85,7 +85,24 @@ switch param
         dt = dtSet(dt, 'blockparams', blockParms);
         dtnum = viewGet(vw, 'current dt');
         dataTYPES(dtnum) = dt; %#ok<NASGU>
+
+    case 'ncycles'
+        % Return the number of cycles in the current or specified scan
+        % (assuming scan is set up for coranal).
+        %   scan = 1; vw = viewSet(vw,'num cycles', 8, scan);
+        if isempty(varargin) || isempty(varargin{1})
+            scan = viewGet(vw, 'CurScan');
+        else
+            scan = varargin{1};
+        end
+        dt         = viewGet(vw, 'dtStruct');
+        blockParms = dtGet(dt,'bparms');
+        blockParms(scan).nCycles = val;
+        dt = dtSet(dt, 'blockparams', blockParms);
+        dtnum = viewGet(vw, 'current dt');
+        dataTYPES(dtnum) = dt; %#ok<NASGU>
         
+     
     otherwise
         error('Unknown view parameter %s.', param);
         

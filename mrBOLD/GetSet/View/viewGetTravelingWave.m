@@ -31,7 +31,7 @@ switch param
         if ~isempty(vw.co) && length(vw.co) >=nScan, val = vw.co{nScan};
         else                val = []; end
     case 'spatialgrad'
-        val = vw.spatialGrad
+        val = vw.spatialGrad;
     case 'phase'
         % Phase for all voxels, all scans in current dataTYPE
         %   ph = viewGet(vw, 'Phase');
@@ -104,6 +104,42 @@ switch param
         
         % colorbar-related params: this code uses a simple linear
         % mapping from coAnal phase -> polar angle or eccentricity
+    case 'ncycles'
+        % Return the number of cycles in the current or specified scan
+        % (assuming scan is set up for coranal).
+        %   nycles = viewGet(vw,'ncycles')
+        %   scan = 1; nycles = viewGet(vw,'ncycles', scan)
+        if isempty(varargin) || isempty(varargin{1})
+            scan = viewGet(vw, 'CurScan');
+        else
+            scan = varargin{1};
+        end
+        curDT = viewGet(vw,'curdt');
+        blockParms = dtGet(dataTYPES(curDT),'bparms',scan);
+        % There are some issues with event and block that we need to figure out
+        % here.
+        
+        if isfield(blockParms,'nCycles'), val = blockParms.nCycles;
+        else                              val = 1;
+        end
+        
+    case 'framestouse'
+        % Return a vector of time frames in the current or specified
+        % scan to be used for coranal (block) analyses
+        %   frames = viewGet(vw,'frames to use');
+        %   scan = 1; frames = viewGet(vw,'frames to use',scan);
+        if isempty(varargin) || isempty(varargin{1})
+            scan = viewGet(vw, 'CurScan');
+        else
+            scan = varargin{1};
+        end
+        dt         = viewGet(vw, 'dtStruct');
+        blockParms = dtGet(dt,'bparms',scan);
+        if checkfields(blockParms, 'framesToUse')
+            val = blockParms.framesToUse;
+        else
+            val = 1: viewGet(vw,'nFrames',scan);
+        end
         
     otherwise
         error('Unknown viewGet parameter');
