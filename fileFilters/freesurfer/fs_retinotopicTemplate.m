@@ -12,11 +12,19 @@ function fs_retinotopicTemplate(subject, out_path, subjects_dir)
 %    Full path to the Freesurfer SUBJECTS_DIR. Per default this will be set
 %    to the environment-defined $SUBJECTS_DIR variable 
 %
-% Notes
-% -----
-% Based on the work of Benson et al. (2012). This function will not work,
-% unless the Freesurfer `fsaverage_sym` subject is available under your
-% $SUBJECTS_DIR. This used to be abvailable at:
+% Notes 
+% ----- 
+% Based on the work of Benson et al. (2012). The requirements
+% for this to work are: 
+% 1. The data should have been processed using the cross-sectional stream
+% in FreeSurfer (i.e. recon-all -s subjid -autorecon-all). Preferably using
+% Freesurfer version 5.1
+% 2. The scripts (surfreg) and atlas (fsaverage_sym), which are not part of
+% the standard FreeSurfer 5.1 distribution, should be installed
+% 3. surfreg should be installed in $FREESURFER_HOME/bin/
+% 4. fsaverage_sym should be copied to the FreeSufer subject data directory
+% 
+% The 'fsaverage_sym' subject used to be abvailable at:
 %
 % ftp://surfer.nmr.mgh.harvard.edu/transfer/outgoing/flat/greve/
 %
@@ -96,7 +104,8 @@ for map_idx = 1:length(maps)
             hemis{hemi_idx} , maps{map_idx}));
         cmd_str = [sprintf('mri_convert  %s.mgz ', tmp_file), outfile];
         syscall(cmd_str);
-        gzip(outfile)
+        gzip(outfile);
+        delete(outfile);
         
     end
 end
