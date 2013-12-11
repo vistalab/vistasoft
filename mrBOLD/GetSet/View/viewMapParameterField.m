@@ -383,6 +383,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('initdisplaymodes') = 'initdisplaymodes';
     DictViewTranslate('resetdisplaymodes') = 'initdisplaymodes';
     DictViewTranslate('ui') = 'ui';
+    DictViewTranslate('cmapcurrent') = 'cmapcurrent';    
     DictViewTranslate('userinterface') = 'ui';
     DictViewTranslate('fignum') = 'fignum';
     DictViewTranslate('figurenumber') = 'fignum';
