@@ -41,6 +41,6 @@ classNi.data(lGM) = l.leftGray;
 classNi.data(rGM) = l.rightGray;
 
 classNi.fname = classFileOut;
-writeFileNifti(classNi);
+niftiWrite(classNi);
 
 return
