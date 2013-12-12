@@ -10,7 +10,29 @@ function pysurfer(subject_id, hemi, surf, subjects_dir, overlay, range, ...
 %
 % subject_id : str
 %     The subject id in the Freesurfer context
-%
+% hemi : str
+%     {'lh' | 'rh'}
+% surf: str
+%     Which surface to show: {'inflated' | 'pial' | 'white' | ...}
+% subjects_dir : str (optional)
+%    The full path of the FS SUBJECTS_DIR. Defaults to the system-defined
+%    SUBJECTS_DIR
+% overlay : str (optional)
+%    Full path to a '.mgh' file with data corresponding to the displayed
+%    surface
+% range : a 1x2 matrix (optional) 
+%    Defines a threshold and a maximum for the range of data overlayed
+% min : double or int
+%    The minimum of the range of the colormap
+% max : double or int
+%    The maximum of the range of the colormap
+% background: str
+%    The color of the background. Many different color names work here
+% cortex : str
+%    The color-scheme used for the display of curvature: 
+%    {'classic'|'bone'|'high_contrast'|'low_contrast'}
+%    See: http://pysurfer.github.io/documentation/custom_viz.html#changing-the-curvature-color-scheme
+% 
 % Notes
 % -----
 % This relies on a call out to Pysurfer. To install pysurfer, refer to the
@@ -31,7 +53,9 @@ function pysurfer(subject_id, hemi, surf, subjects_dir, overlay, range, ...
 %            '/biac4/wandell/biac2/wandell/data/DWI-Tamagawa-Japan/JMD1-MM-20121025-DWI/fs_Retinotopy2/JMD1-MM-20121025-DWI_lh_ecc.mgh',...
 %             [5, 90], 5, 90, 'white','bone')
 %
-% These are the arguments to the pysurfer command-line:
+
+
+% For reference, these are the arguments to the pysurfer command-line:
 % positional arguments:
 %   subject_id            subject id as in subjects dir
 %   hemi                  hemisphere to load
