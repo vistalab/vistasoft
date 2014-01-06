@@ -57,8 +57,9 @@ end
 %struct with the new data
 
 pixDim = niftiGet(nii,'pixdim');
-newPixDim = [pixDim(xdim), pixDim(ydim), pixDim(zdim)];
-nii = niftiSet(nii,'pixdim',newPixDim);
+newPixDim = pixDim;
+newPixDim(1:3) = [pixDim(xdim), pixDim(ydim), pixDim(zdim)];
+nii = niftiSet(nii,'pixdim', newPixDim);
 
 newDim = niftiGet(nii,'dim');
 newSize = size(niftiGet(nii,'data'));
