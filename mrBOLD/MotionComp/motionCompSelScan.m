@@ -70,9 +70,10 @@ for iScan = 1:length(scanList)
 	if iScan==1
 		xlabel('Time (frames)')
 		ylabel('Motion (voxels)')
-	end
-
-	dataTYPES(tgtDt).scanParams(tgtScan).WithinScanMotion = motion; %TODO: Use dtGet
+    end
+    
+    dataTYPES(tgtDt) = dtSet(dataTYPES(tgtDt), 'Within Scan Motion', motion, tgtScan);
+	%dataTYPES(tgtDt).scanParams(tgtScan).WithinScanMotion = motion; %TODO: Use dtSet
 end
 saveSession;
 
