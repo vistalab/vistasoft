@@ -58,9 +58,9 @@ version = ver('Matlab');
 matlabVersion = version.Version;        
 if ~ismember(matlabVersion, expectedMatlabVersion);    % (matlabVersion ~= expectedMatlabVersion)
     warning('Matlab version %s not on supported list (mrVista %s).', ...
-        matlabVersion, num2str(mrLoadRetVERSION));
+        matlabVersion, num2str(mrLoadRetVersion));
 else
-    fprintf('mrVista version: %s\nMatlab version: %s\n',num2str(mrLoadRetVERSION),version.Version);
+    fprintf('mrVista version: %s\nMatlab version: %s\n',num2str(mrLoadRetVersion),version.Version);
 end
 
 %% set global variables/properties
