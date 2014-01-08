@@ -29,7 +29,10 @@ try
     %Now that we have the number of scans, we know how many tSeries nifti
     %files we will need to create
     
-    inplaneBasePath = fullfile(pwd,'Inplane');
+    % Use local paths, not absolute paths
+    % inplaneBasePath = fullfile(pwd,'Inplane');
+    inplaneBasePath = 'Inplane';
+    
     
     for dtNum = 1:numel(dataTYPES)
         fprintf('Starting dataTYPE number %d\n', dtNum);
@@ -104,7 +107,10 @@ try
                 save('mrSESSION.mat', 'mrSESSION','-append');
                 save('mrSESSION.mat', 'dataTYPES','-append');
                 
-                writeFileNifti(nii);
+                % we already wrote the nifti 4 lines above. this is
+                % redundant.
+                %   writeFileNifti(nii);
+                
                 fprintf('Finished scan number %d\n', scan)
             end %for
             
