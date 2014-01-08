@@ -81,9 +81,9 @@ if(~all(niiv.sto_xyz(1:9)==0))
     nii.hdr.hist.srow_y = sto_xyz(2,:);
     nii.hdr.hist.srow_z = sto_xyz(3,:);
 else
-    nii.hdr.hist.srow_x = 0;
-    nii.hdr.hist.srow_y = 0;
-    nii.hdr.hist.srow_z = 0;
+    nii.hdr.hist.srow_x = [0 0 0 0];
+    nii.hdr.hist.srow_y = [0 0 0 0];
+    nii.hdr.hist.srow_z = [0 0 0 0];
 end
   
 % --- nk fields
