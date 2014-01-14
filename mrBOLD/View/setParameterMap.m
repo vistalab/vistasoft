@@ -1,10 +1,20 @@
 function vw = setParameterMap(vw, parMap, mapName, mapUnits)
-%
-% vw = setParameterMap(vw, parMap, [mapName], [mapUnits])
-%
 % Sets the field vw.map = parMap, after checking that parMap has the
 % correct size.
-% sets vw.mapName=mapNname;
+% 
+%  vw = setParameterMap(vw, parMap, [mapName], [mapUnits])
+%
+% Inputs:
+%   vw:      a view structure
+%   parMap:  cell array of parameter maps, one entry per scan
+%   mapName: string to indicate map name (will be set in vw.mapName) 
+%   mapUnits: string to indicate map units (will be set in vw.mapUnits) 
+%
+% Outputs:
+%   vw:     modified view structure
+% 
+% Example: vw = setParameterMap(vw, map, 'my map name', '% BOLD')
+%
 %
 % djh, 12/30/98
 % rmk, 1/15/99 added map name parameter
@@ -23,6 +33,7 @@ function vw = setParameterMap(vw, parMap, mapName, mapUnits)
 % delete those -- just punch in maps for scans assigned to the parMap.
 % ras, 05/04: Made the test more stringent for distinguishing hidden v 
 % non-hidden views.
+
 if notDefined('mapName');	mapName='';		end
 if notDefined('mapUnits');	mapUnits='';	end
 
@@ -32,20 +43,9 @@ end
 
 checkSize(vw,parMap);
 
-% clear out the old map field
-vw.map = cell(1, viewGet(vw, 'numScans'));
-
-for s = 1:viewGet(vw, 'numScans')
-    if ~isempty(parMap{s})
-		vw.map{s} = parMap{s};
-        mapName(mapName=='_') = '-'; % dodge the TeX interpreter :)
-		vw.mapName = mapName;
-		vw.mapUnits = mapUnits;
-    end
-end
-
-if isfield(vw, 'ui') && isfield(vw.ui,'windowHandle'); % test for non-hidden vw    
-    vw = setDisplayMode(vw, 'map');
-end
+vw = viewSet(vw, 'map name', mapName);
+vw = viewSet(vw, 'map units', mapUnits);
+vw = viewSet(vw, 'parameter map', parMap);
+vw = viewSet(vw, 'display mode', 'map');
 
 return

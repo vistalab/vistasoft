@@ -121,6 +121,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('statisticalmap') = 'map';
     DictViewTranslate('smap') = 'map';
     DictViewTranslate('allmap') = 'map';
+    DictViewTranslate('parmap') = 'map';
+    DictViewTranslate('parametermap') = 'map';
     DictViewTranslate('mapname') = 'mapname';
     DictViewTranslate('mapunits') = 'mapunits';
     DictViewTranslate('mapclip') = 'mapclip';
