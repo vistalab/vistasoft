@@ -94,6 +94,8 @@ switch param
         switch viewGet(vw,'View Type')
             case 'Inplane'
                 val = niftiGet(viewGet(vw,'anat nifti'),'Pix Dim');
+                % there can only be 3 dimensions of space: take only 3 dimensions of pix dim                
+                val = val(1:3);
             case {'Volume' 'Gray' 'generalGray'}
                 if isfield(vw, 'mmPerVox'),
                     val =  vw.mmPerVox;
