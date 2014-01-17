@@ -8,7 +8,7 @@ function [params] = niftiGetParamsFromDescrip(niftiFile)
 % ** Note that only nifti files created by NIMS (cni.stanford.edu/nims) 
 %    will have these values in the descrip field.
 % 
-% ** Note also that this function read the nifti file, so speed is
+% ** Note also that this function reads the nifti file, so speed is
 %    completely dependent on file size.
 % 
 % 
@@ -35,18 +35,21 @@ function [params] = niftiGetParamsFromDescrip(niftiFile)
 
 
 %% Check input
-
-if ~isstruct(niftiFile)
-    if ~exist('niftiFile','var') || ~exist(niftiFile,'file')
-        niftiFile=uigetfile('*.nii.gz','Choose nifti file');
-    end
-    % Read in the nifti 
-    ni = niftiRead(niftiFile);
+if exist('niftiFile','var') && ~isstruct(niftiFile)
+        ni = niftiFile;
+        clear niftiFile;
 else
-    ni = niftiFile; 
-    clear niftiFile;
+    if  ~exist('niftiFile','var') || ~exist(niftiFile,'file') 
+        niftiFile=uigetfile('*.nii.gz','Choose nifti file');
+        if niftiFile == 0
+            return
+        end
+    end
+    % Read in the nifti
+    ni = niftiRead(niftiFile);
 end
 
+% Check that descrip field exists
 if ~isfield(ni,'descrip')
     warning('vista:niftiError','Descrip field does not exist. Returning [].');
     params = [];
