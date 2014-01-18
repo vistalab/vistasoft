@@ -180,6 +180,15 @@ switch param
             val = prod(niftiGet(ni,'Pixdim'));
         end
         
+    case {'params','scanparams','descrip','description'}
+        if isfield(ni,'descrip') 
+            val = niftiGetParamsFromDescrip(ni);
+        else
+            warning('vista:niftiError','Descrip field does not exist');
+            val = [];
+        end
+            
+        
     otherwise
          error('Unknown parameter %s\n',param);       
         
