@@ -35,7 +35,7 @@ function [params] = niftiGetParamsFromDescrip(niftiFile)
 
 
 %% Check input
-if exist('niftiFile','var') && ~isstruct(niftiFile)
+if exist('niftiFile','var') && isstruct(niftiFile)
         ni = niftiFile;
         clear niftiFile;
 else
