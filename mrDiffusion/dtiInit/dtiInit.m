@@ -56,7 +56,8 @@ end
 disp('Loading raw data...');
 dwRaw = niftiRead(dwRawFileName);
 
-% By default all processe nifti's will be at the same resolution of the dwi data
+% By default all processed nifti's will be at the same resolution as the
+% dwi data
 if notDefined('dwParams'); 
   dwParams         = dtiInitParams; 
   dwParams.dwOutMm = dwRaw.pixdim(1:3);
@@ -73,7 +74,7 @@ fprintf('dataDir = %s; dims = [%d %d %d %d];\n', dwDir.dataDir, size(dwRaw.data)
 
 % Check for the case that the user wants to align to MNI instead of T1.
 if exist('t1FileName','var') && strcmpi(t1FileName,'MNI')
-    t1FileName = fullfile(dwDir.mrDiffusionDir,'templates','MNI_EPI.nii.gz');
+    t1FileName = fullfile(mrDiffusionDir,'templates','MNI_EPI.nii.gz');
     disp('The MNI EPI template will be used for alignment.');
 end
 
