@@ -54,7 +54,7 @@ switch param
         switch vw.viewType
             case 'Inplane'
                 val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Dim');
-                val = val(1:3);
+                val = double(val(1:3));
             case {'Volume' 'Gray' 'generalGray' 'Flat'}
                 val = size(vw.anat);
         end
