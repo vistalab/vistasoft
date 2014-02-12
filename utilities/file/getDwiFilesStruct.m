@@ -109,6 +109,11 @@ for kk = 1:numel(bfile)
     dw{kk}.directions = getdirections(dw{kk}.bvec);
 
 end
+
+
+if isempty(dw)
+    fprintf('No diffusion data found');
+end
     
 
 return
