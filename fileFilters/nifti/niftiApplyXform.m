@@ -80,13 +80,15 @@ end
 if (~isempty(niftiGet(nii,'freqdim')) && niftiGet(nii,'freqdim'))
     nii = niftiSet(nii,'freqdim', dimOrder(niftiGet(nii,'freqdim')));
 else
-    warning('No freqdim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
+    warning('No freqdim field set in the nifti. Assuming freqdim = 1. Nifti stored at: %s', niftiGet(nii,'FName'));
+    nii = niftiSet(nii,'freqdim', 1);
 end
 
 if (~isempty(niftiGet(nii,'phasedim')) && niftiGet(nii,'phasedim'))
     nii = niftiSet(nii,'phasedim', dimOrder(niftiGet(nii,'phasedim')));
 else
-    warning('No phasedim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
+    warning('No phasedim field set in the nifti. Assuming phasedim = 2. Nifti stored at: %s', niftiGet(nii,'FName'));
+    nii = niftiSet(nii,'phasedim', 2);
 end
 
 if (~isempty(niftiGet(nii,'slicedim')) && niftiGet(nii,'slicedim'))
