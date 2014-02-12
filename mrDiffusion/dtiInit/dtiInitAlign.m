@@ -1,4 +1,4 @@
-function [doAlign doResamp] = dtiInitAlign(dwParams,dwDir,doResamp)
+function [doAlign, doResamp] = dtiInitAlign(dwParams,dwDir,doResamp)
 % 
 % function doAlign = dtiInitAlign(dwParams,dwDir)
 % 

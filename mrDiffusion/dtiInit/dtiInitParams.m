@@ -96,6 +96,9 @@ function dwParams = dtiInitParams(varargin)
 %                padded with zeros then you should use the 'b0' method
 %                which calculates the noise baseed on the std of the b=0
 %                image.
+%       .outDir = '';
+%                The directory to which dtiInit should write all output
+%                files. 
 % 
 % Web Resources:
 %       http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
@@ -134,6 +137,7 @@ dwParams.rotateBvecsWithCanXform = false;
 dwParams.bvecsFile               = '';
 dwParams.bvalsFile               = '';
 dwParams.noiseCalcMethod         = 'corner';
+dwParams.outDir                  = '';
 
 %% Varargin
 

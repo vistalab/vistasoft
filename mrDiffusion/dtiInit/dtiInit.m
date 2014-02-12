@@ -66,7 +66,8 @@ end
 % Initialize the structure containing all directory info and file names
 dwDir      = dtiInitDir(dwRawFileName,dwParams);
 outBaseDir = dwDir.outBaseDir;
-fprintf('dataDir = %s; dims = [%d %d %d %d];\n', dwDir.dataDir, size(dwRaw.data));
+fprintf('Dims = [%d %d %d %d] \nData Dir = %s \n', size(dwRaw.data), dwDir.dataDir);
+fprintf('Output Dir = %s \n', dwDir.subjectDir);
 
 
 
@@ -238,6 +239,9 @@ bs.showProgress = false;
 
 %% XV. Name the folder that will contain the dt6.mat file
 
+% If the user passed in a full path to dt6BaseName and outDir ... if
+% they're different the dt6.mat file will be saved to dt6BaseName while the
+% other data will be saved to outDir. See dtiInitDir for the fix.
 if isempty(dwParams.dt6BaseName) 
     % nUniqueDirs from dtiBootGetPermMatrix
     dwParams.dt6BaseName = fullfile(dwDir.subjectDir,sprintf('dti%02d',nUniqueDirs));
@@ -272,7 +276,7 @@ switch lower(dwParams.fitMethod)
 
     case {'rtls','lsrt','all','both','trilinrt'};
         dt6FileName = ...
-            dtiInitTensorFit(dwRawFileName, dwRawAligned, dwDir, dwParams, bs);
+            dtiInitTensorFit(dwRawAligned, dwDir, dwParams, bs);
 end
 
 
