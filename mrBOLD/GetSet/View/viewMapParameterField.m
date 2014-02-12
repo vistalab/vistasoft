@@ -314,7 +314,11 @@ if isempty(DictViewTranslate)
     DictViewTranslate('currentmeshdata') = 'meshdata';
     DictViewTranslate('selectedmeshdata') = 'meshdata';
     DictViewTranslate('meshn') = 'meshn';
+    DictViewTranslate('meshnum') = 'meshn';
+    DictViewTranslate('meshnumber') = 'meshn';    
     DictViewTranslate('currentmeshn') = 'meshn';
+    DictViewTranslate('currentmeshnum') = 'meshn';    
+    DictViewTranslate('currentmeshnumber') = 'meshn';        
     DictViewTranslate('setcurrentmeshn') = 'meshn';
     DictViewTranslate('curmeshnum') = 'meshn';
     DictViewTranslate('curmeshn') = 'meshn';
