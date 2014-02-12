@@ -946,7 +946,7 @@ switch lower(thisParams.stimType)
                 'FilterDefinitions','*.m');
             f = dir(d);
             str = cell(length(f)+1,1);
-            str{1} = 'None';
+            str{1} = 'none';
             for ii=1:length(f)
                 s = findstr(f(ii).name,'_');
                 [p,str{ii+1},e] = fileparts(f(ii).name((s+1):end));
@@ -959,11 +959,11 @@ switch lower(thisParams.stimType)
         grayEditText(handles,whichScan);  % Not stim from scan
         
         % For most cases, these are not options so we gray them out
-        set(handles.popupImageFile,'String','None');
+        set(handles.popupImageFile,'String','none');
         set(handles.popupImageFile,'Value',1);
-        set(handles.popupParamsFile,'String','None');
+        set(handles.popupParamsFile,'String','none');
         set(handles.popupParamsFile,'Value',1);
-        set(handles.popupImageFilter,'String','None');
+        set(handles.popupImageFilter,'String','none');
         set(handles.popupImageFilter,'Value',1);
         
         
@@ -971,7 +971,7 @@ end
 
 % Populate the pulldown Jitter files
 f = dir(fullfile(sDir,'*jitter*.mat'));
-str = cell(length(f)+1,1); str{1} = 'None';
+str = cell(length(f)+1,1); str{1} = 'none';
 if ~isempty(f)
     for ii=1:length(f)
         str{ii+1} = f(ii).name;
