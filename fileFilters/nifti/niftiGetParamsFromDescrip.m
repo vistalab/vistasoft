@@ -1,6 +1,6 @@
 function [params] = niftiGetParamsFromDescrip(niftiFile)
 % 
-% function [params] = niftiGetParamsFromDescrip(niftiFile)
+%  [params] = niftiGetParamsFromDescrip(niftiFile)
 % 
 % This function will take a nifti file and parse the descrip field to build
 % a structure containing the included values.
@@ -30,7 +30,8 @@ function [params] = niftiGetParamsFromDescrip(niftiFile)
 %            rp: 2
 %            rs: 1
 % 
-% (C) Stanford Vista Lab 2014 - LMP
+% 
+% (C) Stanford University, Vista Lab [2014] - LMP
 % 
 
 
@@ -57,12 +58,27 @@ if ~isfield(ni,'descrip')
 end
 
 % Get the values from the descrip field into the workspace
-eval([ni.descrip,';']);
+% Check to make sure the format is correct, i.e., there is an assigment of
+% some sort.
+if strfind(ni.descrip,'=') 
+    try
+        eval([ni.descrip,';']);
+    catch err
+        fprintf('%s\n',err.message);
+        clear err
+    end
+end
 
 % Get the TR from the 4th dimension of the nifti
-tr = ni.dim(4); 
+try
+    tr = ni.dim(4); 
+catch err
+    fprintf('%s\n',err.message);
+    clear err
+    tr = [];
+end
 
-% Remove the nifti struct, so we don't save it.
+% Remove the nifti struct, so we don't save it along with the other stuff.
 clear ni 
 
 % Set a temporary name to save to
@@ -77,9 +93,9 @@ params.tr = tr;
 if isfield(params,'name')
     params = rmfield(params,'name');
 end
-if isfield(params,'niftiFile')
-    params = rmfield(params,'niftiFile');
-end
+% if isfield(params,'niftiFile')
+%     params = rmfield(params,'niftiFile');
+% end
 
 return
 

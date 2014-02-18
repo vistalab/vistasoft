@@ -37,34 +37,69 @@ end
 
 dwDir.mrDiffusionDir = fileparts(which('mrDiffusion.m'));
 
+
 % We need the full path to the dwRawFile so check to see if the user did
-% not provide the full path the raw file and add it if needed.
-[p f e] = fileparts(dwRawFileName);  %#ok<NASGU>                                      
+% not provide the full path to the raw file and add it if needed.
+[p, ~, e] = fileparts(dwRawFileName);  %#ok<NASGU>                                      
 if isempty(p), dwRawFileName = fullfile(pwd,dwRawFileName); end
+
 
 % Build the names using the raw dti file
 [dwDir.dataDir,dwDir.inBaseName] = fileparts(dwRawFileName);
 if isempty(dwDir.dataDir); dwDir.dataDir = pwd; end
 
-% Set default paths
-[tmp,dwDir.inBaseName] = fileparts(dwDir.inBaseName); %#ok<ASGLU>
-dwDir.mnB0Name         = fullfile(dwDir.dataDir,[dwDir.inBaseName '_b0.nii.gz']);
-dwDir.outBaseName      = [dwDir.inBaseName dwDir.outSuffix];
-dwDir.outBaseDir       = fullfile(dwDir.dataDir,dwDir.outBaseName);
-dwDir.inBaseDir        = fullfile(dwDir.dataDir,dwDir.inBaseName);
-dwDir.subjectDir       = fileparts(dwDir.dataDir);
 
 % Default output dir is one level above the dataDir. We assume that
-% this is the 'subjectDir', which contains the 'raw' data dir.
+% this is the 'subjectDir', which contains the 'raw' data dir. 
+dwDir.subjectDir = fileparts(dwDir.dataDir);
 if isempty(dwDir.subjectDir); dwDir.subjectDir = pwd; end
+
+
+% If the user supplied an full path to the dt6BaseName this is where we'll
+% put things % % NEED TO TEST THIS
+if ~isempty(fileparts(dwParams.dt6BaseName)) % && exist(fileparts(dwParams.dt6BaseName),'dir')
+    dwDir.subjectDir = fileparts(dwParams.dt6BaseName);    
+end
+
+
+% If the user supplied an output directory then we assume this is where
+% they want everything.
+if isfield(dwParams,'outDir') && exist(dwParams.outDir,'dir')
+    dwDir.subjectDir = dwParams.outDir;
+end
+
+
+% Check to see if the output directory exists - if not, then create it.
+if  ~exist(dwDir.subjectDir,'dir')
+    fprintf('Output directory does not exist!\n Creating: %s\n',dwDir.subjectDir)
+    result = mkdir(dwDir.subjectDir);
+    if result == 1 
+        disp('Success.');
+    else
+        error('Could not create directory. Check permissions.');
+    end
+end
+
+
+% Set default names
+[~,  dwDir.inBaseName] = fileparts(dwDir.inBaseName); 
+dwDir.mnB0Name         = fullfile(dwDir.subjectDir,[dwDir.inBaseName '_b0.nii.gz']);
+dwDir.outBaseName      = [dwDir.inBaseName dwDir.outSuffix];
+
+% Set default paths
+dwDir.outBaseDir       = fullfile(dwDir.subjectDir,dwDir.outBaseName);
+dwDir.inBaseDir        = fullfile(dwDir.dataDir,dwDir.inBaseName);
+
+fprintf('Data will be saved to: %s \n',dwDir.subjectDir);
 
 
 %% Set file path and name defaults
 
-dwDir.bvalsFile        = [dwDir.inBaseDir  '.bvals'];
-dwDir.bvecsFile        = [dwDir.inBaseDir  '.bvecs'];
-dwDir.ecFile           = [dwDir.inBaseDir  '_ecXform.mat'];
-dwDir.acpcFile         = [dwDir.inBaseDir  '_acpcXform.mat'];
+dwDir.bvalsFile        = [dwDir.inBaseDir  '.bval'];
+dwDir.bvecsFile        = [dwDir.inBaseDir  '.bvec'];
+
+dwDir.ecFile           = [dwDir.outBaseDir  '_ecXform.mat'];
+dwDir.acpcFile         = [dwDir.outBaseDir  '_acpcXform.mat'];
 dwDir.alignedBvecsFile = [dwDir.outBaseDir '.bvecs'];
 dwDir.alignedBvalsFile = [dwDir.outBaseDir '.bvals'];
 dwDir.dwAlignedRawFile = [dwDir.outBaseDir '.nii.gz'];
