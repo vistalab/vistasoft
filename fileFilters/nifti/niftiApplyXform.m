@@ -22,7 +22,12 @@ function [nii] = niftiApplyXform(nii,xform)
 xformLocal = xform(1:3,1:3);
 
 if(all(all(xformLocal == eye(3))))
-    fprintf('[%s:] The transform does not need to be applied. Returning nifti without change.\n', mfilename);
+    if (ispref('VISTA','verbose'))
+        if getpref('VISTA','verbose')>0
+             fprintf('[%s:] The transform does not need to be applied. Returning nifti without change.\n', mfilename); % Only print this if we have asked for verbose reporting
+        end
+    end
+    
     return %No need to do the rest of the calculations
 end %if
 
