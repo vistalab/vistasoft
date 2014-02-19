@@ -59,7 +59,7 @@ end
 
 %% Get a list all the relevant files
 tn  = tempname;
-cmd = ['find ' path ' -follow -type f -name *.nii.gz -o -name "*.bvec" -o -name ".bval" | tee ' tn];
+cmd = ['find ' path ' -follow -type f -name "*.nii.gz" -o -name "*.bvec" -o -name ".bval" | tee ' tn];
 
 [status, result] = system(cmd);
 
