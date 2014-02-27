@@ -20,7 +20,7 @@ function [params] = niftiGetParamsFromDescrip(niftiFile)
 %   params =
 %
 %     niftiFile: '4534_10_1.nii.gz'
-%            tr: 33
+%            tr: 0.0140
 %            te: 2
 %            ti: 0
 %            fa: 20
