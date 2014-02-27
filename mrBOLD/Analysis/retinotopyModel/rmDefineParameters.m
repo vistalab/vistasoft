@@ -175,7 +175,12 @@ end
 % model.
 %params.analysis.sigmaRatioFixedValue       = [];
 
-
+% if the model has a nonlinearity, then store this explicitly
+switch lower(params.analysis.pRFmodel{1})
+    case {'onegaussiannonlinear' 'css'}
+        params.analysis.nonlinear = true;
+end
+        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% 1st stage ("coarse" grid fit)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,6 +262,8 @@ params.analysis.numberSigmaRatios= 5;
 % The number of the angle of sigma_major (theta)
 params.analysis.numberThetas= 4;
 % params.analysis.numberThetas= 1;
+
+params.analysis.numberExponents= 4;
 
 % The next parameter defines how the sigma values are distributed
 % between minRF and maxRF. So far we have three methods:
@@ -441,31 +448,44 @@ keep = find(dist<=params.analysis.maxXY & ...
     (dist-params.analysis.outerlimit.*z)<=params.analysis.fieldSize);
 % put in params structure
 
-if strcmp(params.analysis.pRFmodel, 'one oval gaussian')
-    numSigmaRatiosThetas = params.analysis.numberSigmaRatios*params.analysis.numberThetas;
-    params.analysis.x0 = repmat(flipud(x(keep)),numSigmaRatiosThetas,1);
-    params.analysis.y0 = repmat(flipud(y(keep)),numSigmaRatiosThetas,1);
-    params.analysis.sigmaMajor = repmat(flipud(z(keep)),numSigmaRatiosThetas,1);
-    tmp = sort(repmat((1/params.analysis.numberSigmaRatios:1/params.analysis.numberSigmaRatios:1)',size(flipud(x(keep)))));
-    tmp2= repmat(tmp,params.analysis.numberThetas,1);
-    params.analysis.sigmaMinor = params.analysis.sigmaMajor.*tmp2;
-    tmp = sort(repmat((pi/params.analysis.numberThetas:pi/params.analysis.numberThetas:pi)',size(flipud(x(keep)),1)*params.analysis.numberSigmaRatios,1));
-    params.analysis.theta = tmp;
-    clear tmp*
-    % params.analysis.theta = -atan(params.analysis.y0./params.analysis.x0);
-elseif strcmp(params.analysis.pRFmodel, 'one oval gaussian without theta')
-    params.analysis.x0 = repmat(flipud(x(keep)),(params.analysis.numberSigmas+1),1);
-    params.analysis.y0 = repmat(flipud(y(keep)),(params.analysis.numberSigmas+1),1);
-    params.analysis.sigmaMajor = repmat(flipud(z(keep)),(params.analysis.numberSigmas+1),1);
-    params.analysis.sigmaMinor = sort(repmat(unique(params.analysis.sigmaMajor),size(x(keep))));
-    params.analysis.theta = -atan(params.analysis.y0./params.analysis.x0);
-    params.analysis.theta(isnan(params.analysis.theta))=0;
-else
-    params.analysis.x0 = flipud(x(keep));
-    params.analysis.y0 = flipud(y(keep));
-    params.analysis.sigmaMajor = flipud(z(keep));
-    params.analysis.sigmaMinor = params.analysis.sigmaMajor;
-    params.analysis.theta = params.analysis.sigmaMajor * 0; 
+switch params.analysis.pRFmodel{1}
+    case 'one oval gaussian'
+        numSigmaRatiosThetas = params.analysis.numberSigmaRatios*params.analysis.numberThetas;
+        params.analysis.x0 = repmat(flipud(x(keep)),numSigmaRatiosThetas,1);
+        params.analysis.y0 = repmat(flipud(y(keep)),numSigmaRatiosThetas,1);
+        params.analysis.sigmaMajor = repmat(flipud(z(keep)),numSigmaRatiosThetas,1);
+        tmp = sort(repmat((1/params.analysis.numberSigmaRatios:1/params.analysis.numberSigmaRatios:1)',size(flipud(x(keep)))));
+        tmp2= repmat(tmp,params.analysis.numberThetas,1);
+        params.analysis.sigmaMinor = params.analysis.sigmaMajor.*tmp2;
+        tmp = sort(repmat((pi/params.analysis.numberThetas:pi/params.analysis.numberThetas:pi)',size(flipud(x(keep)),1)*params.analysis.numberSigmaRatios,1));
+        params.analysis.theta = tmp;
+        clear tmp*
+        % params.analysis.theta = -atan(params.analysis.y0./params.analysis.x0);
+    case 'one oval gaussian without theta'
+        params.analysis.x0 = repmat(flipud(x(keep)),(params.analysis.numberSigmas+1),1);
+        params.analysis.y0 = repmat(flipud(y(keep)),(params.analysis.numberSigmas+1),1);
+        params.analysis.sigmaMajor = repmat(flipud(z(keep)),(params.analysis.numberSigmas+1),1);
+        params.analysis.sigmaMinor = sort(repmat(unique(params.analysis.sigmaMajor),size(x(keep))));
+        params.analysis.theta = -atan(params.analysis.y0./params.analysis.x0);
+        params.analysis.theta(isnan(params.analysis.theta))=0;
+        
+    case 'onegaussiannonlinear'
+        numberOfGridPoints          = length(keep);
+        params.analysis.x0          = repmat(flipud(x(keep)),(params.analysis.numberExponents),1);
+        params.analysis.y0          = repmat(flipud(y(keep)),(params.analysis.numberExponents),1);
+        params.analysis.sigmaMajor  = repmat(flipud(z(keep)),(params.analysis.numberExponents),1);
+        params.analysis.sigmaMinor  = params.analysis.sigmaMajor;
+        params.analysis.theta       = params.analysis.sigmaMajor * 0;
+        exponentValues              = (1:params.analysis.numberExponents)/params.analysis.numberExponents;
+        params.analysis.exponent    = repmat(exponentValues, numberOfGridPoints, 1);
+        params.analysis.exponent    = params.analysis.exponent(:);
+        
+    otherwise
+        params.analysis.x0 = flipud(x(keep));
+        params.analysis.y0 = flipud(y(keep));
+        params.analysis.sigmaMajor = flipud(z(keep));
+        params.analysis.sigmaMinor = params.analysis.sigmaMajor;
+        params.analysis.theta = params.analysis.sigmaMajor * 0;
 end
 
 fprintf(1,'[%s]:Number of [x,y,s] models for grid search: %d.\n',...

@@ -30,13 +30,14 @@ params.analysis.x0         = single(params.analysis.x0);
 params.analysis.y0         = single(params.analysis.y0);
 params.analysis.sigmaMajor = single(params.analysis.sigmaMajor);
 params.analysis.sigmaMinor = single(params.analysis.sigmaMinor);
-params.analysis.theta = single(params.analysis.theta);
+params.analysis.theta      = single(params.analysis.theta);
 params.analysis.X          = single(params.analysis.X);
 params.analysis.Y          = single(params.analysis.Y);
 params.analysis.allstimimages    = single(params.analysis.allstimimages);
 params.analysis.sigmaRatio       = single(params.analysis.sigmaRatio);
 params.analysis.sigmaRatioInfVal = single(params.analysis.sigmaRatioInfVal);
 params.analysis.sigmaRatioMaxVal = single(params.analysis.sigmaRatioMaxVal);
+params.analysis.exponent         = single(params.analysis.exponent);
 
 % Accessing the trends needs to move inside the slice loop. This is because
 % the size of trends can change inside the loop, causing errors upon the
@@ -74,8 +75,18 @@ nSlices = length(loopSlices);
 %-----------------------------------
 n = numel(params.analysis.x0);
 s = [[1:ceil(n./1000):n-2] n+1]; %#ok<NBRAK>
-allstimimages = rmDecimate(params.analysis.allstimimages,...
+
+% if we have a nonlinear model, then we cannot pre-convolve the stimulus
+% with the hRF. instead we make predictions with the unconvolved images and
+% then convolve with the hRF afterwards
+if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
+    allstimimages = rmDecimate(params.analysis.allstimimages_unconvolved,...
+        params.analysis.coarseDecimate);
+else
+    allstimimages = rmDecimate(params.analysis.allstimimages,...
     params.analysis.coarseDecimate);
+end
+
 prediction = zeros(size(allstimimages,1),n,'single');
 fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
 drawnow;tic;
@@ -96,6 +107,14 @@ for n=1:numel(s)-1,
         fprintf(1,'.');drawnow;
     end
 end;
+
+% for nonlinear model, do the hrf convolution after the prediction
+if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
+    error('Need to do separately for each scan, then concatenate')
+    predictionTotheNthPower = bsxfun(@power, prediction, params.analysis.exponent');
+    prediction = filter(params.analysis.Hrf{n}, 1, prediction);
+end
+
 clear n s rf pred;
 fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
 drawnow;
@@ -285,6 +304,9 @@ for slice=loopSlices,
             case {'oneovalgaussian','one oval gaussian','one oval gaussian without theta'}
                 s{n}=rmGridFit_oneOvalGaussian(s{n},prediction,data,params,t);
                 
+            case {'css' 'onegaussiannonlinear', 'onegaussianexponent'}
+                s{n}=rmGridFit_oneGaussianNonlinear(s{n},prediction,data,params,t);
+
             otherwise
                 fprintf('[%s]:Unknown pRF model: %s: IGNORED!',mfilename,params.analysis.pRFmodel{n});
         end
