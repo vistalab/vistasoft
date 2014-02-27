@@ -1,24 +1,24 @@
 function [params] = niftiGetParamsFromDescrip(niftiFile)
-% 
+%
 %  [params] = niftiGetParamsFromDescrip(niftiFile)
-% 
+%
 % This function will take a nifti file and parse the descrip field to build
 % a structure containing the included values.
-% 
-% ** Note that only nifti files created by NIMS (cni.stanford.edu/nims) 
+%
+% ** Note that only nifti files created by NIMS (cni.stanford.edu/nims)
 %    will have these values in the descrip field.
-% 
+%
 % ** Note also that this function reads the nifti file, so speed is
 %    completely dependent on file size.
-% 
-% 
+%
+%
 % EXAMPLE USAGE:
 %   [params] = niftiGetParamsFromNifti(niftiFile)
 %
 % OUTPUT:
-% 
-%   params = 
-% 
+%
+%   params =
+%
 %     niftiFile: '4534_10_1.nii.gz'
 %            tr: 33
 %            te: 2
@@ -29,10 +29,10 @@ function [params] = niftiGetParamsFromDescrip(niftiFile)
 %            mt: 0
 %            rp: 2
 %            rs: 1
-% 
-% 
+%
+%
 % (C) Stanford University, Vista Lab [2014] - LMP
-% 
+%
 
 
 %% Check input
@@ -40,7 +40,7 @@ if exist('niftiFile','var') && isstruct(niftiFile)
         ni = niftiFile;
         clear niftiFile;
 else
-    if  ~exist('niftiFile','var') || ~exist(niftiFile,'file') 
+    if  ~exist('niftiFile','var') || ~exist(niftiFile,'file')
         niftiFile=uigetfile('*.nii.gz','Choose nifti file');
         if niftiFile == 0
             return
@@ -60,7 +60,7 @@ end
 % Get the values from the descrip field into the workspace
 % Check to make sure the format is correct, i.e., there is an assigment of
 % some sort.
-if strfind(ni.descrip,'=') 
+if strfind(ni.descrip,'=')
     try
         eval([ni.descrip,';']);
     catch err
@@ -71,7 +71,7 @@ end
 
 % Get the TR from the 4th dimension of the nifti
 try
-    tr = ni.dim(4); 
+    tr = ni.pixdim(4);
 catch err
     fprintf('%s\n',err.message);
     clear err
@@ -79,7 +79,7 @@ catch err
 end
 
 % Remove the nifti struct, so we don't save it along with the other stuff.
-clear ni 
+clear ni
 
 % Set a temporary name to save to
 name = tempname;
