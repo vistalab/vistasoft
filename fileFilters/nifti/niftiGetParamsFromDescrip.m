@@ -87,7 +87,7 @@ save(name);
 
 % Load the values into the output struct
 params    = load(name);
-params.tr = tr;
+params.tr = tr*1000;
 
 % Remove the temporary name and file fields
 if isfield(params,'name')
