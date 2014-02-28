@@ -124,7 +124,8 @@ if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
     prediction = bsxfun(@power, prediction, params.analysis.exponent');
     for scan = 1:numel(params.stim)
         inds = scans == scan;        
-        prediction(inds,:) = filter(params.analysis.Hrf{scan}, 1, prediction(inds,:));
+        hrf = rmDecimate(params.analysis.Hrf{scan}, params.analysis.coarseDecimate);
+        prediction(inds,:) = filter(hrf, 1, prediction(inds,:));
     end
 end
 
@@ -152,12 +153,12 @@ for slice=loopSlices,
     % remove trends from data so they do not count in the percent variance
     % explained calculation later.
     data(isnan(data)) = 0;
-    data       = single(data);
+    data = single(data);
     
     %-----------------------------------
     %--- make trends to fit with the model (discrete cosine set)
     %-----------------------------------
-    [trends, ntrends, dcid]  = rmMakeTrends(params);
+    [trends, ntrends, dcid] = rmMakeTrends(params);
     trends = single(trends);
 
 
@@ -166,7 +167,7 @@ for slice=loopSlices,
     %    trendBetas(ntrends+1:end) = 0;
     %    ntrends = ntrends + size(params.analysis.allnuisance,2);
     %end
-    data       = data - trends*trendBetas;
+    data = data - trends*trendBetas;
     
     % reset DC component by specific data-period (if requested)
     if params.analysis.dc.datadriven
@@ -178,7 +179,7 @@ for slice=loopSlices,
     trends = rmDecimate(trends,params.analysis.coarseDecimate);
   
     % compute rss raw data for variance computation later
-    rssdata        = sum(data.^2);
+    rssdata = sum(data.^2);
 
     %-----------------------------------
     % initiate stuff on first loop

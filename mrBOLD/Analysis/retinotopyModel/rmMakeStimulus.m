@@ -109,26 +109,34 @@ for n=1:length(params.stim),
     % now convolve with HRF
     params.stim(n).images = filter(params.analysis.Hrf{n}, 1, params.stim(n).images'); % images: pixels by time (so images': time x pixels)
     
-    % store a copy of the images that do not get convolved with hRF
-    params.stim(n).images_unconvolved = params.stim(n).images_org;
-    
     % limit to actual MR recording.
     params.stim(n).images = params.stim(n).images(params.stim(n).prescanDuration+1:end,:);
-    params.stim(n).images_unconvolved = params.stim(n).images_unconvolved(params.stim(n).prescanDuration+1:end,:);
-    
+
     % and time averaging
     params.stim(n).images = rmAverageTime(params.stim(n).images, ...
                                           params.stim(n).nUniqueRep);
-    params.stim(n).images_unconvolved = rmAverageTime(params.stim(n).images_unconvolved, ...
-        params.stim(n).nUniqueRep);
 
     % rotate so we can easily create an average stimulus image matrix
     params.stim(n).images = params.stim(n).images';
-    
-    % store the scan number. this may be useful later for convolution with
-    % hRF
-    params.stim(n).scan_number = n*ones(1, size(params.stim(n).images_unconvolved, 2));
 
+    %*********************************************************************
+    % store a copy of the images that do not get convolved with hRF
+    params.stim(n).images_unconvolved = params.stim(n).images_org;
+    
+    % now scale amplitude according to the sample rate:
+    params.stim(n).images_unconvolved = params.stim(n).images_unconvolved.*(params.analysis.sampleRate.^2);
+    
+    % limit to actual MR recording.
+    params.stim(n).images_unconvolved = params.stim(n).images_unconvolved(params.stim(n).prescanDuration+1:end,:);
+    
+    % and time averaging
+    params.stim(n).images_unconvolved = rmAverageTime(params.stim(n).images_unconvolved, ...
+        params.stim(n).nUniqueRep);
+    
+    % store the scan number. this will be useful for convolution with hRF
+    params.stim(n).scan_number = n*ones(1, size(params.stim(n).images_unconvolved, 2));
+    %*********************************************************************
+    
 end;
 
 % matrix with all the different stimulus images.
