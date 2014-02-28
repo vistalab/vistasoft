@@ -13,7 +13,7 @@ if ~exist('id','var') || isempty(id),       id = 1:numel(model); end
 % loop over models
 tmp = cell(numel(id),1);
 for n=id,
-    f = {'x0','y0','s','x02','y02','s2','s_major','s_minor','s_theta','rss','rss2','rawrss','rawrss2'};
+    f = {'x0','y0','s','x02','y02','s2','s_major','s_minor','s_theta','rss','rss2','rawrss','rawrss2', 'exponent'};
 
     % for all models
     tmp{n}.desc = rmGet(model{n},'desc');

@@ -26,18 +26,19 @@ if notDefined('params'), error('Need params'); end;
 %--- For speed we do our computations in single precision.
 %--- But we output in double (for compatibility).
 %-----------------------------------
-params.analysis.x0         = single(params.analysis.x0);
-params.analysis.y0         = single(params.analysis.y0);
-params.analysis.sigmaMajor = single(params.analysis.sigmaMajor);
-params.analysis.sigmaMinor = single(params.analysis.sigmaMinor);
-params.analysis.theta      = single(params.analysis.theta);
-params.analysis.X          = single(params.analysis.X);
-params.analysis.Y          = single(params.analysis.Y);
+params.analysis.x0               = single(params.analysis.x0);
+params.analysis.y0               = single(params.analysis.y0);
+params.analysis.sigmaMajor       = single(params.analysis.sigmaMajor);
+params.analysis.sigmaMinor       = single(params.analysis.sigmaMinor);
+params.analysis.theta            = single(params.analysis.theta);
+params.analysis.exponent         = single(params.analysis.exponent);
+params.analysis.X                = single(params.analysis.X);
+params.analysis.Y                = single(params.analysis.Y);
 params.analysis.allstimimages    = single(params.analysis.allstimimages);
 params.analysis.sigmaRatio       = single(params.analysis.sigmaRatio);
 params.analysis.sigmaRatioInfVal = single(params.analysis.sigmaRatioInfVal);
 params.analysis.sigmaRatioMaxVal = single(params.analysis.sigmaRatioMaxVal);
-params.analysis.exponent         = single(params.analysis.exponent);
+
 
 % Accessing the trends needs to move inside the slice loop. This is because
 % the size of trends can change inside the loop, causing errors upon the
@@ -79,12 +80,20 @@ s = [[1:ceil(n./1000):n-2] n+1]; %#ok<NBRAK>
 % if we have a nonlinear model, then we cannot pre-convolve the stimulus
 % with the hRF. instead we make predictions with the unconvolved images and
 % then convolve with the hRF afterwards
-if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
-    allstimimages = rmDecimate(params.analysis.allstimimages_unconvolved,...
+if ~checkfields(params, 'analysis', 'nonlinear') || ~params.analysis.nonlinear
+   % for a lineaer model, use the pre-convolved stimulus images
+    allstimimages = rmDecimate(params.analysis.allstimimages,...
         params.analysis.coarseDecimate);
 else
-    allstimimages = rmDecimate(params.analysis.allstimimages,...
-    params.analysis.coarseDecimate);
+    % for a nonlinear model, use the unconvolved images
+    allstimimages = rmDecimate(params.analysis.allstimimages_unconvolved,...
+        params.analysis.coarseDecimate);
+    
+    % scans stores the scan number for each time point. we need to keep
+    % track of the scan number to ensure that hRF convolution does operate
+    % across scans
+    scans = rmDecimate(params.analysis.scan_number, params.analysis.coarseDecimate);
+    scans = round(scans);
 end
 
 prediction = zeros(size(allstimimages,1),n,'single');
@@ -108,11 +117,15 @@ for n=1:numel(s)-1,
     end
 end;
 
-% for nonlinear model, do the hrf convolution after the prediction
-if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
-    error('Need to do separately for each scan, then concatenate')
-    predictionTotheNthPower = bsxfun(@power, prediction, params.analysis.exponent');
-    prediction = filter(params.analysis.Hrf{n}, 1, prediction);
+% for nonlinear model, do the hRF convolution after the prediction
+if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear    
+    % rectify prediction to avoid complex numbers 
+    prediction(prediction < 0) = 0;
+    prediction = bsxfun(@power, prediction, params.analysis.exponent');
+    for scan = 1:numel(params.stim)
+        inds = scans == scan;        
+        prediction(inds,:) = filter(params.analysis.Hrf{scan}, 1, prediction(inds,:));
+    end
 end
 
 clear n s rf pred;
@@ -466,6 +479,11 @@ for n=1:numel(params.analysis.pRFmodel),
             model{n} = rmSet(model{n},'b'   ,zeros(d1,d2,nt+2));
             model{n} = rmSet(model{n},'desc','Linked sequential 2D pRF fit (2*(x,y,sigma, positive only))');
 
+         case {'css' 'onegaussiannonlinear', 'onegaussianexponent'}
+            model{n} = rmSet(model{n},'b'   ,zeros(d1,d2,nt+1));
+            model{n} = rmSet(model{n},'desc','2D nonlinear pRF fit (x,y,sigma,exponent, positive only)');
+            model{n} = rmSet(model{n},'exponent', fillwithzeros+1);
+              
         otherwise
             fprintf('Unknown pRF model: %s: IGNORED!',mfilename,params.analysis.pRFmodel{n})
     end

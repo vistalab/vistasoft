@@ -263,6 +263,7 @@ params.analysis.numberSigmaRatios= 5;
 params.analysis.numberThetas= 4;
 % params.analysis.numberThetas= 1;
 
+% The number of exponents for nonlinear model (pred = (stim*prf)^exponent)
 params.analysis.numberExponents= 4;
 
 % The next parameter defines how the sigma values are distributed
@@ -459,6 +460,7 @@ switch params.analysis.pRFmodel{1}
         params.analysis.sigmaMinor = params.analysis.sigmaMajor.*tmp2;
         tmp = sort(repmat((pi/params.analysis.numberThetas:pi/params.analysis.numberThetas:pi)',size(flipud(x(keep)),1)*params.analysis.numberSigmaRatios,1));
         params.analysis.theta = tmp;
+        params.analysis.exponent = ones(size(params.analysis.x0));
         clear tmp*
         % params.analysis.theta = -atan(params.analysis.y0./params.analysis.x0);
     case 'one oval gaussian without theta'
@@ -468,24 +470,30 @@ switch params.analysis.pRFmodel{1}
         params.analysis.sigmaMinor = sort(repmat(unique(params.analysis.sigmaMajor),size(x(keep))));
         params.analysis.theta = -atan(params.analysis.y0./params.analysis.x0);
         params.analysis.theta(isnan(params.analysis.theta))=0;
+        params.analysis.exponent = ones(size(params.analysis.x0));
         
     case 'onegaussiannonlinear'
         numberOfGridPoints          = length(keep);
+
         params.analysis.x0          = repmat(flipud(x(keep)),(params.analysis.numberExponents),1);
         params.analysis.y0          = repmat(flipud(y(keep)),(params.analysis.numberExponents),1);
-        params.analysis.sigmaMajor  = repmat(flipud(z(keep)),(params.analysis.numberExponents),1);
-        params.analysis.sigmaMinor  = params.analysis.sigmaMajor;
-        params.analysis.theta       = params.analysis.sigmaMajor * 0;
+
         exponentValues              = (1:params.analysis.numberExponents)/params.analysis.numberExponents;
         params.analysis.exponent    = repmat(exponentValues, numberOfGridPoints, 1);
         params.analysis.exponent    = params.analysis.exponent(:);
-        
+
+        params.analysis.sigmaMajor  = repmat(flipud(z(keep)),(params.analysis.numberExponents),1);
+        params.analysis.sigmaMajor  = params.analysis.sigmaMajor .* sqrt(params.analysis.exponent);
+        params.analysis.sigmaMinor  = params.analysis.sigmaMajor;
+        params.analysis.theta       = params.analysis.sigmaMajor * 0;
+
     otherwise
         params.analysis.x0 = flipud(x(keep));
         params.analysis.y0 = flipud(y(keep));
         params.analysis.sigmaMajor = flipud(z(keep));
         params.analysis.sigmaMinor = params.analysis.sigmaMajor;
         params.analysis.theta = params.analysis.sigmaMajor * 0;
+        params.analysis.exponent = ones(size(params.analysis.x0));
 end
 
 fprintf(1,'[%s]:Number of [x,y,s] models for grid search: %d.\n',...

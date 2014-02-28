@@ -220,7 +220,7 @@ nSamples = params.analysis.numberStimulusGridPoints;
 resampled = zeros(length(params.analysis.X), nImages);
 
 for ii = 1:nImages
-    tmp = imresize(I.images(:,:,ii), 1+2*[nSamples nSamples]);
+    tmp = imresize(I.images(:,:,ii), 1+2*[nSamples nSamples], 'nearest');
     resampled(:, ii) = tmp(:);
 end
 

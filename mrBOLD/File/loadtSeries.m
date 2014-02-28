@@ -76,7 +76,7 @@ if strcmp(viewType,'Inplane')
     tSeries = reshape(tSeries, [voxPerSlice nFrames])'; % time x voxels
     
 else
-    strcmp(viewType,'Gray')
+    %strcmp(viewType,'Gray')
     
     %Original way of loading matrix files
     dirPathStr = fullfile(viewGet(vw,'tSeriesDir'),['Scan',int2str(scan)]);

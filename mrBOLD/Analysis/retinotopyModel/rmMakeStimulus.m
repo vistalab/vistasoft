@@ -107,10 +107,10 @@ for n=1:length(params.stim),
     params.stim(n) = rmJitterImages(params.stim(n), params);
     
     % now convolve with HRF
-    params.stim(n).images = filter(params.analysis.Hrf{n}, 1, params.stim(n).images');
+    params.stim(n).images = filter(params.analysis.Hrf{n}, 1, params.stim(n).images'); % images: pixels by time (so images': time x pixels)
     
     % store a copy of the images that do not get convolved with hRF
-    params.stim(n).images_unconvolved = params.stim(n).images';
+    params.stim(n).images_unconvolved = params.stim(n).images_org;
     
     % limit to actual MR recording.
     params.stim(n).images = params.stim(n).images(params.stim(n).prescanDuration+1:end,:);
@@ -133,7 +133,7 @@ end;
 
 % matrix with all the different stimulus images.
 params.analysis.allstimimages = [params.stim(:).images]';
-params.analysis.allstimimages_unconvolved = [params.stim(:).images_unconvolved]';
+params.analysis.allstimimages_unconvolved = [params.stim(:).images_unconvolved]';  % time x pixels
 params.analysis.scan_number    = [params.stim(:).scan_number]';
 
 % the stimulus generation file can specify nuisance factors (e.g. large
