@@ -245,7 +245,9 @@ for slice=loopSlices,
                   'unsigned 2d prf fit (x,y,sigma)','u',...
                   'mirrored 2d prf fit (2*(x,y,sigma, positive only))','m',...
 			      'shifted 2d prf fit (2*(x,y,sigma, positive only))',...
-                  '1d prf fit (x,sigma, positive only)'}
+                  '1d prf fit (x,sigma, positive only)' ...  
+                  '2d nonlinear prf fit (x,y,sigma,exponent, positive only)', ...
+                  }
                     s{n}.b(2:nTrends+1,wProcess) = 0;
 
             case {'double 2d prf fit (x,y,sigma,sigma2, center=positive)','d',...
@@ -304,12 +306,36 @@ for slice=loopSlices,
         s{n}.rawrss(wProcess) = sum(double(data).^2);
     end;
 
+  
+   
+    
+    %%
     
     % decimate predictions?
-    original_allstimimages = params.analysis.allstimimages;
-    params.analysis.allstimimages = ...
-        rmDecimate(params.analysis.allstimimages,doDecimate);
-
+    %   If we have a nonlinear model, then we cannot pre-convolve the
+    %   stimulus with the hRF. Instead we make predictions with the
+    %   unconvolved images and then convolve with the hRF afterwards
+    if ~checkfields(params, 'analysis', 'nonlinear') || ~params.analysis.nonlinear
+        % for a lineaer model, use the pre-convolved stimulus images
+        original_allstimimages = params.analysis.allstimimages;
+        params.analysis.allstimimages = rmDecimate(params.analysis.allstimimages,...
+            doDecimate);
+    else
+        % for a nonlinear model, use the unconvolved images
+        params.analysis.allstimimages_unconvolved = rmDecimate(...
+            params.analysis.allstimimages_unconvolved, doDecimate);
+        
+        % scans stores the scan number for each time point. we need to keep
+        % track of the scan number to ensure that hRF convolution does operate
+        % across scans
+        scans = rmDecimate(params.analysis.scan_number, doDecimate);
+        params.analysis.scans = round(scans);
+    end
+    
+    
+    %%
+    
+    
     
     %-----------------------------------
     % Go for each voxel
@@ -397,6 +423,10 @@ for slice=loopSlices,
                 t.dcid = t.dcid + 1;
                 s{n}=rmSearchFit_oneGaussian(s{n},residuals,params,wProcess,t);
                 trendBetas = zeros(size(trendBetas));
+
+            case {'css' 'onegaussiannonlinear', 'onegaussianexponent', ...
+                    '2d nonlinear prf fit (x,y,sigma,exponent, positive only)'}
+                s{n}=rmSearchFit_oneGaussianNonlinear(s{n},data,params,wProcess,t);
                 
             otherwise
                 fprintf('[%s]:Unknown pRF model: %s: IGNORED!\n',mfilename,desc);

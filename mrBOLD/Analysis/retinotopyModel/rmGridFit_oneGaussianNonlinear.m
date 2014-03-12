@@ -1,5 +1,6 @@
 function model = rmGridFit_oneGaussianNonlinear(model,prediction,data,params,t)
-% rmGridFit_oneGaussian - core of one Gaussian fit
+% rmGridFit_oneGaussianNonlinear - core of one non-linear (exponential) Gaussian fit
+% CSS or compressive spatial summation model
 %
 % model = rmGridFit_oneGaussian(model,prediction,data,params);
 %
@@ -55,7 +56,7 @@ for n=1:numel(params.analysis.x0),
     X    = [prediction(:,n) trends];
     % This line takes up 30% of the time
     % lscov takes as long as the pinv method but provides the rss as well...
-    [b,ci,rss]    = lscov(X,data); 
+    [b,~,rss]    = lscov(X,data); 
     
     % Compute RSS only for positive fits. The basic problem is
     % that if you have two complementary locations, you
