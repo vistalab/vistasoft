@@ -165,7 +165,7 @@ if(~exist('xformToAcPc','var') || isempty(xformToAcPc))
 end
 
 if ~exist('noiseCalcMethod','var') || isempty(noiseCalcMethod)
-    noiseCalcMethod = 'bo';
+    noiseCalcMethod = 'b0';
 end
 
 %% Load the bvecs & bvals
