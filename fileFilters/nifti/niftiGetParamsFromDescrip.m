@@ -75,7 +75,7 @@ try
 catch err
     fprintf('%s\n',err.message);
     clear err
-    tr = [];
+    tr = nan;
 end
 
 % Remove the nifti struct, so we don't save it along with the other stuff.
