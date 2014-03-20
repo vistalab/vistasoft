@@ -165,7 +165,7 @@ if(~exist('xformToAcPc','var') || isempty(xformToAcPc))
 end
 
 if ~exist('noiseCalcMethod','var') || isempty(noiseCalcMethod)
-    noiseCalcMethod = 'corner';
+    noiseCalcMethod = 'bo';
 end
 
 %% Load the bvecs & bvals
@@ -257,6 +257,9 @@ end
 % calculate noise from the variance of the b=0 images
 
 sigma = dtiComputeImageNoise(dwRaw, bvals, liberalBrainMask, noiseCalcMethod);
+if sigma==0
+    error('Noise estimate (sigma) is exactly zero; maybe try a different noiseCalcMethod?');
+end
 
 % Memory usage is tight- if we loaded the raw data, clear it now since
 % we've made the reorganized copy that we'll use for all subsequent ops.
@@ -330,7 +333,7 @@ X    = [ones(numVols,1) -q(:,1).^2 -q(:,2).^2 -q(:,3).^2 -2.*q(:,1).*q(:,2)...
 % 50 steps. Implemented in the loop @ ~li 340
 if notDefined('nstep'), nstep = 50; end
 
-fprintf('Fitting %d tensors with RESTORE [nstep=%s] (EXPERIMENTAL AND SLOW!)...\n',...
+fprintf('Fitting %d tensors with RESTORE [nstep=%s] (SLOW!)...\n',...
     nvox,num2str(nstep));
 
 gof      = zeros(1, nvox, 'int16');
