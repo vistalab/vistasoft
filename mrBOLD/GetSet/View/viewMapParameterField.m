@@ -121,6 +121,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('statisticalmap') = 'map';
     DictViewTranslate('smap') = 'map';
     DictViewTranslate('allmap') = 'map';
+    DictViewTranslate('parmap') = 'map';
+    DictViewTranslate('parametermap') = 'map';
     DictViewTranslate('mapname') = 'mapname';
     DictViewTranslate('mapunits') = 'mapunits';
     DictViewTranslate('mapclip') = 'mapclip';
@@ -312,7 +314,11 @@ if isempty(DictViewTranslate)
     DictViewTranslate('currentmeshdata') = 'meshdata';
     DictViewTranslate('selectedmeshdata') = 'meshdata';
     DictViewTranslate('meshn') = 'meshn';
+    DictViewTranslate('meshnum') = 'meshn';
+    DictViewTranslate('meshnumber') = 'meshn';    
     DictViewTranslate('currentmeshn') = 'meshn';
+    DictViewTranslate('currentmeshnum') = 'meshn';    
+    DictViewTranslate('currentmeshnumber') = 'meshn';        
     DictViewTranslate('setcurrentmeshn') = 'meshn';
     DictViewTranslate('curmeshnum') = 'meshn';
     DictViewTranslate('curmeshn') = 'meshn';

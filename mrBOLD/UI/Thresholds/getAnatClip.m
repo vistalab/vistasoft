@@ -1,6 +1,6 @@
-function anatClip = getAnatClip(view)
+function anatClip = getAnatClip(vw)
 %
-% anatClip = getAnatClip(view)
+% anatClip = getAnatClip(vw)
 %
 % Gets anatomy clipping values from anatMin and anatMax sliders
 % ras 01/05: made brightness/contrast sliders in place of
@@ -9,24 +9,26 @@ function anatClip = getAnatClip(view)
 % I notice the anatMin is not often used for inplane
 % images, so I use the difference between the anatMin & anatMax
 % as the contrast. 
-if isequal(view.name, 'hidden')
-    anatClip = [0 1];
-    if isfield(view, 'anat') & ~isempty(view.anat)
-        % guess threshold from anat img
-        histThresh = prod(size(view.anat))/1000; % ignore bins w/ fewer voxels than this
-        [binCnt binCenters] = hist(view.anat(:), 100);
-        minval = binCenters(min(find(binCnt>histThresh)));
-        maxval = binCenters(max(find(binCnt>histThresh)));
-        anatClip = [minval maxval];
-    end
+
+anat = double(viewGet(vw, 'anat'));
+
+if isequal(vw.name, 'hidden')
+    
+    % guess threshold from anat img
+    histThresh = numel(anat)/1000; % ignore bins w/ fewer voxels than this
+    [binCnt, binCenters] = hist(anat(:), 100);
+    minval = binCenters(find(binCnt>histThresh, 1 ));
+    maxval = binCenters(find(binCnt>histThresh, 1, 'last' ));
+    anatClip = [minval maxval];
+    
 else
-    if isfield(view.ui,'anatMin')
-        anatClip = [get(view.ui.anatMin.sliderHandle,'Value'),...
-            get(view.ui.anatMax.sliderHandle,'Value')];
-    elseif isfield(view.ui,'contrast')
-        contrast = get(view.ui.contrast.sliderHandle,'Value');        
-        a = double(min(view.anat(:)));
-        b = (1-contrast)*double(max(view.anat(:)));
+    if isfield(vw.ui,'anatMin')
+        anatClip = [get(vw.ui.anatMin.sliderHandle,'Value'),...
+            get(vw.ui.anatMax.sliderHandle,'Value')];
+    elseif isfield(vw.ui,'contrast')
+        contrast = get(vw.ui.contrast.sliderHandle,'Value');
+        a = double(min(anat(:)));
+        b = (1-contrast)*double(max(anat(:)));
         anatClip = [a b];
     end
 end

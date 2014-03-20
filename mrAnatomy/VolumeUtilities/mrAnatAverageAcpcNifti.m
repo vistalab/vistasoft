@@ -126,17 +126,11 @@ else
         if(~exist(fileNameList{ii},'file')) error([fileNameList{ii} ' does not exist!']); end
     end
     % Load the first image (the reference)
-    ni = readFileNifti(fileNameList{1});
+    ni = niftiRead(fileNameList{1});
     ni = niftiApplyCannonicalXform(ni);
     numImages = length(fileNameList);
 end
 
-<<<<<<< HEAD
-=======
-% Load the first image (the reference)
-ni = niftiRead(fileNameList{1});
-ni = niftiApplyCannonicalXform(ni);
->>>>>>> 67e8f4239bc4fd725a0e5e59bb47eaf4ede6738b
 refDescrip = ni.descrip;
 
 if(isempty(clipVals))

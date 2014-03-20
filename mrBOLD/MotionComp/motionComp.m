@@ -16,8 +16,8 @@ function motion = motionComp(vw, tgtDt, scan, nSmooth, baseFrame, baseScan)
 %   baseFrame:  align all frames to this frame (integer)
 %   baseScan:   scan to align all frames to. if empty, then baseScan = scan
 %
-% OUTPUTS: 
-%	motion:     2 x nFrames matrix, with row 1 representing estimated 
+% OUTPUTS:
+%	motion:     2 x nFrames matrix, with row 1 representing estimated
 %               rotational motion for each frame (relative to the reference
 %               frame),savetSeries and row 2 representing translational motion.
 %
@@ -37,10 +37,9 @@ if isempty(baseScan),       baseScan = 0;                       end
 if exist('nSmooth', 'var'), nSmooth  = 2*fix(nSmooth/2) + 1;
 else                        nSmooth  = 1;                       end
 
-slices  = sliceList(vw,scan);
-nSlices = length(slices);
-nFrames = viewGet(vw, 'numFrames',scan);
-dims    = viewGet(vw, 'sliceDims',scan);
+nSlices = viewGet(vw, 'num slices', scan);
+nFrames = viewGet(vw, 'num frames', scan);
+dims    = viewGet(vw, 'slice dims',scan);
 motion  = zeros(2, nFrames);
 %srcDt   = viewGet(vw, 'curDt');
 
@@ -49,19 +48,11 @@ if ~exist('baseFrame','var') || isempty(baseFrame)
 end
 
 % Load tSeries from all slices into one big array
-volSeries = zeros([dims(1) dims(2) nSlices nFrames]);
+[~, nii] = loadtSeries(vw, scan);
+volSeries = niftiGet(nii, 'data');
 
 midX = [dims/2 nSlices/2]';
 
-waitHandle = waitbar(0,'Loading tSeries from all slices. Please wait...');
-for slice=slices
-    waitbar(slice/nSlices);
-    ts = loadtSeries(vw,scan,slice);
-    for frame=1:nFrames
-        volSeries(:,:,slice,frame)  =  reshape(ts(frame,:),dims);     
-    end
-end
-close(waitHandle)
 
 %% Get base volume.  Other frames will be motion compensated to this one.
 
@@ -73,13 +64,8 @@ if baseMax > nFrames, baseMax = nFrames; end
 
 if baseScan,
     % if we are aligning to a separate base scan, load that scan
-    bvolSeries = zeros([dims(1) dims(2) nSlices nFrames]);
-    for slice=slices
-        bts = loadtSeries(vw,baseScan,slice);
-        for frame=baseMin:baseMax
-            bvolSeries(:,:,slice,frame) = reshape(bts(frame,:),dims);
-        end
-    end
+    [~, nii] = loadtSeries(vw,baseScan);
+    bvolSeries = niftiGet(nii, 'data');
     baseVol = mean(bvolSeries(:,:,:,baseMin:baseMax),4);
     clear bvolSeries
 else
@@ -121,35 +107,28 @@ for frame = 1:nFrames
         M = estMotionIter3(baseVol,vol,2,eye(4),1,1); % rigid body, ROBUST
         % warp the volume putting an edge of 1 voxel around to avoid lost data
         warpedVolSeries(:,:,:,frame) = warpAffine3(volSeries(:,:,:,frame),M,NaN,1);
-        midXp = M(1:3, 1:3) * midX; 
+        midXp = M(1:3, 1:3) * midX;
         motion(1, frame) = sqrt(sum((midXp - midX).^2)); % Rotational motion
         motion(2, frame) = sqrt(sum(M(1:3, 4).^2)); % Translational motion
     end
 end
 close(waitHandle)
 
-% Save warped tSeries to tSeries.dat
-tSeries = zeros(size(ts));
-numPixels = size(tSeries,2);
+% Save warped tSeries 
+
 waitHandle = waitbar(0,'Saving tSeries. Please wait...');
 
 vw = viewSet(vw, 'curdt', tgtDt);
-tSeriesFull = [];
-dimNum = 0;
-for slice=slices
-  waitbar(slice/nSlices);
-  for frame=1:nFrames
-    tSeries(frame,:) = reshape(warpedVolSeries(:,:,slice,frame),[1 numPixels]);
-  end
-  dimNum = numel(size(tSeries));
-  tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries); %Combine together
-end %for
 
-if dimNum == 3
-    tSeriesFull = reshape(tSeriesFull,[1,2,4,3]);
-end %if
+% put time first rather than last, consistent with old .mat tseries
+warpedVolSeries = permute(warpedVolSeries, [4, 1, 2, 3]);
 
-savetSeries(tSeriesFull, vw, scan);
+% put the two slice dimensions into one dimension, consistent with old .mat
+% tseries
+sz = size(warpedVolSeries);
+warpedVolSeries = reshape(warpedVolSeries, sz(1), sz(2)*sz(3), sz(4));
+
+savetSeries(warpedVolSeries, vw, scan);
 close(waitHandle)
 
 return

@@ -22,7 +22,12 @@ function [nii] = niftiApplyXform(nii,xform)
 xformLocal = xform(1:3,1:3);
 
 if(all(all(xformLocal == eye(3))))
-    fprintf('The transform does not need to be applied. Returning nifti without change.\n');
+    if (ispref('VISTA','verbose'))
+        if getpref('VISTA','verbose')>0
+             fprintf('[%s:] The transform does not need to be applied. Returning nifti without change.\n', mfilename); % Only print this if we have asked for verbose reporting
+        end
+    end
+    
     return %No need to do the rest of the calculations
 end %if
 
@@ -57,8 +62,9 @@ end
 %struct with the new data
 
 pixDim = niftiGet(nii,'pixdim');
-newPixDim = [pixDim(xdim), pixDim(ydim), pixDim(zdim)];
-nii = niftiSet(nii,'pixdim',newPixDim);
+newPixDim = pixDim;
+newPixDim(1:3) = [pixDim(xdim), pixDim(ydim), pixDim(zdim)];
+nii = niftiSet(nii,'pixdim', newPixDim);
 
 newDim = niftiGet(nii,'dim');
 newSize = size(niftiGet(nii,'data'));
@@ -79,13 +85,15 @@ end
 if (~isempty(niftiGet(nii,'freqdim')) && niftiGet(nii,'freqdim'))
     nii = niftiSet(nii,'freqdim', dimOrder(niftiGet(nii,'freqdim')));
 else
-    warning('No freqdim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
+    warning('No freqdim field set in the nifti. Assuming freqdim = 1. Nifti stored at: %s', niftiGet(nii,'FName'));
+    nii = niftiSet(nii,'freqdim', 1);
 end
 
 if (~isempty(niftiGet(nii,'phasedim')) && niftiGet(nii,'phasedim'))
     nii = niftiSet(nii,'phasedim', dimOrder(niftiGet(nii,'phasedim')));
 else
-    warning('No phasedim field set in the nifti. Nifti stored at: %s', niftiGet(nii,'FName'));
+    warning('No phasedim field set in the nifti. Assuming phasedim = 2. Nifti stored at: %s', niftiGet(nii,'FName'));
+    nii = niftiSet(nii,'phasedim', 2);
 end
 
 if (~isempty(niftiGet(nii,'slicedim')) && niftiGet(nii,'slicedim'))

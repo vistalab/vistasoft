@@ -53,10 +53,19 @@ while ~feof(fidPar)
     ln(ln==sprintf('\n')) = '';
     
     vals = explode(sprintf('\t'), ln);
-    %sscanf(ln,'%f\t%i\t%s %s %s');
-    onsets(end+1) = str2num(vals{1});
-    conds(end+1) = str2num(vals{2});
     
+    vals{1} = str2num(vals{1});
+    vals{2} = str2num(vals{2});
+
+    % make sure we have an onset time and condition number, otherwise the
+    % line we read is invalid and we should break out of loop without error
+    if isempty(vals{1}) || isempty(vals{2}), break; end
+
+    %sscanf(ln,'%f\t%i\t%s %s %s');
+    onsets(end+1) = vals{1};
+    conds(end+1)  = vals{2};
+    
+        
     if (length(vals) > 2) & (nargout > 2)
         labels{end+1} = vals{3};
     else

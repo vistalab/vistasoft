@@ -34,7 +34,7 @@ function dwParams = dtiInitParams(varargin)
 %                to be reoriented for oblique prescriptions as with some
 %                other DTI sequences. However, this sequence assumes that
 %                the 2nd column in dwepi.grads is the phase-encode dim. If
-%                your phase-enmcode is the usual '2', then this is fine.
+%                your phase-encode is the usual '2', then this is fine.
 %                But, if you run ASSET and change the phase encode to L-R
 %                (dim 1), you need to swap the first and second columns of
 %                dwepi.grads. Also, there appears to be a flip in the
@@ -96,6 +96,9 @@ function dwParams = dtiInitParams(varargin)
 %                padded with zeros then you should use the 'b0' method
 %                which calculates the noise baseed on the std of the b=0
 %                image.
+%       .outDir = '';
+%                The directory to which dtiInit should write all output
+%                files. 
 % 
 % Web Resources:
 %       http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
@@ -134,6 +137,7 @@ dwParams.rotateBvecsWithCanXform = false;
 dwParams.bvecsFile               = '';
 dwParams.bvalsFile               = '';
 dwParams.noiseCalcMethod         = 'corner';
+dwParams.outDir                  = '';
 
 %% Varargin
 

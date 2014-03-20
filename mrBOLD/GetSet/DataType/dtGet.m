@@ -144,8 +144,8 @@ switch param
         val = dt.name;
         
     case {'nframes'}
-        % dtGet(dataTYPES,'nframes',scan);
-        % dtGet(dataTYPES,'nframes');
+        % dtGet(dt,'nframes',scan);
+        % dtGet(dt,'nframes');
         if checkfields(dt,'scanParams','nFrames')
             if isempty(varargin), val = dt.scanParams(:).nFrames;
             else val = dt.scanParams(varargin{1}).nFrames;
@@ -154,6 +154,14 @@ switch param
         
         %Now we need to apply keepFrames to this number
         
+    case {'withinscanmotion'}
+        % dtGet(dt, 'within scan motion')
+        % dtGet(dt, 'within scan motion', scan)
+        if checkfields(dt,'scanParams','WithinScanMotion')
+            if isempty(varargin), val = dt.scanParams(:).WithinScanMotion;
+            else val = dt.scanParams(varargin{1}).WithinScanMotion;
+            end
+        end   
         
     case {'nscans'}
         val = length(dt.scanParams);

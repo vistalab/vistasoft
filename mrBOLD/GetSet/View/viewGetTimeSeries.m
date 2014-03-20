@@ -34,7 +34,7 @@ switch param
         % a single scan.
         %  dataSize = viewGet(vw, 'Data Size');
         %  scan = 1; dataSize = viewGet(vw, 'Data Size', scan);
-        val = dataSize(vw);
+        val = double(dataSize(vw));
     case 'dim'
         % Return the dimension of data in current slice or specificed slice
         %   dim = viewGet(vw, 'Slice Dimension')
