@@ -73,7 +73,8 @@ end
 try
     tr = ni.pixdim(4);
 catch err
-    fprintf('%s\n',err.message);
+	fprintf('Warning: Could not detrmine a TR for %s\n',niftiFile);
+    fprintf('\t%s\n',err.message);
     clear err
     tr = nan;
 end

@@ -113,6 +113,8 @@ end
 
 if isempty(dw)
     fprintf('[%s] - Diffusion data not found in: %s\n', mfilename, path);
+    else
+    	fprintf('[%s]: Diffusion data found!\n', mfilename); 
 end
     
 
