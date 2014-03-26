@@ -85,11 +85,11 @@ if ~isnan(tr)
 	switch lower(ni.time_units)
 		case 'sec'
     		tr = tr * 1000;
-    		fprintf('Converting TR units to milliseconds: TR = %.3f ms\n',tr);
+    		fprintf('\t%s: \n\tSetting TR units to milliseconds: TR = %.3f ms\n',ni.fname,tr);
     	case 'msec'
-    		fprintf('TR units are in milliseconds: %.2f ms\n',tr);
+    		fprintf('\t%s: \n\tTR units are in milliseconds: %.2f ms\n',ni.fname,tr);
 		otherwise
-			fprintf('Unknown units for TR: %.2f %s\n',tr,ni.time_units);
+			fprintf('\t%s: \n\tUnknown units for TR: %.2f %s\n',ni.fname, tr,ni.time_units);
     end
 end
 
