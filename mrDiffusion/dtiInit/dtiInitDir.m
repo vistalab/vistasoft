@@ -97,8 +97,11 @@ fprintf('Data will be saved to: %s \n',dwDir.subjectDir);
 
 dwDir.bvalsFile        = [dwDir.inBaseDir  '.bval'];
 dwDir.bvecsFile        = [dwDir.inBaseDir  '.bvec'];
-
-dwDir.ecFile           = [dwDir.outBaseDir  '_ecXform.mat'];
+if dwParams.eddyCorrect == -1 
+    dwDir.ecFile       = ''
+else
+    dwDir.ecFile       = [dwDir.outBaseDir  '_ecXform.mat'];
+end
 dwDir.acpcFile         = [dwDir.outBaseDir  '_acpcXform.mat'];
 dwDir.alignedBvecsFile = [dwDir.outBaseDir '.bvecs'];
 dwDir.alignedBvalsFile = [dwDir.outBaseDir '.bvals'];
