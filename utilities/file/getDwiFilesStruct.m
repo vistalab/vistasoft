@@ -73,7 +73,7 @@ end
 if ~isempty(result)
     theFiles = readFileList(tn);
 else
-    disp('no files found'); 
+    fprintf('[%s]: No diffusion nifti files found.\n', mfilename); 
     dw = []; 
     return
 end
@@ -112,9 +112,16 @@ end
 
 
 if isempty(dw)
-    fprintf('No diffusion data found');
+    fprintf('[%s] - Diffusion data not found in: %s\n', mfilename, path);
+	elseif numel(dw) == 1
+    	fprintf('[%s]: Diffusion data found!\n', mfilename); 
+	elseif numel(dw) > 1
+    	fprintf('[%s]: Found %.0f Diffusion data sets!\n',mfilename,numel(dw));
 end
-    
+
+for x = 1:numel(dw)
+	fprintf('dw %s: \n\t%s\n\t%s\n\t%s\n',num2str(x),dw{x}.nifti,dw{x}.bvec,dw{x}.bval);
+end
 
 return
 %%
