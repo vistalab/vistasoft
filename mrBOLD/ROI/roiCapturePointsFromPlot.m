@@ -30,8 +30,10 @@ function vw = roiCapturePointsFromPlot(vw, subX, subY, coIndices, ROIcoords)
  msgbox(message)
 
  % update the view with the new ROI
- vw=newROI(vw);
- vw.ROIs(vw.selectedROI).coords = newCoords;
- vw.ROIs(vw.selectedROI).modified = datestr(now);
- vw = refreshScreen(vw, 0);
+ vw     = newROI(vw);
+ ROInum = viewGet(vw, 'num ROIs');
+ vw     = viewSet(vw, 'ROI coords', newCoords, ROInum);
+ vw     = viewSet(vw, 'ROI modified', datestr(now), ROInum);
+ vw     = refreshScreen(vw, 0);
+ 
 end
