@@ -74,8 +74,8 @@ s = size(ni.pixdim);
 if ( s(2) >= 4 )
     tr = ni.pixdim(4);
 else
-	fprintf('Warning: Could not detrmine a TR for %s\n',niftiFile);
-    fprintf('\tpixdim field does not contain a 4th dimension for TR!\n\ttr=nan;');
+	fprintf('Warning: Could not determine a TR for %s\n',niftiFile);
+    fprintf('\tpixdim field does not contain a 4th dimension for TR! Setting tr = nan \n');
     clear err
     tr = nan;
 end
