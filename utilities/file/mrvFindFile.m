@@ -1,14 +1,19 @@
-function file = mrvFindFile(fileName,directory)
+function file = mrvFindFile(fileName,directory,mode)
 % 
-%  file = mrvFindFile(fileName,directory)
+%  file = mrvFindFile(fileName,directory,mode)
 % 
 % This simple function is designed to find a return a full path to a given
 % file within a directory. It will search the directory tree recursively to
 % find the file and give you it's full path. 
+%
+% VALID MODES:
+%   [1] or [2]:
+%   By default the mode = 1, which allows the code to follow soft links.
+%   This can be turned off by setting mode = 2.
 % 
 % EXAMPLE:
 %   
-% file = mrvFindFile(pwd, 'dt6.mat')
+% file = mrvFindFile('dt6.mat',pwd,1)
 % 
 %   file =
 % 
@@ -23,15 +28,30 @@ if notDefined('directory')
     directory = pwd;
 end
 
+if notDefined('mode')
+	mode = 1;
+end	
+
 [ p, ~ ] = fileparts(directory);
+
 if isempty(p)
     directory = fullfile(pwd,directory);
 end
 
 file = '';
 
-cmd = ['find ' directory ' -follow -type f -name "' fileName '"'];
-
+switch mode 
+	case 1
+		cmd = ['find ' directory ' -follow -type f -name "' fileName '"'];
+	case 2
+        fprintf('\n[%s] - Not following softlinks.\n',mfilename);
+		cmd = ['find ' directory ' -type f -name "' fileName '"'];
+	otherwise
+		cmd = '';
+        fprintf('\n[%s] - Invalid mode.\n',mfilename)
+        help(mfilename);
+end
+ 
 % Run the command 
 [status, result] = system(cmd);
 if status ~= 0 

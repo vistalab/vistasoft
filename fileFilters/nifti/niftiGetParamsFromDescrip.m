@@ -69,13 +69,28 @@ if strfind(ni.descrip,'=')
     end
 end
 
-% Get the TR from the 4th dimension of the nifti
-try
+% Get the TR from the 4th dimension of nifti pixdim field
+s = size(ni.pixdim);
+if ( s(2) >= 4 )
     tr = ni.pixdim(4);
-catch err
-    fprintf('%s\n',err.message);
+else
+	fprintf('Warning: Could not determine a TR for %s\n',niftiFile);
+    fprintf('\tpixdim field does not contain a 4th dimension for TR! Setting tr = nan \n');
     clear err
-    tr = [];
+    tr = nan;
+end
+
+% Convert units of tr to milliseconds if in seconds
+if ~isnan(tr)
+	switch lower(ni.time_units)
+		case 'sec'
+    		tr = tr * 1000;
+    		fprintf('\t%s: \n\tSetting TR units to milliseconds: TR = %.3f ms\n',ni.fname,tr);
+    	case 'msec'
+    		fprintf('\t%s: \n\tTR units are in milliseconds: %.2f ms\n',ni.fname,tr);
+		otherwise
+			fprintf('\t%s: \n\tUnknown units for TR: %.2f %s\n',ni.fname, tr,ni.time_units);
+    end
 end
 
 % Remove the nifti struct, so we don't save it along with the other stuff.
@@ -87,7 +102,7 @@ save(name);
 
 % Load the values into the output struct
 params    = load(name);
-params.tr = tr*1000;
+params.tr = tr;
 
 % Remove the temporary name and file fields
 if isfield(params,'name')
