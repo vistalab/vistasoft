@@ -101,13 +101,29 @@ if ~quiet
         end
     end
     
+    % Display results for equal fields
     if ~isempty(equal)
         fprintf('\nEQUAL FIELDS:\n');
         for jj = 1:numel(equal)
             fprintf('\t%s \n',equal{jj});
         end
+        
+        fprintf('\n:::: EQUAL DETAILED OUTPUT ::::\n')
+        for jj = 1:numel(equal)
+            disp(['>>> ' equal{jj} ' <<<']);
+            
+            % Do not display the data field
+            if ~strcmpi(equal{jj},'data')
+                disp(n1.(equal{jj}));
+                disp('----');
+                
+            else disp(' Data fields are equal.');
+                disp(' ----')
+            end
+        end
     end
     
+    % Display results for non-equal fields
     if ~isempty(notequal)
         fprintf('\nNON-EQUAL FIELDS:\n');
         for jj = 1:numel(notequal)
