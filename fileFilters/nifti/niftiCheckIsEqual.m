@@ -124,8 +124,10 @@ if ~quiet
                 disp(n2.(notequal{kk}));
                 disp('----');
                 
-            else disp(' Data field is not equal');
+            else disp(' Data field is not equal. Generating difference image.');
                 disp(' ----')
+                showMontage(n1.data-n2.data);
+                set(gcf,'Name','Nifti DATA Difference Image (nifti1.data - nifti2.data)');
             end
         end
     else
@@ -140,6 +142,10 @@ results.allequal = isequal(n1,n2);
 results.equal    = equal;
 results.notequal = notequal; 
 results.nonfield = nonfield;
+
+if ~quiet
+    fprintf('\nSUMMARY:\n\t%s fields were equal\n\t%s fields were not equal \n\t%s  fields were unique to one nifti\n\n',num2str(numel(equal)),num2str(numel(notequal)),num2str(numel(nonfield)));
+end
 
 
 return
