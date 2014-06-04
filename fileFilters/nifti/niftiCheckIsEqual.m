@@ -1,18 +1,22 @@
 function [results] = niftiCheckIsEqual(nifti1,nifti2,quiet)
-
 %
-% results = niftiCheckIsEqual(nifti1,nifti2)
+% results = niftiCheckIsEqual([nifti1],[nifti2],[quiet])
 % 
-% DESCRIPTION 
-%   Run isequal on a pair of nifti files field by field. 
 % 
-% USAGE 
+% DESCRIPTION: 
+%   Run 'isequal' on a pair of nifti files, field by field. If ~ quiet print
+%   a summary of equal and ~equal values do the command window.
+% 
+% USAGE:
 %   results = niftiCheckIsEqual(nifti1,nifti2)
 % 
-% INPUT
+% INPUT:
 %   nifti1  - The filename/path or structure of a niftifile
+%   nifti2  - The filename/path or structure of a niftifile
+%   quiet   - Supress output to command window. Only field names are 
+%             returned.
 % 
-% OUTPUT
+% OUTPUT:
 %   results - A structure containing the following fields
 %           - .allequal >> boolean where 1 == all equal and 0 == not.
 %           - .equal    >> fieldnames of equal-fields
@@ -20,10 +24,14 @@ function [results] = niftiCheckIsEqual(nifti1,nifti2,quiet)
 %           - .nonfield >> fieldnames that are absent in at least one
 %                          nifti.
 % 
+%
+% (C) Stanford University, VISTA 2014 [ lmperry@stanford.edu ]
+%
+%
 %#ok<*AGROW>
 
 
-%% Handle inputs
+%% HANDLE INPUTS
 
 results = {};
 
@@ -34,11 +42,6 @@ if notDefined('nifti1')
     end
 end
 
-if ~isstruct(nifti1)
-    n1 = niftiRead(nifti1);
-else
-    n1 = nifti1;
-end
 
 if notDefined('nifti2')
     nifti2 = mrvSelectFile('r','*.nii*','Select second nifti file',pwd);
@@ -47,18 +50,32 @@ if notDefined('nifti2')
     end
 end
 
+
+% Read the nifti files if not passed in as structs
+if ~isstruct(nifti1)
+    n1 = niftiRead(nifti1);
+else
+    n1 = nifti1;
+end
+
 if ~isstruct(nifti2)
     n2 = niftiRead(nifti2);
 else
     n2 = nifti2;
 end
 
+
+% Quiet param will cause window output to be supressed
 if notDefined('quiet')
     quiet = 0; 
 end
 
+if ~quiet
+    fprintf('Running %s ... \n\tNifti 1 = %s\n\tNifti 2 = %s\n',mfilename,n1.fname,n2.fname);
+end
 
-%% Compare nifti fields
+
+%% COMPARE NIFTI FIELDS
 
 fields1 = fieldnames(n1);
 fields2 = fieldnames(n2);
@@ -91,7 +108,7 @@ for ii = 1:numel(allfields)
 end
 
 
-%% Display the results
+%% DISPLAY THE RESULTS
 
 if ~quiet   
     if ~isempty(nonfield)
@@ -115,8 +132,7 @@ if ~quiet
             % Do not display the data field
             if ~strcmpi(equal{jj},'data')
                 disp(n1.(equal{jj}));
-                disp('----');
-                
+                disp('----');               
             else disp(' Data fields are equal.');
                 disp(' ----')
             end
@@ -138,8 +154,7 @@ if ~quiet
             if ~strcmpi(notequal{kk},'data')
                 disp(n1.(notequal{kk}));
                 disp(n2.(notequal{kk}));
-                disp('----');
-                
+                disp('----');             
             else disp(' Data field is not equal. Generating difference image.');
                 disp(' ----')
                 showMontage(n1.data-n2.data);
@@ -152,7 +167,7 @@ if ~quiet
 end
 
 
-%% Return the results
+%% RETURN THE RESULTS
 
 results.allequal = isequal(n1,n2);
 results.equal    = equal;
