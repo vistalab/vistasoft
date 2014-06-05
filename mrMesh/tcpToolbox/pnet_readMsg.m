@@ -22,7 +22,7 @@ msg = [];
 
 % Don't wait forever before aborting:
 if ispc, pnet(con,'setreadtimeout',4);
-else     pnet(con,'setreadtimeout',6);
+else     pnet(con,'setreadtimeout',2);
 end
 
 % The header and trailer are each 8 bytes long
