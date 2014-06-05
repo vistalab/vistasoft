@@ -188,6 +188,7 @@ minD = min(d(d(:)>0));
 
 %% Compute a brain mask
 % 
+keyboard
 disp('Computing brain mask from average b0...');
 b0 = mean(d(:,:,:,bvals<=0.01),4);
 try

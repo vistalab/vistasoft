@@ -255,7 +255,6 @@ else
     end
 end
 
-
 %% XVI. Tensor Fitting
 
 % Switch on the fit method. If 'ls' use dtiRawFitTensorMex. If 'rt' use

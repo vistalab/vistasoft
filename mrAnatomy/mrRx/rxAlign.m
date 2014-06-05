@@ -42,6 +42,7 @@ if ~isfield(inplane,'anat') || isempty(inplane.anat)
 end
 anat = viewGet(inplane,'Anatomy Data');
 ipVoxelSize = viewGet(inplane,'Voxel Size');
+keyboard
 
 vol = double(vol);
 anat = double(anat);

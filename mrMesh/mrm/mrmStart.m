@@ -31,12 +31,12 @@ switch computer
     case {'GLNXA64'}
         % check whether we are using fedora, and if so, what version
         [s,r]=unix('cat /proc/version | grep fc14.x86_64'); %#ok<*ASGLU>
-        [t v] = unix('cat /proc/version | grep centos'); %#ok<*ASGLU>
+        %[t v] = unix('cat /proc/version | grep centos'); %#ok<*ASGLU>
         [x y] = unix('cat /proc/version | grep Ubuntu'); %#ok<*ASGLU>
         if ~isempty(strfind(r,'fc14.x86_64')),
             srvPath = which('mrMeshSrv_FC14.glxa64');
-        elseif ~isempty(strfind(v,'centos'))
-            srvPath = which('mrMeshSrv_Centos.glxa64');
+%         elseif ~isempty(strfind(v,'centos'))
+%             srvPath = which('mrMeshSrv_Centos.glxa64');
         elseif ~isempty(strfind(y,'Ubuntu'))
             disp('Ubuntu system detected: Loading mrMeshSrv for Ubuntu 12.04')
             srvPath = which('mrMeshSrv_Ubuntu1204.glxa64');
