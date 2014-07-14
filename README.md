@@ -25,6 +25,6 @@ External dependencies:
 For documentation, please visit the [VISTA lab wiki](http://vistalab.stanford.edu/wiki).
 
 
-For help with the new mrInit intialization method, please see the [Initialization Page](http://vistalab.stanford.edu/newlm/index.php/Initialization#mrInit).
+For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
 
 (c) Vista lab, Stanford University, 2013. 
