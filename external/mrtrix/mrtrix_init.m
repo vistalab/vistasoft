@@ -42,20 +42,19 @@ function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
 % For details: 
 % http://www.brain.org.au/software/mrtrix/tractography/preprocess.html
 % 
-% Bob, Ariel & Franco (c) Stanford Vista Team 2012
+% Franco Pestilli, Ariel Rokem and Bob Dougherty Stanford University 
 
 % Loading the dt file containing all the paths to the fiels we need.
 if ~isstruct(dt6)
-dt_info = load(dt6);
+    dt_info = load(dt6);
 else
     dt_info = dt6;
 end
 
 % Strip the file names out of the dt6 strings. 
-dwRawFile    = dt_info.files.alignedDwRaw;
+dwRawFile         = dt_info.files.alignedDwRaw;
 [session,dwiname] = fileparts(dwRawFile);
-[~,dwiname] = fileparts(dwiname);
-% session = fileparts(session);
+[~,dwiname]       = fileparts(dwiname);
 
 % If the output fibers folder was not passed in, then generate one in the current
 % mrDiffusion session.
@@ -107,25 +106,26 @@ end
 
 % Estimate the response function of single fibers: 
 if (~computed.('response'))
+    keyboard
   mrtrix_response(files.brainmask, files.fa, files.sf, files.dwi,...
-      files.response, files.b, true) % That last 'true' means a figure of the 
-                                  % response function will be displayed
+      files.response, files.b, true); % That last 'true' means a figure of the 
+                                      % response function will be displayed
 end
 
-% Create a white-matter mask, tracktography will act only in here.
+% Create a white-matter mask, tractography will act only within this mask.
 if (~computed.('wm'))
     if notDefined('wmMaskFile') || isempty('wmMaskFile')
         % Use mrDiffusion default white-matter mask
         wmMaskFile = fullfile(session, dt_info.files.wmMask);
     end
-    fprintf('[%s] Creating WM mask from file: %s\n', mfilename, wmMaskFile)
-    mrtrix_mrconvert(wmMaskFile, files.wm)
+    fprintf('[%s] Creating WM mask from file: %s\n', mfilename, wmMaskFile);
+    mrtrix_mrconvert(wmMaskFile, files.wm);
 end
 
 % Compute the CSD estimates: 
 if (~computed.('csd'))  
   disp('The following step takes a while (a few hours)');                                  
-  mrtrix_csdeconv(files.dwi, files.response, lmax, files.csd, files.b, files.brainmask)
+  mrtrix_csdeconv(files.dwi, files.response, lmax, files.csd, files.b, files.brainmask);
 end
 
 

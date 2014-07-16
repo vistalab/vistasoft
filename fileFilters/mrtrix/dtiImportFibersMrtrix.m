@@ -18,7 +18,7 @@ function fg = dtiImportFibersMrtrix(filename, fiberPointStride)
 % fg = dtiImportFibersMrtrix('all_1000K.tck');
 % mtrExportFibers(fg, 'all_1000K.pdb', eye(4));
 %
-% Bob & Franco (c) Vista Soft, Stanford University, 2013
+% Franco Pestilli and Bob Dougherty Stanford University 
 
 % Strip out the file name.
 [~,f] = fileparts(filename);
