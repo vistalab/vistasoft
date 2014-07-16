@@ -56,6 +56,16 @@ dwRawFile         = dt_info.files.alignedDwRaw;
 [session,dwiname] = fileparts(dwRawFile);
 [~,dwiname]       = fileparts(dwiname);
 
+% Return a warning if the number of parameters necessary to fit the
+% diffusion data using constrained spherical deconvolution is larger then
+% the number of diffusion directions in the current data set. 
+bv       = dlmread(dt_info.files.alignedDwBvecs);
+nbvecs   = unique(sum((bv ~= 0),2));
+max_lmax = mrtrix_findlmax(nbvecs);
+if (max_lmax < lmax) 
+    warning('[%s] The hosen Lmax (%i) requires a number of diffusion directions larger than the measured ones (%i). \nThe suggested Lmax is: %i', mfilename, lmax,nbvecs, max_lmax);
+end
+
 % If the output fibers folder was not passed in, then generate one in the current
 % mrDiffusion session.
 if notDefined('mrtrix_folder'), mrtrix_folder = [session, 'mrtrix']; end
@@ -104,12 +114,11 @@ if  (~computed.('ev'))
   mrtrix_tensor2vector(files.dt, files.ev, files.fa);
 end
 
-% Estimate the response function of single fibers: 
-if (~computed.('response'))
-    keyboard
+% Estimate the response function of single fibers. 
+% We use the max_lmax to estimate the response.
+if (~computed.('response'))    
   mrtrix_response(files.brainmask, files.fa, files.sf, files.dwi,...
-      files.response, files.b, true); % That last 'true' means a figure of the 
-                                      % response function will be displayed
+      files.response, files.b, true,false, max_lmax);
 end
 
 % Create a white-matter mask, tractography will act only within this mask.
