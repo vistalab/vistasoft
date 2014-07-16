@@ -63,7 +63,7 @@ if (~exist('fileNameList','var') || isempty(fileNameList))
         fileNameList = {fullfile(p,f)};
     end
 end
-if(~iscell(fileNameList))
+if(ischar(fileNameList))
     if(isempty(strfind(fileNameList,'*')))
         d = cat(1, dir(fullfile(fileNameList,'*.nii.gz')), dir(fullfile(fileNameList,'*.nii')), dir(fileNameList));
     else
@@ -105,10 +105,6 @@ end
 
 if (~exist('clipVals','var')), clipVals = []; end
 
-for(ii=1:length(fileNameList))
-	if(~exist(fileNameList{ii},'file')) error([fileNameList{ii} ' does not exist!']); end
-end
-
 % from spm_bsplins:  
 % d(1:3) - degree of B-spline (from 0 to 7) along different dimensions
 % d(4:6) - 1/0 to indicate wrapping along the dimensions
@@ -121,16 +117,20 @@ bSplineParams = [7 7 7 0 0 0];
 spm_defaults;
 defaults.analyze.flip = 0;
 
-numImages = length(fileNameList);
-% for(ii=1:numImages)
-%   if(length(fileNameList{ii})<7 || ~strcmpi(fileNameList{ii}(end-6:end),'.nii.gz')) || ~strcmpi(fileNameList{ii}(end-3:end),'.nii'))
-%     fileNameList{ii} = [fileNameList{ii} '.nii.gz'];
-%   end
-% end
+if(isstruct(fileNameList))
+    % assume we were passed a nifti file
+    ni = fileNameList;
+    numImages = 1;
+else
+    for(ii=1:length(fileNameList))
+        if(~exist(fileNameList{ii},'file')) error([fileNameList{ii} ' does not exist!']); end
+    end
+    % Load the first image (the reference)
+    ni = niftiRead(fileNameList{1});
+    ni = niftiApplyCannonicalXform(ni);
+    numImages = length(fileNameList);
+end
 
-% Load the first image (the reference)
-ni = readFileNifti(fileNameList{1});
-ni = niftiApplyCannonicalXform(ni);
 refDescrip = ni.descrip;
 
 if(isempty(clipVals))
@@ -184,7 +184,7 @@ else
         [p,f,e] = fileparts(alignLandmarks);
         disp(['Aligning reference image to the template image in ' f '...']);
         if(strcmpi(e,'.nii')||strcmpi(e,'.gz'))
-            tmp = readFileNifti(alignLandmarks);
+            tmp = niftiRead(alignLandmarks);
             img = tmp.data;
             acpcXform = tmp.qto_xyz;
             mmPerVox = tmp.pixdim([1:3]);
@@ -279,7 +279,7 @@ newOrigin = inv(refXform)*[0 0 0 1]'; newOrigin = newOrigin(1:3)'-newMmPerVox/2;
 refImg(refImg<0|isnan(refImg)) = 0; refImg(refImg>1) = 1;
 if(showFigs)
     o = round(newOrigin);
-    figure; set(gcf,'Name',[fileNameList{1} ' (ref)']);
+    figure; set(gcf,'Name',[ni.fname ' (ref)']);
     subplot(1,3,1); imagesc(flipud(squeeze(refImg(:,:,o(3)))')); axis image; colormap gray;
     subplot(1,3,2); imagesc(flipud(squeeze(refImg(:,o(2),:))')); axis image; colormap gray;
     subplot(1,3,3); imagesc(flipud(squeeze(refImg(o(1),:,:))')); axis image; colormap gray;
@@ -302,7 +302,7 @@ for(ii=1:numImages)
 	startInd = 2; 
   else
 	startInd = 1; 
-	ni = readFileNifti(fileNameList{ii});
+	ni = niftiRead(fileNameList{ii});
 	ni = niftiApplyCannonicalXform(ni);
   end
   
@@ -323,7 +323,7 @@ for(ii=1:numImages)
     img(img<0) = 0; img(img>1) = 1;
     if(showFigs)
         o = round(newOrigin);
-    	figure; set(gcf,'Name',[fileNameList{ii}]);
+    	figure; set(gcf,'Name',[ni.fname]);
         subplot(1,3,1); imagesc(flipud(squeeze(img(:,:,o(3)))')); axis image; colormap gray;
         subplot(1,3,2); imagesc(flipud(squeeze(img(:,o(2),:))')); axis image; colormap gray;
         subplot(1,3,3); imagesc(flipud(squeeze(img(o(1),:,:))')); axis image; colormap gray;

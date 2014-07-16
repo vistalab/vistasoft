@@ -29,7 +29,7 @@ if(ischar(t1Align)),
 	% is it NIFTI or a directory of DICOMs?
 	[p f ext] = fileparts(t1Align);
 	if ismember( lower(ext), {'.nii' '.gz'} )
-		t1Align = readFileNifti(t1Align); 
+		t1Align = niftiRead(t1Align); 
 	else
 		% assume DICOM dir
         s = dicomLoadAllSeries(t1Align);

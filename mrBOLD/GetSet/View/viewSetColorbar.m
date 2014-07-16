@@ -31,7 +31,8 @@ switch param
         vw.ui.(displayMode).cmap(nGrays+1:end,:) = val;
         vw.ui.(displayMode).name = 'user';
         
-        
+    case 'cmapmode'
+        vw.ui.mapMode = setColormap(vw.ui.mapMode, val); 
     otherwise
         error('Unknown view parameter %s.', param);
         

@@ -30,7 +30,7 @@ coords = xformROIcoords(ipROI.coords, xform, ipVoxSize, volVoxSize);
 
 if isempty(coords)
     % put a warning, but only if these aren't hidden views
-    if ~isequal(ipView.name, 'hidden') & ~isequal(volView.name, 'hidden');
+    if ~isequal(viewGet(ipView,'Name'), 'hidden') && ~isequal(viewGet(volView,'Name'), 'hidden')
         msg = sprintf(['No voxels from %s map to the volume view. ' ...
                        'No ROI created.'], ipROI.name);
         myWarnDlg(msg);    
@@ -40,7 +40,7 @@ if isempty(coords)
 end
 
 % Toss coords outside the volume
-volSize = viewSize(volView);
+volSize = viewGet(volView,'Size');
 indices = ((coords(1,:) >= 1) & (coords(1,:) <= volSize(1)) & ...
     (coords(2,:) >= 1) & (coords(2,:) <= volSize(2)) & ...
     (coords(3,:) >= 1) & (coords(3,:) <= volSize(3)));

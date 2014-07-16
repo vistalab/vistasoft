@@ -160,13 +160,13 @@ end
 %% Handling of WM Mask
 if ~bInteractive || queryOverwrite(fullfile(localSubDir,'bin',wmProbFile))
     disp('Creating wmProb file...');
-    bm = readFileNifti(fullfile(localSubDir,'bin','brainMask.nii.gz'));
+    bm = niftiRead(fullfile(localSubDir,'bin','brainMask.nii.gz'));
     %bm = double(bm.data);
     %bm(bm>0)=1;
-    b0 = readFileNifti(fullfile(localSubDir,'bin','b0.nii.gz'));
+    b0 = niftiRead(fullfile(localSubDir,'bin','b0.nii.gz'));
     xformToAcpc = b0.qto_xyz;
     b0 = double(b0.data);
-    dt6 = readFileNifti(fullfile(localSubDir,'bin','tensors.nii.gz'));
+    dt6 = niftiRead(fullfile(localSubDir,'bin','tensors.nii.gz'));
     dt6 = double(squeeze(dt6.data(:,:,:,1,[1 3 6 2 4 5])));
     wmProb = dtiFindWhiteMatter(dt6,b0,xformToAcpc);
     %wmProb = wmProb .* bm;
@@ -178,10 +178,10 @@ end
 pdfFile = fullfile(localSubDir,'bin','pdf.nii.gz');
 if ~bInteractive || queryOverwrite(pdfFile);
     disp('Creating pdf file.');
-    niTensors = readFileNifti(fullfile(localSubDir,'bin','tensors.nii.gz'));
+    niTensors = niftiRead(fullfile(localSubDir,'bin','tensors.nii.gz'));
     imgTensors = double(squeeze(niTensors.data(:,:,:,1,[1 3 6 2 4 5])));
-    niPDDD = readFileNifti(fullfile(localSubDir,'bin','pddDispersion.nii.gz'));
-    niBM = readFileNifti(fullfile(localSubDir,'bin','brainMask.nii.gz'));
+    niPDDD = niftiRead(fullfile(localSubDir,'bin','pddDispersion.nii.gz'));
+    niBM = niftiRead(fullfile(localSubDir,'bin','brainMask.nii.gz'));
     [eigVec, eigVal] = dtiSplitTensor(imgTensors);
     [imgCl, imgCp, imgCs] = dtiComputeWestinShapes(eigVal);
     imgEVec1 = squeeze(eigVec(:,:,:,[1 2 3],1));
@@ -220,7 +220,7 @@ if ~bOnlyPDF
     %% Initialization
     %dt6 = load(fullfile(localSubDir,dt6Dir,'dt6.mat'));
     % Get dimensions for mask image
-    ni = readFileNifti(fullfile(localSubDir,'bin','b0.nii.gz'));
+    ni = niftiRead(fullfile(localSubDir,'bin','b0.nii.gz'));
     xformToAcpc = ni.qto_xyz;
     img_mask = zeros(size(ni.data));
     clear ni;

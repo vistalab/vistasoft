@@ -18,8 +18,8 @@ elseif(islogical(outFile) && ~outFile)
     outFile = [];
 end
 
-b0 = readFileNifti(fullfile(dataDir,'b0.nii.gz'));
-bm = readFileNifti(fullfile(dataDir,'brainMask.nii.gz'));
+b0 = niftiRead(fullfile(dataDir,'b0.nii.gz'));
+bm = niftiRead(fullfile(dataDir,'brainMask.nii.gz'));
 % the brainMask file in the bin dir is based on the b0 and can include
 % extra stuff, like the eyes. So, we'll combine it with a bet mask to clean
 % it up.

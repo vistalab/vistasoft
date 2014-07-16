@@ -15,7 +15,7 @@ function vw = initHiddenInplane(dataType,scan,roi)
 % ras, 06/05, ensures session is loaded, 
 % mrGlobals is run; can specify data type,
 % scan, and roi at outset.
-% ras, 02/06: disbaled the notice that this was being initialized.
+% ras, 02/06: disabled the notice that this was being initialized.
 % I've found it a bit distracting; just a preference...
 
 if ~exist('dataType','var') || isempty(dataType)
@@ -33,18 +33,20 @@ evalin('base','mrGlobals');
 evalin('base','HOMEDIR = pwd;');
 evalin('base','loadSession');
 
+%Initialize the view
+vw = struct();
 %TODO: Make all of the below use viewSets
-vw.name     ='hidden';
-vw.viewType ='Inplane';
-vw.subdir   ='Inplane';
+vw = viewSet(vw,'name','hidden');
+vw = viewSet(vw,'viewType','Inplane');
+vw = viewSet(vw,'subdir','Inplane');
 
 % Initialize slots for co, amp, and ph
-vw.co       = [];
-vw.amp      = [];
-vw.ph       = [];
-vw.map      = [];
-vw.mapName  = '';
-vw.mapUnits = '';
+vw = viewSet(vw,'co',[]);
+vw = viewSet(vw,'amp',[]);
+vw = viewSet(vw,'ph',[]);
+vw = viewSet(vw,'map',[]);
+vw = viewSet(vw,'mapName','');
+vw = viewSet(vw,'mapUnits','');
 
 % Initialize slots for tSeries
 vw.tSeries      = [];
@@ -64,6 +66,9 @@ end
 
 % Initialize curScan
 vw.curScan = scan;
+
+% Load Anatomy of this view
+vw = loadAnat(vw);
 
 % load any ROIs specified
 

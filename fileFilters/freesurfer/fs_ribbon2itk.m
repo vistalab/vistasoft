@@ -98,7 +98,9 @@ else
 end
 
 if ~exist(ribbon, 'file'),
-    [fname pth] = uigetfile({'ribbon*.mgz', 'Ribbon files'; '*.mgz', '.mgz files'}, 'Cannot locate ribbon file. Please find it yourself.', pwd);
+    [fname, pth] = uigetfile(...
+        {'ribbon*.mgz', 'Ribbon files'; '*.mgz', '.mgz files'},...
+        'Cannot locate ribbon file. Please find it yourself.', pwd);
     ribbon = fullfile(pth, fname);
 end    
 
@@ -110,7 +112,16 @@ if notDefined('outfile'),
 end
 
 %% Convert MGZ to NIFTI
-
+if exist('alignTo', 'var')
+    [~, ~, ext] = fileparts(alignTo);
+    if strcmpi(ext, '.mgz'),
+        newT1 = fullfile(fileparts(alignTo), 't1.nii.gz');
+        str = sprintf('!mri_convert --out_orientation RAS -rt %s %s %s', ...
+            resample_type, alignTo, newT1);
+        alignTo = newT1;
+        eval(str)
+    end
+end
 
 if exist('alignTo', 'var') && exist('in_orientation','var'),
     str = sprintf('!mri_convert  --in_orientation %s --out_orientation RAS --reslice_like %s -rt %s %s %s', in_orientation, alignTo, resample_type, ribbon, outfile);
@@ -131,7 +142,7 @@ eval(str)
 %   unlabeled:    0 => 0 (if fillWithCSF == 0) or 1 (if fillWithCSF == 1)          
 
 % read in the nifti
-ni = readFileNifti(outfile);
+ni = niftiRead(outfile);
 
 % check that we have the expected values in the ribbon file
 vals = sort(unique(ni.data(:)));

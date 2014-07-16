@@ -34,6 +34,7 @@ if isempty(DictViewSplit)
     DictViewSplit('cmap') =  'colorbar';
     DictViewSplit('cmapcolor') =  'colorbar';
     DictViewSplit('cmapgrayscale') =  'colorbar';
+    DictViewSplit('cmapmode') =  'colorbar';
     DictViewSplit('twparams') =  'colorbar';
     DictViewSplit('analysisdomain') =  'em';
     DictViewSplit('datavalindex') =  'em';
@@ -66,7 +67,6 @@ if isempty(DictViewSplit)
     DictViewSplit('recomputev2gmap') =  'mesh';
     DictViewSplit('rightclassfile') =  'mesh';
     DictViewSplit('rightgrayfile') =  'mesh';
-    DictViewSplit('framestouse') =  'retinotopy';
     DictViewSplit('rmcurrent') =  'retinotopy';
     DictViewSplit('rmfile') =  'retinotopy';
     DictViewSplit('rmhrf') =  'retinotopy';
@@ -109,13 +109,13 @@ if isempty(DictViewSplit)
     DictViewSplit('nslices') =  'session';
     DictViewSplit('refreshfn') = 'session';
     DictViewSplit('sessionname') =  'session';
+    DictViewSplit('size')   =  'session';
     DictViewSplit('subdir') =  'session';
     DictViewSplit('subject') =  'session';
     DictViewSplit('viewtype') =  'session';
     DictViewSplit('datasize') =  'timeseries';
     DictViewSplit('dim') =  'timeseries';
     DictViewSplit('functionalslicedim') = 'timeseries';
-    DictViewSplit('ncycles') =  'timeseries';
     DictViewSplit('nframes') =  'timeseries';
     DictViewSplit('tr') =  'timeseries';
     DictViewSplit('tseries') =  'timeseries';
@@ -136,6 +136,8 @@ if isempty(DictViewSplit)
     DictViewSplit('scanco') =  'travelingwave';
     DictViewSplit('scanph') =  'travelingwave';
     DictViewSplit('spatialgrad') =  'travelingwave';
+    DictViewSplit('framestouse') =  'travelingwave';
+    DictViewSplit('ncycles') =  'travelingwave';    
     DictViewSplit('amplitudemode') =  'ui';
     DictViewSplit('anatomymode') =  'ui';
     DictViewSplit('cbarrange') = 'ui';
@@ -185,7 +187,6 @@ end %if
 if DictViewSplit.isKey(paramIn)
     splitParam = DictViewSplit(paramIn);
 else
-    splitParam = '';
     error('Dict:ViewSplitError', 'The input %s does not appear to be in the split dictionary.', paramIn);
 end
 

@@ -36,7 +36,7 @@ else
     z = double(data);
     
     % Remove NaN coords
-    allFinite = find(finite(x) & finite(y));
+    allFinite = find(isfinite(x) & isfinite(y));
     x = x(allFinite);
     y = y(allFinite);
     z = z(allFinite);

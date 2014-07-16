@@ -235,7 +235,9 @@ static int shortest_path(double *nodeArray, int num_nodes, double *edgeArray, in
  * Implements a priority queue using a static heap.
  */
 
+#if !defined(__APPLE__)
 #include <malloc.h>
+#endif
 
 #define PARENT(i)	(((i)-1) >> 1)
 #define LEFT(i)		(((i) << 1) + 1)

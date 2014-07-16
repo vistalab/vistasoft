@@ -9,10 +9,7 @@ function fs_autosegmentToITK(subjID, t1, skipRecon, resample_type)
 % INPUTS:
 %   subjID: directory name in which freesurfer stores outputs
 %   t1:     file name (with complete path) of t1 used for segmentation.
-%                TODO: Currently a single NIFTI is expected by this script.
-%                Freesurfer is more flexible so the scipt could be improved
-%                by allowing multiplte T1s or one or more directories of
-%                DICOMs.
+%
 %   skipRecon: boolean. If true, then we regenerate a t1 class file (nifti)
 %       `       from the already complete freesurfer segementation, without
 %               re-doing the freesurfer segmentation. [default = false]
@@ -56,14 +53,19 @@ if notDefined('t1') || ~exist(t1, 'file'),
 end
 if ~exist(t1, 'file'), error('Cannot locate t1 file'); end
 
-if ~exist('skipRecon', 'var'),     skipRecon = false; end
-if ~exist('resample_type', 'var'), resample_type = 'nearest'; end
+if ~exist('skipRecon', 'var') || isempty(skipRecon)
+    skipRecon = false;
+end
+if ~exist('resample_type', 'var') || isempty(resample_type)
+    resample_type = 'nearest'; 
+end
 
 % This is the directory where freesurfer puts subject data. If it is
 % defined in the linux shell (e.g., bashrc) then matlab can find it. If it
 % is not defined, look for the 'freesurfer_home/subjects', which is the
-% default location in freesurfer.
+% default location in freesurfer. 
 subdir   = getenv('SUBJECTS_DIR');
+
 if isempty(subdir),
     fshome = getenv('FREESURFER_HOME');
     subdir = fullfile(fshome, 'subjects');
@@ -86,7 +88,7 @@ end
 % check whether t1 is [1 1 1] (freesurfer standard resolution). if not we
 % need to resample the segmentation.
 
-ni  = readFileNifti(t1);
+ni  = niftiRead(t1);
 res = ni.pixdim;
 if any(abs(res(1:3) - [1 1 1]) > .000001), 
     resampleSeg = true;

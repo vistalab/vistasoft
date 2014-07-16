@@ -61,14 +61,14 @@ end
 
 if(ischar(dwRaw))
     disp(['Loading raw data ' dwRaw '...']);
-    dwRaw = readFileNifti(dwRaw);
+    dwRaw = niftiRead(dwRaw);
 end
 
 interpParams = [1 1 1 0 0 0];
 mnB0File =  fullfile(dataDir,[inBaseName '_b0.nii.gz']);
 mnB0File = dtiRawComputeMeanB0(dwRaw, bvalsFile, mnB0File);
 disp(['Loading eddycorrect reference image ' mnB0File '...']);
-mnB0 = readFileNifti(mnB0File);
+mnB0 = niftiRead(mnB0File);
 
 dtiRawAlignToT1(mnB0, t1File, outAcpcXform);
 

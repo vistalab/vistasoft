@@ -14,12 +14,13 @@ function indices = coords2Indices(coords,dims)
 %   values of an array with dimensions dims.
 %
 % gmb, 1/23/98
+% ARW 01/30/14 : Added cast to prod : dims are sometimes ints
 
 if find(coords)
   indices = coords(1,:);
 
   for d = 2:length(dims)
-    indices = indices + (coords(d,:)-1) * prod(dims(1:d-1));
+    indices = indices + (coords(d,:)-1) * prod(double(dims(1:d-1)));
   end
   
 else

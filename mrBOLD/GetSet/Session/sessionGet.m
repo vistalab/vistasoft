@@ -287,7 +287,7 @@ switch param
 
     case {'version'}
         if isfield(s, 'mrVistaVersion'), val = s.mrVistaVersion; 
-        else error('The field relevant to %s was not found in the session.', param);
+        else val = 0;
         end
         
     otherwise

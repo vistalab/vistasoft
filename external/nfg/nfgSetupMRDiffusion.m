@@ -46,7 +46,7 @@ dtiRawFitTensorMex(noisyImg, bvecsFile, bvalsFile, dtDir, numBootstraps);
 
 % Fix automatically generated brain mask
 disp(' '); disp('Fixing automatically generated brain mask ...');
-ni = readFileNifti(brainMaskFile);
+ni = niftiRead(brainMaskFile);
 ni.data(:) = 1;
 writeFileNifti(ni);
 

@@ -25,7 +25,7 @@ function fgOut=mtrClipFiberGroupToROIs(fgInFile,niT1File,roi1File,roi2File,wmNif
 fg = dtiReadFibers(fgInFile);
 
 % Load T1 image
-niT1 = readFileNifti(niT1File);
+niT1 = niftiRead(niT1File);
 % XXX WHY DO I NEED A DIFFERENT ONE FROM ROI
 % Matrix for converting fiber group coords into dti image space
 %xformFromAcPc = diag([(dt6.mmPerVox(:)') 1])*inv(niT1.qto_xyz);
@@ -38,7 +38,7 @@ img_mask = zeros(size(niT1.data));
 if ieNotDefined('wmNiftiFile')
     img_wm = img_mask+1;
 else
-    ni = readFileNifti(wmNiftiFile);
+    ni = niftiRead(wmNiftiFile);
     img_wm = ni.data;
     clear ni;
 end

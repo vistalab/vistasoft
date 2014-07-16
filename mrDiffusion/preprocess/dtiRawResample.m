@@ -84,7 +84,7 @@ end
 
 if(ischar(dwRaw))
     disp(['Loading raw data ' dwRaw '...']);
-    dwRaw = readFileNifti(dwRaw);
+    dwRaw = niftiRead(dwRaw);
 end
 nvols = size(dwRaw.data,4);
 % dtMm = dwRaw.pixdim(1:3);

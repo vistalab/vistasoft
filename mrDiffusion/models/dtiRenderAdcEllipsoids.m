@@ -54,7 +54,7 @@ reflectADCs = false;
 % This file is supposed to have bvals and bvecs.  Most don't.  That
 % produces and error.  We should use the routine loadRawADC inside of
 % dtiFiberUI and attach the values to the adcNI here. - BW
-if(ischar(adcNi)), adcNi = readFileNifti(adcNi); end
+if(ischar(adcNi)), adcNi = niftiRead(adcNi); end
 
 if(~exist('plotType','var')||isempty(plotType))
     % options include: adcProfile, diffusionEllipsoid

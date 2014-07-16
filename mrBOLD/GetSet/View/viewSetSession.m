@@ -58,7 +58,7 @@ switch param
                 set(vw.ui.slice.labelHandle, 'String', str);
                 
             case {'Volume', 'Gray'}
-                volSize = viewSize(vw);
+                volSize = viewGet(vw,'Size');
                 sliceOri=getCurSliceOri(vw);
                 sliceNum=clip(val,1,volSize(sliceOri));
                 set(vw.ui.sliceNumFields(sliceOri), 'String',num2str(sliceNum));
@@ -84,10 +84,10 @@ switch param
         
     case 'curscan'
         %vw = setCurScan(vw,val);
-        view.curScan = val;
+        vw.curScan = val;
         % If we have a GUI open, update it as well:
-        if checkfields(view, 'ui', 'scan'),
-            setSlider(view,view.ui.scan,val,0);
+        if checkfields(vw, 'ui', 'scan'),
+            setSlider(vw,vw.ui.scan,val,0);
         end
         
     otherwise

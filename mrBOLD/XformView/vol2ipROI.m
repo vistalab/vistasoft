@@ -43,7 +43,7 @@ xform = inv(mrSESSION.alignment);
 coords = xformROIcoords(volROI.coords, xform, volVoxSize, ipVoxSize);
 
 % Toss coords outside the inplanes
-ipSize = viewSize(ipView);
+ipSize = viewGet(ipView,'Size');
 indices = ((coords(1,:) >= 1) & (coords(1,:) <= ipSize(1)) & ...
     (coords(2,:) >= 1) & (coords(2,:) <= ipSize(2)) & ...
     (coords(3,:) >= 1) & (coords(3,:) <= ipSize(3)));

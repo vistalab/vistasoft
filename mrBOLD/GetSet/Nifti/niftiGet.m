@@ -1,6 +1,20 @@
 function val = niftiGet(ni,param,varargin)
-% Get data from various nifti data structures
 %
+% Get a value from a nifti structure
+%
+%   val = niftiGet(nii,param,varargin)
+%
+% USAGE
+%  val = niftiGet(nii,'Data');
+%
+% INPUTS
+%  Nifti struct - The structure read in by niftiRead
+%  param - String parameter specifying the value to retrieve
+%
+% RETURNS
+%  Value (or values) stored in the nifti or calculated from values stored
+%  in the nifti
+
 
 if notDefined('ni'), error('Nifti data structure variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
@@ -80,13 +94,19 @@ switch param
         if isfield(ni, 'slice_end') && isfield(ni,'slice_start')
             val = ni.slice_end - ni.slice_start + 1;
         else
-            warning('vista:niftiError', 'No number of slices defined information found in nifti. Returning empty');
-            val = [];
+            error('vista:niftiError', 'No number of slices defined information found in nifti. Returning empty');
         end
+        if ni.slice_end == 0 || ni.slice_start == 0
+            %First, let's try to use slicedim on the 'dim' field
+            dims = niftiGet(ni,'Dim');
+            sliceDim = niftiGet(ni,'Slice Dim');
+            val = dims(sliceDim);
+        end    
+        
         if val == 0
             error('vista:niftiError', 'The number of slices are not properly defined in this nifti. Please ensure that slice_start and slice_end are non-zero.');
         end
-        
+
     case 'phasedim'
         if isfield(ni, 'phase_dim')
             val = ni.phase_dim;
@@ -124,7 +144,7 @@ switch param
             warning('vista:niftiError', 'No slicedims information found in nifti. Returning empty');
             val = [];
         end
-        
+        %Default to a slice dim of '3'
         if val == 0, val = 3; end
         
     case 'slicedims'
@@ -159,6 +179,15 @@ switch param
             %Now we need to calculate voxelSize
             val = prod(niftiGet(ni,'Pixdim'));
         end
+        
+    case {'params','scanparams','descrip','description'}
+        if isfield(ni,'descrip') 
+            val = niftiGetParamsFromDescrip(ni);
+        else
+            warning('vista:niftiError','Descrip field does not exist');
+            val = [];
+        end
+            
         
     otherwise
          error('Unknown parameter %s\n',param);       

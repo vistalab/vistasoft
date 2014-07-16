@@ -8,18 +8,18 @@ function vw = makeZoomButtons(vw)
 % 02/06: made callbacks just call the axis command, rather than
 % refreshing the zoom -- should be much faster.
 
-name = vw.name;
-type = vw.viewType;
-dims = viewSize(vw);
+name = viewGet(vw,'Name');
+type = viewGet(vw,'View Type');
+dims = viewGet(vw,'Size');
 
 switch type
     case {'Inplane', 'Flat'},
-		cb1 = sprintf('%s = zoomInplane(%s);', vw.name, vw.name);
-		cb2 = sprintf('%s = zoomInplane(%s, 1);', vw.name, vw.name);                     
+		cb1 = sprintf('%s = zoomInplane(%s);', viewGet(vw,'Name'), viewGet(vw,'Name'));
+		cb2 = sprintf('%s = zoomInplane(%s, 1);', viewGet(vw,'Name'), viewGet(vw,'Name'));                     
                      
     case {'Volume', 'Gray','generalGray'},        
-		cb1 = sprintf('%s = zoom3view(%s);', vw.name, vw.name);
-		cb2 = sprintf('%s = zoom3view(%s, 1);', vw.name, vw.name);     
+		cb1 = sprintf('%s = zoom3view(%s);', viewGet(vw,'Name'), viewGet(vw,'Name'));
+		cb2 = sprintf('%s = zoom3view(%s, 1);', viewGet(vw,'Name'), viewGet(vw,'Name'));     
         
     otherwise,
         error('Huh? Weird view type.');

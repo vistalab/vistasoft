@@ -33,7 +33,7 @@ mr.info.effectiveResolution = func.effectiveResolution;
 mr.info.coil = mr.hdr.coil;
 
 % now read data, get other info:
-mr.data = readFileMag(pth, slices, littleEndian);
+mr.data = readMagFile(pth, slices, littleEndian);
 if ~isempty(t)
 	% sub-select time points
 	mr.data = mr.data(:,:,:,t);

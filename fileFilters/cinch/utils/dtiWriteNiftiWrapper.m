@@ -94,11 +94,9 @@ elseif(length(filename)<6||~strcmpi(filename(end-5:end),'nii.gz'))
 end
 ni.fname = filename;
 
-
 %% Write the file
 % 
 writeFileNifti(ni);
-
 
 return;
 

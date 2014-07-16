@@ -48,7 +48,7 @@ for scan = scans;
     frameRate = viewGet(vw, 'framerate', scan);
     
     % Get ROI coords
-    if vw.selectedROI, ROIcoords = getCurROIcoords(vw);
+    if viewGet(vw, 'selected ROI'), ROIcoords = viewGet(vw, 'ROI coords');
     else  myErrorDlg('No current ROI');
     end
 

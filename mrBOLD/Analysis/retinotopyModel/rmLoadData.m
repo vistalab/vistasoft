@@ -1,4 +1,4 @@
-function [data, params, coords] = rmLoadData(view, params, slice, coarse, preserveCoords)
+function [data, params, coords] = rmLoadData(vw, params, slice, coarse, preserveCoords)
 % rmLoadData - load time series data for retinotopy experiment
 %
 % data = rmLoadData(view, params, [slice or roiIndex],[coarse],[preserveCoords]);
@@ -51,9 +51,9 @@ if notDefined('preserveCoords'), preserveCoords = 0;     end
 data = [];
 grayConMat = [];
 
-nScans = viewGet(view, 'nScans');
+nScans = viewGet(vw, 'nScans');
 if nScans ~= length(params.stim)
-	scans = er_selectScans(view, ...
+	scans = er_selectScans(vw, ...
 		sprintf('please choose %d scans for the model', length(params.stim)));
 else
 	scans = 1:length(params.stim);
@@ -63,16 +63,16 @@ for ds = 1:length(params.stim),
 	scannum = scans(ds);
 	switch lower(params.wData),
 		case {'all'},
-			tSeries  = loadtSeries(view, scannum, slice);
+			tSeries  = loadtSeries(vw, scannum, slice);
 
 			% get the coordinates for each time series
-			if isequal( lower(view.viewType), 'inplane' )
-				dims = viewSize(view);
-				[X Y Z] = meshgrid(1:dims(2), 1:dims(1), 1:dims(3));
+			if isequal( lower(vw.viewType), 'inplane' )
+				dims = viewGet(vw,'Size');
+				[X, Y, Z] = meshgrid(1:dims(2), 1:dims(1), 1:dims(3));
 				coords   = [Y(:) X(:) Z(:)]';
 			else
 				% gray/volume view -- "coords"=indices in the view coords
-				coords = 1:size(view.coords, 2);
+				coords = 1:size(vw.coords, 2);
 			end
 
 
@@ -81,11 +81,11 @@ for ds = 1:length(params.stim),
             
             if coarse,
                 % smooth
-                [tSeries grayConMat] = dhkGraySmooth(view,tSeries,...
+                [tSeries, grayConMat] = dhkGraySmooth(vw,tSeries,...
                     params.analysis.coarseBlurParams(1,:),grayConMat);
                 
                 % sparsely sample
-                coarseIndex = rmCoarseSamples(viewGet(view,'coords'),params.analysis.coarseSample);
+                coarseIndex = rmCoarseSamples(viewGet(vw,'coords'),params.analysis.coarseSample);
                 tSeries = tSeries(:,coarseIndex);
             end
             
@@ -95,8 +95,8 @@ for ds = 1:length(params.stim),
             end
             
 		case {'roi'}
-			[tSeries coords params grayConMat] = ...
-				rmLoadDataROI(view, params, ds, scannum, coarse, grayConMat, preserveCoords);
+			[tSeries, coords, params, grayConMat] = ...
+				rmLoadDataROI(vw, params, ds, scannum, coarse, grayConMat, preserveCoords);
 
 		otherwise,
 			error('Unknown parameter wData (%s).',params.wData);
@@ -127,7 +127,7 @@ return;
 
 
 %---------------------------------
-function [tSeries coords params grayConMat] = rmLoadDataROI(view, params, ds, scannum, coarse, grayConMat, preserveCoords)
+function [tSeries, coords, params, grayConMat] = rmLoadDataROI(vw, params, ds, scannum, coarse, grayConMat, preserveCoords)
 %% load the data from the selected ROI, regardless of view type.
 % ras 09/2008: broken off into a separate function because the indentation
 % was getting a bit extreme.
@@ -135,31 +135,31 @@ function [tSeries coords params grayConMat] = rmLoadDataROI(view, params, ds, sc
 % get relevant ROI index, the 'slice' switch is not appropriate
 % here. Because slice will always be defined. Thereby interfering
 % with the selectedROI.
-r = view.selectedROI;
+r = vw.selectedROI;
 
 % get ROI coords
-coords = view.ROIs(r).coords;
+coords = vw.ROIs(r).coords;
 
 % index into view's data
-[coordsIndex coords] = roiIndices(view, coords, preserveCoords);
+[coordsIndex, coords] = roiIndices(vw, coords, preserveCoords);
 % do we want to recompute coords? this is good for gray views, in case ROI
 % voxels are missing from the slice prescription. but might it cause
 % problems for inplane models? 
 %coordsIndex = roiIndices(view, coords, preserveCoords);
 
 % store roi info
-params = rmSet(params, 'roiName',   view.ROIs(r).name);
+params = rmSet(params, 'roiName',   vw.ROIs(r).name);
 params = rmSet(params, 'roiCoords', coords);
 params = rmSet(params, 'roiIndex',  coordsIndex);
 
 % coarse to fine switch
 if coarse,
 	% process everything, must do so for proper smoothing
-	tSeries  = loadtSeries(view, ds);
+	tSeries  = loadtSeries(vw, ds);
 	tSeries  = rmAverageTime(tSeries, params.stim(ds).nUniqueRep);
 	blurParams = params.analysis.coarseBlurParams(1,:);
 	grayConMat = [];
-	[tSeries grayConMat] = dhkGraySmooth(view, tSeries, blurParams, grayConMat);
+	[tSeries grayConMat] = dhkGraySmooth(vw, tSeries, blurParams, grayConMat);
 	coarseIndex = rmCoarseSamples(rmGet(params,'roicoords'),params.analysis.coarseSample);
 
 	% limit to roi
@@ -173,17 +173,17 @@ if coarse,
 	coords = roiIndex(coarseIndex);
 
 else % old approach
-	if strcmpi(view.viewType,'inplane'), roiSlices = unique(coords(3,:));
+	if strcmpi(vw.viewType,'inplane'), roiSlices = unique(coords(3,:));
     else                                 roiSlices = 1; end;
 
 	tSeries  = [];
 
 	% loop over slices and load data
 	for roiSlice = roiSlices,
-		view.tSeriesSlice = roiSlice;
-		view.tSeriesScan  = scannum;
-		view.tSeries      = loadtSeries(view, scannum, roiSlice);
-		tSeries           = [tSeries getTSeriesROI(view, coords, 1)];
+		vw.tSeriesSlice = roiSlice;
+		vw.tSeriesScan  = scannum;
+		vw.tSeries      = loadtSeries(vw, scannum, roiSlice);
+		tSeries           = [tSeries getTSeriesROI(vw, coords, 1)];
 	end;
 
 	% ras 01/09: only convert to percent change if the flag is set

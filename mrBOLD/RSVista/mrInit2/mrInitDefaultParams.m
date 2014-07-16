@@ -33,21 +33,6 @@ function params = mrInitDefaultParams
 %     subject: subject name. Default: get from inplane header.
 % 
 %     description: description of session. Default: empty.
-% 
-%     crop: [2 x 2] matrix specifying the location in the INPLANE
-%           anatomies from which to take data. Format is 
-%           [x1 y1
-%            x2 y2]. 
-%           mrInit2 will take data from the inplanes in the range
-%           anat(y1:y2, x1:x2, :). (Remember rows are the Y axis and
-%           columns are the X axis.) Will also find the corresponding
-%           region of the functionals, and take only that subset. Note
-%           that if the functionals are lower resolution than the
-%           inplanes, and the crop values provided turn out to not
-%           specify an integer number of functional voxels, the code
-%           will round it out, such that both the inplane and
-%           functionals are cropped for an integer number of voxels.
-%           If omitted, will ask the user to crop in a dialog.
 %
 %	keepFrames: [nScans x 2] matrix describing which frames to keep 
 %			from each scan's time series. (Frames may be clipped from the
@@ -74,7 +59,7 @@ function params = mrInitDefaultParams
 %    coParams: {1 x nScans} cell array of coherence anaysis ("blocked analysis
 %			params" in the outdated nomenclature) parameters for each scan.
 %			Will only assign these to scans for which the cell is nonempty. 
-%			Use initCoParams and initCoParamsGUI to initialize and edit 
+%			Use coParamsDefault and coParamsEdit to initialize and edit 
 %			these parameters. Default empty: don't assign any parameters.
 %
 %	glmParams: {1 x nScans} cell array of GLM analysis parameters
@@ -126,7 +111,6 @@ params.sessionCode = f;
 params.subject = '';
 params.description = '';
 params.comments = '';
-params.crop = [];
 params.keepFrames = [];
 params.annotations = {};
 params.parfile = {};

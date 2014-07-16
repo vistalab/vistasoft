@@ -36,6 +36,7 @@ function vw = viewSet(vw,param,val,varargin)
 %      'refph'
 %      'ampclip'
 %      'framestouse'
+%      'ncycles'
 %
 % %%%%% Map properties
 %      'map'

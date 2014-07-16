@@ -1,4 +1,4 @@
-function view = makeFlatMask(view,blurLevel,thresh)
+function vw = makeFlatMask(vw,blurLevel,thresh)
 %
 % function view = makeFlatMask(view,blurLevel,thresh)
 %
@@ -24,14 +24,14 @@ if ~exist('thresh','var')
   thresh = .1;
 end
 
-mask=zeros(viewSize(view));
-imSize = view.ui.imSize;
+mask=zeros(viewGet(vw,'Size'));
+imSize = vw.ui.imSize;
 for h=1:2 
-    if isempty(view.coords{h})
+    if isempty(vw.coords{h})
         mask(:,:,h) = NaN*ones(imSize);
     else
         % Get coordinates
-        coords = round(view.coords{h});
+        coords = round(vw.coords{h});
         y = coords(1,:);
         x = coords(2,:);
         % Remove NaN coords
@@ -58,7 +58,7 @@ for h=1:2
 end
 
 % Set view.ui.mask field
-view.ui.mask = mask;
+vw.ui.mask = mask;
 
 return
 

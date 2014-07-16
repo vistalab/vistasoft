@@ -3,13 +3,13 @@ function vw = averageTSeries(vw, scanList, typeName, annotation)
 %  vw = averageTSeries(vw, [scanList], [typeName], [annotation])
 %
 % Average the time series scans specified in the parameter scanList.  The user determines
-% the scans from a popup dialog box if scanListis not defined.  
+% the scans from a popup dialog box if scanListis not defined.
 %
 % Saves results in the 'Averages' data type with a new annotation.  It is
 % possible to save in another dataType by specifying typeName.
 %
 % The optional 'annotation' argument specifies the annotation (the text
-% that pops up for the scan in mrVista) for the scan. Default is to use 
+% that pops up for the scan in mrVista) for the scan. Default is to use
 % the text 'Average of [data type] [scans] scans'.
 %
 % Uses the current dataType of the view to determine which tSeries
@@ -19,19 +19,19 @@ function vw = averageTSeries(vw, scanList, typeName, annotation)
 % djh,  2/28/2001, Reimplemented for mrLoadRet-3.0
 % arw,  08/28/02,  Added option to set new data type name.
 % ras,  12/17/05,  Added optional new annotation.
- 
+
 mrGlobals
 
 % default input args
 if notDefined('typeName'),    typeName='Averages';             end
-if notDefined('annotation'),    
+if notDefined('annotation'),
     annotation = sprintf('Average of %s scans: %s',  ...
-                          getDataTypeName(vw),  ... 
-                          num2str(scanList));
+        getDataTypeName(vw),  ...
+        num2str(scanList));
 end
- 
+
 if notDefined('scanList') || isequal(scanList, 'dialog')
-	[scanList, typeName, annotation] = averageTSeriesGUI(vw, scanList, typeName, annotation); 
+    [scanList, typeName, annotation] = averageTSeriesGUI(vw, scanList, typeName, annotation);
 end
 
 checkScans(vw, scanList);
@@ -60,7 +60,7 @@ hiddenView = selectDataType(hiddenView, typeName);
 
 saveSession
 
-% Get the tSeries directory for this dataType 
+% Get the tSeries directory for this dataType
 % (make the directory if it doesn't already exist).
 tseriesdir = tSeriesDir(hiddenView);
 
@@ -73,15 +73,16 @@ end
 % Double loop through slices and scans in scanList
 nAvg = length(scanList);
 % *** check that all scans have the same slices
-waitHandle = waitbar(0, 'Averaging tSeries.  Please wait...');
 nSlices = length(sliceList(vw, scanList(1)));
 tSeriesAvgFull = []; %Initialize
-for iSlice = sliceList(vw, scanList(1));
-    % For each slice...
-    % disp(['Averaging scans for slice ',  int2str(iSlice)])
+
+% If it's INPLANE: get the whole tseries in one read
+if strcmpi('INPLANE', viewGet(vw, 'view type'))
     for iAvg=1:nAvg
         iScan = scanList(iAvg);
-        tSeries = loadtSeries(vw,  iScan,  iSlice);
+        [~, nii] = loadtSeries(vw,  iScan);
+        tSeries = double(niftiGet(nii, 'data'));
+        
         dimNum = length(size(tSeries)); %Can handle 2 and 3D tSeries
         bad = isnan(tSeries);
         tSeries(bad) = 0;
@@ -96,28 +97,60 @@ for iSlice = sliceList(vw, scanList(1));
     tSeriesAvg = tSeriesAvg ./ nValid;
     tSeriesAvg(nValid == 0) = NaN;
     tSeriesAvgFull = cat(dimNum + 1, tSeriesAvgFull, tSeriesAvg); %Combine together
-    waitbar(iSlice/nSlices);
-end %for
-% Now we need to reshape to have slices be the 3rd dimension. But only if we
-% have a total of 4 dimensions now, i.e. dimNum == 3
+    
+    % reshape to time x pixels x slice
+    dims = viewGet(vw, 'data size');
+    tSeriesAvgFull = reshape(tSeriesAvgFull, prod(dims(1:2)), dims(3), []);
+    tSeriesAvgFull = permute(tSeriesAvgFull, [3 1 2]);
+else    
+    % If it's GRAY of FLAT...
+    waitHandle = waitbar(0, 'Averaging tSeries.  Please wait...');
+    for iSlice = sliceList(vw, scanList(1));
+        % For each slice...
+        % disp(['Averaging scans for slice ',  int2str(iSlice)])
+        for iAvg=1:nAvg
+            iScan = scanList(iAvg);
+            tSeries = loadtSeries(vw,  iScan,  iSlice);
+            dimNum = length(size(tSeries)); %Can handle 2 and 3D tSeries
+            bad = isnan(tSeries);
+            tSeries(bad) = 0;
+            if iAvg > 1;
+                tSeriesAvg = tSeriesAvg + tSeries;
+                nValid = nValid + ~bad;
+            else
+                tSeriesAvg = tSeries;
+                nValid = ~bad;
+            end
+        end
+        tSeriesAvg = tSeriesAvg ./ nValid;
+        tSeriesAvg(nValid == 0) = NaN;
+        tSeriesAvgFull = cat(dimNum + 1, tSeriesAvgFull, tSeriesAvg); %Combine together
+        waitbar(iSlice/nSlices);
+    end %for
+    
+    close(waitHandle);
 
-if dimNum == 3
-    tSeriesAvgFull = permute(tSeriesAvgFull,[1,2,4,3]);
-end %if
+    % Now we need to reshape to have slices be the 3rd dimension. But only if we
+    % have a total of 4 dimensions now, i.e. dimNum == 3
+    
+    if dimNum == 3
+        tSeriesAvgFull = permute(tSeriesAvgFull,[1,2,4,3]);
+    end %if
+end
+
 
 savetSeries(tSeriesAvgFull, hiddenView, newScanNum);
-close(waitHandle);
 
 verbose = prefsVerboseCheck;  % only pop up if we prefer it
 if verbose
-	% This could be displayed more beautifully (turned off msgbox -ras)
-	str = sprintf('Averaged tSeries saved with annotation: %s\n', annotation);
-	str = [str, sprintf('Data are saved in %s data type\n', typeName)];
-	% msgbox(str);
-	disp(str)
+    % This could be displayed more beautifully (turned off msgbox -ras)
+    str = sprintf('Averaged tSeries saved with annotation: %s\n', annotation);
+    str = [str, sprintf('Data are saved in %s data type\n', typeName)];
+    % msgbox(str);
+    disp(str)
 end
 
-% Loop through the open views,  switch their curDataType appropriately,  
+% Loop through the open views,  switch their curDataType appropriately,
 % and update the dataType popups
 INPLANE = resetDataTypes(INPLANE, ndataType);
 VOLUME  = resetDataTypes(VOLUME, ndataType);
@@ -156,7 +189,7 @@ return;
 function [scans, typeName, str] = averageTSeriesGUI(vw, scans, typeName, str)
 % Dialog to get the scan selection and type name for averageTSeries
 for ii = 1:viewGet(vw, 'numScans')
-	scanList{ii} = sprintf('(%i) %s', ii, annotation(vw, ii));
+    scanList{ii} = sprintf('(%i) %s', ii, annotation(vw, ii));
 end
 
 dlg(1).fieldName = 'scans';

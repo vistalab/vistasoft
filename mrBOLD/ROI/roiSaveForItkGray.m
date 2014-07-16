@@ -41,7 +41,7 @@ coords = getCurROIcoords(vw);
 len = size(coords, 2);
 
 % make a 3D image with all points set to zero except ROI = roiColor
-roiData = zeros(size(vw.anat));
+roiData = zeros(viewGet(vw, 'anatomy size'));
 for ii = 1:len
     roiData(coords(1,ii), coords(2,ii), coords(3,ii)) = roiColor;
 end
@@ -60,7 +60,7 @@ if ismember(ext, {'.nii', '.gz'})
     if ~exist(vANATOMYPATH, 'file')
         warning('vANATOMYPATH not found. Not using vANAT header') %#ok<WNTAG>
     else
-        ni       = readFileNifti(vANATOMYPATH);
+        ni       = niftiRead(vANATOMYPATH);
         ni.fname = fname;
         ni.data  = data;
         ni.scl_slope  = 1; % this appears to be necessary for the file to be readable in freesurfer

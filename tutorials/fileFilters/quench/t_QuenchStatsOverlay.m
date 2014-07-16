@@ -25,18 +25,18 @@
 fg=mtrImportFibers('/biac3/wandell4/data/reading_longitude/dti_adults/rb080930/fibers/conTrack/L_OpticRad_JY_20000.pdb');
 
 %load eccentricity map
-ec=readFileNifti('/azure/scr1/vistadata/wmRetinotopy/functional/rb_eccentricity_18-Feb-2011.nii.gz');
+ec=niftiRead('/azure/scr1/vistadata/wmRetinotopy/functional/rb_eccentricity_18-Feb-2011.nii.gz');
 
 %Load quantitative maps
-hlf=readFileNifti('/biac3/wandell5/data/relaxometry/HLF15T15mm/rb1_5T_1_5mms/HLFB1.nii.gz');
-wf=readFileNifti('/biac3/wandell5/data/relaxometry/HLF15T15mm/rb1_5T_1_5mms/Wf.nii.gz');
+hlf=niftiRead('/biac3/wandell5/data/relaxometry/HLF15T15mm/rb1_5T_1_5mms/HLFB1.nii.gz');
+wf=niftiRead('/biac3/wandell5/data/relaxometry/HLF15T15mm/rb1_5T_1_5mms/Wf.nii.gz');
 
 %turn wf into tf
 wf.data=1-wf.data;
 
 %create an FA map. first we need to load the dt6 file
 dt=dtiLoadDt6('/biac3/wandell4/data/reading_longitude/dti_adults/rb080930/dti06trilin/dt6.mat');
-b0=readFileNifti('/biac3/wandell4/data/reading_longitude/dti_adults/rb080930/dti06trilin/bin/b0.nii.gz');
+b0=niftiRead('/biac3/wandell4/data/reading_longitude/dti_adults/rb080930/dti06trilin/bin/b0.nii.gz');
 
 % creating a new nifti image with the same header info as the b0
 fa=b0;

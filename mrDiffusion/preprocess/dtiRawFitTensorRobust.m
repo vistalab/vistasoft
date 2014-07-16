@@ -49,8 +49,8 @@ function dt6FileName = dtiRawFitTensorRobust(dwRaw, bvecs, bvals, ...
 %      dtiRawFitTensor([f 'nii.gz'], [f 'bvecs'], [f 'bvals'], out, [], 'rt', mask);
 % 
 % Show outlier count as an overlay on the b0:
-%      aNi = readFileNifti(fullfile(out,'bin','b0.nii.gz'));
-%      oNi = readFileNifti(fullfile(out,'bin','outliers.nii.gz'));
+%      aNi = niftiRead(fullfile(out,'bin','b0.nii.gz'));
+%      oNi = niftiRead(fullfile(out,'bin','outliers.nii.gz'));
 %      aIm = mrAnatHistogramClip(double(aNi.data),0.4,0.98);
 %      oIm = double(sum(oNi.data,4));
 %      mrAnatOverlayMontage(oIm, oNi.qto_xyz, aIm, aNi.qto_xyz,...
@@ -77,7 +77,7 @@ end
 % Load the raw data
 if(ischar(dwRaw))
     disp(['Loading raw data ' dwRaw '...']);
-    dwRaw = readFileNifti(dwRaw);
+    dwRaw = niftiRead(dwRaw);
     weLoadedRaw = true;
     [dataDir,inBaseName] = fileparts(dwRaw.fname);
 else
@@ -123,9 +123,9 @@ if(exist(outBaseName,'dir'))
             
         if(strcmp(resp,'Cancel')), disp('canceled.'); return; end
     
-    elseif exist(dt6FileName,'file') ...
-        || exist(binDirName,'dir') ...
-        && ~isempty(dir(fullfile(binDirName,'*.nii*'))) ...
+    elseif( exist(dt6FileName,'file') ...
+        || (exist(binDirName,'dir') ...
+        && ~isempty(dir(fullfile(binDirName,'*.nii*'))))) ...
         && clobber ~= 1 ... 
         && clobber == -1
         disp('Tensor fitting already completed and "Clobber" is set to "false". Exiting tensor fit.'); 
@@ -165,7 +165,7 @@ if(~exist('xformToAcPc','var') || isempty(xformToAcPc))
 end
 
 if ~exist('noiseCalcMethod','var') || isempty(noiseCalcMethod)
-    noiseCalcMethod = 'corner';
+    noiseCalcMethod = 'b0';
 end
 
 %% Load the bvecs & bvals
@@ -198,7 +198,7 @@ if(~isempty(brainMask))
     if(ischar(brainMask))
         % brainMask can be a path to the file or the nifti struct or an image
         disp(['Loading brainMask ' brainMask '...']);
-        brainMask = readFileNifti(brainMask);
+        brainMask = niftiRead(brainMask);
     end
     if(isstruct(brainMask))
         brainMask = uint8(brainMask.data);
@@ -257,6 +257,9 @@ end
 % calculate noise from the variance of the b=0 images
 
 sigma = dtiComputeImageNoise(dwRaw, bvals, liberalBrainMask, noiseCalcMethod);
+if sigma==0
+    error('Noise estimate (sigma) is exactly zero; maybe try a different noiseCalcMethod?');
+end
 
 % Memory usage is tight- if we loaded the raw data, clear it now since
 % we've made the reorganized copy that we'll use for all subsequent ops.
@@ -330,7 +333,7 @@ X    = [ones(numVols,1) -q(:,1).^2 -q(:,2).^2 -q(:,3).^2 -2.*q(:,1).*q(:,2)...
 % 50 steps. Implemented in the loop @ ~li 340
 if notDefined('nstep'), nstep = 50; end
 
-fprintf('Fitting %d tensors with RESTORE [nstep=%s] (EXPERIMENTAL AND SLOW!)...\n',...
+fprintf('Fitting %d tensors with RESTORE [nstep=%s] (SLOW!)...\n',...
     nvox,num2str(nstep));
 
 gof      = zeros(1, nvox, 'int16');
@@ -370,7 +373,8 @@ clear logData;
 tic;
 
 % Options for fminsearch optimization
-options    = optimset('Display', 'off', 'MaxIter', 100);
+options    = optimset('Display', 'off', 'MaxIter', 100,...
+                      'Algorithm','levenberg-marquardt');
 sigmaSq    = sigma.^2;
 voxPerStep = ceil(nvox/nstep);
 
@@ -383,23 +387,24 @@ for jj=1:nstep
             % Use a nonlinear search to compute the tensor fit to the data.
             % dtiRawTensorErr computes the difference between the tensor
             % and the data
-            [x, resnorm] = fminsearch(@(x) dtiRawTensorErr(x, data(:,ii), ...
-                X, sigmaSq, false), A(:,ii), options);
+            [x, resnorm] = lsqnonlin(@(x) dtiRawTensorErr(x, data(:,ii), ...
+                X, sigmaSq, false), A(:,ii), [], [], options);
             
             residuals = data(:,ii)-exp(X*x);
             
             % If any residuals are more than 3 standard deviations from the
             % model prediction then redo the search downweigting that point
-            if(any(residuals>=sigma*3))
-                x = fminsearch(@(x) dtiRawTensorErr(x, data(:,ii), X, ...
-                    sigmaSq, true), A(:,ii), options);
+            if(any(abs(residuals)>=sigma*3))
+                x = lsqnonlin(@(x) dtiRawTensorErr(x, data(:,ii), X, ...
+                    sigmaSq, true), A(:,ii), [], [], options);
                 
                 residuals      = data(:,ii)-exp(X*x);
-                o              = residuals>sigma*3;
+                o              = abs(residuals)>sigma*3;
                 outliers(:,ii) = o;
                 
-                [x, resnorm] = fminsearch(@(x) dtiRawTensorErr(x,...
-                    data(~o,ii), X(~o,:), sigmaSq, false), A(:,ii), options);
+                [x, resnorm] = lsqnonlin(@(x) dtiRawTensorErr(x,...
+                    data(~o,ii), X(~o,:), 1, false), A(:,ii), [], [], ...
+                    options);
             end
             A(:,ii) = x;
             gof(ii) = int16(round(resnorm));
@@ -518,7 +523,7 @@ if(~isempty(gof))
     
     % Create summary image of outliers.nii.gz that can be viewed as an
     % image when loaded into DTIfiberUI.
-    outlierImage       = readFileNifti(fullfile(ppBinDir,files.outliers));
+    outlierImage       = niftiRead(fullfile(ppBinDir,files.outliers));
     outlierImage.data  = sum(outlierImage.data,4);
     outlierImage.fname = fullfile(ppBinDir,pBinDir,'outlier_sum_image.nii.gz');
     writeFileNifti(outlierImage);

@@ -32,7 +32,7 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_OutputFcn',  @setUnderlayFig_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin & isstr(varargin{1})
+if nargin && isstr(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -91,7 +91,9 @@ function SaveButton_Callback(hObject, eventdata, handles)
 % hObject    handle to SaveButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global underlay INPLANE HOMEDIR;
+global underlay;
+mrGlobals; 
+
 hunderlay = findobj('Parent',gcf,'Tag','UnderlayListbox');
 whichUnderlay = get(hunderlay,'Value');
 viewName = get(gcf,'UserData');
@@ -120,7 +122,8 @@ function UseButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % save the underlay data in anat.mat
-global underlay INPLANE HOMEDIR;
+global underlay;
+mrGlobals;
 hunderlay = findobj('Parent',gcf,'Tag','UnderlayListbox');
 whichUnderlay = get(hunderlay,'Value');
 viewName = get(gcf,'UserData');
@@ -146,7 +149,8 @@ function InterpInplaneButton_Callback(hObject, eventdata, handles)
 % hObject    handle to InterpInplaneButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global dataTYPES HOMEDIR INPLANE underlay;
+global underlay;
+mrGlobals;
 
 h = msgbox('Loading alignment info...');
 
@@ -195,26 +199,27 @@ function LoadTSeriesButton_Callback(hObject, eventdata, handles)
 % hObject    handle to LoadTSeriesButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global INPLANE dataTYPES HOMEDIR underlay;
+global underlay;
+mrGlobals;
 
 hdt = findobj('Parent',gcf,'Tag','DataTypePopup');
 dt = get(hdt,'Value');
 hscans = findobj('Parent',gcf,'Tag','ScansEdit');
 scans = str2num(get(hscans,'String'));
 
-cmd = sprintf('view = %s;',get(gcf,'UserData'));
+cmd = sprintf('vw = %s;',get(gcf,'UserData'));
 eval(cmd);
 
 % view = viewSet(view,'curdt',dt);
-view.curDataType = dt;
+vw.curDataType = dt;
 
 %%%%% ALT STRATEGY: go through the mean maps;
 % since the caclulation of mean is linear,
 % averaging several mean maps across several
 % scans is the same as doing it from scractch.
-meanMapPath = fullfile(dataDir(view),'meanMap.mat');
+meanMapPath = fullfile(dataDir(vw),'meanMap.mat');
 if ~exist(meanMapPath,'file');
-    computeMeanMap(view,scans);
+    computeMeanMap(vw,scans);
 end
 
 load(meanMapPath);
@@ -223,7 +228,7 @@ load(meanMapPath);
 reload = 0;
 for s = scans
     if isempty(map{s})
-        computeMeanMap(view,s);
+        computeMeanMap(vw,s);
         reload = 1;
     end
 end
@@ -235,10 +240,10 @@ end
 fprintf(' done.\nResizing to viewSize...');
 
 % rescale, resize it to the view's sliceDims
-anatSize = viewSize(view);
-funcSize = dataSize(view,scans(1));
-nFrames = numFrames(view,scans(1));
-for slice = 1:numSlices(view)
+anatSize = viewGet(vw,'Size');
+funcSize = dataSize(vw,scans(1));
+nFrames = numFrames(vw,scans(1));
+for slice = 1:numSlices(vw)
     if length(scans) > 1
         % take avg across scans
         for s = 1:length(scans)

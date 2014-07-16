@@ -59,7 +59,7 @@ if ok
     for ii=1:length(s)
         % From dtiCreateRoiFromMniNifti, but without any of the stuff that
         % translates to/from MNI space.
-        roiNii = readFileNifti(fullfile(p, [char(fileList{s(ii)}) extList{s(ii)}]));
+        roiNii = niftiRead(fullfile(p, [char(fileList{s(ii)}) extList{s(ii)}]));
         % Find all unique, non-zero indices, each distinct index will be a
         % mask for a distinct ROI
         roisToMake=unique(roiNii.data);

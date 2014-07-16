@@ -16,7 +16,7 @@ if(~exist('rawBvals','var')||isempty(rawBvals))
 end
 
 
-ni = readFileNifti(rawNii);
+ni = niftiRead(rawNii);
 bvals = dlmread(rawBvals);
 bvecs = dlmread(rawBvecs);
 

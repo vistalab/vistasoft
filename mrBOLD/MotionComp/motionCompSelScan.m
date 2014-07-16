@@ -35,8 +35,7 @@ if notDefined('baseFrame') || notDefined('nSmooth')
 end
 % record the data type from the source (pre-correction) data
 srcDt = vw.curDataType;
-%TODO: Use viewGet instead
-
+%TODO: Replace with viewGet
 
 %% open a figure for the motion estimate report
 h_report = figure;
@@ -71,9 +70,10 @@ for iScan = 1:length(scanList)
 	if iScan==1
 		xlabel('Time (frames)')
 		ylabel('Motion (voxels)')
-	end
-
-	dataTYPES(tgtDt).scanParams(tgtScan).WithinScanMotion = motion; %TODO: Use dtGet
+    end
+    
+    dataTYPES(tgtDt) = dtSet(dataTYPES(tgtDt), 'Within Scan Motion', motion, tgtScan);
+	%dataTYPES(tgtDt).scanParams(tgtScan).WithinScanMotion = motion; %TODO: Use dtSet
 end
 saveSession;
 

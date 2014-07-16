@@ -90,7 +90,7 @@ niftiDt6 = reshape(dt_sn.dt6(:,:,:,[1 4 2 5 6 3]),[sz(1:3),1,sz(4)]);
 tensors = niftiGetStruct(niftiDt6, dt_sn.xformToAcpc, [], desc, 'DTI');
 
 % Load the MNI to check the normalization results:
-mni = readFileNifti(fullfile(templateDir, 'MNI_T1.nii.gz'));
+mni = niftiRead(fullfile(templateDir, 'MNI_T1.nii.gz'));
 [pddT1,acpcToImXform,mm] = dtiRawCheckTensors(tensors, mni, bm);
 sl = 6:2:size(mni.data,3)-2;
 imgRgb = makeMontage3(flipdim(permute(pddT1,[2 1 3 4]),1), sl, mni.pixdim(1), 0, [], [], -1);

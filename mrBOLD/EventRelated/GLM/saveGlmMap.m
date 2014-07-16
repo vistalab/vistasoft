@@ -16,7 +16,6 @@ if ieNotDefined('scan'), scan = getCurScan(view); end
 % initialize map as zeros
 map = cell(1, numScans(view));
 mapSize = dataSize(view);
-% anatSize = viewSize(view);
 map{scan} = zeros(mapSize);
 
 h = waitbar(0, 'Saving GLM Map...');

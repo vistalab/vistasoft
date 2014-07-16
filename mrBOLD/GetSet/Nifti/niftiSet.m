@@ -17,13 +17,13 @@ switch param
         dim = niftiGet(ni,'dim');
         
         if(any(dim(1:3)~=sz(1:3)))
-            warning('[%s] NIFTI volume dim wrong- setting it to the actual data size.',mfilename);
+            warning('[%s] NIFTI volume dim wrong- setting it to the actual data size.\n',mfilename);
             dim(1:3) = sz(1:3);
             ni = niftiSet(ni,'dim',dim);
         end
         
         if(ni.qform_code==0 && ni.sform_code~=0)
-            warning('[%s] ni.qform_code is zero and sform_code ~=0. Setting ni.qto_* from ni.sto_*...',mfilename);
+            warning('[%s] ni.qform_code is zero and sform_code ~=0. Setting ni.qto_* from ni.sto_*...\n',mfilename);
             %ni = niftiSetQto(ni, ni.sto_xyz);
             ni = niftiSet(ni,'qto',niftiGet(ni,'sto_xyz'));
         end
@@ -34,9 +34,10 @@ switch param
         if(any(origin<2)||any(origin>dim(1:3)-2))
             [~,r,s,k] = affineDecompose(niftiGet(ni, 'qto_ijk'));
             t = ni.dim/2;
-            warning('[%s] Qto matrix defines an origin very far away from the isocenter.\n',mfilename);
-            warning('[%s] This implies that the Qto matrix may be bad - please check qto_ijk. An automatic fix will be attempted.\n',mfilename);
-            warning('[%s] Origin to the image center is at [%2.3f,%2.3f,%2.3f] pix.\n',mfilename,t(1),t(2),t(3));
+            warning_string = [sprintf('[%s] Qto matrix defines an origin very far away from the isocenter.\n',mfilename),...
+                              sprintf('This implies that the Qto matrix may be bad - please check qto_ijk. An automatic fix will be attempted.\n'),...
+                              sprintf('Origin to the image center is at [%2.3f,%2.3f,%2.3f] pix.\n',t(1),t(2),t(3))];
+            warning(warning_string);
             %ni = niftiSetQto(ni, inv(affineBuild(t,r,s,k)));
             ni = niftiSet(ni,'qto',inv(affineBuild(t,r,s,k)));
             

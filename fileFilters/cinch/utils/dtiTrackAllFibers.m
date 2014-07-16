@@ -48,7 +48,7 @@ opts.whichAlgorithm = 1;
 opts.whichInterp = 1;
 opts.seedVoxelOffsets = [0];
 
-dt6 = readFileNifti(fullfile(dataDirectory,'tensors.nii.gz'));
+dt6 = niftiRead(fullfile(dataDirectory,'tensors.nii.gz'));
 % check for the new NIFTI-compliant 5d format
 if(dt6.ndim>4)
   % Convert from the 5d, lower-tri row order NIFTI tensor format
@@ -56,7 +56,7 @@ if(dt6.ndim>4)
   dt6.data = double(squeeze(dt6.data(:,:,:,1,[1 3 6 2 4 5])));
 end
 if(exist(fullfile(dataDirectory,'brainMask.nii.gz')))
-  mask = readFileNifti(fullfile(dataDirectory,'brainMask.nii.gz'));
+  mask = niftiRead(fullfile(dataDirectory,'brainMask.nii.gz'));
   for(ii=1:6)
 	tmp = dt6.data(:,:,:,ii);
 	tmp(~mask.data) = 0;

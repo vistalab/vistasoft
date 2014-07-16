@@ -85,7 +85,7 @@ xform = inv(mrSESSION.alignment);
 ipCoords = round(xform*[roi.coords; ones(1,nVoxels)]);
 
 % get only coords w/in inplanes
-dims = viewSize(inplane);
+dims = viewGet(inplane,'Size');
 c = ipCoords;
 ok = find( c(1,:)>=1 & c(1,:)<=dims(1) & ...
             c(2,:)>=1 & c(2,:)<=dims(2) & ...

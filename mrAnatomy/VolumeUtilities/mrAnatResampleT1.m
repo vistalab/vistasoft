@@ -19,7 +19,7 @@ function [t1New, xformNew, bb] = mrAnatResampleT1(t1File, outT1FileName, outMm, 
 disp('resampling the t1...');
 
 % Get the t1
-t1 = readFileNifti(t1File);
+t1 = niftiRead(t1File);
 
 % Get the xform from the nifti struct
 if notDefined('xform'), xform = t1.qto_xyz; end

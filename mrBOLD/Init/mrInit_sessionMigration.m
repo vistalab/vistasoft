@@ -41,8 +41,8 @@ end %try
 disp('Inplane anatomy update has been applied correctly.');
 
 try
-    if ~isfield(mrSESSION.functionals(1),'keepFrames')
-        %Has not been updated yet, let's update
+    if ~strcmp(sessionGet(mrSESSION,'Version'),'2.1')
+       %Has not been updated yet, let's update
         mrInit_updateSessiontSeries;
     else
         display('tSeries functionals update has already been applied. Will not re-apply.');

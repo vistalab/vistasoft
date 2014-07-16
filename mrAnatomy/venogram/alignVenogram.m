@@ -84,7 +84,7 @@ niftiVenogramAnat   = niftiFromDicom(dicomVenogramAnatDir, dicomVenogramAnatDir)
 
 
 %% (2) Reslice NIFTIs to resolution of stored t1-anatomy
-ni = readFileNifti(t1);
+ni = niftiRead(t1);
 res = ni.pixdim; clear ni;
 
 % paths to resliced niftis from venogram (resolution of stored t1)
@@ -175,8 +175,8 @@ for ii = 1:2;
     rxClose;
 
     % copy the nifti fields from the t1
-    ni  = readFileNifti(aligned);
-    ni2 = readFileNifti(t1);
+    ni  = niftiRead(aligned);
+    ni2 = niftiRead(t1);
     ni3 = ni2;
     ni3.data = ni.data;
     ni3.fname = ni.fname;

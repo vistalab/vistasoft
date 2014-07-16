@@ -40,7 +40,7 @@ if notDefined('roi_img') || ~exist(roi_img,'file')
     roi_img = mrvSelectFile('r','.nii*','Select Nifti File');
 end   
 
-roiImg = readFileNifti(roi_img);
+roiImg = niftiRead(roi_img);
 
 % Pull out the coordinates from roiImg.data
 [x1,y1,z1] = ind2sub(size(roiImg.data), find(roiImg.data));

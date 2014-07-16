@@ -52,6 +52,7 @@ for n=1:numel(params.analysis.x0),
     %--- now apply glm to fit RF
     %-----------------------------------
     % minimum RSS fit
+    
     X    = [prediction(:,n) trends];
     % This line takes up 30% of the time
     % lscov takes as long as the pinv method but provides the rss as well...

@@ -21,7 +21,7 @@ for ss = 1:length(subjVec)
         mtrComputeManyFiberDensities(subjDir,'paths_STT_LDOCC.dat',3000);
     end
     sttDensityImage = dir('paths_STT_LDOCC*_fd_image.nii.gz');
-    niL = readFileNifti(sttDensityImage(1).name);
+    niL = niftiRead(sttDensityImage(1).name);
 
     f = dir('paths_STT_RDOCC*_fd_image.nii.gz');
     if isempty(f)
@@ -29,7 +29,7 @@ for ss = 1:length(subjVec)
         mtrComputeManyFiberDensities(subjDir,'paths_STT_RDOCC.dat',3000);
     end
     sttDensityImage = dir('paths_STT_RDOCC*_fd_image.nii.gz');
-    niR = readFileNifti(sttDensityImage(1).name);
+    niR = niftiRead(sttDensityImage(1).name);
     
     imgComb = double(niL.data>0) + double(niR.data>0)*2;
     disp(['Writing ' fullfile(subjDir,imageDir,combSTTFile) ' ...']);
@@ -48,7 +48,7 @@ for ss = 1:length(subjVec)
             disp('Density file does not exist, creating it ...');
             mtrComputeManyFiberDensities(subjDir,pathsFile,threshVec);
         end
-        niL = readFileNifti(densityFile);
+        niL = niftiRead(densityFile);
 
         fgDir = fullfile(subjDir,'conTrack/resamp_RDOCC');
         disp(['cd ' fgDir]);
@@ -58,7 +58,7 @@ for ss = 1:length(subjVec)
         if isempty(f)
             mtrComputeManyFiberDensities(subjDir,pathsFile,threshVec);
         end
-        niR = readFileNifti(densityFile);
+        niR = niftiRead(densityFile);
 
         imgComb = double(niL.data>0) + double(niR.data>0)*2;
         disp(['Writing ' fullfile(subjDir,imageDir,combFile) ' ...']);

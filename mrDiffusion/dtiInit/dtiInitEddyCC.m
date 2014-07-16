@@ -16,6 +16,7 @@ function [doECC doResamp] = dtiInitEddyCC(dwParams,dwDir,doResamp)
 %%
 % 
 doECC = false;
+doResamp = false;
 
 % If the user has elected not to do ECC then set doECC to false and go on.
 if dwParams.eddyCorrect == -1 

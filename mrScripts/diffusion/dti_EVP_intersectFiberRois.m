@@ -36,7 +36,7 @@ for ii=1:length(subs)
             dt6Dir = fullfile(subDir, dirs);
             roiDir = fullfile(dt6Dir,'ROIs','Mori_Contrack');
             dt     = dtiLoadDt6(fullfile(dt6Dir,'dt6.mat'));
-            t1     = readFileNifti(fullfile(subDir,'t1','t1.nii.gz'));
+            t1     = niftiRead(fullfile(subDir,'t1','t1.nii.gz'));
 
             disp(['Processing ' subDir '...']);
            

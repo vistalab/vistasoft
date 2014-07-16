@@ -43,7 +43,7 @@ if(~exist(ctFile,'file'))
     ct.fname = 'ct.nii.gz';
     writeFileNifti(ct);
 else
-    ct = readFileNifti(ctFile);
+    ct = niftiRead(ctFile);
 end
 
 if(~exist(t1File,'file'))
@@ -61,13 +61,13 @@ if(~exist(t1File,'file'))
     writeFileNifti(t1);
     
 else
-    t1 = readFileNifti(t1File);
+    t1 = niftiRead(t1File);
     t1 = niftiApplyCannonicalXform(t1);
 end
 
 % Run this to manually set the ac-pc alignment
 %mrAnatSetNiftiXform(t1File);
-%t1 = readFileNifti(t1File);
+%t1 = niftiRead(t1File);
 
 % CT slice thickness is wrong in the DICOM header. Header said 1.25, but it
 % is actually 1.0. Maybe the slices overlap? Use SliceLocation field to see
@@ -119,7 +119,7 @@ rgbIm = makeMontage3(r,g,b,sl,1);
 imwrite(rgbIm,'ct_t1_align.png');
 
 %% To regenerate the gray matter segmentation, run the following:
-classNi = readFileNifti('t1_class_gray_electrodes.nii.gz');
+classNi = niftiRead('t1_class_gray_electrodes.nii.gz');
 % left hemisphere
 class = readClassFile(classNi,0,0,'left');
 [nodes,edges,classData] = mrgGrowGray(class,2);

@@ -95,7 +95,7 @@ return
 % % % because there should only be one place where we load the data. 
 % % 
 % % if ~isempty(dwi.nifti) && exist(dwi.nifti,'file')
-% %     dwi.nifti = readFileNifti(dwi.nifti);
+% %     dwi.nifti = niftiRead(dwi.nifti);
 % %     if strfind(dwi.name,'Default') ==1
 % %         dwi.name  = dwi.nifti.fname;
 % %     end

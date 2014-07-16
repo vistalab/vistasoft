@@ -1,4 +1,4 @@
-function view = makeFlatMaskLevels(view,blurLevel,thresh)
+function vw = makeFlatMaskLevels(vw,blurLevel,thresh)
 %
 % function view = makeFlatMaskLevels(view,blurLevel,thresh)
 %
@@ -14,7 +14,7 @@ function view = makeFlatMaskLevels(view,blurLevel,thresh)
 %
 % ras, 10/04. Version for flat level view (coords is not a cell anymore).
 
-global mrSESSION
+global mrSESSION;
 
 if ~exist('blurLevel','var')
   blurLevel = 1;
@@ -23,10 +23,10 @@ if ~exist('thresh','var')
   thresh = .1;
 end
 
-mask=zeros(viewSize(view));
-imSize = view.ui.imSize;
-for slice = 1:numSlices(view)
-    coords = view.coords{slice};
+mask=zeros(viewGet(vw,'Size'));
+imSize = vw.ui.imSize;
+for slice = 1:numSlices(vw)
+    coords = vw.coords{slice};
     coords = round(coords);
     
     if isempty(coords)
@@ -58,7 +58,7 @@ for slice = 1:numSlices(view)
 end
 
 % Set view.ui.mask field
-view.ui.mask = mask;
+vw.ui.mask = mask;
 
 return
 

@@ -99,7 +99,7 @@ switch param
         if isequal(vw.name,'hidden')
             % no UI or slider -- use tSeries slice
             curSlice = vw.tSeriesSlice;
-            if isnan(curSlice), val = 1; end
+            if isnan(curSlice) || isempty(curSlice), val = 1; end
             return
         end
         switch vw.viewType
@@ -186,6 +186,23 @@ switch param
         %   dtStruct = viewGet(vw, 'DT struct');
         curdt = viewGet(vw, 'Current Data TYPE');
         val   = dataTYPES(curdt);
+        
+    case 'size'
+    
+        switch viewGet(vw,'View Type')
+            case 'Inplane'
+                val = viewGet(vw,'anatsize');
+            case {'Volume','Gray','generalGray'}
+                if isfield(vw, 'anat')
+                    if ~isempty(vw.anat), val = viewGet(vw,'Anat Size'); end
+                end
+                if ~exist('val','var') || isempty(val)
+                    pth = getVAnatomyPath; % assigns it if it's not set
+                    [~, val] = readVolAnatHeader(pth);
+                end
+            case 'Flat'
+                val = [vw.ui.imSize,2];
+        end
         
         
     otherwise

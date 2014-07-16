@@ -96,7 +96,7 @@ case 'Flat'
     % Pull out data for this scan
     data = getCurData(vw,fieldname,scan);
     % Construct subdata for voxels in ROI
-    indices = coords2Indices(roi.coords,viewSize(vw));
+    indices = coords2Indices(roi.coords,viewGet(vw,'Size'));
     if ~isempty(data)
         subdata = data(indices);   
     else

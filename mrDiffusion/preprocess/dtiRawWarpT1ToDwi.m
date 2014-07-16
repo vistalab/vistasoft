@@ -52,7 +52,7 @@ if(~exist('mnB0','var')||isempty(mnB0))
 end
 if(ischar(mnB0))
   disp(['Loading b0 data ' mnB0 '...']);
-  mnB0 = readFileNifti(mnB0);
+  mnB0 = niftiRead(mnB0);
 end
 
 % Check output file
@@ -62,7 +62,7 @@ end
 
 if(ischar(t1))
   disp(['Loading raw data ' t1 '...']);
-  t1 = readFileNifti(t1);
+  t1 = niftiRead(t1);
 end
 
 dtMm = mnB0.pixdim(1:3);
@@ -138,10 +138,10 @@ subs = {'at040918','at051008','at060825','at070815'};
 
 
 % Align and resamble class from y1 to other years
-r = readFileNifti(fullfile(bd,subs{1},'t1','t1.nii.gz'));
-c = readFileNifti(fullfile(bd,subs{1},'t1','t1_class.nii.gz'));
+r = niftiRead(fullfile(bd,subs{1},'t1','t1.nii.gz'));
+c = niftiRead(fullfile(bd,subs{1},'t1','t1_class.nii.gz'));
 for(ii=2:numel(subs))
-    a = readFileNifti(fullfile(bd,subs{ii},'t1','t1.nii.gz'));
+    a = niftiRead(fullfile(bd,subs{ii},'t1','t1.nii.gz'));
     sz = size(a.data);
     xform =  mrAnatRegister(double(r.data),double(a.data),[],[],true);
     bb = [1 1 1; sz];
@@ -162,8 +162,8 @@ for(ii=1:numel(subs))
     % Clean up the classification and add in the sub-cortical gray
     scgNi = mrGrayConvertFirstToClass(fullfile(bd,subs{ii},'t1','first','t1_sgm_all_th4_first.nii.gz'), false, []);
     l = mrGrayGetLabels;
-    c = readFileNifti(fullfile(bd,subs{ii},'t1','t1_class.nii.gz'));
-    bm = readFileNifti(fullfile(bd,subs{ii},'t1','t1_mask.nii.gz'));
+    c = niftiRead(fullfile(bd,subs{ii},'t1','t1_class.nii.gz'));
+    bm = niftiRead(fullfile(bd,subs{ii},'t1','t1_mask.nii.gz'));
     c.data(~bm.data) = 0;
     % Add a perimeter of CSF to ensure that the brain is encased in CSF.
     perim = imdilate(bm.data>0,strel('disk',5));
@@ -184,11 +184,11 @@ ip = [1 1 1 0 0 0];
 for(ii=1:numel(subs))
     cd(fullfile(bd,subs{ii}));
     % Generate a simple seg file for FascTrack.
-    t1 = readFileNifti('t1/t1.nii.gz');
+    t1 = niftiRead('t1/t1.nii.gz');
     t1.data = double(t1.data);
-    bm = readFileNifti('t1/t1_mask.nii.gz');
+    bm = niftiRead('t1/t1_mask.nii.gz');
     bm.data = logical(bm.data);
-    b0 = readFileNifti('dti06/bin/b0.nii.gz');
+    b0 = niftiRead('dti06/bin/b0.nii.gz');
     b0.data = double(b0.data);
     % unwarp using skull-stripped t1
     t1.data(~bm.data) = 0;
@@ -210,9 +210,9 @@ for(ii=1:numel(subs))
 	writeFileNifti(ni);
     
     l = mrGrayGetLabels;
-    c = readFileNifti('t1/t1_class.nii.gz');
+    c = niftiRead('t1/t1_class.nii.gz');
     c.data = double(c.data);
-    bm = readFileNifti('t1/t1_mask.nii.gz');
+    bm = niftiRead('t1/t1_mask.nii.gz');
     %disp('Growing Gray...');
     %cg = mrgSaveClassWithGray(4, c, []);
     % clear anything outside the brain mask
@@ -220,7 +220,7 @@ for(ii=1:numel(subs))
     c.data(~bm.data) = 0;
     disp('Loading FIRST data...');
     % We want ventricles treated as wm, but nothing else
-    scgNi = readFileNifti('t1/first/t1_sgm_all_th4_first.nii.gz');
+    scgNi = niftiRead('t1/first/t1_sgm_all_th4_first.nii.gz');
     disp('Labeling ventricles as CSF...');
     csf = any(scgNi.data(:,:,:,2:end)==4|scgNi.data(:,:,:,2:end)==104|scgNi.data(:,:,:,2:end)==43|scgNi.data(:,:,:,2:end)==143,4);
     csf = mrAnatResliceSpm(double(csf), t1.qto_ijk, bb, outMm, ip, 0);

@@ -56,7 +56,7 @@ system(cmd,'-echo');
 % Load dti-noisy and dti-clean in order to prepare them for dtiFitTensorMex
 b0Factor = 1000;
 disp(' '); disp(['Apply b0 offset factor of ' num2str(b0Factor) ' and AcPc offset to image center ...']);
-ni = readFileNifti(noisyImg);
+ni = niftiRead(noisyImg);
 ni.data = ni.data*b0Factor;
 m = abs(ni.qto_xyz);
 % Must add half voxel offset always for center of image
@@ -65,7 +65,7 @@ im = inv(m);
 im(1:3,4) = im(1:3,4) + 0.5; 
 ni = niftiSetQto(ni,m);
 writeFileNifti(ni);
-ni = readFileNifti(cleanImg);
+ni = niftiRead(cleanImg);
 ni.data = ni.data*b0Factor;
 m = abs(ni.qto_xyz);
 m(1:3,4) = - ni.pixdim(1:3) .* ni.dim(1:3)/2;

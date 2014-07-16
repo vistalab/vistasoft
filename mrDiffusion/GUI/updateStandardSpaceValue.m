@@ -40,7 +40,7 @@ else
                 lutFile = dtiGetFilenameInDT6(handles.dataFile,'lutMNI');
                 if(exist(lutFile,'file') && ~isempty(lutFile))
                     disp(['Loading inverse deformation from ' lutFile '...']);
-                    ni = readFileNifti(lutFile);
+                    ni = niftiRead(lutFile);
                     handles.t1NormParams(normSs).coordLUT = squeeze(ni.data(:,:,:,1,:));
                     handles.t1NormParams(normSs).inMat = ni.qto_ijk;
                     clear ni;

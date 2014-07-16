@@ -121,6 +121,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('statisticalmap') = 'map';
     DictViewTranslate('smap') = 'map';
     DictViewTranslate('allmap') = 'map';
+    DictViewTranslate('parmap') = 'map';
+    DictViewTranslate('parametermap') = 'map';
     DictViewTranslate('mapname') = 'mapname';
     DictViewTranslate('mapunits') = 'mapunits';
     DictViewTranslate('mapclip') = 'mapclip';
@@ -280,11 +282,13 @@ if isempty(DictViewTranslate)
     DictViewTranslate('classfilename') = 'classfilename';
     DictViewTranslate('classfile') = 'classfilename';
     DictViewTranslate('classpath') = 'classfilename';
+    DictViewTranslate('classdata') = 'classdata';
     DictViewTranslate('leftclassfile') = 'leftclassfile';
     DictViewTranslate('leftclassfilename') = 'leftclassfile';
     DictViewTranslate('rightclassfile') = 'rightclassfile';
     DictViewTranslate('rightclassfilename') = 'rightclassfile';
-    DictViewTranslate('leftgrayfile') = 'leftgrayfile';
+	DictViewTranslate('classdata') = 'classdata';
+	DictViewTranslate('leftgrayfile') = 'leftgrayfile';
     DictViewTranslate('leftgrayfilename') = 'leftgrayfile';
     DictViewTranslate('leftpath') = 'leftgrayfile';
     DictViewTranslate('flatleftpath') = 'leftgrayfile';
@@ -310,7 +314,11 @@ if isempty(DictViewTranslate)
     DictViewTranslate('currentmeshdata') = 'meshdata';
     DictViewTranslate('selectedmeshdata') = 'meshdata';
     DictViewTranslate('meshn') = 'meshn';
+    DictViewTranslate('meshnum') = 'meshn';
+    DictViewTranslate('meshnumber') = 'meshn';    
     DictViewTranslate('currentmeshn') = 'meshn';
+    DictViewTranslate('currentmeshnum') = 'meshn';    
+    DictViewTranslate('currentmeshnumber') = 'meshn';        
     DictViewTranslate('setcurrentmeshn') = 'meshn';
     DictViewTranslate('curmeshnum') = 'meshn';
     DictViewTranslate('curmeshn') = 'meshn';
@@ -381,6 +389,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('initdisplaymodes') = 'initdisplaymodes';
     DictViewTranslate('resetdisplaymodes') = 'initdisplaymodes';
     DictViewTranslate('ui') = 'ui';
+    DictViewTranslate('cmapcurrent') = 'cmapcurrent';    
     DictViewTranslate('userinterface') = 'ui';
     DictViewTranslate('fignum') = 'fignum';
     DictViewTranslate('figurenumber') = 'fignum';
@@ -418,6 +427,8 @@ if isempty(DictViewTranslate)
     DictViewTranslate('curcmap') = 'cmap';
     DictViewTranslate('currentcmap') = 'cmap';
     DictViewTranslate('overlaycmap') = 'cmap';
+    DictViewTranslate('cmapmode') = 'cmapmode';
+    DictViewTranslate('colormapmode') = 'cmapmode';
     DictViewTranslate('anatomymap') = 'anatomymap';
     DictViewTranslate('anatomycolormap') = 'anatomymap';
     DictViewTranslate('anatmap') = 'anatomymap';
@@ -478,7 +489,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('tseriesdir') = 'tseriesdir';
     DictViewTranslate('tseriesdirectory') = 'tseriesdir';
     DictViewTranslate('graycoords') = 'graycoords';
-    
+    DictViewTranslate('size')           = 'size';
     
 end %if
 

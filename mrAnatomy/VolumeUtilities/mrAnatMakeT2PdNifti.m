@@ -9,7 +9,7 @@ imName = {'pd','t2'};
 im.img2std = computeCannonicalXformFromIfile(fullfile(p,f));
 [f,p] = uigetfile('*.gz','Select t1 file...',baseDir);
 if(isnumeric(f)) error('user cancelled.'); end
-refNi = readFileNifti(fullfile(p,f));
+refNi = niftiRead(fullfile(p,f));
 VG.uint8 = uint8(round(mrAnatHistogramClip(double(refNi.data),0.4,0.98).*255));
 VG.mat = refNi.qto_xyz;
 for(ii=1:2)
@@ -34,7 +34,7 @@ for(ii=1:2)
 end
 clear dt ip VF VG f;
 
-t2 = readFileNifti(fullfile(baseDir, 't2.nii.gz'));
+t2 = niftiRead(fullfile(baseDir, 't2.nii.gz'));
 handles = guidata(gcf);
 newMm = [0.5 0.5 0.5];
 [img,xform] = mrAnatResliceSpm(double(t2.data),t2.qto_ijk,dtiGet(handles,'t1bb'),newMm);
@@ -43,7 +43,7 @@ img = img./max(img(:));
 handles = dtiAddBackgroundImage(handles, img, 't2', newMm, diag([1 1 1 1]));
 guidata(gcf, handles);
 
-pd = readFileNifti(fullfile(baseDir, 'pd.nii.gz'));
+pd = niftiRead(fullfile(baseDir, 'pd.nii.gz'));
 handles = guidata(gcf);
 % The nifti q-form goes converts voxel space to ac-pc space, but we want
 % voxel to t1-anat, so we undo the ac-pc part.
@@ -58,9 +58,9 @@ guidata(gcf, handles);
 % Starting from NIFTIS:
 %
 baseDir = '/biac3/wandell4/data/Achiasma/DL070825_anatomy/';
-ni1 = readFileNifti(fullfile(baseDir,'raw','t2pd_1.nii.gz');
-ni2 = readFileNifti(fullfile(baseDir,'raw','t2pd_2.nii.gz');
-ref = readFileNifti(fullfile(baseDir,'raw','t1.nii.gz');
+ni1 = niftiRead(fullfile(baseDir,'raw','t2pd_1.nii.gz');
+ni2 = niftiRead(fullfile(baseDir,'raw','t2pd_2.nii.gz');
+ref = niftiRead(fullfile(baseDir,'raw','t1.nii.gz');
 im1 = ni1.data(:,:,[1:2:40]);
 im2 = ni2.data(:,:,[1:2:40]);
 xform =  mrAnatRegister(im2,im1);

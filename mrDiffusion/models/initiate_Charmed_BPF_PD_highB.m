@@ -27,7 +27,7 @@ S_Raw='/biac3/wandell4/data/reading_longitude/dti_adults/ns090519/raw/dwi_g354_b
 % dt6_path='/biac3/wandell4/data/reading_longitude/dti_adults/ns090519/dti40';
 % 
 % relax_DirDat = '/biac3/wandell5/data/relaxometry/ns_090512/trilin_nss_1';
-% f = readFileNifti(fullfile(relax_DirDat,'f.nii.gz'));
+% f = niftiRead(fullfile(relax_DirDat,'f.nii.gz'));
 % BFP=f.data;
 % 
 % BPF=Fcc_cor12(CC_Cor);

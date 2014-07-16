@@ -34,7 +34,7 @@ bvecs = dlmread([bn '_aligned.bvecs']);
 bvals = dlmread([bn '_aligned.bvals']);
 ec = load([bn '_ecXform.mat']);
 acpc = load([bn '_acpcXform.mat']);
-dwRaw = readFileNifti([bn '.nii.gz']);
+dwRaw = niftiRead([bn '.nii.gz']);
 % APply the cannonical xform to make sure data are unflipped axial
 % (RAS) oriented. The acpc xform assumes this and our mrDiffusion
 % tempalates are in this orientation.
@@ -114,7 +114,7 @@ return;
 
 if(1)
   % Save one slice to a movie
-  dwSn = readFileNifti(outFname);
+  dwSn = niftiRead(outFname);
   M = zeros(dwSn.dim([1,2,4]),'uint8');
   slNum = round(dwSn.dim(3)/2);
   for(ii=1:dwSn.dim(4))    
