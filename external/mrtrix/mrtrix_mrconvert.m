@@ -14,7 +14,7 @@ if strcmp(  orig_data_file(end-1:end), 'gz')
     % Need to change the target for conversion:
     convert_file = orig_data_file(1:end-3);
     if status ~= 0 && ~exist(convert_file,'file')
-        error('There was some problem extracting the raw data file');
+        error('There was some problem extracting the raw data file. \n UNIX Message: %s \n',results);
     end
 else
     convert_file = orig_data_file;

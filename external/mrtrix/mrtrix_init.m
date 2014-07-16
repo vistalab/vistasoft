@@ -45,13 +45,17 @@ function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
 % Bob, Ariel & Franco (c) Stanford Vista Team 2012
 
 % Loading the dt file containing all the paths to the fiels we need.
+if ~isstruct(dt6)
 dt_info = load(dt6);
+else
+    dt_info = dt6;
+end
 
 % Strip the file names out of the dt6 strings. 
 dwRawFile    = dt_info.files.alignedDwRaw;
 [session,dwiname] = fileparts(dwRawFile);
 [~,dwiname] = fileparts(dwiname);
-session = fileparts(session);
+% session = fileparts(session);
 
 % If the output fibers folder was not passed in, then generate one in the current
 % mrDiffusion session.
@@ -114,6 +118,7 @@ if (~computed.('wm'))
         % Use mrDiffusion default white-matter mask
         wmMaskFile = fullfile(session, dt_info.files.wmMask);
     end
+    fprintf('[%s] Creating WM mask from file: %s\n', mfilename, wmMaskFile)
     mrtrix_mrconvert(wmMaskFile, files.wm)
 end
 
