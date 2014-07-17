@@ -5,15 +5,28 @@ function lmax = mrtrix_findlmax(nbvecs)
 % reproted here:
 % http://www.brain.org.au/software/mrtrix/tractography/preprocess.html
 %
-% lmax = mrtrix_findlmax(nbvecs)
+% The maximum harmonic order to fit in the spherical deconvolution model
+% must be an even integer. It determines the flexibility  of the resulting
+% model fit to the diffusion signal (higher values correspond to more
+% flexible models), but also determines number of parameters that need to
+% be fit. The number of diffusion directions acquired should be larger than
+% the number of parameters required.
+% - lmax: 4  -> nParams 15
+% - lmax: 8  -> nParms  45
+% - lmax: 12 -> nParmas 91
+% General formula: 
+% - lmax = n	nParams = ½ (n+1)(n+2)
+%
+% USAGE:
+%   lmax = mrtrix_findlmax(nbvecs)
 %
 % INPUTS:
 %  nbvecs - number of directions acquired for a data set. For example the
-%  size of the bvecs: nbvecs = size(bvecs,2)
+%           size of the bvecs: nbvecs = size(bvecs,2)
 %
 % OUPUTS:
 %  lmax  - the Maximum harmonic order that can be used given the number of
-%  measued diffusion directions (size
+%          measured diffusion directions.
 %
 % EXAMPLE:
 %  bvecs  = dlmread('path/to/bvecs/file/in/mrdiffusion/formatbv.bvec')
