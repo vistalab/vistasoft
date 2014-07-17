@@ -1,4 +1,4 @@
-function dtiDt6Migrate
+function dtiDt6Migrate(rawDir)
 %
 % Migrate a dt6 structure from a previosu cfolder to the current folder. 
 %
@@ -25,7 +25,6 @@ function dtiDt6Migrate
 dt6NewDir = pwd;
 subDir    = fileparts(dt6NewDir);
 
-% FIX FIX MAke sure we are updateing the t
 % (1) Load the dt6 file:
 load('dt6.mat')
 
@@ -35,19 +34,23 @@ expression = params.subDir;
 % (3) We change three fields in files
 string       = files.alignedDwRaw;
 [~,matchend] = regexp(string,expression);
-rawFile      = files.alignedDwRaw(matchend+1:end);
-files.alignedDwRaw = fullfile(subDir,rawFile);
+params.subDir     = subDir;
 
-bvecsFile            = files.alignedDwBvecs(matchend+1:end);
-files.alignedDwBvecs = fullfile(subDir,bvecsFile);
+if notDefined('rawDir')
+rawDir            = params.rawDataDir(matchend+1:end);
+end
+params.rawDataDir = fullfile(subDir,rawDir);
 
-bvalsFile            = files.alignedDwBvals(matchend+1:end);
-files.alignedDwBvals = fullfile(subDir,bvalsFile);
+[~, rawFile,ext]   = fileparts(files.alignedDwRaw);
+files.alignedDwRaw = fullfile(params.rawDataDir,[rawFile,ext]);
+
+[~, bvecsFile,ext]   = fileparts(files.alignedDwBvecs);
+files.alignedDwBvecs = fullfile(params.rawDataDir,[bvecsFile,ext]);
+
+[~, bvalsFile,ext]   = fileparts(files.alignedDwBvals);
+files.alignedDwBvals = fullfile(params.rawDataDir,[bvalsFile,ext]);
 
 % (4) We change two fields in params:
-params.subDir     = subDir;
-rawDir            = params.rawDataDir(matchend+1:end);
-params.rawDataDir = fullfile(subDir,rawDir);
 
 % (5) Move the current dt6 into a backup
 movefile('dt6.mat', 'dt6_old.mat')

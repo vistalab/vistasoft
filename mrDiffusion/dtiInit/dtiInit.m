@@ -120,7 +120,6 @@ bvals = dlmread(dwDir.bvalsFile);
 
 [doResamp, bvecs, bvals, dwRaw] = dtiInitCheckVols(bvecs, bvals, dwRaw, dwParams);
 
-
 %% VII. Rotate bvecs using Rx or CanXform: * More comments from RFD needed.
 
 if dwParams.rotateBvecsWithRx 
