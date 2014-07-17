@@ -90,11 +90,9 @@ fwrite(fid,numalgs,'uint');  % Well, this is weird.  I guess numalgs is always z
 % Write algorithm header
 % saveAlgorithmHeader(pdb,fid);
 
-% Write version info !!!! WHAT ... always writes version 2!!!!!
-% version = 2;
 fwrite(fid,version,'uint');
 
-%Writing path info
+% Writing path info
 numpaths = length(fg.fibers);
 fwrite(fid,numpaths,'uint');
 fileOffsets = zeros(1,numpaths);
