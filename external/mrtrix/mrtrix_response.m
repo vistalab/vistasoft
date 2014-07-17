@@ -22,7 +22,7 @@ function [status,results] = mrtrix_response(mask_file, fa_file, sf_file,...
 % NOTES
 % http://www.brain.org.au/software/mrtrix/tractography/preprocess.html
 %
-% Franco Pestilli and Ariel Rokem, Stanford University
+% Franco Pestilli, Bob Dougherty and Ariel Rokem, Stanford University
 if notDefined('verbose'), verbose = true;end
 if notDefined('bkgrnd'),   bkgrnd = false;end
 if notDefined('lmax'),       lmax = 6;end

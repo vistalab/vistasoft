@@ -5,17 +5,14 @@ function fg = mrtrix_tck2pdb(tck_file, pdb_file)
 % Convert an mrtrix .tck tracking file to the pdb format. 
 % 
 %
-% Parameters
-% ----------
-% tck_file: string, full path to the tck file. 
-% pdb_file: string, full path to the resulting pdb file. 
+% INPUTS
+%   tck_file - string, full path to the tck file. 
+%   pdb_file - string, full path to the resulting pdb file. 
 % 
 % Notes
-% -----
-% Uses dtiImportFibersMrtrix.
+%  see dtiImportFibersMrtrix.m
 %
-%
-% Franco Pestilli and Bob Dougherty Stanford University 
+% Franco Pestilli, Ariel Rokem and Bob Dougherty Stanford University 
 
 if exist(tck_file,'file')
    fg = dtiImportFibersMrtrix(tck_file);
