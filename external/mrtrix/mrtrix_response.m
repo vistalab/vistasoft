@@ -21,7 +21,7 @@ function [status,results] = mrtrix_response(mask_file, fa_file, sf_file,...
 %                 In a unix shell type the followin for more information: 
 %                 $threshold --help
 %                 Possible alternative:
-%                   '-percent .8' % thresholding efined as percent FA
+%                   '-percent .8' % thresholding defined as percent FA
 %   show_figure - Optional. Whether to show a figure of the response function
 %                 profile (default: true)
 %       verbose - Outputs the opretions being performted in the MatLab
