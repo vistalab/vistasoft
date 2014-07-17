@@ -127,12 +127,9 @@ end
 % Estimate the response function of single fibers. 
 % We use the max_lmax to estimate the response.
 if (~computed.('response'))    
-    keyboard
-  mrtrix_response(files.brainmask, files.fa, files.sf, files.dwi,...
+  mrtrix_response(files.wm, files.fa, files.sf, files.dwi, ...
       files.response, files.b, true,false, max_lmax);
 end
-
-
 
 % Compute the CSD estimates: 
 if (~computed.('csd'))  
@@ -140,43 +137,5 @@ if (~computed.('csd'))
   mrtrix_csdeconv(files.dwi, files.response, lmax, files.csd, files.b, files.brainmask);
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%
-% mrtrix_build_files %
-%%%%%%%%%%%%%%%%%%%%%%
-function files = mrtrix_build_files(fname_trunk,lmax)
-%
-% Builds a structure with the mrtrix file names.
-%
-
-% Convert the raw dwi data to the mrtrix format: 
-files.dwi = strcat(fname_trunk,'_dwi.mif');
-
-% This file contains both bvecs and bvals, as per convention of mrtrix
-files.b     = strcat(fname_trunk, '.b');
-
-% Convert the brain mask from mrDiffusion into a .mif file: 
-files.brainmask = strcat(fname_trunk,'_brainmask.mif');
-
-% Generate diffusion tensors:
-files.dt = strcat(fname_trunk, '_dt.mif');
-
-% Get the FA from the diffusion tensor estimates: 
-files.fa = strcat(fname_trunk, '_fa.mif');
-
-% Generate the eigenvectors, weighted by FA: 
-files.ev = strcat(fname_trunk, '_ev.mif');
-
-% Estimate the response function of single fibers: 
-files.sf = strcat(fname_trunk, '_sf.mif');
-files.response = strcat(fname_trunk, '_response.txt');
-
-% Create a white-matter mask, tracktography will act only in here.
-files.wm    = strcat(fname_trunk, '_wm.mif');
-
-% Compute the CSD estimates: 
-files.csd = strcat(fname_trunk, sprintf('_csd_lmax%i.mif',lmax)); 
-
-
-
+end
 
