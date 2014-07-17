@@ -114,13 +114,6 @@ if  (~computed.('ev'))
   mrtrix_tensor2vector(files.dt, files.ev, files.fa);
 end
 
-% Estimate the response function of single fibers. 
-% We use the max_lmax to estimate the response.
-if (~computed.('response'))    
-  mrtrix_response(files.brainmask, files.fa, files.sf, files.dwi,...
-      files.response, files.b, true,false, max_lmax);
-end
-
 % Create a white-matter mask, tractography will act only within this mask.
 if (~computed.('wm'))
     if notDefined('wmMaskFile') || isempty('wmMaskFile')
@@ -130,6 +123,16 @@ if (~computed.('wm'))
     fprintf('[%s] Creating WM mask from file: %s\n', mfilename, wmMaskFile);
     mrtrix_mrconvert(wmMaskFile, files.wm);
 end
+
+% Estimate the response function of single fibers. 
+% We use the max_lmax to estimate the response.
+if (~computed.('response'))    
+    keyboard
+  mrtrix_response(files.brainmask, files.fa, files.sf, files.dwi,...
+      files.response, files.b, true,false, max_lmax);
+end
+
+
 
 % Compute the CSD estimates: 
 if (~computed.('csd'))  

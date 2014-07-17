@@ -34,7 +34,7 @@ if notDefined('lmax'),    lmax = 6;end
 
 % This generates a mask of voxels with high FA. These are assumed to be
 % voxels that contain a single fiber: 
-cmd_str = sprintf('erode %s - | erode - - | mrmult %s - - | threshold - -abs 0.7 %s',...
+cmd_str = sprintf('erode %s - | erode - - | mrmult %s - - | threshold - -abs 0.8 %s',...
     mask_file, fa_file, sf_file);
 
 [status, results] = mrtrix_cmd(cmd_str, bkgrnd, verbose);
@@ -43,6 +43,7 @@ cmd_str = sprintf('erode %s - | erode - - | mrmult %s - - | threshold - -abs 0.7
 % response function from these voxels: 
 cmd_str = sprintf('estimate_response %s %s %s -grad %s -lmax %i',...
     dwi_file, sf_file, response_file, b_file, lmax);
+lmax
 
 [status, results] = mrtrix_cmd(cmd_str, bkgrnd, verbose);
 
