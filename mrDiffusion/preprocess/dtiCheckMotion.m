@@ -22,7 +22,7 @@ function [fh, figurename] = dtiCheckMotion(ecXformFile,visibility)
 %   figurename - Full path to the figure saved out to disk showing the
 %                motion estimates. 
 %
-% Franco Pestilli & Bod Dougherty Stanford University
+% Franco Pestilli & Bob Dougherty Stanford University
 
 if notDefined('visibility'), visibility = 'on'; end
 if(~exist('ecXformFile','var') || isempty(ecXformFile))
