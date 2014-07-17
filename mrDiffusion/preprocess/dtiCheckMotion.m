@@ -2,7 +2,7 @@ function [fh, figurename] = dtiCheckMotion(ecXformFile,visibility)
 % Plots rotations and translations from an eddy-current correction
 % transform file.
 %
-% fh = dtiCheckMotion([ecXformFile=uigetfile],visibility)
+%   [fh, figurename]  = dtiCheckMotion([ecXformFile=uigetfile],visibility)
 %
 % INPUTS:
 %   ecXformFile - Eddy Current correction trasformation infromation. This
@@ -37,8 +37,7 @@ t = vertcat(ec.xform(:).ecParams);
 
 % We make a plot of the motion correction during eddy current correction
 % but we do not show the figure. We only save i to disk.
-keyboard
-fh = mrvNewGraphWin([],[],'visibility',visibility);
+fh = mrvNewGraphWin([],[],visibility);
 subplot(2,1,1); 
 plot(t(:,1:3)); 
 title('Translation'); 
@@ -59,7 +58,7 @@ figurename = fullfile(p,[f,'.png']);
 printCommand = ...
     sprintf('print(%s, ''-painters'',''-dpng'', ''-noui'', ''%s'')', ...
     num2str(fh),figurename);
-fprintf('[%s] Saving Eddy Currenct correction figure: \n %s \n', ...
+fprintf('[%s] Saving Eddy Current correction figure: \n %s \n', ...
          mfilename,figurename);
 eval(printCommand);
 
