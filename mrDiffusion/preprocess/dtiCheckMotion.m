@@ -37,18 +37,19 @@ t = vertcat(ec.xform(:).ecParams);
 
 % We make a plot of the motion correction during eddy current correction
 % but we do not show the figure. We only save i to disk.
-fh = mrvNewGraphWin('visibility',visibility);
+keyboard
+fh = mrvNewGraphWin([],[],'visibility',visibility);
 subplot(2,1,1); 
 plot(t(:,1:3)); 
 title('Translation'); 
-xlabel('image'); 
+xlabel('Diffusion image number (diffusion direction)'); 
 ylabel('translation (voxels)'); 
 legend({'x','y','z'});
 
 subplot(2,1,2); 
 plot(t(:,4:6)/(2*pi)*360); 
 title('Rotation');
-xlabel('image'); 
+xlabel('Diffusion image number (diffusion direction)'); 
 ylabel('rotation (degrees)'); 
 legend({'pitch','roll','yaw'});
 
@@ -59,11 +60,11 @@ printCommand = ...
     sprintf('print(%s, ''-painters'',''-dpng'', ''-noui'', ''%s'')', ...
     num2str(fh),figurename);
 fprintf('[%s] Saving Eddy Currenct correction figure: \n %s \n', ...
-         mfilename,figurename)
+         mfilename,figurename);
 eval(printCommand);
 
 % Delete output if it was nto requested
-if (nargout < 1), close fh;end
+if (nargout < 1), close(fh); clear fh figurename; end
 
 return;
 
