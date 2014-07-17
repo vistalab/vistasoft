@@ -48,4 +48,5 @@ nparams = .5*(alllmax+1).*(alllmax+2);
 % one additional data point (diffusion direction) to supporting each
 % parameter of the deconvolution.
 lmax = alllmax( find(nparams < (nbvecs-1),1,'last') );
+
 end

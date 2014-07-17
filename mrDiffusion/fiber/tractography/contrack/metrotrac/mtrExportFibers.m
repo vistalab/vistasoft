@@ -83,7 +83,6 @@ xformToAcPc = xformToAcPc';
 fwrite(fid,xformToAcPc(:),'double');  % The xform
 fwrite(fid,numstats,'uint');          % The number of statistics saved with the fibers
 
-
 % Write statistics to the PDB header
 saveStatisticsHeader(pdb,fid);
 
