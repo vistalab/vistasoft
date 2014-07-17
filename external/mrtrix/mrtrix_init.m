@@ -1,35 +1,35 @@
 function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
+% Initialize an filenames and directories to use the MRtrix toolbox via
+% MatLab. MRtrix allows using Contrained Spherical Deconvolution and
+% implements different types of tractography (i.e., probabilistic,
+% deterministic).
 %
 % function files = mrtrix_init(dt6, lmax, mrtrix_folder, [wmMaskFile])
-% 
-% Initialize an mrtrix CSD analysis
 %
-% This function computes all the files needed to use mrtrix_track. 
-%
-% - Inputs -
-%    dt6  - string, full-path to an mrInit-generated dt6 file. 
-%    lmax - The maximal harmonic order to fit in the spherical deconvolution (d
-%           model. Must be an even integer. This input determines the
-%           flexibility  of the resulting model fit (higher values correspond
-%           to more flexible models), but also determines the number of
-%           parameters that need to be fit. The number of dw directions
-%           acquired should be larger than the number of parameters required.	
-%           lmax: 4  -> nParams 15
-%           lmax: 8  -> nParms  45
-%           lmax: 12 -> nParmas 91
-%           General formula: lmax = n	nParams = ½ (n+1)(n+2)
-%           http://www.brain.org.au/software/mrtrix/tractography/preprocess.html
+% This function computes all the files needed to use mrtrix_track.
+% - INPUTS -
+%    dt6   - string, full-path to an mrInit-generated dt6 file. 
+%    lmax  - The maximal harmonic order to fit in the spherical deconvolution (d
+%            model. Must be an even integer. This input determines the
+%            flexibility  of the resulting model fit (higher values correspond
+%            to more flexible models), but also determines the number of
+%            parameters that need to be fit. The number of dw directions
+%            acquired should be larger than the number of parameters required.	
+%              lmax: 4  -> nParams 15
+%              lmax: 8  -> nParms  45
+%              lmax: 12 -> nParmas 91
+%            General formula: lmax = n	nParams = ½ (n+1)(n+2)
+%            http://www.brain.org.au/software/mrtrix/tractography/preprocess.html
 %
 %    mrtrix_folder - Name of the output folder
 %    wmMaskFile    - Full path to a nifti file to be used as WM mask,
 %                    in replacemnt of the default WM mask found in the dt6 file.
 %
-% - Outputs -
+% - OUTPUTS -
 %    files - The full-path to the files created
 %
 % - Notes -
 %   This functionn performs the following operations:
-%
 %   1. Convert the raw dwi file into .mif format
 %   2. Convert the bvecs, bvals into .b format
 %   3. Convert the brain-mask to .mif format 
