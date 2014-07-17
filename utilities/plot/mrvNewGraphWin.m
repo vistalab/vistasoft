@@ -1,7 +1,7 @@
-function figHdl = mrvNewGraphWin(ftitle,fType)
+function figHdl = mrvNewGraphWin(ftitle,fType,visibility)
 % Open a new graph window  
 %
-%    figHdl = mrvNewGraphWin([title],[fType])
+%    figHdl = mrvNewGraphWin([title],[fType],[visibility])
 %
 % A stanford mrVIsta graph window figure is opened and its handle is
 % returned.
@@ -17,29 +17,33 @@ function figHdl = mrvNewGraphWin(ftitle,fType)
 %   mrvNewGraphWin;
 %   mrvNewGraphWin('myTitle','tall')
 %   mrvNewGraphWin('wideTitle','wide')
+%   mrvNewGraphWin('wideTitle','wide')
 %
-% (c) Stanford VISTA Team
+% Franco Pestilli & Brian Wandell Stanford University
 
-figHdl = figure;
+if notDefined('visibility'), visibility = 'on'; end
 
 if notDefined('ftitle'), ftitle = 'mrVista: '; 
 else                     ftitle = sprintf('mrVista: %s',ftitle);
 end
 if notDefined('fType'), fType = 'upper left'; end
 
-set(figHdl,'Name',ftitle,'NumberTitle','off');
-set(figHdl,'Color',[1 1 1]);
-
 % Position the figure
 fType = mrvParamFormat(fType);
 switch(fType)
     case 'upperleft'
-        set(figHdl,'Units','normalized','Position',[0.007 0.55  0.28 0.36]);
+        position = [0.007 0.55  0.28 0.36];
     case 'tall'
-        set(figHdl,'Units','normalized','Position',[0.007 0.055 0.28 0.85]);
+        position = [0.007 0.055 0.28 0.85];
     case 'wide'
-        set(figHdl,'Units','normalized','Position',[0.007 0.62  0.7  0.3]);
+        position = [0.007 0.62  0.7  0.3];
     otherwise % default
 end
 
+figHdl = figure('Name',ftitle, ...
+                'NumberTitle','off', ...
+                'visible',   visibility, ...
+                'Color',[1 1 1], ...
+                'Units','normalized', ...
+                'Position',position);
 return;
