@@ -33,14 +33,14 @@ cmd_str = sprintf('erode %s - | erode - - | mrmult %s - - | threshold - -abs 0.8
     mask_file, fa_file, sf_file);
 [status, results] = mrtrix_cmd(cmd_str, bkgrnd, verbose);
 
-if status
+if ~status
     % Once we know where there are single fibers, we estimate the fiber
     % response function from these voxels:
     cmd_str = sprintf('estimate_response %s %s %s -grad %s -lmax %i',...
         dwi_file, sf_file, response_file, b_file, lmax);
     [status, results] = mrtrix_cmd(cmd_str, bkgrnd, verbose);
     
-    if status
+    if ~status
         % We can take a look at this. It should look like a disk (see the figure
         % example in
         % http://www.brain.org.au/software/mrtrix/tractography/preprocess.html):

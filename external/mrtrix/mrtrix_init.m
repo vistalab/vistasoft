@@ -128,7 +128,7 @@ end
 % We use the max_lmax to estimate the response.
 if (~computed.('response'))    
   mrtrix_response(files.wm, files.fa, files.sf, files.dwi, ...
-      files.response, files.b, true,false, max_lmax);
+      files.response, files.b, true,false, min([6,max_lmax]));
 end
 
 % Compute the CSD estimates: 
