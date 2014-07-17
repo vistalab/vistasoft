@@ -165,8 +165,10 @@ if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name); end
 
 % If doECC comes back true do the eddy current correction
 if doECC
-dtiRawRohdeEstimateEddyMotion(dwRaw, dwDir.mnB0Name, bvals, dwDir.ecFile,...
+   dtiRawRohdeEstimateEddyMotion(dwRaw, dwDir.mnB0Name, bvals, dwDir.ecFile,...
                               dwParams.eddyCorrect==1);
+   % Make a figure of the Motion estimated during eddicurrent correction
+   dtiCheckMotion(dwDir.ecFile,'off');
 end
 
 
