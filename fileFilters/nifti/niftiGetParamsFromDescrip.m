@@ -41,9 +41,11 @@ if exist('niftiFile','var') && isstruct(niftiFile)
         clear niftiFile;
 else
     if  ~exist('niftiFile','var') || ~exist(niftiFile,'file')
-        niftiFile=uigetfile('*.nii.gz','Choose nifti file');
-        if niftiFile == 0
+        [ fileName, pathName ] = uigetfile('*.nii.gz','Choose nifti file');      
+        if fileName == 0
             return
+        else
+            niftiFile = fullfile(pathName,fileName);
         end
     end
     % Read in the nifti
