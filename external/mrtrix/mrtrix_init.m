@@ -51,6 +51,19 @@ else
     dt_info = dt6;
 end
 
+% Check if it contains a path to the raw dwi data
+if ~isfield(dt_info.files,'alignedDwRaw')
+    % This code handles special case where the dt6.mat file was not created
+    % using dtiInit. For example if dtiRawFitTensorMex was run directly
+    dt_info = load(dt6);
+    dt_info.files.alignedDwRaw = fullfile(dt_info.params.rawDataDir,dt_info.params.rawDataFile);
+    if ~exist(dt_info.files.alignedDwRaw,'file')
+        dt_info.files.alignedDwRaw = [dt_info.files.alignedDwRaw '.gz'];
+    end
+    dt_info.files.alignedDwBvecs = [prefix(prefix(dt_info.files.alignedDwRaw)) '.bvecs'];
+    dt_info.files.alignedDwBvals = [prefix(prefix(dt_info.files.alignedDwRaw)) '.bvals'];
+end
+
 % Strip the file names out of the dt6 strings. 
 dwRawFile         = dt_info.files.alignedDwRaw;
 [session,dwiname] = fileparts(dwRawFile);
