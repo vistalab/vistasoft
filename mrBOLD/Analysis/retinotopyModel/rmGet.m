@@ -41,12 +41,8 @@ try
             val = model.hrf.maxresponse;
 
         case {'s','sigma'}
-            val = (model.sigma.major + model.sigma.minor)./2;
-<<<<<<< HEAD
-            if isfield(model, 'exponent')                
-=======
+            val = (model.sigma.major + model.sigma.minor)./2;             
             if isfield(model, 'exponent'),
->>>>>>> 9fbe27b372ac53946df168123bff598bd5f21499
                 val = model.sigma.major./sqrt(model.exponent);
             end
         case {'sigmamajor','sigma major','s_major'}
