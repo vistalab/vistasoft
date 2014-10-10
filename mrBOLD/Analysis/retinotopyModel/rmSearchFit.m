@@ -427,7 +427,8 @@ for slice=loopSlices,
             case {'css' 'onegaussiannonlinear', 'onegaussianexponent', ...
                     '2d nonlinear prf fit (x,y,sigma,exponent, positive only)'}
                 s{n}=rmSearchFit_oneGaussianNonlinear(s{n},data,params,wProcess,t);
-                
+            case {'cssboxcar' 'onegaussiannonlinearboxcar', 'onegaussianexponentboxcar'}
+                s{n}=rmSearchFit_oneGaussianNonlinear(s{n},data,params,wProcess,t);
             otherwise
                 fprintf('[%s]:Unknown pRF model: %s: IGNORED!\n',mfilename,desc);
         end

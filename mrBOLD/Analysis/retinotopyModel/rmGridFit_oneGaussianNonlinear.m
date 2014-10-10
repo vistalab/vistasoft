@@ -13,8 +13,8 @@ if nargin < 4,
 end
 
 % some variables we need
-trends         = t.trends;
-t_id           = t.dcid+1;
+trends         = [t.trends t.boxcar];
+t_id           = [t.dcid t.boxcarid]+1 ;
 
 % we compute mean rss but we need sum rss (old convention)
 model.rss=single(model.rss./(size(prediction,1)-size(trends,2)+1));  

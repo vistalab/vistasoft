@@ -177,7 +177,7 @@ end
 
 % if the model has a nonlinearity, then store this explicitly
 switch lower(params.analysis.pRFmodel{1})
-    case {'onegaussiannonlinear' 'css'}
+    case {'onegaussiannonlinear' 'css' 'onegaussiannonlinearboxcar' 'cssboxcar'}
         params.analysis.nonlinear = true;
 end
         
