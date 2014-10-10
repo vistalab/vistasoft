@@ -42,7 +42,7 @@ try
 
         case {'s','sigma'}
             val = (model.sigma.major + model.sigma.minor)./2;
-            if strcmpi(model.description, 'fitprf'),
+            if isfield(model, 'exponent')                
                 val = model.sigma.major./sqrt(model.exponent);
             end
         case {'sigmamajor','sigma major','s_major'}

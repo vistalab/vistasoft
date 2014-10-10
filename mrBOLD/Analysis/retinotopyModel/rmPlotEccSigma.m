@@ -102,7 +102,7 @@ thresh.varexp  = max(viewGet(v,'cothresh'), rmParams.analysis.fmins.vethresh);
 
 % take all data within the stimulus range, and decrease it by a small 
 % amount to be more conservative.
-thresh.ecc = [0 max([rmParams.stim(:).stimSize])] + [0.5 -0.5];% * binsize/2; 
+thresh.ecc = [0 max([rmParams.stim(:).stimSize])] + [.5 -2];% * binsize/2; 
 
 % thresh.ecc = [0 30];
 % basically no sigma threshold
