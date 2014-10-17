@@ -65,6 +65,7 @@ end
 
 %% Normalizing fiber endpoint density
 % normalize fiber endpoint density by max
+niisave = nii;
 maxnum = max(nii.data);
 maxmax = max(maxnum);
 maxmaxmax = max(maxmax);
