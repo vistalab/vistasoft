@@ -23,7 +23,6 @@ function [dt6FileName, outBaseDir] = dtiInit(dwRawFileName, t1FileName, dwParams
 %
 % WEB resources:
 %   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
-%   mrvBrowseSVN('dtiInit');
 % 
 % 
 % Example Usage: 
@@ -42,7 +41,6 @@ function [dt6FileName, outBaseDir] = dtiInit(dwRawFileName, t1FileName, dwParams
 % (C) Stanford VISTA, 8/2011 [lmp]
 % 
 % 
-%#ok<*ASGLU>
 
 
 %% I. Load the diffusion data, set up parameters and directories structure
@@ -167,7 +165,7 @@ if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name); end
 if doECC
    dtiRawRohdeEstimateEddyMotion(dwRaw, dwDir.mnB0Name, bvals, dwDir.ecFile,...
                               dwParams.eddyCorrect==1);
-   % Make a figure of the Motion estimated during eddicurrent correction
+   % Make a figure of the Motion estimated during eddy current correction
    dtiCheckMotion(dwDir.ecFile,'off');
 end
 
@@ -311,4 +309,5 @@ dtiInitLog(dwParams,dwDir);
 
 
 return
+%#ok<*ASGLU>
 
