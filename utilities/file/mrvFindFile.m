@@ -4,22 +4,42 @@ function file = mrvFindFile(fileName,directory,mode)
 % 
 % This simple function is designed to find a return a full path to a given
 % file within a directory. It will search the directory tree recursively to
-% find the file and give you it's full path. 
+% find the file and give you it's full path. If more than one file is found
+% the will be returned in a string array.
 %
-% VALID MODES:
-%   [1] or [2]:
-%   By default the mode = 1, which allows the code to follow soft links.
-%   This can be turned off by setting mode = 2.
+% 
+% MODES:
+% 
+%   [1, 'all' 'allfollow'] 
+%       By default the mode = [1], which allows the code to follow soft
+%       links.
+% 
+%   [2, 'allnofollow'] 
+%       Link following can be turned off by setting mode = [2]. 
+% 
+%   [3, 'first', 'firstfollow'] 
+%       Follow soflinks but only return the first matching result.
+% 
+%   [4, 'firstnofollow'] 
+%       Do not follow soft links and only return the first matching
+%       result.
+% 
+%   [5, 'firstnot','notfirst']
+%       Return the first file that is *not* matching 'fileName'.
+% 
+%   [6, 'not', 'allnot','notall']
+%       Return *all* files that do *not* match 'fileName'.
 % 
 % EXAMPLE:
 %   
-% file = mrvFindFile('dt6.mat',pwd,1)
+%   file = mrvFindFile('dt6.mat',pwd,'first')
 % 
 %   file =
 % 
 %       /biac4/wandell/data/westonhavens/results/testlab/20130509_1152_4534/dt6/dt6.mat
 % 
-% (C) Stanford University - VISTA LAB, 2014
+% 
+% (C) Stanford University - VISTA LAB, 2014 - lmperry@stanford.edu
 % 
 
 
@@ -39,50 +59,52 @@ if isempty(p)
 end
 
 file = '';
+tn   = tempname;
 
-switch mode 
-	case 1
-		cmd = ['find ' directory ' -follow -type f -name "' fileName '"'];
-	case 2
+switch mode
+    case {1, 'all', 'allfollow'}
+        cmd = ['find ' directory ' -follow -type f -name "' fileName '" | tee > ' tn];
+    
+    case {2, 'allnofollow'}
         fprintf('\n[%s] - Not following softlinks.\n',mfilename);
-		cmd = ['find ' directory ' -type f -name "' fileName '"'];
-	otherwise
-		cmd = '';
+        cmd = ['find ' directory ' -type f -name "' fileName '" | tee > ' tn];
+    
+    case {3, 'first', 'firstfollow'}
+        cmd = ['find ' directory ' -follow -type f -name "' fileName '" -print | head -n 1 | tee > ' tn];
+    
+    case {4, 'firstnofollow'}
+        cmd = ['find ' directory ' -type f -name "' fileName '" -print | head -n 1 | tee > ' tn];
+    
+    case {5, 'firstnot', 'notfirst'}
+        cmd = ['find ' directory ' -follow -type f ! -name "' fileName '" -print | head -n 1 | tee > ' tn];
+    
+    case {6, 'not', 'allnot'}
+        cmd = ['find ' directory ' -follow -type f ! -name "' fileName '" | tee > ' tn];
+       
+    otherwise
+        cmd = '';
         fprintf('\n[%s] - Invalid mode.\n',mfilename)
         help(mfilename);
 end
  
 % Run the command 
-[status, result] = system(cmd);
+[status, ~] = system(cmd);
 if status ~= 0 
     warning('There was a problem finding files.');
     return
 end
 
 
-file =  regexprep(result,'\r\n|\n|\r','');
+file = readFileList(tn);
+
+% If there's only one file give it back as a string
+% NOT sure this is the right thing to do...
+if numel(file) == 1
+    file = file{1};
+end
 
 
+%%
 return
 
 
-
-%% Could make it smarter to allow for multiple file types, etc...
-% tn  = tempname;
-% cmd = ['find ' path ' -follow -type f -name "' fileName '" | tee ' tn];
-% 
-% [status, result] = system(cmd);
-% 
-% if status ~= 0
-%     error('There was a problem finding files.');
-% end
-% 
-% % WORK HERE - if tn is empty then we need to not follow through
-% 
-% % niFiles will now have a full-path list of all relevant files
-% if ~isempty(result)
-%     theFiles = readFileList(tn);
-% else
-%     disp('no files found');  
-%     return
-% end
