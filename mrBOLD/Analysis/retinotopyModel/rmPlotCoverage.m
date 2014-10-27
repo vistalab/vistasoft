@@ -383,7 +383,7 @@ if vfc.nboot>0
     all_models(isnan(all_models))=0;
 
     switch lower(vfc.method)
-        case {'sum','add','avg','average everything'}
+        case {'sum','add','avg','average everything', 'average'}
             m = bootstrp(vfc.nboot, @mean, all_models');
         
         case {'max','profile','maximum profile' 'maximum'}

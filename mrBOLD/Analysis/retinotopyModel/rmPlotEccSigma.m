@@ -102,8 +102,12 @@ thresh.varexp  = max(viewGet(v,'cothresh'), rmParams.analysis.fmins.vethresh);
 
 % take all data within the stimulus range, and decrease it by a small 
 % amount to be more conservative.
+<<<<<<< HEAD
+thresh.ecc = [0 max([rmParams.stim(:).stimSize])] + [.5 -2];% * binsize/2; 
+=======
 thresh.ecc = viewGet(v, 'mapclip') + [0.5 -0.5];
 % thresh.ecc = [0 max([rmParams.stim(:).stimSize])] + [0.5 -0.5];% * binsize/2; 
+>>>>>>> 9fbe27b372ac53946df168123bff598bd5f21499
 
 % thresh.ecc = [0 30];
 % basically no sigma threshold
