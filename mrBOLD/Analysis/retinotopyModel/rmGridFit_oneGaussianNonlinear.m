@@ -13,6 +13,7 @@ if nargin < 4,
 end
 
 % some variables we need
+if ~isfield(t, 'boxcar'), t.boxcar = []; end
 trends         = [t.trends t.boxcar];
 t_id           = [t.dcid t.boxcarid]+1 ;
 

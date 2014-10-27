@@ -176,7 +176,8 @@ switch modelName,
 
         rfParams(:,4) = beta(1:2);
         rfParams = rfParams(1,:);
-    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'}
+    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)', ...
+            '2D nonlinear pRF fit with boxcar (x,y,sigma,exponent, positive only)'}
         % we-do the prediction with stimulus that has not been convolved
         % with the hrf, and then add in the exponent, and then convolve
         

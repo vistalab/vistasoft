@@ -71,7 +71,8 @@ switch modelName,
         rfParams(2,2) = rmCoordsGet(viewType, model, 'y02', coords);
         rfParams(2,3) = rmCoordsGet(viewType, model, 's2',coords);
         
-    case {'fitprf' 'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'}
+    case {'fitprf' 'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)' ...
+            '2D nonlinear pRF fit with boxcar (x,y,sigma,exponent, positive only)'}
         rfParams = zeros(1,6);
         
         

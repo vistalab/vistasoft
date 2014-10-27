@@ -73,7 +73,8 @@ switch modelName,
         % serge's method
         RFs = rfGaussian2d(X, Y, rfParams(3), rfParams(3), rfParams(6), rfParams(1), rfParams(2));
         RFs = RFs * r;                
-    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'}
+    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)' ...
+            '2D nonlinear pRF fit with boxcar (x,y,sigma,exponent, positive only)'}
         RFs = rfGaussian2d(X, Y, rfParams(3), rfParams(3), rfParams(6), rfParams(1), rfParams(2));
         
     otherwise,
