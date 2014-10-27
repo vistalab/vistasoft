@@ -1,4 +1,4 @@
-function [prediction, RFs, rfParams, varexp blanks] = rmPlotGUI_makePrediction(M, coords, voxel)
+function [prediction, RFs, rfParams, varexp, blanks] = rmPlotGUI_makePrediction(M, coords, voxel)
 % Create predicted time series and pRFs for a voxel in the rmPlotGUI. 
 %   [prediction, RFs, rfParams, varexp] = rmPlotGUI_makePrediction(M, voxel);
 %
@@ -176,6 +176,32 @@ switch modelName,
 
         rfParams(:,4) = beta(1:2);
         rfParams = rfParams(1,:);
+    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'}
+        % we-do the prediction with stimulus that has not been convolved
+        % with the hrf, and then add in the exponent, and then convolve
+        
+        % make neural predictions for each RF
+        pred = (M.params.analysis.allstimimages_unconvolved * RFs).^rfParams(7);
+        % reconvolve with hRF
+        for scan = 1:length(M.params.stim)
+            these_time_points = M.params.analysis.scan_number == scan;
+            hrf = M.params.analysis.Hrf{scan};
+            pred(these_time_points,:) = filter(hrf, 1, pred(these_time_points,:));
+        end
+        
+        if recompFit
+            beta = pinv([pred trends(:,dcid)])*M.tSeries(:,voxel);
+            beta(1) = max(beta(1),0);
+            
+        else
+            beta = rmCoordsGet(M.viewType, model, 'b', coords);
+            beta = beta([1 dcid+1])';            
+        end
+        
+        RFs        = RFs .* (beta(1) .* M.params.analysis.HrfMaxResponse);
+        
+        rfParams(4) = beta(1);
+        
     case {'fitprf'}
         % this is how we calculate the time-series
         %   y = gain * (prf (dot) stimulus) ^ (exponent)

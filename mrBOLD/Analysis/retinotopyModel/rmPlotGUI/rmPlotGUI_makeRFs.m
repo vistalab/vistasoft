@@ -35,7 +35,7 @@ switch modelName,
         RFs = rfGaussian2d(X, Y, rfParams(:,3), rfParams(:,3), 0, rfParams(:,1), rfParams(:,2));
         RFs = sum(RFs,2);
 
-    case {'fitprf'},
+    case 'fitprf'
         % the model:
         %   y = gain * (prf (dot) stimulus) ^ (exponent)
 
@@ -73,6 +73,9 @@ switch modelName,
         % serge's method
         RFs = rfGaussian2d(X, Y, rfParams(3), rfParams(3), rfParams(6), rfParams(1), rfParams(2));
         RFs = RFs * r;                
+    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'}
+        RFs = rfGaussian2d(X, Y, rfParams(3), rfParams(3), rfParams(6), rfParams(1), rfParams(2));
+        
     otherwise,
         error('Unknown modelName: %s', modelName);
 end;
