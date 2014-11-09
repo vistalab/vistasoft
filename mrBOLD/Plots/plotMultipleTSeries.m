@@ -54,14 +54,12 @@ set(gcf,'Name',headerStr);
 % pre-compute the y axis limits
 maxY=0;
 for t=1:nROIs
-    
     if (max(abs(tSeries{t}))>maxY)
         maxY=max(abs(tSeries{t}));
     end
 end
 
 maxY=ceil(maxY+maxY/5);
-
 for r=1:nROIs
     
     % check to see whether we will plot the multiple ROIs as mulitple
