@@ -94,8 +94,12 @@ if status ~= 0
     return
 end
 
-
 file = readFileList(tn);
+
+% Return an empty string if there were no results. 
+if isempty(file)
+    file = '';
+end
 
 % If there's only one file give it back as a string
 % NOT sure this is the right thing to do...
