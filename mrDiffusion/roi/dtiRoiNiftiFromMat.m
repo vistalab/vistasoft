@@ -74,8 +74,7 @@ end
 
 ref   = niftiRead(refImg);
 xform = ref.qto_xyz;
-bb    = [-size(ref.data)/2; size(ref.data)/2-1];
-
+bb = [-(size(ref.data).*ref.pixdim)/2; (size(ref.data).*ref.pixdim)/2-1];
 
 %% Create the roiImg and xForm from the roi 
 [roiImg, imgXform] = dtiRoiToImg(roi,xform,bb);
