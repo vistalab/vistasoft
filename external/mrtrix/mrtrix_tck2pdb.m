@@ -1,6 +1,6 @@
 function fg = mrtrix_tck2pdb(tck_file, pdb_file)
 %
-% function fg = mrtrix_tck2pdb(tck_file, pdb_file)
+%    fg = mrtrix_tck2pdb(tck_file, pdb_file)
 %
 % Convert an mrtrix .tck tracking file to the pdb format. 
 % 
