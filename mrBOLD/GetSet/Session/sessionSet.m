@@ -56,7 +56,8 @@ switch param
         if isempty(varargin), s.functionals = val;
         else s.functionals(varargin{1}) = val;
         end
-        
+    case {'functionalorientation'}
+        s.functionals(1).orientation = val;        
     case {'inplane'}
         s.inplanes = val;
         % Information about the functional scans
