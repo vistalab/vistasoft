@@ -1,4 +1,4 @@
-function [xform] = niftiCreateXform(nii,xformType)
+function [xform, vectorTo] = niftiCreateXform(nii,xformType)
 %Create a specified transform onto the supplied nifti struct. For
 % data in slice format, we specify our output data xform according to
 % certain rules. Our preferred orientation is PRS, but we do not want to
@@ -40,7 +40,8 @@ function [xform] = niftiCreateXform(nii,xformType)
 %
 % RETURNS
 %  Xform matrix in the form a quaternion
-%
+%  vectorTo: string indicating the orientation that will result from
+%            applying the outut xform to the input nifti
 % See also niftiCreateStringInplane
 %
 % Copyright Stanford VistaLab 2013
@@ -48,6 +49,8 @@ function [xform] = niftiCreateXform(nii,xformType)
 xformType = mrvParamFormat(xformType);
 
 xform = zeros(4); %Initialization
+vectorTo = '';    %Initialization
+
 sliceDim = niftiGet(nii,'slicedim');
 if (sliceDim == 0) %Default to a slice dim of 3 if not populated
     sliceDim = 3;
@@ -55,12 +58,9 @@ end %if
 
 switch xformType
     case 'inplane'
-        [vectorFrom, xform] = niftiCurrentOrientation(nii);
-        if ~strcmp(vectorFrom,'PRS')
-            %We don't need to change the transform at all
-            vectorTo = niftiCreateStringInplane(vectorFrom,sliceDim);
-            xform = niftiCreateXformBetweenStrings(vectorFrom,vectorTo);
-        end
+        vectorFrom = niftiCurrentOrientation(nii);
+        vectorTo   = niftiCreateStringInplane(vectorFrom,sliceDim);
+        xform      = niftiCreateXformBetweenStrings(vectorFrom,vectorTo);
         
     otherwise
         warning('vista:niftiError','The supplied transform type was unrecognized. Please try again. Returning empty transform.');

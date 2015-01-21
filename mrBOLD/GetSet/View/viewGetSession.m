@@ -99,7 +99,7 @@ switch param
         if isequal(vw.name,'hidden')
             % no UI or slider -- use tSeries slice
             curSlice = vw.tSeriesSlice;
-            if isnan(curSlice) || isempty(curSlice), val = 1; end
+            if isnan(curSlice) | isempty(curSlice), val = 1; end
             return
         end
         switch vw.viewType

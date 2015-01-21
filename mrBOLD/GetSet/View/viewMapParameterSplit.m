@@ -18,6 +18,7 @@ if isempty(DictViewSplit)
     DictViewSplit('anatomycurrentslice') = 'anatomy';
     DictViewSplit('anatomymap') =  'anatomy';
     DictViewSplit('anatomynifti') =  'anatomy';
+    DictViewSplit('inplaneorientation') =  'anatomy';
     DictViewSplit('anatsize') =  'anatomy';
     DictViewSplit('anatsizexyz') =  'anatomy';
     DictViewSplit('anatslicedim') =  'anatomy';
