@@ -48,12 +48,10 @@ function [vw, status, forceSave] = saveROI(vw, ROI, local, forceSave)
 % ras 11/06: offers option to save over all, returning modified forceSave
 % flag. (Very helpful when saving a lot of ROIs that you want to update.)
 
-if notDefined('view'),      vw = getCurView;      end
+if notDefined('vw'),        vw = getCurView;        end
 if notDefined('forceSave'), forceSave = 0;          end
 if notDefined('ROI'),       ROI = 'selected';       end
-if notDefined('local'),    
-    local = isequal(vw.viewType, 'Inplane');         
-end
+if notDefined('local'),     local = isequal(vw.viewType, 'Inplane'); end
 
 status = 0;
 verbose = prefsVerboseCheck;
