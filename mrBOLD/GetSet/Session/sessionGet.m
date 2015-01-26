@@ -113,6 +113,15 @@ switch param
         else error('The field relevant to %s was not found in the session.', param);
         end
         
+    case {'functionalorientation'}
+        % orientation = sessionGet(s,'functional orientation'); 
+        if isfield(s, 'functionals') && isfield(s.functionals, 'orientation')
+            val = s.functionals(1).orientation;
+        else
+            warning('Functional orientation has not been defined')
+            val = [];
+        end
+            
     case {'inplane'}
         % pth = sessionGet(s, 'inplane path');
         % Return the structure of the inplanes data

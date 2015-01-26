@@ -37,6 +37,12 @@ switch param
     case 'anatomynifti'
         %Return the actual nifti struct stored in anat
         val = vw.anat;
+    case 'inplaneorientation'
+        %Return the orientation of the inplane as a 3 letter string (e.g.,
+        %'PRS' for Posterior/Right/Superior as indices increase in dims
+        %1-3)
+        if isfield(vw, 'inplaneOrientation'), val = vw.inplaneOrientation; 
+        else warning('Inplane orientation not set'); val = []; end               
     case 'anatclip'
         % Return anatomy clipping values from anatMin and anatMax sliders.
         %   anataomyClip = viewGet(vw, 'Anatomy Clip');
