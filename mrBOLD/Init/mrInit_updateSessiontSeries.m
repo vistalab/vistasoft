@@ -61,7 +61,22 @@ try
                     tSeriesIn = reshape(tSeriesIn.tSeries, dimSize(1:3));
                     tSeries(:,:,:,slice) = tSeriesIn;
                 end %for
+                
+                % The following transform will preserve the orientation of the data
+                % across the migration, such that inplane to vAnatomy xforms do not
+                % need to change, nor do parameter maps, ROIs, etc. The permute([2 1])
+                % followed by flipdim(2) effectively converts from x/y coordinates to
+                % row/column coordinates. The reason we do this is that the old
+                % vistasoft (prior to the move to NIFTIs) did this transform when
+                % showing the slices as images, whereas the current code simply pulls
+                % the data array from a nifti (after applying a standard xform to the
+                % nifti), and uses an image tool such as imagesc slice by slice without
+                % re-orienting the array. Since we no longer do this xform each time we
+                % show the data, we must do it here as part of the migration if want
+                % the migrated data to appear the same way as the pre-migrated data.
+                % See also mrInit_updateInplaneSession.m.
                 tSeries = permute(tSeries,[3 2 4 1]); %Standard format: freq phase slice time
+                tSeries = flipdim(tSeries, 2);
                 %Note: this needed to be changed to reflect the fact that
                 %MATLAB stores values row, column, etc. and not column,
                 %row,

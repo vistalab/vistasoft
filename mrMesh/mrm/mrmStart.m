@@ -35,8 +35,8 @@ switch computer
         [x y] = unix('cat /proc/version | grep Ubuntu'); %#ok<*ASGLU>
         if ~isempty(strfind(r,'fc14.x86_64')),
             srvPath = which('mrMeshSrv_FC14.glxa64');
-        elseif ~isempty(strfind(v,'centos'))
-            srvPath = which('mrMeshSrv_Centos.glxa64');
+         elseif ~isempty(strfind(v,'centos'))
+             srvPath = which('mrMeshSrv_Centos.glxa64');
         elseif ~isempty(strfind(y,'Ubuntu'))
             disp('Ubuntu system detected: Loading mrMeshSrv for Ubuntu 12.04')
             srvPath = which('mrMeshSrv_Ubuntu1204.glxa64');

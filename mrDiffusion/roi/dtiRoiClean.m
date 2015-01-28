@@ -42,9 +42,9 @@ else
     dilate           = 0;
     if(nargin>2)
         flags = lower(flags);
-        if(~isempty(strfind(flags,'fillhole'))),  fillHoles        = 1; end
-        if(~isempty(strfind(flags,'removesat'))), removeSatellites = 1; end
-        if(~isempty(strfind(flags,'dilate'))),    dilate           = 1; end
+        if(sum(strcmp(flags,'fillholes'))>0),  fillHoles        = 1; end
+        if(sum(strcmp(flags,'removesat'))>0), removeSatellites = 1; end
+        if(sum(strcmp(flags,'dilate'))>0),    dilate           = 1; end
     end
 end
 

@@ -13,7 +13,7 @@ function [dt6FileName,pdd] = dtiRawFitTensorMex(dwRaw, bvecs, bvals, outBaseName
 % because they produce very human-friendly numbers (eg. free diffusion of
 % water is 3 micron^2/msec). Your adcUnits are determined by the units in
 % which your bvals are specified. (adcUnits = 1/bvalUnits) For our GE
-% Bammer/Hedehus DTI sequence, the native bvalUnits are sec/mm^2. However, 
+% Bammer/Hedehus DTI sequence, the native bvalUnits are sec/mm^2. However,
 % we usually divide the bval by 1000, producing msec/micrometer^2 units.
 %
 % Currently, the only supported fitMethod is 'ls' (linear least-squares).
@@ -25,7 +25,7 @@ function [dt6FileName,pdd] = dtiRawFitTensorMex(dwRaw, bvecs, bvals, outBaseName
 %
 % Currently, specifying the bootstrap causes the resulting dt6 file to have
 % the following additional variables:
-%    
+%
 %   faStd, mdStd: standard deviations on fa and mean diffusivity.
 %
 %   pddDisp: dispersion of PDD axes (based on the Watson) in degrees of
@@ -55,11 +55,11 @@ function [dt6FileName,pdd] = dtiRawFitTensorMex(dwRaw, bvecs, bvals, outBaseName
 % 2009.11.15 AJS: Added bCalcBrainMask flag so that I don't throw away
 % voxels just because they don't fit the brain mask parameters... this is
 % particularly important for phantom data
-    
+
 if(~exist('dwRaw','var')||isempty(dwRaw))
    [f,p] = uigetfile({'*.nii.gz;*.nii';'*.*'}, 'Select the raw DW NIFTI dataset...');
    if(isnumeric(f)) error('User cancelled.'); end
-   dwRaw = fullfile(p,f); 
+   dwRaw = fullfile(p,f);
 end
 if(ischar(dwRaw))
     % dwRaw can be a path to the file or the file itself
@@ -94,7 +94,7 @@ if(~exist('adcUnits','var'))
 end
 
 % If clobber is passed in as 1 and the processing has been done previously
-% overwrite the directory that contains the data. 
+% overwrite the directory that contains the data.
 if(~exist('clobber','var')) || isempty('clobber')
     clobber = 0;
 end
@@ -121,8 +121,8 @@ else
         %binDirName = fullfile(p,f);
     end
     if (exist(dt6FileName,'file') || (exist(binDirName,'dir') && ~isempty(dir(fullfile(binDirName,'*.nii*'))))) && clobber == -1
-        disp('Tensor fitting already completed and "Clobber" is set to "false". Exiting tensor fit.'); 
-        return 
+        disp('Tensor fitting already completed and "Clobber" is set to "false". Exiting tensor fit.');
+        return
     end
 end
 if(~exist(binDirName,'dir'))
@@ -156,7 +156,7 @@ if(bs.n<=1)
 else
     bs.permutations = dtiBootGetPermutations(nvols, bs.n);
 end
-  
+
 if(~exist('fitMethod','var')||isempty(fitMethod))
     fitMethod = 'ls';
 end
@@ -187,7 +187,7 @@ clear dwRaw;
 minD = min(d(d(:)>0));
 
 %% Compute a brain mask
-% 
+%
 disp('Computing brain mask from average b0...');
 b0 = mean(d(:,:,:,bvals<=0.01),4);
 try
@@ -220,7 +220,7 @@ end
 b0 = int16(round(b0));
 
 %% Fit the tensor maps.
-% 
+%
 disp('Fitting the tensor model...');
 % Compute the X-matrix (this will be inverted for the tensor fit)
 % Each row is of the form:
@@ -254,7 +254,7 @@ wmProb = dtiFindWhiteMatter(dt6,[]);
 wmProb(~brainMask) = 0;
 wmProb = uint8(round(wmProb*255));
 %wmMask = wmProb>0.5;
-%wmMask = uint8(dtiCleanImageMask(wmMask,0,0));    
+%wmMask = uint8(dtiCleanImageMask(wmMask,0,0));
 
 %% Save all results
 %
@@ -301,7 +301,7 @@ dtiWriteNiftiWrapper(uint8(round(pdd.*255)), xformToAcPc, ...
 % NIFTI convention is for the 6 unique tensor elements stored in the 5th
 % dim in lower-triangular, row-order (Dxx Dxy Dyy Dxz Dyz Dzz). NIFTI
 % reserves the 4th dim for time, so in the case of a time-invatiant tensor,
-% we just leave a singleton 4th dim. Our own internal convention is 
+% we just leave a singleton 4th dim. Our own internal convention is
 % [Dxx, Dyy, Dzz, Dxy, Dxz, Dyz], so we use the code below to convert to
 % the NIFTI order and dt6=squeeze(ni.data(:,:,:,1,[1 3 6 2 4 5])); to get
 % back to our convention. FOr reference- the 3x3 tensor matrix is:
@@ -318,7 +318,7 @@ if(bs.n>1)
     files.mdStd = fullfile(pBinDir,'mdStd.nii.gz');
     files.pddDisp = fullfile(pBinDir,'pddDispersion.nii.gz');
     dtiWriteNiftiWrapper(single(faStd), xformToAcPc, fullfile(ppBinDir,files.faStd), 1, desc, 'FA stdev');
-    dtiWriteNiftiWrapper(single(mdStd), xformToAcPc, fullfile(ppBinDir,files.mdStd), 1, desc, 'MD stdev');  
+    dtiWriteNiftiWrapper(single(mdStd), xformToAcPc, fullfile(ppBinDir,files.mdStd), 1, desc, 'MD stdev');
     dtiWriteNiftiWrapper(pddDisp, xformToAcPc, fullfile(ppBinDir,files.pddDisp), 1, desc, 'PDD disp (deg)');
 end
 save(dt6FileName,'adcUnits','params','files');

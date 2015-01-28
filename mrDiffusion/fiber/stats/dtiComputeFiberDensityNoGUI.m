@@ -90,6 +90,14 @@ end
 % countThresh for that fg to be added to a bin.
 countThresh = 1;
 
+% don't try to process empty fiber groups
+for ii=1:length(fiberGroupNum)
+    if length(fiberGroups(fiberGroupNum(ii)).fibers)<1
+        fiberGroupNum(ii) = NaN;
+    end
+end
+fiberGroupNum = fiberGroupNum(~isnan(fiberGroupNum));
+
 nFgs = length(fiberGroupNum);
 
 fdImg = zeros(imSize);

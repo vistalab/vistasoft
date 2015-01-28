@@ -168,6 +168,7 @@ save mrInit_params params   % stash the params in case we crash
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if isfield(params,'functionals') && ~isempty(params.functionals)
+    if ischar(params.functionals), params.functionals = {params.functionals}; end
     func = mrLoadHeader(params.functionals{1});
     
     for scan = 1:length(params.functionals)
@@ -185,6 +186,11 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         %local func struct.
         tS = niftiRead(func.path);
         tS = niftiApplyAndCreateXform(tS,'Inplane');
+        
+        %Store the orientation of the functional data. We will need the
+        %anatomical Inplane to have the same orientation.
+        [~, func.orientation] = niftiCreateXform(tS,'Inplane');
+        
         %Need to move over:
         %Data
         func.data = niftiGet(tS,'Data');
@@ -372,7 +378,7 @@ f.reconParams = mr.hdr;
 
 if scan==1
     mrSESSION = sessionSet(mrSESSION, 'Functionals', f);
-    %mrSESSION.functionals = f;
+    mrSESSION = sessionSet(mrSESSION, 'Functional Orientation', mr.orientation);
 else
     mrSESSION = sessionSet(mrSESSION, 'Functionals', ...
         mergeStructures(sessionGet(mrSESSION, 'Functionals', scan-1), f), scan);

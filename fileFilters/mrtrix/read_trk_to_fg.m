@@ -1,9 +1,12 @@
 function fg = read_trk_to_fg( filename )
-
-% fg = read_trk_to_fg( filename)
-% read_trk reads fiber fg output from trackvis
+% Read Trackvis format into fg
+%
+%   fg = read_trk_to_fg( filename)
+%
+% Creates fiber fg structure from trackvis file.
+%
 % Input:
-%       filename: Name of track file output from trackvis
+%       filename: Name of trk file output from trackvis
 %                 The extension of file is .trk
 % Output:
 %       fg is a mrDiffusion fiber group structure.
@@ -14,21 +17,30 @@ function fg = read_trk_to_fg( filename )
 % For details about header fields and fileformat see:
 % http://www.trackvis.org/docs/?subsect=fileformat
 %
-%
 % Example;
 %
-% fg = read_trk_to_fg('hardiO10.trk');
+%   fg = read_trk_to_fg('hardiO10.trk');
 %
 % HISTORY:
 % 2009.09.21 RFD wrote it, based on code by Sudhir K Pathak (read_trk).
 %
 % for PghBC2009 competition 2009 url:http://sfcweb.lrdc.pitt.edu/pbc/2009/
 %
-
-
-% NOTE: This program reads a binary fiber tracking file output from TrackVIS in native format
-% If you reading .trk file on big endian machine change fopen function:
-% fid = fopen(filename ,'r', 'ieee-le');
+% PROGRAMMING TODO
+%
+%  This program reads a binary fiber tracking file output from
+% TrackVIS in native format. If you are reading .trk file on big endian
+% machine change fopen function: fid = fopen(filename ,'r', 'ieee-le');
+%
+% This should be called from dtiImportFibers or some more general place
+% rather than this routine.  Like fgRead would be good!
+%
+% We need a unit test.  Say read a .trk file in and check the hash on the
+% return or something, to verify that this code is running right.  We
+% should put the trk file in the vistadata directory.  And we should figure
+% out a good way to maintain that directory!
+%
+% Vistasoft Team, Copyright
 
 [p,f,e] = fileparts(filename);
 fg = dtiNewFiberGroup(f);

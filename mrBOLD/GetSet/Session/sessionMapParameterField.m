@@ -38,6 +38,7 @@ if isempty(DictSessionTranslate)
     DictSessionTranslate('functionals') = 'functionals';
     DictSessionTranslate('functionalsslicedim') = 'functionalsslicedim';
     DictSessionTranslate('functionalvoxelsize') = 'functionalvoxelsize';
+    DictSessionTranslate('functionalorientation') = 'functionalorientation';
     DictSessionTranslate('inplane') = 'inplane';
     DictSessionTranslate('inplanepath') = 'inplanepath';
     DictSessionTranslate('interframedelta') = 'interframetiming';

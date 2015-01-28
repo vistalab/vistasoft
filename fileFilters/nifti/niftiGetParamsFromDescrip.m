@@ -20,7 +20,7 @@ function [params] = niftiGetParamsFromDescrip(niftiFile)
 %   params =
 %
 %     niftiFile: '4534_10_1.nii.gz'
-%            tr: 33
+%            tr: 0.0140
 %            te: 2
 %            ti: 0
 %            fa: 20
@@ -41,9 +41,11 @@ if exist('niftiFile','var') && isstruct(niftiFile)
         clear niftiFile;
 else
     if  ~exist('niftiFile','var') || ~exist(niftiFile,'file')
-        niftiFile=uigetfile('*.nii.gz','Choose nifti file');
-        if niftiFile == 0
+        [ fileName, pathName ] = uigetfile('*.nii.gz','Choose nifti file');      
+        if fileName == 0
             return
+        else
+            niftiFile = fullfile(pathName,fileName);
         end
     end
     % Read in the nifti
@@ -69,13 +71,28 @@ if strfind(ni.descrip,'=')
     end
 end
 
-% Get the TR from the 4th dimension of the nifti
-try
+% Get the TR from the 4th dimension of nifti pixdim field
+s = size(ni.pixdim);
+if ( s(2) >= 4 )
     tr = ni.pixdim(4);
-catch err
-    fprintf('%s\n',err.message);
+else
+	fprintf('Warning: Could not determine a TR for %s\n',niftiFile);
+    fprintf('\tpixdim field does not contain a 4th dimension for TR! Setting tr = nan \n');
     clear err
-    tr = [];
+    tr = nan;
+end
+
+% Convert units of tr to milliseconds if in seconds
+if ~isnan(tr)
+	switch lower(ni.time_units)
+		case 'sec'
+    		tr = tr * 1000;
+    		fprintf('\t%s: \n\tSetting TR units to milliseconds: TR = %.3f ms\n',ni.fname,tr);
+    	case 'msec'
+    		fprintf('\t%s: \n\tTR units are in milliseconds: %.2f ms\n',ni.fname,tr);
+		otherwise
+			fprintf('\t%s: \n\tUnknown units for TR: %.2f %s\n',ni.fname, tr,ni.time_units);
+    end
 end
 
 % Remove the nifti struct, so we don't save it along with the other stuff.

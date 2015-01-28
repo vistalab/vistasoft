@@ -26,15 +26,24 @@ switch param
         setSlider(vw, vw.ui.contrast, val);
     case 'inplanepath'
         vw.anat.inplanepath = val;
+    case 'inplaneorientation'
+        vw.inplaneOrientation = val;
     case 'anatinitialize'
         %Expects a path as the value
         %Read in the nifti from the path value
         vw = viewSet(vw,'Anatomy Nifti', niftiRead(val));
         %Calculate Voxel Size as that is not read in
         vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Voxel Size',prod(niftiGet(vw.anat,'pixdim'))));
-        
-        %Let us also calculate and and apply our transform
-        vw = viewSet(vw,'Anatomy Nifti',niftiApplyAndCreateXform(viewGet(vw,'Anatomy Nifti'),'Inplane'));
+        %If functional orientation is defined, make sure we use it
+        ipOrientation = viewGet(vw, 'Inplane Orientation');
+        if ~isempty(ipOrientation)            
+            vectorFrom = niftiCurrentOrientation(viewGet(vw,'Anatomy Nifti'));
+            xform      = niftiCreateXformBetweenStrings(vectorFrom,ipOrientation);
+            vw = viewSet(vw, 'Anatomy Nifti', niftiApplyXform(viewGet(vw,'Anatomy Nifti'),xform));
+        else
+            %Let us also calculate and and apply our transform
+            vw = viewSet(vw,'Anatomy Nifti',niftiApplyAndCreateXform(viewGet(vw,'Anatomy Nifti'),'Inplane'));
+        end
     case 'anatomynifti'
         vw.anat = val; %This means that we are passing in an entire Nifti!
         

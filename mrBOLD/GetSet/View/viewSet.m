@@ -53,6 +53,7 @@ function vw = viewSet(vw,param,val,varargin)
 %      'inplanepath'
 %      'anatinitialize'
 %      'anatomynifti'
+%      'inplaneorientation'
 %
 % %%%%% ROI-related properties
 %      'roi'

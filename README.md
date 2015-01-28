@@ -16,15 +16,23 @@ And in addition:
 - utilities
 - setup
 - tutorials 
-- external: functions written by others that we use as dependencies.
+- external: functions written by others that we use as dependencies (see optional software).
 
 External dependencies:
-- Matlab (2009 or newer)
-- SPM8
+- [Matlab](http://mathworks.com)
+- [SPM](http://www.fil.ion.ucl.ac.uk/spm/)
 
-For documentation, please visit the [VISTA lab wiki](http://vistalab.stanford.edu/wiki).
+Optional packages:
+ - [Freesurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall)
+ - [FSL](http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/)
+ - [MRTrix](http://www.nitrc.org/projects/mrtrix/)
+ - [JSONLab](http://iso2mesh.sourceforge.net/cgi-bin/index.cgi?jsonlab)
+
+For detailed documentation, please visit the [VISTA lab wiki](http://vistalab.stanford.edu/wiki).
 
 
-For help with the new mrInit intialization method, please see the [Initialization Page](http://vistalab.stanford.edu/newlm/index.php/Initialization#mrInit).
+For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
 
-(c) Vista lab, Stanford University, 2013. 
+(c) Vista lab, Stanford University.
+
+Unless otherwise noted, all our code is released under the [GPL](http://www.gnu.org/copyleft/gpl.html) 

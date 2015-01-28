@@ -12,11 +12,9 @@ function dtiInitLog = dtiInitLog(dwParams,dwDir)
 %                   files and directories used while preprocessing dwi
 %                   data.
 % RETURNS
-%       dtiInitLog:    Structure that contains the two input structures as
-%                   well as: the date and time and svn information. 
+%       dtiInitLog: Structure that contains the two input structures as
+%                   well as: the date and time and svn/git information. 
 %
-% Web Resources
-%       mrvBrowseSVN('dtiInitLog');
 % 
 % Example:
 %   dtiInitLog = dtiInitLog(dwParams,dwDir);
@@ -27,11 +25,11 @@ function dtiInitLog = dtiInitLog(dwParams,dwDir)
 
 %% Initialize the structure and populate it with dwParams and dwDir ...
 % 
-dtiInitLog         = struct;
-dtiInitLog.params  = dwParams;
-dtiInitLog.dir     = dwDir;
-dtiInitLog.date    = getDateAndTime;
-dtiInitLog.system.os  = [getenv('OS') ' ' computer];
+dtiInitLog               = struct;
+dtiInitLog.params        = dwParams;
+dtiInitLog.dir           = dwDir;
+dtiInitLog.date          = getDateAndTime;
+dtiInitLog.system.os     = [getenv('OS') ' ' computer];
 dtiInitLog.system.matlab = version;
 
 

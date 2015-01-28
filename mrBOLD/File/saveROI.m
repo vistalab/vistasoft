@@ -1,15 +1,15 @@
-function [view, status, forceSave] = saveROI(view, ROI, local, forceSave)
+function [vw, status, forceSave] = saveROI(vw, ROI, local, forceSave)
 %
 % [view, status, forceSave] = saveROI([view=cur view], [ROI='selected'], [local], [forceSave=0])
 %
 % Saves ROI to a file.
 %
 % INPUTS:
-% view: mrVista view. Finds current view if omitted.
+%   vw: mrVista view. Finds current view if omitted.
 %
-% ROI: ROI structure, or index into ROI structure. Entering 'selected' 
-% as ROI will cause the view's selected ROI to be saved. [This is the 
-% default behavior if the ROI argument is omitted.]
+%   ROI: ROI structure, or index into the ROI structure in the view. 
+%   If this the string 'selected' the view's selected ROI to be saved. 
+%   [This is the default behavior if the ROI argument is omitted.]
 %
 % local: flag to save ROI in a local directory to the view (e.g.,
 % 'Volume/ROIs'), or a shared directory (e.g., relative to the
@@ -22,13 +22,22 @@ function [view, status, forceSave] = saveROI(view, ROI, local, forceSave)
 % without asking. Useful for scripting. [Defaults to 0].
 %
 % OUTPUTS:
-%   view: modified view.
+%   vw    : Modified view (e.g, Inplane ...).
 %   status: 0 if the ROI saving was aborted. This is used when calling this
 %           repeatedly (see 'saveAllROIs'), if the file exists and the
 %           user selects 'Cancel'.
 %   forceSave: modified forceSave flag, if the file exists, and the user
 %           wants to bypass the dialog for future files. (again, see 
 %           'saveAllROIs'.)
+%
+% Example:  saveROI(INPLANE{1});
+%
+% See also:
+%    The roi management is a mess.  This should be roiSave, but there is
+%    another roiSave.  All the roi management routines have different names
+%    and different behavior.  Sigh.
+%
+% Vistasoft Team
 %
 % djh, 1/24/98
 % gmb, 4/25/98 added dialog box
@@ -39,21 +48,19 @@ function [view, status, forceSave] = saveROI(view, ROI, local, forceSave)
 % ras 11/06: offers option to save over all, returning modified forceSave
 % flag. (Very helpful when saving a lot of ROIs that you want to update.)
 
-if notDefined('view'),      view = getCurView;      end
+if notDefined('vw'),        vw = getCurView;        end
 if notDefined('forceSave'), forceSave = 0;          end
 if notDefined('ROI'),       ROI = 'selected';       end
-if notDefined('local'),    
-    local = isequal(view.viewType, 'Inplane');         
-end
+if notDefined('local'),     local = isequal(vw.viewType, 'Inplane'); end
 
 status = 0;
 verbose = prefsVerboseCheck;
 
 % disambiguate the ROI specification
-if isnumeric(ROI), ROI = tc_roiStruct(view, ROI); end
+if isnumeric(ROI), ROI = tc_roiStruct(vw, ROI); end
 
 if ischar(ROI) && isequal(lower(ROI), 'selected')
-    ROI = view.ROIs( view.selectedROI );
+    ROI = vw.ROIs( vw.selectedROI );
 end
 
 if isfield(ROI, 'roiVertInds')
@@ -76,7 +83,7 @@ if ~strcmp(ext,'.mat')
 else,
   ROIname = ROI.name;
 end;
-pathStr = fullfile(roiDir(view,local), ROIname);
+pathStr = fullfile(roiDir(vw,local), ROIname);
 
 if check4File(pathStr) && forceSave==0
     q = sprintf('ROI %s already exists.  Overwrite?', ROI.name);

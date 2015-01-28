@@ -89,7 +89,7 @@ function dwParams = dtiInitParams(varargin)
 %                set in dtiInitDir.
 %       .bvalsFile  = ''; Path to bvals file (optional) Path to this file
 %                set in dtiInitDir.
-%       .noiseCalcMethod = 'corner'
+%       .noiseCalcMethod = 'b0'
 %                IF you are using robust tensor fitting you must decide how
 %                to calculate the image noise. The default is to use the
 %                corner of the image but if the corner of the image is
@@ -136,7 +136,7 @@ dwParams.rotateBvecsWithRx       = false;
 dwParams.rotateBvecsWithCanXform = false;
 dwParams.bvecsFile               = '';
 dwParams.bvalsFile               = '';
-dwParams.noiseCalcMethod         = 'corner';
+dwParams.noiseCalcMethod         = 'b0';
 dwParams.outDir                  = '';
 
 %% Varargin

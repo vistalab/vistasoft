@@ -161,6 +161,7 @@ INPLANE{s} = eventMenu(INPLANE{s});
 INPLANE{s} = helpMenu(INPLANE{s}, 'Inplane');
 
 % go ahead and load the anatomicals
+INPLANE{s} = viewSet(INPLANE{s}, 'Inplane orientation', sessionGet(mrSESSION,'functional orientation'));
 INPLANE{s} = loadAnat(INPLANE{s}, sessionGet(mrSESSION,'Inplane Path'));
 
 

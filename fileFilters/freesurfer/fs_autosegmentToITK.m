@@ -53,14 +53,19 @@ if notDefined('t1') || ~exist(t1, 'file'),
 end
 if ~exist(t1, 'file'), error('Cannot locate t1 file'); end
 
-if ~exist('skipRecon', 'var'),     skipRecon = false; end
-if ~exist('resample_type', 'var'), resample_type = 'nearest'; end
+if ~exist('skipRecon', 'var') || isempty(skipRecon)
+    skipRecon = false;
+end
+if ~exist('resample_type', 'var') || isempty(resample_type)
+    resample_type = 'nearest'; 
+end
 
 % This is the directory where freesurfer puts subject data. If it is
 % defined in the linux shell (e.g., bashrc) then matlab can find it. If it
 % is not defined, look for the 'freesurfer_home/subjects', which is the
-% default location in freesurfer.
+% default location in freesurfer. 
 subdir   = getenv('SUBJECTS_DIR');
+
 if isempty(subdir),
     fshome = getenv('FREESURFER_HOME');
     subdir = fullfile(fshome, 'subjects');

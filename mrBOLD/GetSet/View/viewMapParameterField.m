@@ -154,6 +154,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('anatnifti') = 'anatomynifti';
     DictViewTranslate('niftianat') = 'anatomynifti';
     DictViewTranslate('niftianatomy') = 'anatomynifti';
+    DictViewTranslate('inplaneorientation') = 'inplaneorientation';    
     DictViewTranslate('anatsizexyz') = 'anatsizexyz';
     DictViewTranslate('anatomysizeforclass') = 'anatsizexyz';
     DictViewTranslate('ngraylayers') = 'ngraylayers';

@@ -1,6 +1,6 @@
-function view = addROIline(view,sgn)
+function vw = addROIline(vw,sgn)
 %
-% view = addROIline(view,[sgn])
+% vw = addROIline(vw,[sgn])
 %
 % Click on two points in the image and find an ROI along a line
 % between them.  What does line mean?  Geodesic or screen line?
@@ -14,7 +14,7 @@ function view = addROIline(view,sgn)
 % bw, 4/30/99
 
 % error if no current ROI
-if view.selectedROI == 0
+if viewGet(vw, 'selected ROI') == 0
   myErrorDlg('No current ROI');
   return
 end
@@ -25,10 +25,10 @@ if ~exist('sgn','var')
 end
 
 % Get current ROI coords
-curCoords = getCurROIcoords(view);
+curCoords = viewGet(vw, 'ROI coords');
 
 % Save prevCoords for undo
-view.prevCoords = curCoords;
+vw.prevCoords = curCoords;
 
 % Get curSlice
 curSlice = viewGet(vw, 'Current Slice');
@@ -50,9 +50,9 @@ rgn = fliplr(rgn);
 
 % Check if outside image
 % 
-dims=size(view.ui.image);
-if (min(rgn(:,1))< 1 | max(rgn(:,1))>dims(1) | ...
-      min(rgn(:,2))< 1 | max(rgn(:,2))>dims(2))
+dims=size(vw.ui.image);
+if (min(rgn(:,1))< 1 || max(rgn(:,1))>dims(1) || ...
+      min(rgn(:,2))< 1 || max(rgn(:,2))>dims(2))
   myWarnDlg('Must choose line endpoints within image boundaries');
   return;
 end
@@ -73,12 +73,12 @@ newCoords(2,:) = x;
 newCoords(3,:) = curSlice*ones(1,length(x));
 
 % Do an (inverse) rotation if necessary
-if (strcmp(view.viewType,'Flat'))
-    newCoords=(rotateCoords(view,newCoords,1));
+if (strcmp(vw.viewType,'Flat'))
+    newCoords=(rotateCoords(vw,newCoords,1));
 end
 
 % Convert coords to canonical frame of reference
-newCoords = curOri2CanOri(view,newCoords);
+newCoords = curOri2CanOri(vw,newCoords);
 
 % Merge/remove coordinates
 if sgn
@@ -89,8 +89,8 @@ else
   coords = removeCoords(newCoords,curCoords);
 end
 
-view.ROIs(view.selectedROI).coords = coords;
+vw.ROIs(vw.selectedROI).coords = coords;
 
-view.ROIs(view.selectedROI).modified = datestr(now);
+vw.ROIs(vw.selectedROI).modified = datestr(now);
 
 return;

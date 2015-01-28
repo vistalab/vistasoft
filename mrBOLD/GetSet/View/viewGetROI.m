@@ -9,6 +9,12 @@ function val = viewGetROI(vw,param,varargin)
 %
 % We assume that input comes to us already fixed and does not need to be
 % formatted again.
+%
+% Wandell says we should use roiGet/Set/Create and have this function call
+% those.  THe reason is so that we can interact with ROIs and not have to
+% require a whole vw object.
+%
+% Vistasoft Team, many years ago.
 
 if notDefined('vw'), vw = getCurView; end
 if notDefined('param'), error('No parameter defined'); end

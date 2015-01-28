@@ -23,7 +23,6 @@ function [dt6FileName, outBaseDir] = dtiInit(dwRawFileName, t1FileName, dwParams
 %
 % WEB resources:
 %   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
-%   mrvBrowseSVN('dtiInit');
 % 
 % 
 % Example Usage: 
@@ -42,7 +41,6 @@ function [dt6FileName, outBaseDir] = dtiInit(dwRawFileName, t1FileName, dwParams
 % (C) Stanford VISTA, 8/2011 [lmp]
 % 
 % 
-%#ok<*ASGLU>
 
 
 %% I. Load the diffusion data, set up parameters and directories structure
@@ -120,7 +118,6 @@ bvals = dlmread(dwDir.bvalsFile);
 
 [doResamp, bvecs, bvals, dwRaw] = dtiInitCheckVols(bvecs, bvals, dwRaw, dwParams);
 
-
 %% VII. Rotate bvecs using Rx or CanXform: * More comments from RFD needed.
 
 if dwParams.rotateBvecsWithRx 
@@ -166,8 +163,10 @@ if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name); end
 
 % If doECC comes back true do the eddy current correction
 if doECC
-dtiRawRohdeEstimateEddyMotion(dwRaw, dwDir.mnB0Name, bvals, dwDir.ecFile,...
+   dtiRawRohdeEstimateEddyMotion(dwRaw, dwDir.mnB0Name, bvals, dwDir.ecFile,...
                               dwParams.eddyCorrect==1);
+   % Make a figure of the Motion estimated during eddy current correction
+   dtiCheckMotion(dwDir.ecFile,'off');
 end
 
 
@@ -255,7 +254,6 @@ else
     end
 end
 
-
 %% XVI. Tensor Fitting
 
 % Switch on the fit method. If 'ls' use dtiRawFitTensorMex. If 'rt' use
@@ -311,4 +309,5 @@ dtiInitLog(dwParams,dwDir);
 
 
 return
+%#ok<*ASGLU>
 
