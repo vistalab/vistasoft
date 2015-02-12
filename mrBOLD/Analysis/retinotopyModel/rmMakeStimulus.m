@@ -127,7 +127,7 @@ for n=1:length(params.stim),
     params.stim(n).images_unconvolved = params.stim(n).images_unconvolved.*(params.analysis.sampleRate.^2);
     
     % limit to actual MR recording.
-    params.stim(n).images_unconvolved = params.stim(n).images_unconvolved(params.stim(n).prescanDuration+1:end,:);
+    params.stim(n).images_unconvolved = params.stim(n).images_unconvolved(:, params.stim(n).prescanDuration+1:end);
     
     % and time averaging
     params.stim(n).images_unconvolved = rmAverageTime(params.stim(n).images_unconvolved, ...

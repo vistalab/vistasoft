@@ -8,12 +8,18 @@ function closeGraphWin
 
 global GRAPHWIN
 
+curFigure = get(0,'CurrentFigure');
+
+if isstruct(curFigure)
+    curFigure = get(curFigure, 'Number');
+end
+
 if GRAPHWIN
-  if (GRAPHWIN == get(0,'CurrentFigure'))
+  if (GRAPHWIN == curFigure)
     GRAPHWIN=0; 
   end
 end 
 
-delete(get(0,'CurrentFigure'));
+delete(curFigure);
 
 

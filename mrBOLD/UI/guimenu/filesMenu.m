@@ -77,7 +77,7 @@ uimenu(fileMenu,'Label','(Re-)create Readme.txt','Separator','off',...
     'Callback',cb);
 
 % Quit
-cb = ['close(',num2str(view.ui.figNum),'); mrvCleanWorkspace;'];
+cb = ['close(',num2str(viewGet(view, 'figure number')),'); mrvCleanWorkspace;'];
 uimenu(fileMenu,'Label','Quit ','Separator','on', 'Callback',cb);
 
 

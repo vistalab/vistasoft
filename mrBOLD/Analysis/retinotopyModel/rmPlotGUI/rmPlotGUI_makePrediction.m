@@ -273,7 +273,7 @@ if M.params.analysis.calcPC && ~recompFit
     % Only do this if the prediction is not already in % signal. We check
     % whether the signal is in % signal. If it is the mean should be
     % near-zero. So: 
-    if abs(mean(prediction))>0.1 % random picked number (0.001 is too low)
+    if abs(mean(prediction))>1 % random picked number (0.001 is too low)
         fprintf('[%s]:WARNING:converting prediction to %% signal even though recompFit=false.\n',mfilename);
         prediction  = raw2pc(prediction);
     end
