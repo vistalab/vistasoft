@@ -1,10 +1,13 @@
 function model = rmSearchFit_oneGaussianNonlinear(model, data, params, wProcess, t)
 % rmSearchFit_oneGaussianNonlinear - wrapper for 'fine' one Gaussian fit
 %
-% model = rmSearchFit_oneGaussian(model, data, params, wProcess, t);
+% model = rmSearchFit_oneGaussianNonlinear(model, data, params, wProcess, t);
 %
 % 2008/01 SOD: split of from rmSearchFit.
 % 2010/02 SOD: cleanup.
+% 2015/02 JW: branched from rmSearchFit_oneGaussian, now includes
+%             non-linear model (see Kay et al, 2013, on Compressive
+%             Spatial Summation)
 
 % fminsearch options
 searchOptions = params.analysis.fmins.options;
@@ -44,7 +47,7 @@ for ii = 1:numel(wProcess),
                 fprintf(1,'[%s]:Estimated processing time: %d voxels: %d minutes.\n',...
                     mfilename,numel(wProcess),ceil(esttime./60));
             end;
-            fprintf(1,'[%s]:Nonlinear optimization (x,y,sigma):',mfilename);
+            fprintf(1,'[%s]:Nonlinear optimization (x,y,sigma, exponent):',mfilename);
         end;
         fprintf(1,'.');drawnow;
         progress = progress + 1;

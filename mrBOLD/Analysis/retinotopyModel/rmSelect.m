@@ -41,6 +41,17 @@ if ischar(rmFile) && ismember(lower(rmFile), {'newest' 'mostrecent'})
 	rmFile = fullfile( dataDir(vw), w(order(end)).name );
 end
 
+if ~exist(rmFile,'file')
+    if exist([rmFile '.mat'], 'file')
+        rmFile = [rmFile '.mat'];
+    elseif check4File(fullfile(dataDir(vw), rmFile))
+        rmFile = fullfile(dataDir(vw), rmFile);
+    else
+        disp(sprintf('[%s]:No file: %s',mfilename,rmFile));
+        return;
+    end
+end
+
 % if the load model flag is 1, but the file's already selected, just load
 % it and return:
 if loadModel && checkfields(vw, 'rm' , 'retinotopyModelFile')
@@ -55,16 +66,6 @@ if loadModel && checkfields(vw, 'rm' , 'retinotopyModelFile')
     return;
 end;
 
-if ~exist(rmFile,'file') 
-    if exist([rmFile '.mat'], 'file')
-        rmFile = [rmFile '.mat'];
-    elseif check4File(fullfile(dataDir(vw), rmFile))
-        rmFile = fullfile(dataDir(vw), rmFile);
-    else
-        disp(sprintf('[%s]:No file: %s',mfilename,rmFile));
-        return;
-    end
-end
     
 % store rmFile filename:
 vw = viewSet(vw,'rmFile',rmFile);
