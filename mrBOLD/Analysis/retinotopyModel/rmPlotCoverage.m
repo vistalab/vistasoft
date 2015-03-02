@@ -40,18 +40,18 @@ if notDefined('vw'),           error('View must be defined.'); end
 %% default parameters
 vfc.prf_size = true; 
 vfc.fieldRange = min(30, vw.rm.retinotopyParams.analysis.maxRF);
-vfc.method = 'maximum profile';         
+vfc.method = 'average';         
 vfc.newfig = true;                      
-vfc.nboot = 0;                          
+vfc.nboot = 50;                          
 vfc.normalizeRange = true;              
-vfc.smoothSigma = false;                
+vfc.smoothSigma = true;                
 vfc.cothresh = viewGet(vw, 'co thresh');         
 vfc.eccthresh = [0 1.5*vfc.fieldRange]; 
 vfc.nSamples = 128;            
 vfc.meanThresh = 0;
 vfc.weight = 'fixed';  
 vfc.weightBeta = 0;
-vfc.cmap = 'hot';						
+vfc.cmap = 'jet';						
 vfc.clipn = 'fixed';                    
 vfc.threshByCoh = false;                
 vfc.addCenters = true;                 
