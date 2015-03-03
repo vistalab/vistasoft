@@ -375,7 +375,7 @@ end;
 if params.analysis.coarseToFine,
     model = rmInterpolate(view, model, params);
      if isfield(model{1}, 'exponent')
-        model{1}.sigma.major = model{1}.sigma.major .* sqrt(model{1}.exponent);
+        model{1} = rmSet(model{1}, 's', model{1}.sigma.major .* sqrt(model{1}.exponent));
      end
 end;
 
