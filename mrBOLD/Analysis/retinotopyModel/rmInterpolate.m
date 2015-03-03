@@ -69,8 +69,11 @@ for n=1:numel(model),
             end;
         elseif ~isempty(val) && numel(val)==numel(fulval),
             model{n} = rmSet(model{n},rp{p},val);
-        end;
+        end;        
     end;
+    if isfield(model{n}, 'exponent') && ~isempty(model{n}.exponent)
+        model{n} = rmSet(model{n}, 's', model{n}.sigma.major .* sqrt(model{n}.exponent));
+    end
 end;
 
 % separate loop for the betas, because they are saved in a different way
