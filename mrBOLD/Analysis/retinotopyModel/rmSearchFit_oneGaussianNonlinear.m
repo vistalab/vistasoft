@@ -16,12 +16,14 @@ expandRange   = params.analysis.fmins.expandRange;
 % convert to double just in case
 params.analysis.X = double(params.analysis.X);
 params.analysis.Y = double(params.analysis.Y);
+
 params.analysis.allstimimages = double(params.analysis.allstimimages);
 params.analysis.allstimimages_unconvolved = double(params.analysis.allstimimages_unconvolved);
 data = double(data);
 
 % get starting upper and lower range and reset TolFun 
 % (raw rss computation (similar to norm) and TolFun adjustments)
+model.s = model.s_major;
 [range, TolFun] = rmSearchFit_range(params,model,data);
 
 % amount of negative fits
@@ -95,14 +97,14 @@ for ii = 1:numel(wProcess),
     % do adjust the rss, so it won't be accidentally counted as a 'good'
     % fit. 
     if b(1)>0,
-        model.x0(vi)   = outParams(1);
-        model.y0(vi)   = outParams(2);
-        model.s(vi)    = outParams(3);
+        model.x0(vi)         = outParams(1);
+        model.y0(vi)         = outParams(2);
+        model.s(vi)          = outParams(3);
         model.s_major(vi)    = outParams(3);
         model.s_minor(vi)    = outParams(3);
         model.s_theta(vi)    = 0;
-        model.rss(vi)  = rss;
-        model.b([1 t_id],vi)  = b;
+        model.rss(vi)        = rss;
+        model.b([1 t_id],vi) = b;
     else
         % change the percent variance explained to be just under the
         % current vethresh. So it counts as a 'coarse'-fit but can still be
