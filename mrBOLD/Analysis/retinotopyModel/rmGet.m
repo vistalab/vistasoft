@@ -40,11 +40,18 @@ try
         case {'hrfmax','peak hrf response value'}
             val = model.hrf.maxresponse;
 
+%         case {'s'}
+%             val = (model.sigma.major + model.sigma.minor)./2;
+%         case {'sigma'}
+%             val = (model.sigma.major + model.sigma.minor)./2;             
+%             if isfield(model, 'exponent'),
+%                 val = model.sigma.major./sqrt(model.exponent);
+%             end
         case {'s','sigma'}
             val = (model.sigma.major + model.sigma.minor)./2;             
             if isfield(model, 'exponent'),
                 val = model.sigma.major./sqrt(model.exponent);
-            end
+            end            
         case {'sigmamajor','sigma major','s_major'}
             val = model.sigma.major;
         case {'sigmaminor','sigma minor','s_minor'}
