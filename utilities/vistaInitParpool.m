@@ -136,13 +136,13 @@ end
 
 %% Open the pool with the numcpus
 
-vistapool.NumWorkers = numcpus;
+vistapool.NumWorkers = total_cpus;
 
 if startpool
     try
-    parpool(vistapool);
+    parpool(vistapool,numcpus);
     catch 
-        fprintf('Could not start pool with %s workers! \n Trying default profile...\n', num2str(numcpus));
+        fprintf('Could not start pool with %s workers! \n Trying defaults...\n', num2str(numcpus));
         try
             parpool;
             pool = gcp;
