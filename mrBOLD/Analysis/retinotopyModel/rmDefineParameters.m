@@ -1,3 +1,4 @@
+
 function params = rmDefineParameters(vw, varargin)
 % rmDefineParameters - define parameters for retinotopic model fit
 %
@@ -263,9 +264,6 @@ params.analysis.numberSigmaRatios= 5;
 params.analysis.numberThetas= 4;
 % params.analysis.numberThetas= 1;
 
-% The number of exponents for nonlinear model (pred = (stim*prf)^exponent)
-params.analysis.numberExponents= 4;
-
 % The next parameter defines how the sigma values are distributed
 % between minRF and maxRF. So far we have three methods:
 % 'lin','log','linlog'. See spaceSigmas below for details.
@@ -473,12 +471,15 @@ switch params.analysis.pRFmodel{1}
         params.analysis.exponent = ones(size(params.analysis.x0));
         
     case 'onegaussiannonlinear'
+        % The number of exponents for nonlinear model (pred = (stim*prf)^exponent)
+        params.analysis.numberExponents= 1 ;
+        
         numberOfGridPoints          = length(keep);
 
         params.analysis.x0          = repmat(flipud(x(keep)),(params.analysis.numberExponents),1);
         params.analysis.y0          = repmat(flipud(y(keep)),(params.analysis.numberExponents),1);
 
-        exponentValues              = (1:params.analysis.numberExponents)/params.analysis.numberExponents;
+        exponentValues              = (params.analysis.numberExponents:-1:1)/params.analysis.numberExponents;
         params.analysis.exponent    = repmat(exponentValues, numberOfGridPoints, 1);
         params.analysis.exponent    = params.analysis.exponent(:);
 
