@@ -81,58 +81,82 @@ s = [[1:ceil(n./1000):n-2] n+1]; %#ok<NBRAK>
 % with the hRF. instead we make predictions with the unconvolved images and
 % then convolve with the hRF afterwards
 if ~checkfields(params, 'analysis', 'nonlinear') || ~params.analysis.nonlinear
-   % for a lineaer model, use the pre-convolved stimulus images
+    % for a lineaer model, use the pre-convolved stimulus images
     allstimimages = rmDecimate(params.analysis.allstimimages,...
         params.analysis.coarseDecimate);
-else
-    % for a nonlinear model, use the unconvolved images
-    allstimimages = rmDecimate(params.analysis.allstimimages_unconvolved,...
-        params.analysis.coarseDecimate);
     
-    % scans stores the scan number for each time point. we need to keep
-    % track of the scan number to ensure that hRF convolution does operate
-    % across scans
-    scans = rmDecimate(params.analysis.scan_number, params.analysis.coarseDecimate);
-    scans = round(scans);
+    prediction = zeros(size(allstimimages,1),n,'single');
+    fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
+    drawnow;tic;
+    for n=1:numel(s)-1,
+        % make rfs
+        rf   = rfGaussian2d(params.analysis.X, params.analysis.Y,...
+            params.analysis.sigmaMajor(s(n):s(n+1)-1), ...
+            params.analysis.sigmaMinor(s(n):s(n+1)-1), ...
+            params.analysis.theta(s(n):s(n+1)-1), ...
+            params.analysis.x0(s(n):s(n+1)-1), ...
+            params.analysis.y0(s(n):s(n+1)-1));
+        % convolve with stimulus
+        pred = allstimimages*rf;
+        
+        % store
+        prediction(:,s(n):s(n+1)-1) = pred;
+        if ismember(n, round((1:10)/10* numel(s)-1)), % every 10% draw a dot
+            fprintf(1,'.');drawnow;
+        end
+    end;
+    
+    clear n s rf pred;
+    fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
+    drawnow;
+else
+    allstimimages = params.analysis.allstimimages_unconvolved;
+    prediction = zeros(size(allstimimages,1),n,'single');
+    fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
+    drawnow;tic;
+    for n=1:numel(s)-1,
+        % make rfs
+        rf   = rfGaussian2d(params.analysis.X, params.analysis.Y,...
+            params.analysis.sigmaMajor(s(n):s(n+1)-1), ...
+            params.analysis.sigmaMinor(s(n):s(n+1)-1), ...
+            params.analysis.theta(s(n):s(n+1)-1), ...
+            params.analysis.x0(s(n):s(n+1)-1), ...
+            params.analysis.y0(s(n):s(n+1)-1));
+        % convolve with stimulus
+        pred = allstimimages*rf;
+        
+        % store
+        prediction(:,s(n):s(n+1)-1) = pred;
+        if ismember(n, round((1:10)/10* numel(s)-1)), % every 10% draw a dot
+            fprintf(1,'.');drawnow;
+        end
+    end;
+    
+    scans = params.analysis.scan_number;
+    
+    % for nonlinear model, do the hRF convolution after the prediction
+    if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
+        % rectify prediction to avoid complex numbers
+        prediction(prediction < 0) = 0;
+        prediction = bsxfun(@power, prediction, params.analysis.exponent');
+        for scan = 1:numel(params.stim)
+            inds = scans == scan;
+            hrf = params.analysis.Hrf{scan};
+            prediction(inds,:) = filter(hrf, 1, prediction(inds,:));
+        end
+    end
+    
+    clear n s rf pred;
+    fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
+    drawnow;
+    
+    % decimate predictions after convolution instead of before
+    prediction = rmDecimate(prediction,...
+        params.analysis.coarseDecimate);
 end
 
 
-prediction = zeros(size(allstimimages,1),n,'single');
-fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
-drawnow;tic;
-for n=1:numel(s)-1,
-    % make rfs
-    rf   = rfGaussian2d(params.analysis.X, params.analysis.Y,...
-        params.analysis.sigmaMajor(s(n):s(n+1)-1), ...
-        params.analysis.sigmaMinor(s(n):s(n+1)-1), ...
-        params.analysis.theta(s(n):s(n+1)-1), ...
-        params.analysis.x0(s(n):s(n+1)-1), ...
-        params.analysis.y0(s(n):s(n+1)-1));
-    % convolve with stimulus
-    pred = allstimimages*rf;
 
-    % store
-    prediction(:,s(n):s(n+1)-1) = pred;
-    if ismember(n, round((1:10)/10* numel(s)-1)), % every 10% draw a dot
-        fprintf(1,'.');drawnow;
-    end
-end;
-
-% for nonlinear model, do the hRF convolution after the prediction
-if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear    
-    % rectify prediction to avoid complex numbers 
-    prediction(prediction < 0) = 0;
-    prediction = bsxfun(@power, prediction, params.analysis.exponent');
-    for scan = 1:numel(params.stim)
-        inds = scans == scan;        
-        hrf = rmDecimate(params.analysis.Hrf{scan}, params.analysis.coarseDecimate);
-        prediction(inds,:) = filter(hrf, 1, prediction(inds,:));              
-    end
-end
-
-clear n s rf pred;
-fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
-drawnow;
 
 
 % go loop over slices

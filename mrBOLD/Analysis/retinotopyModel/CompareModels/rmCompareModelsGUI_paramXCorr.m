@@ -102,9 +102,11 @@ elseif plotFlag==2
 					line([0 0], AX(3:4), 'Color', [.5 .5 .5]);
 				end
 				
-				xlabel([M.dtList{x} ' ' f], 'FontSize', 12);
-				ylabel([M.dtList{y} ' ' f], 'FontSize', 12);
-			end
+% 				xlabel([M.dtList{x} ' ' f], 'FontSize', 12);
+% 				ylabel([M.dtList{y} ' ' f], 'FontSize', 12);
+				xlabel([M.params{x}.analysis.pRFmodel ' ' f], 'FontSize', 12);
+				ylabel([M.params{y}.analysis.pRFmodel ' ' f], 'FontSize', 12);
+            end
 		end
 	end
 	
