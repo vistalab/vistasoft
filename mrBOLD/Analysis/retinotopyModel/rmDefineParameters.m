@@ -470,9 +470,9 @@ switch params.analysis.pRFmodel{1}
         params.analysis.theta(isnan(params.analysis.theta))=0;
         params.analysis.exponent = ones(size(params.analysis.x0));
         
-    case 'onegaussiannonlinear'
+    case {'css' 'onegaussiannonlinear', 'onegaussianexponent'}
         % The number of exponents for nonlinear model (pred = (stim*prf)^exponent)
-        params.analysis.numberExponents= 1 ;
+        params.analysis.numberExponents = 4 ;
         
         numberOfGridPoints          = length(keep);
 
