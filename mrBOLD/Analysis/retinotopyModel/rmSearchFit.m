@@ -419,7 +419,7 @@ for slice=loopSlices,
                 s{n}=rmSearchFit_twoGaussiansPosOnly(s{n},data,params,wProcess,t);
                 
             case {'addgaussian','add one gaussian'}
-                [residuals s{n}] = rmComputeResiduals(view,params,s{n},slice,[false params.analysis.coarseDecimate>1]);
+                [residuals, s{n}] = rmComputeResiduals(view,params,s{n},slice,[false params.analysis.coarseDecimate>1]);
                 t.dcid = t.dcid + 1;
                 s{n}=rmSearchFit_oneGaussian(s{n},residuals,params,wProcess,t);
                 trendBetas = zeros(size(trendBetas));
@@ -427,8 +427,9 @@ for slice=loopSlices,
             case {'css' 'onegaussiannonlinear', 'onegaussianexponent', ...
                     '2d nonlinear prf fit (x,y,sigma,exponent, positive only)'}
                 s{n}=rmSearchFit_oneGaussianNonlinear(s{n},data,params,wProcess,t);
-            case {'cssboxcar' 'onegaussiannonlinearboxcar', 'onegaussianexponentboxcar'}
-                s{n}=rmSearchFit_oneGaussianNonlinear(s{n},data,params,wProcess,t);
+                %
+                %             case {'cssboxcar' 'onegaussiannonlinearboxcar', 'onegaussianexponentboxcar'}
+                %                 s{n}=rmSearchFit_oneGaussianNonlinear(s{n},data,params,wProcess,t);
             otherwise
                 fprintf('[%s]:Unknown pRF model: %s: IGNORED!\n',mfilename,desc);
         end

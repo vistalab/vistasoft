@@ -65,7 +65,7 @@ if isfield(model,'s2')
 end
 
 % set boundary for exponent
-if isfield(model,'exponent')
+if isfield(params.analysis,'nonlinear') && params.analysis.nonlinear
     range.start(4,:) = model.exponent;
     % limit exponent to [0.01 2]? this should be a parameter in the model definition, not buried all the way in here
     range.lower(4,:) = range.lower(3,:)*0 + 0.01;

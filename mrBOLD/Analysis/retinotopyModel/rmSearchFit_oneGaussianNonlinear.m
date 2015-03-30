@@ -17,7 +17,6 @@ expandRange   = params.analysis.fmins.expandRange;
 params.analysis.X = double(params.analysis.X);
 params.analysis.Y = double(params.analysis.Y);
 
-params.analysis.allstimimages = double(params.analysis.allstimimages);
 params.analysis.allstimimages_unconvolved = double(params.analysis.allstimimages_unconvolved);
 data = double(data);
 
@@ -87,8 +86,15 @@ for ii = 1:numel(wProcess),
     % make RF, prediction and get rss,b
     Xv = params.analysis.X-outParams(1);
     Yv = params.analysis.Y-outParams(2);
+    n  = outParams(4);
     rf = exp( (Yv.*Yv + Xv.*Xv) ./ (-2.*(outParams(3).^2)) );
-    X  = [params.analysis.allstimimages * rf trends];
+    pred = (params.analysis.allstimimages_unconvolved * rf).^ n;
+    for scan = 1:numel(params.stim)
+        inds = params.analysis.scans == scan;
+        pred(inds) = filter(params.analysis.Hrf{scan}, 1, pred(inds));
+    end
+        
+    X  = [pred trends];
     b    = pinv(X)*vData;
     rss  = norm(vData-X*b).^2;
 
@@ -103,6 +109,7 @@ for ii = 1:numel(wProcess),
         model.s_major(vi)    = outParams(3);
         model.s_minor(vi)    = outParams(3);
         model.s_theta(vi)    = 0;
+        model.exponent(vi)   = outParams(4);
         model.rss(vi)        = rss;
         model.b([1 t_id],vi) = b;
     else

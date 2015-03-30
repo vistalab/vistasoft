@@ -143,7 +143,7 @@ switch lower(wSearch)
         view = rmSearchFit(view,params);
 
 
-    case {'6','HRF coarse to fine fit','hrf'}
+    case {'6','hrf coarse to fine fit','hrf'}
         [view, params] = rmHrfSearchFit(view, params);
         view = rmFinalFit(view,params);
         view = rmSearchFit(view, params);
