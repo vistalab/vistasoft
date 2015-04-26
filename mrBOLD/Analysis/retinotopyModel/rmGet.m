@@ -379,13 +379,9 @@ try
         case {'n','npoints','number of data points'}
             val = model.npoints;
 
-            % fitprf parameters (kendrick style models)
-        case 'gain'
-            val = model.gain;
-        case {'sigmaexp', 'sigmaexponent', 'sigma.exponentiated', 'sigmacorrectedforexponent'}
-            val = model.sigma.exponentiated;
         case 'exponent'
-            val = model.exponent;
+            if isfield(model, 'exponent'),  val = model.exponent;
+            else                            val = ones(size(model.sigma.major)); end
             
         otherwise,
             error('[%s]:Unknown parameter: %s.',mfilename,param);

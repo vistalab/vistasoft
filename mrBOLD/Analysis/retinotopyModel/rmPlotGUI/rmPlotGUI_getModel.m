@@ -63,74 +63,10 @@ trends  = rmMakeTrends(params);
 %end
 
 % recompute
-switch M.modelNames{1}
-    case 'fitprf'
-        % make the polynomial basis functions for each scans
-        % trends = zeros(size(M.tSeries));
-        nscans = length(M.params.analysis.scans);  
+b = pinv(trends)*M.tSeries;
+M.tSeries = M.tSeries - trends*b;
+nt = size(trends,2);
 
-        % start a counter so we can loop through the voxels
-        firstframe = 1;
-               
-        % loop across scans
-        for scan = 1:nscans
-            % get the frames for this scan
-            nframes = M.params.stim(scan).nFrames;
-            theseframes = firstframe:firstframe + nframes -1; 
-            firstframe  = max(theseframes) + 1;
-            
-            % number of polynomial trends
-            npoly = M.params.stim(scan).nDCT - 1;
-            
-            % project out polynomial trends
-            if npoly > 0
-                ts{scan} = projectionmatrix(...
-                    constructpolynomialmatrix(nframes,0:npoly))*M.tSeries(theseframes,:);
-            else
-                % if we have npoly == 0, we probaly do not want to detrend at all
-                fprintf('[%s]: No detrending. Using raw time series\n', mfilename);
-                ts{scan} = M.tSeries(theseframes,:);
-            end
-
-        end
-        
-        M.tSeries = cat(1, ts{:});
-        
-        %         % betas were written in to the rm file a nvoxels x  ntrends, where
-        %         % ntrends is 1 (for the gain term) + scans * (npoly terms per scan)
-        %         betas  = rmCoordsGet(M.viewType, M.model{1}, 'beta', M.coords);
-        %         % remove the first beta column as this is the gain and not a
-        %         % polynomial fit
-        %         betas  = betas(:,2:end);
-        %         % keep track of which beta column we read out from as it will
-        %         % increment by npoly for each scan, and we might not have the same
-        %         % number of terms oer scan
-        %         bstart = 1;
-        %         for s = 1:nscans
-        %             nframes      = M.params.stim(s).nFrames;
-        %             maxpolydeg   = M.params.stim(s).nDCT - 1;
-        %             polybasis{s} = constructpolynomialmatrix(nframes,0:maxpolydeg);
-        %
-        %             poly(s, :, :)  = betas(:, bstart:bstart+maxpolydeg);
-        %             bstart         = bstart + maxpolydeg + 1;
-        %         end
-        %
-        %         % then apply the the basis functions to each voxel
-        %         tstart = 0;
-        %         for s=1:nscans % loop over number of scans
-        %             nframes =  M.params.stim(s).nFrames;
-        %             timepoints = tstart+(1:nframes); tstart = timepoints(end);
-        %             for v = 1:size(M.tSeries, 2) % loop over voxels
-        %                 trends(timepoints,v) = squeeze(poly(s,v,:))' * polybasis{s}';
-        %             end
-        %         end
-        %
-        %         M.tSeries = M.tSeries - trends;
-    otherwise
-        b = pinv(trends)*M.tSeries;
-        M.tSeries = M.tSeries - trends*b;
-        nt = size(trends,2);
-end
 
 % make x-axis for time series plot
 nFramesInd = [M.params.stim(:).nFrames]./[M.params.stim(:).nUniqueRep];

@@ -392,8 +392,8 @@ if vfc.nboot>0
         otherwise
             error('Unknown method %s',vfc.method)
     end
-    RFcov=mean(m)';
-   
+    RFcov=median(m)';
+    
 % no bootstrap
 else
     switch lower(vfc.method)

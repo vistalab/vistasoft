@@ -167,7 +167,7 @@ pred = lin_reg_matrix(pred,data,estimate_dc);
 rss = sum((data-pred).^2);
 %--- compute reverse of variance explained
 % error in percent
-e = mean(rss./rawrss).*1e6;
+e = double(mean(rss./rawrss).*1e6);
 
 return;
 %-----------------------------------------

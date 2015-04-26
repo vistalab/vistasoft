@@ -60,7 +60,7 @@ stim = [];
 for ii = 1:length(M.params.stim)
    endframe = size(M.params.stim(ii).images_org, 2);
    frames =  endframe - M.params.stim(ii).nFrames+1:endframe;
-    stim = [stim M.params.stim(ii).images_org(:, frames)];
+   stim = [stim M.params.stim(ii).images_org(:, frames)];
 end
 blanks = sum(stim, 1) < .001;
 
@@ -176,8 +176,7 @@ switch modelName,
 
         rfParams(:,4) = beta(1:2);
         rfParams = rfParams(1,:);
-    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)', ...
-            '2D nonlinear pRF fit with boxcar (x,y,sigma,exponent, positive only)'}
+    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'}
         % we-do the prediction with stimulus that has not been convolved
         % with the hrf, and then add in the exponent, and then convolve
         
@@ -202,64 +201,7 @@ switch modelName,
         RFs        = RFs .* (beta(1) .* M.params.analysis.HrfMaxResponse);
         
         rfParams(4) = beta(1);
-        
-    case {'fitprf'}
-        % this is how we calculate the time-series
-        %   y = gain * (prf (dot) stimulus) ^ (exponent)
-        % get some parameters from the model for this voxel:
-        gain     = rfParams(8); % this was defined in rmPlotGUI_getRFParams
-        exponent = rfParams(7); % this was defined in rmPlotGUI_getRFParams        
-        hrf      = M.model{1}.hrf(:, coords);
-
-        if length(hrf) ==1, hrf = 1; end
-        
-        % start a counter so we can loop across the scans
-        firstframe = 1;
-        
-        % this is the stimulus across all scans, without hrf convolution
-        stim = M.params.analysis.allstimimages;
-        
-        % loop across scans
-        for scan = 1:length(M.params.analysis.scans)
-            % get the frames for this scan
-            nframes = M.params.stim(scan).nFrames;
-            theseframes = firstframe:firstframe + nframes -1; 
-            firstframe  = max(theseframes) + 1;
-            
-            % calculate the time series
-            p{scan} = gain * (stim(theseframes,:) * RFs) .^ exponent;
-            
-            % convolve with hRF
-            p{scan} = conv(p{scan}, hrf, 'full');
-            p{scan} = p{scan}(1:nframes);
-            
-            % number of polynomial trends
-            npoly = M.params.stim(scan).nDCT - 1;
-            
-            % project out polynomial trends
-            if npoly > 0  % if we have npoly == 0, we probaly do not want to detrend at all
-
-                p{scan} = projectionmatrix( ...
-                    constructpolynomialmatrix(nframes,0:npoly))*p{scan};            
-            end
-
-        end
-        
-        pred = catcell(1, p);
-        
-        % beta will be requested outside the switch/case, in a
-        % model-general part of the code. in standard prf models the first
-        % beta value is the gain, but in fitprf models the gain is stored
-        % separately, and is already in the equation above. so we make the
-        % first beta value one. the beta struct will need another scalar
-        % for each scan, and we make these all zeros. these beta values are
-        % for the DC term, but we do not need it; we will plot the
-        % detrended prediction and the detrended time series. 
-        % baseline of zero.
-        beta = [1 zeros(size(dcid))]';
-        
-        
-        
+                  
    otherwise,
         error('Unknown modelName: %s', modelName);
 end;

@@ -136,8 +136,6 @@ else
     
     % for nonlinear model, do the hRF convolution after the prediction
     if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
-        % rectify prediction to avoid complex numbers
-        prediction(prediction < 0) = 0;
         prediction = bsxfun(@power, prediction, params.analysis.exponent');
         for scan = 1:numel(params.stim)
             inds = scans == scan;
@@ -146,13 +144,14 @@ else
         end
     end
     
+    % decimate predictions after convolution instead of before
+    fprintf(1,'[%s]:Decimating data\n',mfilename);
+    prediction = rmDecimate(prediction, params.analysis.coarseDecimate);
+
     clear n s rf pred;
     fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
     drawnow;
     
-    % decimate predictions after convolution instead of before
-    prediction = rmDecimate(prediction,...
-        params.analysis.coarseDecimate);
 end
 
 
@@ -345,34 +344,7 @@ for slice=loopSlices,
                 
             case {'css' 'onegaussiannonlinear', 'onegaussianexponent' }
                 s{n}=rmGridFit_oneGaussianNonlinear(s{n},prediction,data,params,t);
-                %             case {'cssboxcar' 'onegaussiannonlinearboxcar', 'onegaussianexponentboxcar'}
-                %                 % BOXCAR
-                %                 % Prediction from boxcar regressor
-                %                 %   Find non-blank image frames: any  frame where the sum of pixel values
-                %                 %   is greater than 0.01% of the max sum across the experiment
-                %                 unconvolved_images = params.analysis.allstimimages_unconvolved;
-                %                 unconvolved_boxcar = sum(unconvolved_images,2) > .0001 * max(sum(unconvolved_images,2));
-                %                 unconvolved_boxcar = rmDecimate(double(unconvolved_boxcar), params.analysis.coarseDecimate);
-                %                 unconvolved_boxcar = round(unconvolved_boxcar);
-                %
-                %                 for scan = 1:numel(params.stim)
-                %                     inds = scans == scan;
-                %                     hrf = rmDecimate(params.analysis.Hrf{scan}, params.analysis.coarseDecimate);
-                %                     prediction_boxcar(inds,:) = filter(hrf, 1, unconvolved_boxcar(inds,:));
-                %                 end
-                %
-                %                 t.boxcar = prediction_boxcar;
-                %                 t.boxcarid = size(trends,2)+1;
-                %
-                %                 s{n}=rmGridFit_oneGaussianNonlinear(s{n},prediction,data,params,t);
-                %
-                %                 % the boxcar regressor will be treated as an additional
-                %                 % trend. we tack on a column of zeros to which the computed
-                %                 % boxcar regressor will later be added. we increment the
-                %                 % number of trends by 1 to account for this new column.
-                %                 trendBetas = padarray(trendBetas, [1 0], 0, 'post');
-                %                 ntrends   =  ntrends + 1;
-                
+                  
             otherwise
                 fprintf('[%s]:Unknown pRF model: %s: IGNORED!',mfilename,params.analysis.pRFmodel{n});
         end

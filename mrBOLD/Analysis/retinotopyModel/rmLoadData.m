@@ -1,7 +1,7 @@
-function [data, params, coords] = rmLoadData(vw, params, slice, coarse, preserveCoords)
+function [data, params, coords] = rmLoadData(vw, params, slice, coarse, preserveCoords, scans)
 % rmLoadData - load time series data for retinotopy experiment
 %
-% data = rmLoadData(view, params, [slice or roiIndex],[coarse],[preserveCoords]);
+% data = rmLoadData(view, params, [slice or roiIndex],[coarse],[preserveCoords], [scans]);
 %
 % INPUTS:
 %   view: mrVista view
@@ -51,12 +51,14 @@ if notDefined('preserveCoords'), preserveCoords = 0;     end
 data = [];
 grayConMat = [];
 
-nScans = viewGet(vw, 'nScans');
-if nScans ~= length(params.stim)
-	scans = er_selectScans(vw, ...
-		sprintf('please choose %d scans for the model', length(params.stim)));
-else
-	scans = 1:length(params.stim);
+if notDefined('scans')
+    nScans = viewGet(vw, 'nScans');
+    if nScans ~= length(params.stim)
+        scans = er_selectScans(vw, ...
+            sprintf('please choose %d scans for the model', length(params.stim)));
+    else
+        scans = 1:length(params.stim);
+    end
 end
 
 for ds = 1:length(params.stim),

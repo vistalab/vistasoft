@@ -1,7 +1,7 @@
-function [tSeries, coords, params] = rmLoadTSeries(view, params, whichData, preserveCoords)
+function [tSeries, coords, params] = rmLoadTSeries(view, params, whichData, preserveCoords, scans)
 % rmLoadTSeries - Load Time Series associated with a retinotopy model and the specified data.
 %
-% [tSeries, coords, params] = rmLoadTSeries(view, [params], [whichData], [preserveCoords]);
+% [tSeries, coords, params] = rmLoadTSeries(view, [params], [whichData], [preserveCoords], [scans]);
 %
 % view: mrVista view. Defaults to current view.
 %
@@ -23,6 +23,7 @@ if notDefined('view'),      view = getCurView;                      end
 if notDefined('params'),    params = viewGet(view, 'rmParams');     end
 if notDefined('whichData'), whichData = 'roi';                      end
 if notDefined('preserveCoords'), preserveCoords = 0;                end
+if notDefined('scans'),     scans = [];                             end
 
 params.wData = whichData;
 
@@ -30,9 +31,9 @@ if isnumeric(whichData) || isstruct(whichData) % ROI index, coordinates, structu
     params.wData = 'roi';
     view.ROIs = tc_roiStruct(view, whichData);
 	view.selectedROI = 1;
-    [tSeries, params, coords] = rmLoadData(view, params, 1, [], preserveCoords);
+    [tSeries, params, coords] = rmLoadData(view, params, 1, [], preserveCoords, scans);
 else
-    [tSeries, params, coords] = rmLoadData(view, params);    
+    [tSeries, params, coords] = rmLoadData(view, params, [], [], [], scans);    
 end
 
 

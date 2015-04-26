@@ -34,7 +34,7 @@ end
 mmPerVox = permute(mmPerVox, [3 2 1]);
 
 % Transform the coordinates
-dataOUT = flipdim(flipdim(permute(dataIN,[3 2 1]),2),3);
+dataOUT = flip(flip(permute(dataIN,[3 2 1]),2),3);
 
 % Get the xform matrix
 xform = [diag(1./mmPerVox), size(dataOUT)'/2; 0 0 0 1];

@@ -93,7 +93,9 @@ topH = figure(...
     'NumberTitle', 'off' ...
     );
 bkColor = get(topH, 'color');
-topHS = num2str(topH);
+
+if isnumeric(topH), topHS = num2str(topH);
+else  topHS = num2str(get(topH, 'Number')); end
 
 % center the figure in the screen (ras, 03/06):
 centerOnscreen(topH);
