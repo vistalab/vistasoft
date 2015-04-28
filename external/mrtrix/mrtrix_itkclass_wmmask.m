@@ -14,6 +14,7 @@ function mrtrix_itkclass_wmmask(classfile, fname)
 % EXAMPLE:
 % classfile = 't1_class.nii.gz';
 % fname = 't1_class_binary';
+% mrtrix_itkclass_wmmask(classfile, fname)
 % (C) Hiromasa Takemura, CiNet/Stanford VISTA Team, 2015
 
 if notDefined('fname')
