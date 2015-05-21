@@ -1,4 +1,4 @@
-function fg = mrtrix_tck2pdb(tck_file, pdb_file)
+function fg = mrtrix_tck2pdb(tck_file, pdb_file, fiberPointStride)
 %
 %    fg = mrtrix_tck2pdb(tck_file, pdb_file)
 %
@@ -14,9 +14,14 @@ function fg = mrtrix_tck2pdb(tck_file, pdb_file)
 %
 % Franco Pestilli, Ariel Rokem and Bob Dougherty Stanford University 
 
+if notDefined('fiberPointStride')
+   fiberPointStride = eye(4);
+else
+end
+
 if exist(tck_file,'file')
-   fg = dtiImportFibersMrtrix(tck_file);
-   mtrExportFibers(fg, pdb_file, eye(4));
+   fg = dtiImportFibersMrtrix(tck_file, fiberPointStride);
+   mtrExportFibers(fg, pdb_file);
 else
     error('[%s] Aborting. Cannot find .tck file : %s .',mfilename,tck_file);
 end
