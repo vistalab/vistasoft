@@ -8,6 +8,9 @@ function fg = mrtrix_tck2pdb(tck_file, pdb_file, fiberPointStride)
 % INPUTS
 %   tck_file - string, full path to the tck file. 
 %   pdb_file - string, full path to the resulting pdb file. 
+%   fiberPointStride - fiberPointStride: if <=1, then all fiber points will be returned. If 2,
+%   every 2nd point will be returned, etc. The default will try to get you
+%   close to a 1mm step size.
 % 
 % Notes
 %  see dtiImportFibersMrtrix.m
