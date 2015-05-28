@@ -1,7 +1,7 @@
-function write_wobj(OBJ,fullfilename)
+function objWrite(OBJ,fullfilename)
 % Write objects to a Wavefront OBJ file
 %
-% write_wobj(OBJ,filename);
+%    objWrite(OBJ,filename);
 %
 % OBJ struct containing:
 %
@@ -70,6 +70,8 @@ function write_wobj(OBJ,fullfilename)
 %   write_wobj(OBJ,'skinMRI.obj');
 %
 % Function is written by D.Kroon University of Twente (June 2010)
+% Renamed but otherwise untouched by BW
+%
 
 if(exist('fullfilename','var')==0)
     [filename, filefolder] = uiputfile('*.obj', 'Write obj-file');
