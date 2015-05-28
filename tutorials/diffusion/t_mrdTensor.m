@@ -124,7 +124,7 @@ end
 % repeated measure.  Or, we would like a bootstrap of the estimate.  That
 % is done in dtiRawFitTensor
 mrvNewGraphWin;
-plot(ADCest,ADC,'.');
+plot(ADCest,ADC,'o');
 tck = (0:0.5:3); axis equal; grid on; set(gca,'xtick',tck,'ytick',tck)
 xlabel('ADC (estimated)');
 ylabel('ADC (observed)');
@@ -158,7 +158,7 @@ std(err)
 
 err3 = diag(err)*bvecs;
 subplot(1,2,2)
-plot3(err3(:,1),err3(:,2),err3(:,3),'.')
+plot3(err3(:,1),err3(:,2),err3(:,3),'o')
 grid on
 axis equal
 
@@ -170,7 +170,7 @@ dSigEst = S0*exp(-bvals.* diag(bvecs*Q*bvecs'));
 
 mrvNewGraphWin
 subplot(1,2,1)
-plot(dSigEst,dSig,'.')
+plot(dSigEst,dSig,'o')
 xlabel('Estimated diffusion sig')
 ylabel('Measured diffusion sig')
 
@@ -181,7 +181,7 @@ xlabel('% Error')
 
 %% The error in 3-space
 p3 = diag(p)*bvecs;
-plot3(p3(:,1),p3(:,2),p3(:,3),'.')
+plot3(p3(:,1),p3(:,2),p3(:,3),'o')
 grid on
 axis equal
 
