@@ -1,6 +1,16 @@
 %% t_meshFibersOBJ
 %
 %
+% obj = objCreate;
+% mtl = mtlCreate;
+% obj = objSet(obj,'material',mtl);
+% obj = objSet(obj,'vertices',FV.vertices);
+% obj = objSet(obj,'vertex normals',N);
+% obj = objSet(obj,'faces',FV.faces);
+%
+% obj = objSet(obj,'line',fg{1}.coords);
+%
+% objWrite(obj);
 %
 
 %%
@@ -30,6 +40,19 @@ fg = fgRead(fgFile);
 % OBJ = objFVN(FV,N);
 % objWrite(OBJ,'deleteMe.obj');
 
+
+%%
+obj = objCreate;
+mtl = mtlCreate;
+
+obj.vertices = fg(1).fibers{1}';
+
+obj.objects(1).type = 'l';
+obj.objects(1).data = 1:120;
+objWrite(obj,'deleteMe.obj');
+
+
+
 %%
 FV.vertices = [];
 FV.faces = [];
@@ -42,6 +65,7 @@ for ff =1:5
     N = [N ; tmp];
 end
 
+% 
 OBJ = objFVN(FV,N);
 objWrite(OBJ,'deleteMe.obj');
 

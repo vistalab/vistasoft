@@ -110,38 +110,62 @@ if(isfield(OBJ,'vertices_texture')&&~isempty(OBJ.vertices_texture))
 end
 
 for i=1:length(OBJ.objects)
+    % Depending on the type and the data, do something slightly different
     type=OBJ.objects(i).type;
     data=OBJ.objects(i).data;
     switch(type)
-        case 'usemtl'
+        case 'usemtl'   % This is material type
             fprintf(fid,'usemtl %s\n',data);
-        case 'f'
+        case 'f'        % Faces
+            % The face format is v/vt/vn
+            % The check here sees what you have and writes the appropriate
+            % form depending on whether there are texture and normals
+            %
             check1=(isfield(OBJ,'vertices_texture')&&~isempty(OBJ.vertices_texture));
             check2=(isfield(OBJ,'vertices_normal')&&~isempty(OBJ.vertices_normal));
             if(check1&&check2)
+                % Have texture and normals, so use v/vt/vn
                 for j=1:size(data.vertices,1)
                     fprintf(fid,'f %d/%d/%d',data.vertices(j,1),data.texture(j,1),data.normal(j,1));
                     fprintf(fid,' %d/%d/%d', data.vertices(j,2),data.texture(j,2),data.normal(j,2));
                     fprintf(fid,' %d/%d/%d\n', data.vertices(j,3),data.texture(j,3),data.normal(j,3));
                 end
             elseif(check1)
+                % Have texture, no normals, so use v/vt
+                % Note, this guy only goes for triangular faces, but the
+                % standard allows more.
                 for j=1:size(data.vertices,1)
                     fprintf(fid,'f %d/%d',data.vertices(j,1),data.texture(j,1));
                     fprintf(fid,' %d/%d', data.vertices(j,2),data.texture(j,2));
                     fprintf(fid,' %d/%d\n', data.vertices(j,3),data.texture(j,3));
                 end
             elseif(check2)
+                % Have vertices and normals, but no texture
+                % so we write v//vt
                 for j=1:size(data.vertices,1)
                     fprintf(fid,'f %d//%d',data.vertices(j,1),data.normal(j,1));
                     fprintf(fid,' %d//%d', data.vertices(j,2),data.normal(j,2));
                     fprintf(fid,' %d//%d\n', data.vertices(j,3),data.normal(j,3));
                 end
             else
+                % Have only vertices
                 for j=1:size(data.vertices,1)
                     fprintf(fid,'f %d %d %d\n',data.vertices(j,1),data.vertices(j,2),data.vertices(j,3));
                 end
             end
+            
+        case 'l'
+            % Need to add checks and such as above.
+            % In the case of a line, the data is a set of integers that
+            % point to the vertices
+            fprintf(fid,'L 0.5 %i\n',size(data.vertices,1));
+            for j=1:size(data.vertices,1)
+                fprintf(fid,'%.2f %.2f %.2f\n',data.vertices(j,1),data.vertices(j,2),data.vertices(j,3));
+            end
+            fprintf(fid,'\n');
+
         otherwise
+            % Some other type.  Could be 'g' or ...
             fprintf(fid,'%s ',type);
             if(iscell(data))
                 for j=1:length(data)
