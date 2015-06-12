@@ -1,6 +1,6 @@
 function dicomAnonymizeDirecotry(dcm_in_dir, dcm_out_dir, dcm_out_base, fields_kept, keep_private)
 %
-% dicomAnonymizeDirecotry([dcm_in_dir], [dcm_out_dir], [dcm_out_base], [fields_kept])
+% dicomAnonymizeDirecotry([dcm_in_dir], [dcm_out_dir], [dcm_out_base], [fields_kept], [keep_private])
 %
 % Anonymize a directory of dicom files. This will remove medical/private
 % fields while keeping some (see 'fields_kept') untouched. Uses
@@ -41,7 +41,7 @@ function dicomAnonymizeDirecotry(dcm_in_dir, dcm_out_dir, dcm_out_base, fields_k
 
 %% Check for dicom toolbox
 f = which('dicomanon');
-if isempty(f) || ~exist(f,'file')
+if isempty(f) || ~exist(f, 'file')
     error('DICOM image processing toolbox not found on path');
 end
 
@@ -68,19 +68,19 @@ else
 end
 
 % Set the default fields to keep if none were passed in.
-if ~exist('fields_kept','var') || isempty(fields_kept)
+if ~exist('fields_kept', 'var') || isempty(fields_kept)
     fields_kept = default_keep_fields;
 end
 
 % If there was no output directory passed in, then write them out where
 % they live now. 
-if ~exist('dcm_out_dir','var') || isempty(dcm_out_dir)
+if ~exist('dcm_out_dir', 'var') || isempty(dcm_out_dir)
     dcm_out_dir = dcm_in_dir;
 end
 
 % If the user did not specify to keep the private fields we opt to keep
 % them by default.
-if ~exist('keep_private','var') || isempty(keep_private)
+if ~exist('keep_private', 'var') || isempty(keep_private)
     keep_private = true;
 end
 
@@ -93,7 +93,7 @@ else
     error('Not a directory');
 end
 
-if ~exist(dcm_out_dir,'dir')
+if ~exist(dcm_out_dir, 'dir')
     mkdir(dcm_out_dir)
 end
 
