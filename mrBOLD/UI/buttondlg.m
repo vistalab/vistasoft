@@ -7,7 +7,7 @@ function [reply ok] = buttondlg(headerStr,optionStr,defaultRes)
 % options in the cell array string 'optionStr'.
 %
 % INPUTS:
-%  
+%
 %  headerStr: string for the title of the dialog.
 %
 %	optionStr: cell array of strings, one for each button option.
@@ -21,7 +21,7 @@ function [reply ok] = buttondlg(headerStr,optionStr,defaultRes)
 %        selected options. reply is empty if the user
 %        chooses to cancel.
 %
-% ok: flag indicating whether the user canceled or not. 
+% ok: flag indicating whether the user canceled or not.
 %
 % EXAMPLE:
 %  reply = buttondlg('pick it',{'this','that','the other'})
@@ -32,6 +32,8 @@ function [reply ok] = buttondlg(headerStr,optionStr,defaultRes)
 % 2004.12.16  arw: Added  select / deselect all option
 % 2006.01.12 MMS: Added the option to feed a default selection in (see line 110)
 % 2006.03.03 ras: centers dialog in screen
+% 2015.06.15 arw: Shamefully disabled 'Select all' under ML > 8.4
+
 ok = 0;
 OptionsPerColumn=30; % max number of options in one column
 
@@ -52,7 +54,7 @@ ncols=ceil(nOptions/OptionsPerColumn);
 nOptionsPerColumn=ceil(nOptions/ncols);
 
 %scale factors for x and y axis coordinates
-xs = 1.8;  
+xs = 1.8;
 ys = 1.8;
 
 %default sizes
@@ -73,11 +75,11 @@ h = figure('MenuBar', 'none',...
     'Units', 'char',...
     'Resize', 'on',...
     'NumberTitle', 'off',...
-    'Position', [20, 10, width*xs,height*ys]); % 
-bkColor = get(h,'Color');       
+    'Position', [20, 10, width*xs,height*ys]); %
+bkColor = get(h,'Color');
 
 % center the figure -- we needed to use char to get
-% a reasonable size, but want to move the corners to 
+% a reasonable size, but want to move the corners to
 % a centered position. This is a quick way to do it:
 set(h, 'Units', 'normalized');
 normPos = get(h, 'Position'); % pos in normalized units
@@ -125,6 +127,7 @@ for optionNum=1:nOptions
     end
 end
 
+
 if exist('defaultRes','var')
     for optionNum=1:nOptions
         try
@@ -133,7 +136,9 @@ if exist('defaultRes','var')
         end
     end
 end
-        
+
+
+
 %Cancel button
 x=1;
 y=botMargin;
@@ -155,23 +160,25 @@ uicontrol('Style','pushbutton',...
     'FontSize',fontSize,...
     'UserData','OK');
 
-% Select all button
-uicontrol('Style','pushbutton',...
-    'String','SelAll',...
-    'Units','char',...
-    'Position',[x*xs+2,y*ys,butWidth*xs/2,ys],...
-    'FontSize',fontSize-4,...
-    'Callback',['set([',num2str(h_button,30),'],''Value'',1);'],...
-    'UserData','OK');
-
-% Clear all button
-uicontrol('Style','pushbutton',...
-    'String','ClrAll',...
-    'Units','char',...
-    'Position',[x*xs+2+butWidth,y*ys,butWidth*xs/2,ys],...
-    'FontSize',fontSize-4,...
-    'Callback',['set([',num2str(h_button,30),'],''Value'',0);'],...
-    'UserData','OK');
+if (verLessThan('matlab','8.4')) % I don't think it's as easy to do this in ML> 8.4
+    % Select all button
+    uicontrol('Style','pushbutton',...
+        'String','SelAll',...
+        'Units','char',...
+        'Position',[x*xs+2,y*ys,butWidth*xs/2,ys],...
+        'FontSize',fontSize-4,...
+        'Callback',['set([',num2str(h_button,30),'],''Value'',1);'],...
+        'UserData','OK');
+    
+    % Clear all button
+    uicontrol('Style','pushbutton',...
+        'String','ClrAll',...
+        'Units','char',...
+        'Position',[x*xs+2+butWidth,y*ys,butWidth*xs/2,ys],...
+        'FontSize',fontSize-4,...
+        'Callback',['set([',num2str(h_button,30),'],''Value'',0);'],...
+        'UserData','OK');
+end
 
 %let the user select some radio buttons and
 %wait for a 'uiresume' callback from OK/Cancel
@@ -180,13 +187,13 @@ uiwait
 %determine which button was hit.
 response = get(gco,'UserData');
 
-%gather the status of the radio buttons if 'OK' was 
+%gather the status of the radio buttons if 'OK' was
 %selected.  Otherwise return empty matrix.
 if strcmp(response,'OK')
     for optionNum=1:nOptions
         reply(optionNum)=get(h_button(optionNum),'Value');
-	end
-	ok = 1;
+    end
+    ok = 1;
 else
     reply = [];
 end
@@ -196,4 +203,3 @@ close(h)
 return;
 
 
-    
