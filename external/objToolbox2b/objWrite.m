@@ -5,16 +5,16 @@ function objWrite(OBJ,fullfilename)
 %
 % OBJ struct containing:
 %
-% OBJ.vertices : Vertices coordinates
+% OBJ.vertices:         Vertices coordinates
 % OBJ.vertices_texture: Texture coordinates 
 % OBJ.vertices_normal : Normal vectors
 % OBJ.vertices_point  : Vertice data used for points and lines   
 % OBJ.material : Parameters from external .MTL file, will contain parameters like
 %           newmtl, Ka, Kd, Ks, illum, Ns, map_Ka, map_Kd, map_Ks,
 %           example of an entry from the material object:
-%       OBJ.material(i).type = newmtl
+%       OBJ.material(i).type = 'newmtl'
 %       OBJ.material(i).data = 'vase_tex'
-% OBJ.objects  : Cell object with all objects in the OBJ file, 
+% OBJ.objects: Cell object with all objects in the OBJ file, 
 %           example of a mesh object:
 %       OBJ.objects(i).type='f'               
 %       OBJ.objects(i).data.vertices: [n x 3 double]
@@ -70,7 +70,12 @@ function objWrite(OBJ,fullfilename)
 %   write_wobj(OBJ,'skinMRI.obj');
 %
 % Function is written by D.Kroon University of Twente (June 2010)
-% Renamed but otherwise untouched by BW
+%
+% BW -
+% Renamed and comment typos fixed
+% Added 'end' to close functions
+% Added 'line' type (which is not yet working and may never)
+% 
 %
 
 if(exist('fullfilename','var')==0)
@@ -86,13 +91,15 @@ comments{2}='';
 fid = fopen(fullfilename,'w');
 write_comment(fid,comments);
 
+% Write out the material file.  Not sure how this gets incoporated when we
+% upload to the web site.
 if(isfield(OBJ,'material')&&~isempty(OBJ.material))
     filename_mtl=fullfile(filefolder,[filename '.mtl']);
     fprintf(fid,'mtllib %s\n',filename_mtl);
     write_MTL_file(filename_mtl,OBJ.material)
-    
 end
 
+% Write out the vertex types
 if(isfield(OBJ,'vertices')&&~isempty(OBJ.vertices))
     write_vertices(fid,OBJ.vertices,'v');
 end
@@ -109,6 +116,7 @@ if(isfield(OBJ,'vertices_texture')&&~isempty(OBJ.vertices_texture))
     write_vertices(fid,OBJ.vertices_texture,'vt');
 end
 
+% Material type, faces, should have group here, no?
 for i=1:length(OBJ.objects)
     % Depending on the type and the data, do something slightly different
     type=OBJ.objects(i).type;
@@ -155,6 +163,7 @@ for i=1:length(OBJ.objects)
             end
             
         case 'l'
+            % BW tried this.  Not working well.
             % Need to add checks and such as above.
             % In the case of a line, the data is a set of integers that
             % point to the vertices
@@ -165,7 +174,7 @@ for i=1:length(OBJ.objects)
             fprintf(fid,'\n');
 
         otherwise
-            % Some other type.  Could be 'g' or ...
+            % Some other type.  Could be 'g' (group type) or ...
             fprintf(fid,'%s ',type);
             if(iscell(data))
                 for j=1:length(data)
@@ -186,14 +195,20 @@ for i=1:length(OBJ.objects)
     end
 end
 fclose(fid);
+end
 
+% Writes a separate material (mtl) file
 function write_MTL_file(filename,material)
+
+% Open and write header comment
 fid = fopen(filename,'w');
 comments=cell(1,2);
 comments{1}=' Produced by Matlab Write Wobj exporter ';
 comments{2}='';
 write_comment(fid,comments);
 
+% For each type of material, specify.  THere are a few types that I don't
+% understand. (BW).
 for i=1:length(material)
     type=material(i).type;
     data=material(i).data;
@@ -236,23 +251,32 @@ comments{1}='';
 comments{2}=' EOF';
 write_comment(fid,comments);
 fclose(fid);
+end
 
+%
 function write_comment(fid,comments)
 for i=1:length(comments), fprintf(fid,'# %s\n',comments{i}); end
+end
 
 function write_vertices(fid,V,type)
 switch size(V,2)
     case 1
         for i=1:size(V,1)
-            fprintf(fid,'%s %5.5f\n', type, V(i,1));
+            fprintf(fid,'%s %5.2f\n', type, V(i,1));
         end
     case 2
         for i=1:size(V,1)
-            fprintf(fid,'%s %5.5f %5.5f\n', type, V(i,1), V(i,2));
+            fprintf(fid,'%s %5.2f %5.2f\n', type, V(i,1), V(i,2));
         end
     case 3
         for i=1:size(V,1)
-            fprintf(fid,'%s %5.5f %5.5f %5.5f\n', type, V(i,1), V(i,2), V(i,3));
+            fprintf(fid,'%s %5.2f %5.2f %5.2f\n', type, V(i,1), V(i,2), V(i,3));
+        end
+    case 6
+        % BW edited to add the color
+        for i=1:size(V,1)
+            fprintf(fid,'%s %5.2f %5.2f %5.2f %5.2f %5.2f %5.2f\n', type, ...
+                V(i,1), V(i,2), V(i,3),V(i,4),V(i,5),V(i,6));
         end
     otherwise
 end
@@ -267,7 +291,4 @@ switch(type)
         fprintf(fid,'# %d\n', size(V,1));
         
 end
-
-
-
-
+end

@@ -1,7 +1,9 @@
 function OBJ = objFVN(FV, N)
-%Convert Matlab faces/vertices/niormals to a wavefront OBJ format
+%Convert Matlab faces/vertices/normals to a wavefront OBJ format
 %
-%  
+%  This appears to work for a cortical mesh.
+%  We have also made it work for a fiber produced by AFQ.
+%
 % Example
 %  OBJ = objFVN(FV,N);
 %  objWrite(OBJ,fname);
@@ -15,7 +17,12 @@ function OBJ = objFVN(FV, N)
 % Need to understand more about the OBJ file format to make this work
 % better. 
 
-% Make a material structure
+% Make material structures.  
+% Ka is the ambient illuminant
+% Kd is the diffuse reflectance
+% Ks is the specular reflectance
+% I don't know what the values in illum (presumably illuminant) and Ns (not
+% sure what that is) refer to.
 material(1).type='newmtl';
 material(1).data='skin';
 material(2).type='Ka';
@@ -29,16 +36,25 @@ material(5).data = 2;
 material(6).type = 'Ns';
 material(6).data = 27;
 
-%% Make OBJ structure
-clear OBJ
+%% Make alias wavefront object structure
 
+% This is the OBJ data structure that will be written out by the routine
+% objWrite 
+clear OBJ
+OBJ.material = material;
+
+% Vertices and normals
 OBJ.vertices = FV.vertices;
 OBJ.vertices_normal = N;
-OBJ.material = material;
+
+% No idea what these control.  They don't seem aligned with the materials
+% above.  Maybe they should be and then something good would happen.
 OBJ.objects(1).type='g';
 OBJ.objects(1).data='skin';
+
 OBJ.objects(2).type='usemtl';
 OBJ.objects(2).data='skin';
+
 OBJ.objects(3).type='f';
 OBJ.objects(3).data.vertices=  FV.faces;
 OBJ.objects(3).data.normal  =  FV.faces;
