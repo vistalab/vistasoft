@@ -9,7 +9,6 @@ function sdmPut(pLink,uName,fname)
 %
 % LMP/BW Vistasoft Team, 2015
 
-
 % Build the url from the permalink by removing the endpart
 url = fileparts(pLink);
 
@@ -19,7 +18,8 @@ if isunix
     checkSum = result(1:32);
     
     % <URL_and_file_name>
-    urlAndName = fullfile(url,fname);
+    [p,n,e] = fileparts(fname);
+    urlAndName = fullfile(url,[n,e]);
     
     % curl -X PUT --data-binary @<file_name_on_disk> -H "Content-MD5:<md5_check_sum>" -H "Content-Type:application/octet-stream" "<URL_and_file_name>?user=<user_name>&flavor=attachment"
     cmd = sprintf('/usr/bin/curl -X PUT --data-binary @%s -H "Content-MD5:%s" -H "Content-Type:application/octet-stream" "%s?user=%s&flavor=attachment"\n',fname,checkSum,urlAndName,uName);

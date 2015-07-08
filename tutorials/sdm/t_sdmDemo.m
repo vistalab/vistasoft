@@ -30,7 +30,7 @@ uName = 'wandell@stanford.edu';
 % Get the file from the SDM.  In this form is it saved in /tmp
 sdmFile = sdmGet(pLink,uName);
 
-%% Prove that you ahve the data
+%% Prove that you have the data
 
 % Read the temporary file
 data = niftiRead(sdmFile);
@@ -55,6 +55,10 @@ showMontage(bData.data,[64:67]);
 
 sdmPut(pLink,uName,betName);
 
+%% If you have the publish/pdf document you can run this to document
+%
+%  pdfFile = publish('t_sdmDemo','pdf');
+%  sdmPut(pLink,uName,pdfFile)
+%
 
-%% END
 
