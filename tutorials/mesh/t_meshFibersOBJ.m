@@ -17,7 +17,8 @@ fg = fgRead(fgFile);
 
 % Render the Tract FA Profile for the left uncinate
 % A small number of triangles (25 is the default).
-[lgt , fSurf, fvc] = AFQ_RenderFibers(fg,'subdivs',6);
+nTriangles = 6;
+[lgt , fSurf, fvc] = AFQ_RenderFibers(fg,'subdivs',nTriangles);
 % mrvNewGraphWin; surf(fSurf.X{1},fSurf.Y{1},fSurf.Z{1},fSurf.C{1})
 % mrvNewGraphWin; plot3(FV.vertices(:,1),FV.vertices(:,2),FV.vertices(:,3),'.');
 
@@ -34,7 +35,7 @@ FV.faces    = [];
 N           = [];
 % select = 1:10;  % Small for debugging.  Select only some faces.
 cnt = 0;
-for ff = [1:4:size(fvc)]
+for ff = [1:4:size(fvc,2)]
     
     % We expertimented with color, and this worked in meshLab but not in
     % brainbrowser
@@ -70,8 +71,15 @@ end
 
 OBJ = objFVN(FV,N);
 
-name = '/Users/wandell/Desktop/deleteMe.obj';
-objWrite(OBJ,name);
+fname = '/Users/wandell/Desktop/deleteMe.obj';
+objWrite(OBJ,fname);
+
+%% Put the data onto SDM
+pLink = 'https://sni-sdm.stanford.edu/api/acquisitions/558da2ba3113bb9e05daaf0f/file/1.3.12.2.1107.5.2.32.35381.2015012510504883990801657.0.0.0_nifti.nii.gz?user='
+uName = 'wandell@stanford.edu';
+
+%
+sdmPut(pLink,uName,fname);
 
 
-%% END
+
