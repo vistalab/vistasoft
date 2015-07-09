@@ -71,15 +71,20 @@ end
 
 OBJ = objFVN(FV,N);
 
-fname = '/Users/wandell/Desktop/deleteMe.obj';
+% fname = '/Users/wandell/Desktop/testArcuate.obj';
+fname = '/home/wandell/Desktop/testArcuate.obj';
 objWrite(OBJ,fname);
 
 %% Put the data onto SDM
-pLink = 'https://sni-sdm.stanford.edu/api/acquisitions/558da2ba3113bb9e05daaf0f/file/1.3.12.2.1107.5.2.32.35381.2015012510504883990801657.0.0.0_nifti.nii.gz?user='
+pLink = 'https://sni-sdm.stanford.edu/api/acquisitions/558da2ba3113bb9e05daaf0f/file/1.3.12.2.1107.5.2.32.35381.2015012510504883990801657.0.0.0_nifti.nii.gz?user=';
 uName = 'wandell@stanford.edu';
 
 %
 sdmPut(pLink,uName,fname);
 
+%%  One way to run this:
+%
+%   pdfFile = publish('t_meshFibersOBJ.m','pdf'); sdmPut(pLink,uName,pdfFile);
+%
 
 
