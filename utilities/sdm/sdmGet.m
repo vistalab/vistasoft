@@ -1,4 +1,4 @@
-function sdmFile = sdmGet(pLink,uName,sdmFile)
+function fName = sdmGet(pLink,uName,fName)
 % Retrieve a file from an sdm instance
 %
 %   sdmFile = sdmGet(pLink,uName,[sdmFile])
@@ -6,10 +6,10 @@ function sdmFile = sdmGet(pLink,uName,sdmFile)
 % Inputs
 %  pLink:  Permalink from the SDM
 %  uName:  The sdm user name with appropriate permission
-%  sdmFile: Location to write the file
+%  fName:  Location and/or filename to write the file
 %
 % Return
-%  sdmFile:  Returned file
+%  fName:  Returned file
 %
 % Example:
 %
@@ -18,10 +18,12 @@ function sdmFile = sdmGet(pLink,uName,sdmFile)
 link = [pLink,uName];
 
 %% Use urlwrwite to retrieve the data and store it
-if notDefined('sdmFile')
-    sdmFile = [tempname,'.nii.gz'];
+if notDefined('sdmFile') 
+    [~, f, e] = fileparts(pLink);
+    t_e = explode('?',e);
+    fName = fullfile(tempdir,[ f, t_e{1}]);
 end
 
-urlwrite(link,sdmFile);
+urlwrite(link,fName);
 
 end
