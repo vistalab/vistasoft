@@ -35,23 +35,29 @@ FV.faces    = [];
 N           = [];
 % select = 1:10;  % Small for debugging.  Select only some faces.
 cnt = 0;
-for ff = [1:size(fvc,2)]
-    
+nFascicles = size(fvc,2);
+c    = ones(nFascicles,3);
+redF = round(nFascicles)/2;
+c(1:redF,:) = repmat([1 0 0],redF,1);
+% c(1:redF,:) = repmat([1 0 0],redF,1);
+
+for ff = 1:2:size(fvc,2)
+   
     % We expertimented with color, and this worked in meshLab but not in
     % brainbrowser
     %
-    %     % When we add color, we do it this way by appending RGB to the
-    %     % vertex, and dealing with the first case separately
-    %     if isempty(FV.vertices)
-    %         % FV.vertices = [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)];
-    %         FV.vertices = [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)];
-    %     else
-    %         % Vertices of the triangles defining the fascicle mesh
-    %         % FV.vertices = [FV.vertices; [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)]];
-    %     end
+    % When we add color, we do it this way by appending RGB to the
+    % vertex, and dealing with the first case separately
+    if isempty(FV.vertices)
+        % FV.vertices = [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)];
+        FV.vertices = [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)];
+    else
+        % Vertices of the triangles defining the fascicle mesh
+        FV.vertices = [FV.vertices; [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)]];
+    end
     
     % Cumulate the vertices
-    FV.vertices = [FV.vertices; fvc(ff).vertices];
+    % FV.vertices = [FV.vertices; fvc(ff).vertices];
     
     % Cumulate the normals for each vertex
     [Nx,Ny,Nz] = surfnorm(fSurf.X{ff},fSurf.Y{ff},fSurf.Z{ff});
@@ -71,8 +77,8 @@ end
 
 OBJ = objFVN(FV,N);
 
-% fname = '/Users/wandell/Desktop/testArcuate.obj';
-fname = '/home/wandell/Desktop/testArcuate.obj';
+fname = '/Users/wandell/Desktop/testArcuate.obj';
+% fname = '/home/wandell/Desktop/testArcuate.obj';
 objWrite(OBJ,fname);
 
 %% Copy the data onto SDM
