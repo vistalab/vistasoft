@@ -17,7 +17,7 @@ function fs_ribbon2itk(subjID, outfile, fillWithCSF, alignTo, resample_type, in_
 %                    nifti. Options: interpolate, weighted, nearest, 
 %                    sinc, and cubic. (Sinc and cubic do not produce integer
 %                    values and do not work in itkGray)
-%                    [default = 'weighted'] 
+%                    [default = 'nearest'] 
 %   in_orientation: sometimes freesurfer mis-reads header information and
 %                    the segmentation file is output with the dimensions
 %                    transposed or flipped.  If this is the case you can
@@ -80,13 +80,13 @@ if ~exist('subjID', 'var')
 end
 
 if notDefined('fillWithCSF'),   fillWithCSF = false;        end
-if notDefined('resample_type'), resample_type= 'weighted';  end
+if notDefined('resample_type'), resample_type= 'nearest';  end
 
 
 %% Find paths
 % If the subjID is not a full path then assume it is a subject directory
 % within the defined freesurfer subject directory.
-if exist(subjID, 'file')
+if exist(subjID, 'file') && ~exist(subjID, 'dir')
     ribbon = subjID;
 else
     subdir   = getenv('SUBJECTS_DIR');
@@ -124,9 +124,9 @@ if exist('alignTo', 'var')
 end
 
 if exist('alignTo', 'var') && exist('in_orientation','var'),
-    str = sprintf('!mri_convert  --in_orientation %s --out_orientation RAS --reslice_like %s -rt %s %s %s', in_orientation, alignTo, resample_type, ribbon, outfile);
+    str = sprintf('!mri_convert  --in_orientation %s --reslice_like %s -rt %s %s %s', in_orientation, alignTo, resample_type, ribbon, outfile);
 elseif exist('alignTo', 'var'),
-    str = sprintf('!mri_convert  --out_orientation RAS --reslice_like %s -rt %s %s %s', alignTo, resample_type, ribbon, outfile);
+    str = sprintf('!mri_convert  --reslice_like %s -rt %s %s %s', alignTo, resample_type, ribbon, outfile);
 else
     str = sprintf('!mri_convert  --out_orientation RAS -rt %s %s %s', resample_type, ribbon, outfile);
 end
