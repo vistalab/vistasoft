@@ -10,13 +10,9 @@ global GRAPHWIN
 
 curFigure = get(0,'CurrentFigure');
 
-if isstruct(curFigure)
-    curFigure = get(curFigure, 'Number');
-end
-
-if GRAPHWIN
-  if (GRAPHWIN == curFigure)
-    GRAPHWIN=0; 
+if isnumeric(GRAPHWIN)
+  if isequal(GRAPHWIN, curFigure)
+    GRAPHWIN=0; d
   end
 end 
 

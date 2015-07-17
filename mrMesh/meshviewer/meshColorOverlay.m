@@ -77,9 +77,9 @@ end
 % 'layers' that map to each of the M vertices.
 vertexGrayMap = meshGet(msh,'vertexGrayMap');
 
-if isempty(vertexGrayMap) | (strcmp(prefs.layerMapMode,'all'))
+if isempty(vertexGrayMap) || (strcmp(prefs.layerMapMode,'all'))
     mapToAllLayers = true;
-    if(size(vertexGrayMap,1)==1)
+    if size(vertexGrayMap,1)==1
         vertexGrayMap = mrmMapVerticesToGray(msh.initVertices, viewGet(vw,'nodes'), ...
             viewGet(vw,'mmPerVox'), viewGet(vw,'edges'));
         msh.vertexGrayMap = vertexGrayMap;

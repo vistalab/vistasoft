@@ -71,7 +71,7 @@ elseif ishandle(V)
     % report the callback in the command window:
     fprintf('Selected Menu Item: \n ');
     fprintf('Label: %s \n ', get(h(SEL), 'Label'));
-    fprintf('Handle: %f \n Callback: %s\n', h(SEL), cb); 
+    fprintf('Callback: %s\n', cb); 
     
     % clean up the temp variable
     evalin('base', 'clear SEL');

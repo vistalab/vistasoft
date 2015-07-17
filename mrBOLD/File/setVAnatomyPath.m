@@ -9,8 +9,8 @@ function pth = setVAnatomyPath(vANATOMYPATH)
 % ras, 06/2008.
 global HOMEDIR
 
-% if the path doesn't exist, ask the user to select it
-if notDefined('vANATOMYPATH') || ~exist(vANATOMYPATH, 'file')
+% if no path, ask the user to select it
+if notDefined('vANATOMYPATH')
 	ext = {'*.nii.gz', 'Compressed NIFTI files'; ...
             '*.dat' 'mrGray .dat files'; ...		
             '*.*' 'All files'};

@@ -45,17 +45,17 @@ nii = niftiSet(nii,'data',permute(niftiGet(nii,'data'),[dimOrder,4,5]));
 
 if (xformLocal(1,xdim)<0)
     %dimFlip(xdim) = 1;
-    nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),1));
+    nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),1));
 end
 
 if (xformLocal(2,ydim)<0)
     %dimFlip(xdim) = 2;
-    nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),2));
+    nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),2));
 end
 
 if (xformLocal(3,zdim)<0)
     %dimFlip(xdim) = 3;
-    nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),3));
+    nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),3));
 end
 
 %Now the permutations on the data are complete, now we can update the

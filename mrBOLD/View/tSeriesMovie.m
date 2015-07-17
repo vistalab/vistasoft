@@ -264,15 +264,16 @@ end
 %%%%% plug into mplayer
 if movieFlag==1
     global mrSESSION dataTYPES;
-    movie = mplay(M,fps);
+    movie = implay(M,fps);
+    
     ttltxt = sprintf('Movie: %s %s %s, Slice %i', ...
                         mrSESSION.sessionCode, ...
                         dataTYPES(vw.curDataType).name, ...
                         num2str(scans), slices(1));
-    set(get(movie,'hfig'),'Name',ttltxt);
+    %set(get(movie,'hfig'),'Name',ttltxt);
     
     % play the movie
-    movie.play
+    %movie.play
 end
 
 %%%%% export to AVI if selected

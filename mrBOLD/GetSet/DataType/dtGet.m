@@ -187,7 +187,9 @@ switch param
     case {'rmparams','retinomodelparams','retinotopymodelparams'}
         if checkfields(dt,'retinotopyModelParams')
             if isempty(varargin), val = dt.retinotopyModelParams;
-            else val = dt.retinotopyModelParams(varargin{1});
+            elseif length(dt.retinotopyModelParams) >= varargin{1},
+                val = dt.retinotopyModelParams(varargin{1});
+            else val = [];
             end
         end
         

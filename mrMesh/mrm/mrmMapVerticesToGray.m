@@ -156,6 +156,7 @@ if(mapToAllLayers && exist('grayEdges','var') && ~isempty(grayEdges))
         
         curNodes = find(grayNodes(6,:) == iLayer);
         for iNode = curNodes
+            % disp(iNode) % debugging
             offset = grayNodes(5,iNode);
             numConnected = grayNodes(4,iNode);
             if numConnected == 0
@@ -178,8 +179,13 @@ if(mapToAllLayers && exist('grayEdges','var') && ~isempty(grayEdges))
                 neighbors(grayNodes(6,neighbors) < iLayer - 1) = [];
                 nextNeighbors = [];
                 neighborsDown = [];
-                
+                % iter = 0; % debugging
                 while isempty(neighborsDown) && ~isequal(neighbors,nextNeighbors)
+                    %iter = iter+1; %debugging
+                    %if iter> 1000,
+                    %    disp foo
+                    %    break
+                    %end
                     neighbors = union(nextNeighbors,neighbors);
                     nextNeighbors = [];
                     for iNeighbor = 1:length(neighbors)

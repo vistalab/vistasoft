@@ -8,7 +8,7 @@ function model = rmSearchFit_oneGaussianNonlinear(model, data, params, wProcess,
 % 2015/02 JW: branched from rmSearchFit_oneGaussian, now includes
 %             non-linear model (see Kay et al, 2013, on Compressive
 %             Spatial Summation)
-
+ 
 % fminsearch options
 searchOptions = params.analysis.fmins.options;
 expandRange   = params.analysis.fmins.expandRange;

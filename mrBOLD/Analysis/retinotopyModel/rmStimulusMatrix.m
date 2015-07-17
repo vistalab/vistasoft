@@ -90,7 +90,7 @@ for ii = 1:length(scans)
 end
 
 
-if     playMovie==1, mplay(M .* 255);
+if     playMovie==1, implay(M .* 255);
 elseif playMovie==2, displayVol(M);
 end
 

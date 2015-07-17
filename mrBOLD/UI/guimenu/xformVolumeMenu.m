@@ -38,7 +38,6 @@ end
 
 flatSubmenu(vw, xformMenu);
 flatLevelSubmenu(vw, xformMenu);
-mrGraySubmenu(vw, xformMenu);
 % bvSubmenu(vw, xformMenu);  % none of the code is checked in
 niftiGraySubmenu(vw, xformMenu);
 analyzeSubmenu(vw, xformMenu);
@@ -478,92 +477,6 @@ uimenu(flat2volumeMenu,'Label','ROIs - all (Flat Level->Volume)','Separator','on
 
 return
 % /-------------------------------------------------------------------/ %
-
-
-
-
-% /-------------------------------------------------------------------/ %
-function vw = mrGraySubmenu(vw, xformMenu)
-%%%%%%%%%%%%%%%%%%%%%
-% Volume->mrGray submenu
-
-volume2mrGrayMenu = uimenu(xformMenu,'Label','Volume->mrGray','Separator','off');
-
-% write mrGray ROI callback:
-%   roi = vw.ROIs(vw.selectedROI);
-%   [fname pname] = uiputfile('*.roi','volROI2mrGray');
-%   volROI2mrGray(roi.name, roi, pname);
-%	 disp(['Wrote selected ROI as mrGray ROI file ' roi.name '.']);
-cb = ['roi = ',vw.name,'.ROIs(',vw.name,'.selectedROI);',...
-        'curDir = pwd; anatDir = getAnatomyPath([]); if(exist(anatDir,''dir'')) chdir(anatDir); end; ' ...
-        '[fname pname] = uiputfile(''*.roi'',''Choose directory: volROI2mrGray'');', ...
-        'volROI2mrGray(roi.name, roi, pname); chdir(curDir);',...
-        'disp([''Wrote selected ROI as mrGray ROI file '' roi.name ''.'']);'];
-uimenu(volume2mrGrayMenu,...
-    'Label','write mrGray ROI - selected',...
-    'Separator','on',...
-    'CallBack',cb);
-
-% write mrGray ROI callback:
-%   roi = vw.ROIs(vw.selectedROI);
-%   [fname pname] = uiputfile('*.roi','volROI2mrGray');
-%   volROI2mrGray(roi.name, roi);
-%	 disp(['Wrote selected ROI as mrGray ROI file ' roi.name '.']);
-cb = ...
-    [ 'curDir = pwd; anatDir = getAnatomyPath([]); if(exist(anatDir,''dir'')) chdir(anatDir); end; ' ...
-        '[fname pname] = uiputfile(''*.roi'',''Choose directory: volROI2mrGray'');', ...
-        'for whichROI=1:length(',vw.name,'.ROIs) ',...
-        'roi = ',vw.name,'.ROIs(whichROI);',...
-        'volROI2mrGray(roi.name, roi,pname);',...
-        'disp([''Wrote ROI #'' num2str(whichROI) '' as mrGray ROI file '' roi.name ''.'']);',...
-        'end;chdir(curDir);'];
-uimenu(volume2mrGrayMenu,'Label','write mrGray ROIs - all','Separator','on',...
-    'CallBack',cb);
-
-% write mrGray functional data overlay callback:
-%   functionals2mrGray(vw);
-cb = ['functionals2mrGray(',vw.name,');'];
-uimenu(volume2mrGrayMenu,'Label','write mrGray functional data overlay','Separator','on',...
-    'CallBack',cb);
-
-% write mrGray functional data overlay callback (masked w/ ROI):
-%   functionals2mrGray(vw);
-cb = ['functionals2mrGray(',vw.name,', getCurROIcoords(',vw.name,'));'];
-uimenu(volume2mrGrayMenu,'Label','write mrGray functional, masked w/ cur ROI','Separator','off',...
-    'CallBack',cb);
-
-return
-% /-------------------------------------------------------------------/ %
-
-
-
-
-% /-------------------------------------------------------------------/ %
-function vw = bvSubmenu(vw, xformMenu)
-%%%%%%%%%%%%%%%%%%%%%
-% Volume->BrainVoyager submenu
-
-volume2BVMenu = uimenu(xformMenu,'Label','Volume->BrainVoyager','Separator','off');
-
-% write BV Functional data callback:
-
-cb = 'BV_mrLoadRet3StatsToVMPFile;';
-uimenu(volume2BVMenu,...
-    'Label','write BV Functional: current scan',...
-    'Separator','off',...
-    'CallBack',cb);
-
-% write BV ROI callback:
-
-cb = 'BV_mrLoadRet3GrayROIsToVOIFile;';
-uimenu(volume2BVMenu,...
-    'Label','write BV ROIs (all)',...
-    'Separator','off',...
-    'CallBack',cb);
-
-return
-% /-------------------------------------------------------------------/ %
-
 
 
 

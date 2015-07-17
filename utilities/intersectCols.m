@@ -18,6 +18,6 @@ function [c,ia,ib] = intersectCols(a,b)
 % See also UNIONCOLS, INTERSECT
 %
 % djh, 8/4/99
-[cTrans,ia,ib] = intersect(a',b','rows');
+[cTrans,ia,ib] = intersect(a',b','rows', 'legacy');
 c = cTrans';
 return

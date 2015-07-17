@@ -1,4 +1,4 @@
-function [RFcov figHandle all_models weight data] = rmPlotCoverage(vw, varargin)
+function [RFcov, figHandle, all_models, weight, data] = rmPlotCoverage(vw, varargin)
 % rmPlotCoverage - calulate the visual field coverage within an ROI
 % 
 % [RFcov figHandle all_models weight data]  = rmPlotCoverage(vw, varargin)
@@ -35,12 +35,13 @@ function [RFcov figHandle all_models weight data] = rmPlotCoverage(vw, varargin)
 % 09/02 SD large rearrangments
 % 09/08 JW allow superposition of pRF centers; various minor debugs
 % 02/10 MB added method 'betasum'
-if notDefined('vw'),           error('View must be defined.'); end
+if notDefined('vw'),       error('View must be defined.'); end
+if notDefined('varargin'), varargin{1} = 'dialog'; end
 
 %% default parameters
 vfc.prf_size = true; 
 vfc.fieldRange = min(30, vw.rm.retinotopyParams.analysis.maxRF);
-vfc.method = 'average';         
+vfc.method = 'max';         
 vfc.newfig = true;                      
 vfc.nboot = 50;                          
 vfc.normalizeRange = true;              
@@ -134,7 +135,7 @@ clear rmModel
 % long time to fix them. So, I'm keeping the y-flip correction, but making
 % it explicit here. When the code is fixed and most models saved on disk
 % are correct, we can remove this. 
-% y0 = -y0;
+y0 = -y0;
 
 % ok. I think it is time to remove. I suggest putting in a flag to flip the
 % y-dimension if requested, but otherwise not to.

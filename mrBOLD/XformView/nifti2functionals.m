@@ -29,9 +29,7 @@ mrGlobals;
 % **********************
 % Variable check
 % **********************
-if ~exist('vw', 'var') || isempty(vw), 
-    vw = getSelectedGray; 
-end
+if notDefined('vw'), vw = getSelectedGray; end
 
 if ~exist('mappth', 'var') || ~exist(mappth, 'file') 
     mappth = getPathStrDialog(dataDir(vw),'Choose nifti parameter map','*.nii.gz');
@@ -51,14 +49,59 @@ end
 parameterMap = cell(1);
 
 % fname for par map should be same as mappth except ".nii.gz" => ".mat"
-[p fname] = fileparts(mappth); %#ok<ASGLU>
-[p fname] = fileparts(fname); %#ok<ASGLU>
+[~, fname] = fileparts(mappth); 
+[~, fname] = fileparts(fname); 
 
 % read a nifti file with map to be converted
 ni = niftiRead(mappth);
 
-% read the associated t1 nifti
-t1  = niftiRead(t1pth);
+% apply our canonical transform to ensure orientation is matched to t1;
+ni = niftiApplyCannonicalXform(ni);
+data = niftiGet(ni, 'data');
+data = nifti2mrVistaAnat(data);
+
+coords = viewGet(vw, 'coords');
+
+indices = coords2Indices(coords, size(data));
+
+
+% *****************************************
+% Create and save the parameter map
+% *****************************************
+
+% initialize the map
+parameterMap{1} = double(data(indices));
+
+% add map to mrVista view
+vw = setParameterMap(vw,parameterMap,fname);
+
+return
+%% CONTINUE HERE BY INVERTING PROCEDURE IN FUNCTIONALS2NIFTI
+% volSize = viewGet(vw,'size');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 % **********************
@@ -69,7 +112,7 @@ t1  = niftiRead(t1pth);
 map.orig.vector     = ni.data(:)';
 
 % i j k are the indices in the image space of the t1 we read in
-[i j k]             = ind2sub(size(ni.data), 1:numel(map.orig.vector));
+[i, j, k]           = ind2sub(size(ni.data), 1:numel(map.orig.vector));
 map.orig.ijk        = single([i; j; k]); clear i j k;
 
 % convert the map coords to ACPC space (we need to do this in case the
@@ -89,7 +132,7 @@ map.acpc.inds       = sub2ind(size(map.acpc.mat), map.acpc.ijk(1,:), map.acpc.ij
 map.acpc.mat(map.acpc.inds) = map.orig.vector;
 map.vista.mat       = nifti2mrVistaAnat(map.acpc.mat);
 
-[i j k]             = ind2sub(size(map.vista.mat), 1:numel(map.vista.mat));
+[i, j, k]           = ind2sub(size(map.vista.mat), 1:numel(map.vista.mat));
 map.vista.ijk       = [i; j; k]; clear i j k;
 map.vista.vector    = map.vista.mat(:)';
 
@@ -117,8 +160,8 @@ parameterMap{1}(grayIndices) = map.vista.vector(map.vista.inds);
 % add map to mrVista view
 vw = setParameterMap(vw,parameterMap,fname);
 
-% Save file
-pathStr = fullfile(dataDir(vw), sprintf('%s.mat', fname)); 
-saveParameterMap(vw, pathStr);
+% % Save file
+% pathStr = fullfile(dataDir(vw), sprintf('%s.mat', fname)); 
+% saveParameterMap(vw, pathStr);
 
 return
