@@ -216,7 +216,7 @@ end
 
 
 desc = lower(rmGet(model{1},'desc'));
-switch tmp,
+switch desc,
     case {'2d prf fit (x,y,sigma, positive only)'}
         tmp.prediction = rmHrfSearchFit_oneGaussian(model, params, loopSlices, wProcess,varexp,allstimimages);
         
