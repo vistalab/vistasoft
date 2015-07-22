@@ -80,6 +80,8 @@ switch param
             if isempty(varargin), val = dt.scanParams(:).annotation;
             else val = dt.scanParams(varargin{1}).annotation;
             end
+        else
+           val = '(Empty Data Type)';
         end
         
     case {'blockedanalysisparams','blockparams','bparams','bparms'}
