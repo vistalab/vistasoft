@@ -22,7 +22,7 @@ end
 xform_opt = [' -bscale ' bscale ' -flipz -flipy -flipx '];
 
 % Has to be scheme2 format so lets strip any provided extension
-[pathstr, name, ext, versn] = fileparts(scheme_filename);
+[pathstr, name, ext] = fileparts(scheme_filename);
 scheme_filename = fullfile(pathstr,[name '.scheme2']);
 scheme_opt = [' > ' scheme_filename];
 
