@@ -1,5 +1,5 @@
-function [tgtDt, tgtScan] = er_deconvolve(view, srcScans, tgtScan, annotation);
-% [tgtDt, tgtScan] = er_deconvolve(view, [scansToDeconvolve, newScanNum, annotation]);
+function [tgtDt, tgtScan] = er_deconvolve(view, srcScans, tgtScan, annotation)
+% [tgtDt, tgtScan] = er_deconvolve(view, [scansToDeconvolve, newScanNum, annotation])
 %
 % 'Deconvolve' a set of scans, producing a new analysis in the Deconvolved
 % data type. The time series in the new Deconvolved scan contains average
