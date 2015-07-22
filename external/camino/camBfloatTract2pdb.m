@@ -1,10 +1,12 @@
 function camBfloatTract2pdb(Bfloattract_filename, output_file)
-
+%
+% camBfloatTract2pdb(Bfloattract_filename, output_file)
+%
 % Converting the streamline/fiber file in Bfloat format into mrDiffusion/pdb format
 % 
 % INPUT:
-% Bfloattract_filename: The full path to Bfload file containing streamline trajectory
-% output_file: The filename for the output file (either .mat or .pdb format)
+% Bfloattract_filename: The full path to Bfloat file containing streamline trajectory
+% output_file:          The filename for the output file (either .mat or .pdb format)
 % 
 % (C) Hiromasa Takemura, CiNet HHS/Stanford Vista Team, 2015
 
