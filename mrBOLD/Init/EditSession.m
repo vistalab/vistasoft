@@ -11,7 +11,8 @@ function [mrSESSION,ok] = EditSession(mrSESSION,editable)
 % a few of the top-level fields and a few of the scan-indexed fields
 % within the functionals struct array field. Various other fields
 % are displayed for informational purposes.
-%
+% arw, 06/15/15 Modify to cope with graphic handle behavior in R2014b onwards
+
 
 if ~exist('editable','var'), editable = 1; end
 
@@ -80,7 +81,16 @@ topH = figure(...
     'NumberTitle','off' ...
     );
 bkColor = get(topH, 'color');
-topHS = num2str(topH);
+
+if (verLessThan('matlab','8.4')) % New object/handle behavior for graphics objects in 2014b
+    tHandle=topH;
+else
+    tHandle=topH.Number;
+end
+
+topHS = num2str(tHandle);
+
+
 
 % center the figure in the screen (ras, 03/06):
 set(topH, 'Units', 'normalized');
@@ -107,12 +117,14 @@ maxLabelWidth = 30; % set it to be constant # characters... (ras 03/06)
 y = y - dy;
 
 % Create the top-level fields:
+
 for iField=1:nTopFields
   labelPos = [x, y, length(topData(iField).label)*xs, height];
-  h = CreateEditRow(topData(iField), labelPos, maxLabelWidth, topH, fontSize, [], 35);
+  h = CreateEditRow(topData(iField), labelPos, maxLabelWidth, tHandle, fontSize, [], 35);
   topData(iField).handle = h;
   y = y - dy;
 end
+
 
 % Inplanes:
 y = y - dy;
@@ -255,7 +267,7 @@ while ~ok
   uiData = get(topH, 'UserData');
   if isfield(uiData, 'cancel')
     ok=0;
-    close(topH);
+    close(tHandle);
     return
   end
   ok = UpdateEdit(topH);

@@ -5,6 +5,7 @@ function view=filesMenu(view)
 % Set up the callbacks for the FILE menu
 %
 % djh, 1/9/98
+% arw, 06/15/15 Check for altered graphic handle behavior in R2014b onwards
 mrGlobals
 
 % create the file menu
@@ -77,7 +78,12 @@ uimenu(fileMenu,'Label','(Re-)create Readme.txt','Separator','off',...
     'Callback',cb);
 
 % Quit
-cb = ['close(',num2str(viewGet(view, 'figure number')),'); mrvCleanWorkspace;'];
+if (verLessThan('matlab','8.4')) % Figure handle behavior changed in 2015
+    cb = ['close(',num2str(view.ui.figNum),'); mrvCleanWorkspace;'];
+else
+    cb = ['close(',num2str(view.ui.figNum.Number),'); mrvCleanWorkspace;'];
+end
+
 uimenu(fileMenu,'Label','Quit ','Separator','on', 'Callback',cb);
 
 
