@@ -32,9 +32,6 @@ if notDefined('keepAllPoints'),
     end
 end
 
-% TODO:
-% Would be kind of cool to use the actual stimulus program when possible.
-
 %-------------------
 % Allow different stimuli. Stimulus parameters are defined as
 % params{stim}.m and the programs to make them are saved as
