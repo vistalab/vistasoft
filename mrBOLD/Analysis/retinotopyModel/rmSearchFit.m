@@ -287,9 +287,11 @@ for slice=loopSlices,
         [data, trendBetas] = rmEstimateDC(data,trendBetas,params,trends,dcid);
     end
     
-    % decimate?
-    data     = rmDecimate(data, doDecimate);
-    trends   = rmDecimate(trends, doDecimate);
+    % decimate? Note that decimated trends are stored in a new variable,
+    % sliceTrends, because if we loop across multiple slices, we do not
+    % want trends to be re-decimated in each loop
+    data        = rmDecimate(data, doDecimate);
+    sliceTrends = rmDecimate(trends, doDecimate);
     
     % put in number of data points. Right now this is the same as
     % size(data,1)
@@ -305,11 +307,6 @@ for slice=loopSlices,
     for n=1:numel(s),
         s{n}.rawrss(wProcess) = sum(double(data).^2);
     end;
-
-  
-   
-    
-    %%
     
     % decimate predictions?
     %   If we have a nonlinear model, then we cannot pre-convolve the
@@ -346,7 +343,7 @@ for slice=loopSlices,
             t.trends = [];
             t.dcid   = [];
         else
-            t.trends = trends(:,dcid);
+            t.trends = sliceTrends(:,dcid);
             t.dcid   = dcid;
         end
         if isempty(desc)
