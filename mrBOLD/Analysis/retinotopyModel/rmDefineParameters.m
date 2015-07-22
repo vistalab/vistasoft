@@ -505,6 +505,12 @@ mygridx = (-params.analysis.fieldSize:...
     params.analysis.sampleRate:...
     params.analysis.fieldSize);
 [params.analysis.X, params.analysis.Y] = meshgrid(mygridx,mygridx);
+% We want the stimulus grid to have postive values for the upper part of
+% the image, which requires a flip. 
+%   For example, prior to flip, this produces negative values in the upper 
+%   portion of the image: figure; imagesc(params.analysis.Y); colorbar;
+%   After the flip, this produces positive values in the upper portion of 
+%   the image: figure; imagesc(params.analysis.Y); colorbar;
 params.analysis.Y = flipud(params.analysis.Y);
 
 % rmMakeStimulus by default limits the sample points to those where a
