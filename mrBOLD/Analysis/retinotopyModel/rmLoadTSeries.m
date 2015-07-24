@@ -38,7 +38,7 @@ end
 
 
 % find the coordinates of the ROI in terms of the view's data
-[coordsInd coords] = roiIndices(view, coords, preserveCoords);
+[coordsInd, coords] = roiIndices(view, coords, preserveCoords);
 origCoords = coords;
 
 %% ras 03/2009: I believe the statement below is just a duplication of ROI
