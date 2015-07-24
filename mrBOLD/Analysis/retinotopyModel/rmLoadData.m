@@ -61,7 +61,7 @@ if notDefined('scans')
     end
 end
 
-for ds = 1:length(params.stim),
+for ds = 1:length(scans),
 	scannum = scans(ds);
 	switch lower(params.wData),
 		case {'all'},
@@ -79,7 +79,7 @@ for ds = 1:length(params.stim),
 
 
 			% average repeats
-			tSeries  = rmAverageTime(tSeries ,params.stim(ds).nUniqueRep);
+			tSeries  = rmAverageTime(tSeries ,params.stim(scannum).nUniqueRep);
             
             if coarse,
                 % smooth
@@ -108,7 +108,7 @@ for ds = 1:length(params.stim),
 	% structure and calculate the start and ending indices for each
 	% iteration (stimulus)
 	if isempty(data),
-		dii.end   = cumsum([params.stim(:).nFrames]./[params.stim(:).nUniqueRep]);
+		dii.end   = cumsum([params.stim(scans).nFrames]./[params.stim(scans).nUniqueRep]);
 		dii.start = [1 dii.end(1:end-1)+1];
 		data = zeros(dii.end(end), size(tSeries ,2));
 	end;
@@ -157,11 +157,11 @@ params = rmSet(params, 'roiIndex',  coordsIndex);
 % coarse to fine switch
 if coarse,
 	% process everything, must do so for proper smoothing
-	tSeries  = loadtSeries(vw, ds);
-	tSeries  = rmAverageTime(tSeries, params.stim(ds).nUniqueRep);
+	tSeries  = loadtSeries(vw, scannum);
+	tSeries  = rmAverageTime(tSeries, params.stim(scannum).nUniqueRep);
 	blurParams = params.analysis.coarseBlurParams(1,:);
 	grayConMat = [];
-	[tSeries grayConMat] = dhkGraySmooth(vw, tSeries, blurParams, grayConMat);
+	[tSeries, grayConMat] = dhkGraySmooth(vw, tSeries, blurParams, grayConMat);
 	coarseIndex = rmCoarseSamples(rmGet(params,'roicoords'),params.analysis.coarseSample);
 
 	% limit to roi
@@ -175,7 +175,7 @@ if coarse,
 	coords = roiIndex(coarseIndex);
 
 else % old approach
-	if strcmpi(vw.viewType,'inplane'), roiSlices = unique(coords(3,:));
+	if strcmpi(vw.viewType,'inplane'),   roiSlices = unique(coords(3,:));
     else                                 roiSlices = 1; end;
 
 	tSeries  = [];
@@ -185,14 +185,14 @@ else % old approach
 		vw.tSeriesSlice = roiSlice;
 		vw.tSeriesScan  = scannum;
 		vw.tSeries      = loadtSeries(vw, scannum, roiSlice);
-		tSeries           = [tSeries getTSeriesROI(vw, coords, 1)];
+		tSeries         = [tSeries getTSeriesROI(vw, coords, 1)];
 	end;
 
 	% ras 01/09: only convert to percent change if the flag is set
 	if params.analysis.calcPC, tSeries  = raw2pc(tSeries);  end
 
 	% average repeats
-	tSeries  = rmAverageTime(tSeries, params.stim(ds).nUniqueRep);
+	tSeries  = rmAverageTime(tSeries, params.stim(scannum).nUniqueRep);
 end;
 
 
