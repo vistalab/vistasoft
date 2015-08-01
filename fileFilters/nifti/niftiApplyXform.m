@@ -18,11 +18,6 @@ function [nii] = niftiApplyXform(nii,xform)
 %
 % Copyright Stanford VistaLab 2013
 
-
-% Matlab is phasing out flipdim and replacing with flip. Versions of Matlab
-% prior to  XXX don't have the function flip
-if verLessThan('matlab', '8.2'), flip = @(data, dim) flipdim(data, dim); end
-
 xformLocal = xform(1:3,1:3);
 
 if(all(all(xformLocal == eye(3))))
@@ -48,18 +43,30 @@ dimOrder = [xdim, ydim, zdim];
 nii = niftiSet(nii,'data',permute(niftiGet(nii,'data'),[dimOrder,4,5]));
 
 if (xformLocal(1,xdim)<0)
-    %dimFlip(xdim) = 1;
-    nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),1));
+    %dimFlip(xdim) = 1;    
+    if verLessThan('matlab', '8.2'), 
+        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),1));
+    else
+        nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),1));
+    end
 end
 
 if (xformLocal(2,ydim)<0)
     %dimFlip(xdim) = 2;
-    nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),2));
+    if verLessThan('matlab', '8.2'), 
+        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),1));
+    else
+        nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),2));
+    end
 end
 
 if (xformLocal(3,zdim)<0)
     %dimFlip(xdim) = 3;
-    nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),3));
+    if verLessThan('matlab', '8.2'), 
+        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),3));
+    else    
+        nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),3));
+    end
 end
 
 %Now the permutations on the data are complete, now we can update the
