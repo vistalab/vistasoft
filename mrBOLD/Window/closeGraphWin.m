@@ -15,6 +15,7 @@ if ~isempty(GRAPHWIN)
   end
 end 
 
-delete(curFigure);
+delete(get(0,'CurrentFigure'));
+
 
 
