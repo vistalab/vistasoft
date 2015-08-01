@@ -19,6 +19,10 @@ function [nii] = niftiApplyXform(nii,xform)
 % Copyright Stanford VistaLab 2013
 
 
+% Matlab is phasing out flipdim and replacing with flip. Versions of Matlab
+% prior to  XXX don't have the function flip
+if verLessThan('matlab', '8.2'), flip = @(data, dim) flipdim(data, dim); end
+
 xformLocal = xform(1:3,1:3);
 
 if(all(all(xformLocal == eye(3))))
