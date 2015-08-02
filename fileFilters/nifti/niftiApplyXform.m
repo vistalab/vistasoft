@@ -54,7 +54,7 @@ end
 if (xformLocal(2,ydim)<0)
     %dimFlip(xdim) = 2;
     if verLessThan('matlab', '8.2'), 
-        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),1));
+        nii = niftiSet(nii,'data',flipdim(niftiGet(nii,'data'),2));
     else
         nii = niftiSet(nii,'data',flip(niftiGet(nii,'data'),2));
     end
