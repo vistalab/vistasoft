@@ -168,11 +168,10 @@ switch param
         
     case 'dtname'
         % Return the name of the currently selected dataTYPE
-        %   dtName = viewGet(vw, 'Data TYPE Name');
-        %
-        % ras 06/07: note that I 'stole' the 'datatype' alias from
-        % the dtnumber property: I think the name is more relevant
-        val = dataTYPES( viewGet(vw, 'curdt') ).name;
+        %   dtName = viewGet(vw, 'Data TYPE Name', [dtnum]);
+        if ~isempty(varargin), dtnum = varargin{1};
+        else dtnum =  viewGet(vw, 'curdt') ; end
+        val = dataTYPES(dtnum).name;
     case 'curdt'
         % Return the number of the currently selected dataTYPE
         %   dtNum = viewGet(vw, 'Current Data TYPE');

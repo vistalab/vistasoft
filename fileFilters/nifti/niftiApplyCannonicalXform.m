@@ -57,7 +57,7 @@ if(all(all(canXform == eye(4))))
 else
     
     % Apply the transform
-    [ni.data,newPixdim,dimOrder,dimFlip] = ...
+    [ni.data,newPixdim,dimOrder] = ...
         applyCannonicalXform(ni.data, canXform, ni.pixdim(1:3), false);
     
     % Fill the NIFTI image slots

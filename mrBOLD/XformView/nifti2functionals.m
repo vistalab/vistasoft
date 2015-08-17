@@ -47,7 +47,7 @@ parameterMap = cell(1);
 ni = niftiRead(mappth);
 
 % apply our canonical transform to ensure orientation is matched to t1;
-ni = niftiApplyCannonicalXform(ni);
+ni   = niftiApplyCannonicalXform(ni);
 data = niftiGet(ni, 'data');
 data = nifti2mrVistaAnat(data);
 

@@ -51,7 +51,9 @@ colormap(cmap(nG+1:end,:));
 
 % if copying to clipboard, copy and close the figure
 if isequal( lower(destination), 'clipboard' )
-	print( sprintf('-f%i', hFig), '-dmeta' )
+    if isa(hFig, 'matlab.ui.Figure'), fignum = get(hFig, 'Number');
+    else fignum = hFig; end
+	print( sprintf('-f%i', fignum), '-dmeta' )
 	close(hFig);
 end
 

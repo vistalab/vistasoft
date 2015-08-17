@@ -135,7 +135,7 @@ clear rmModel
 % long time to fix them. So, I'm keeping the y-flip correction, but making
 % it explicit here. When the code is fixed and most models saved on disk
 % are correct, we can remove this. 
-y0 = -y0;
+% y0 = -y0;
 
 % ok. I think it is time to remove. I suggest putting in a flag to flip the
 % y-dimension if requested, but otherwise not to.

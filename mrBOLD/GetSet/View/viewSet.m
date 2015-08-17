@@ -69,6 +69,7 @@ function vw = viewSet(vw,param,val,varargin)
 %      'roiname'
 %      'roicoords'
 %      'roimodified'
+%      'roicomments'
 %
 % %%%%% Time-series related properties
 %      'tseries'

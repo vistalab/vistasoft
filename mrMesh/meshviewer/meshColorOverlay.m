@@ -32,7 +32,7 @@ function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors] = meshColorO
 
 if notDefined('vw'), vw = getSelectedGray; end
 if notDefined('showData'), showData = 1; end
-if(~exist('dataOverlayScale', 'var') ||isempty(dataOverlayScale)) dataOverlayScale = 1; end
+if(~exist('dataOverlayScale', 'var') ||isempty(dataOverlayScale)), dataOverlayScale = 1; end
 if(~exist('dataThreshold', 'var')), dataThreshold = []; end
 
 msh = viewGet(vw,'currentmesh');
@@ -59,19 +59,6 @@ overlayModDepth = prefs.overlayModulationDepth;
 dataSmoothIterations = prefs.dataSmoothIterations;
 
 clusterThreshold = prefs.clusterThreshold;
-if(strcmp(prefs.overlayLayerMapMode,'mean'))
-    layerMapMethod = 0;
-elseif(strcmp(prefs.overlayLayerMapMode,'max'))
-    layerMapMethod = 1;
-elseif(strcmp(prefs.overlayLayerMapMode,'min'))
-    layerMapMethod = 1;
-elseif(strcmp(prefs.overlayLayerMapMode,'absval'))
-    layerMapMethod = 1;
-else
-    warning(['Unknow value for mrmPreference overlayLayerMapMode ('...
-        prefs.overlayLayerMapMode '). Run mrmPreferences.']);
-    layerMapMethod = 0;
-end
 
 % The vertex gray map can now be N x M, where N is the the number of data
 % 'layers' that map to each of the M vertices.
@@ -98,10 +85,6 @@ sz = size(meshGet(msh,'colors'),2);
 % vertices that are painted in the 3D view.
 newColors = ones(4,sz) + 127;
 
-% Map color overlay to vertices
-% vertexGrayMap tells us which gray node to use for each vertex.
-dataMask = zeros(1,sz);
-
 % VertInds will be a logical map that tells us which vertices have at least
 % one data layer that is not null. Some vertices (find(vertInds==0)) have
 % no data associated with them. Note that this mask is different from the
@@ -109,7 +92,7 @@ dataMask = zeros(1,sz);
 % the user has set.
 vertInds = (vertexGrayMap(1,:) > 0);
 if(mapToAllLayers)
-    for(ii=2:size(vertexGrayMap,1))
+    for ii=2:size(vertexGrayMap,1)
         vertInds = vertInds | (vertexGrayMap(ii,:) > 0);
     end
 end
@@ -163,7 +146,7 @@ if(mapToAllLayers && size(vertexGrayMap,1)>1 && ~isempty(data))
 
             if ~phaseFlag,
                 n = sum(allV,1);
-                for(ii=1:size(vertexGrayMap,1)),
+                for ii=1:size(vertexGrayMap,1),
                     % 03/2006 SOD: If we average over the vertexGrayMap layers we
                     % should start from layer 1 and not with the already existing
                     % dataOverlay. The existing dataOverlay is a mean of all data
@@ -178,15 +161,15 @@ if(mapToAllLayers && size(vertexGrayMap,1)>1 && ~isempty(data))
 
             else % for phase data go complex average and go back
                 % recompute complex dataOverlay, taking only finite data
-                tmpdata = -exp(i*data(vertexGrayMap(allV(:))));
+                tmpdata = -exp(1i*data(vertexGrayMap(allV(:))));
                 dataOverlay = repmat(mean(tmpdata(isfinite(tmpdata))),1,sz);
                 %dataOverlay = repmat(mean(-exp(i*data(vertexGrayMap(allV(:))))),1,sz);
                 n = sum(allV,1);
-                for(ii=1:size(vertexGrayMap,1))
+                for ii=1:size(vertexGrayMap,1)
                     if ii==1,
-                        dataOverlay(allV(ii,:)) = -exp(i*data(vertexGrayMap(ii,allV(ii,:))));
+                        dataOverlay(allV(ii,:)) = -exp(1i*data(vertexGrayMap(ii,allV(ii,:))));
                     else
-                        dataOverlay(allV(ii,:)) = dataOverlay(allV(ii,:)) + -exp(i*data(vertexGrayMap(ii,allV(ii,:))));
+                        dataOverlay(allV(ii,:)) = dataOverlay(allV(ii,:)) + -exp(1i*data(vertexGrayMap(ii,allV(ii,:))));
                     end;
                 end
                 dataOverlay(vertInds) = angle(dataOverlay(vertInds)./n(vertInds))+pi;
@@ -275,7 +258,7 @@ if(dataSmoothIterations>0)
             dataOverlay = connectionBasedSmooth(conMat,double(dataOverlay));
         else
             % phase data, so go complex, smooth and go back
-            dataOverlay = -exp(i*dataOverlay);
+            dataOverlay = -exp(1i*dataOverlay);
             dataOverlay = connectionBasedSmooth(conMat,double(dataOverlay));
             dataOverlay = angle(dataOverlay)+pi;
         end;
@@ -288,7 +271,7 @@ if ~isequal(vw.ui.displayMode, 'anat') && sum(data) ~= 0
     % meshData2Colors, changing the size of the output colors, which
     % will consequently result in an error due to subscripted
     % assignment dimension mismatch.
-    vertInds(find(isnan(dataOverlay)))=0;
+    vertInds(isnan(dataOverlay))=0;
     newColors(1:3,vertInds) = meshData2Colors(dataOverlay(vertInds), cmap, dataRange);
 end
 
