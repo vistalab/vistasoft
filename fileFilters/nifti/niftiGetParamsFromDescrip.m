@@ -114,6 +114,9 @@ end
 %     params = rmfield(params,'niftiFile');
 % end
 
+% Remove the temp file
+delete(name);
+
 return
 
 
