@@ -1,12 +1,22 @@
 function dtiInitStandAloneWrapper(json)
 % 
-%   dtiInitStandAloneWrapper(json)
+% dtiInitStandAloneWrapper(json)
 %
-% From a json file (or object) construct a run of dtiInit inside of a docker
-% container (e.g., vistalab/dtiinit).
+% Read a JSON object, a JSON file, or a directory containing a json file
+% and run dtiInit inside of a docker container (vistalab/dtiinit).
+% 
 % 
 % INPUTS:
-%       json - JSON object, file or directory containing a json file in the following format:
+%       json - a JSON string, a JSON file, or a directory containing a json
+%              file, in the following format (Note that 'input_dir' and
+%              'output_dir' are the only REQUIRED inputs):
+%
+% JSON SCHEMA:
+%       Below is an example JSON file with the defaults show for 'params'.
+%       See dtiInitParams.m for more info regarding params. Note that
+%       "input_dir" and "output_dir" are required and must be in the
+%       context of the container. 
+% 
 %             { 
 %                 "input_dir": "/input",
 %                 "output_dir": "/output",
@@ -38,22 +48,49 @@ function dtiInitStandAloneWrapper(json)
 %                     }
 %             }
 % 
+% 
+% REQUIRED INPUTS:
+%       'input_dir' and 'output_dir' are the only required inputs.  
+% 
+% 
+% HELP: 
+%       If 'help', '-h', '--help', or nothing (nargin==0), is passed in
+%       this help will be displayed.
+% 
+% 
 % USAGE:
-%       Note that 'input_dir' and 'output_dir' are required inputs.       
-%       Pass a json object, file, or directory with jsonFile to docker,
-%       like so:
+%       Pass in a JSON file, a JSON text string, or a path to a directory
+%       containing a JSON file to the docker container to initiate a
+%       dtiInit processing run (see INPUT section for JSON schema):
 % 
-%       docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit {"input_dir":"/input", "output_dir": "/output"}
+%       % Using a JSON file
+%        docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit /input/<JSON_filename>.json
+% 
+%       % Using a JSON string
+%        docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit {"input_dir":"/input", "output_dir": "/output"}
+% 
+%       % Using a directory (in the container), containing a JSON (.json)
+%        docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit /input/
 % 
 % 
-% (C) Vista Lab, Stanford University, 2015 [lmperry]
+% 
+% (C) Vista Lab, Stanford University, 2015
 % 
 
 
 %% Initial checks
 
+% If nothing was passed in, display help and return
 if nargin == 0;
-    error('Must supply path to json file or a json struct');
+    help(mfilename);
+    return
+end
+
+% Assume the user wanted to see the help, and show it
+if ischar(json) 
+    if strcmpi(json, 'help') || strcmpi(json, '-help') || strcmpi(json, '-h') || strcmpi(json, '--help')
+        help(mfilename);
+    end
 end
 
 
@@ -61,17 +98,17 @@ end
 
 if exist(json,'file')
     J = loadjson(json);
-elseif exist ('json','dir')
+elseif exist (json,'dir')
     jsonFile = mrvFindFile('*.json', json);
     if ~isempty(jsonFile)
         J = loadjson(jsonFile);
     else
         error('No JSON file could be found');
     end
-elseif exist('json','var') && ~isempty(json) && ischar(json)
+elseif ~isempty(json) && ischar(json) && ~strfind(json,'/')
     J = loadjson(json);
 else
-    error('Could not find nor parse the json file/structure');
+    error('Could not find/parse the json file/structure');
 end
 
 
@@ -79,6 +116,7 @@ end
 
 required = {'input_dir', 'output_dir'};
 err = false;
+
 for r = 1:numel(required)
     if ~isfield(J, required{r})
         err = true;
@@ -88,8 +126,10 @@ for r = 1:numel(required)
         err = true;
     end
 end
+
+% If there was a problem, return
 if err 
-    error('One or more required fields were not found or their target does not exist.');
+    error('Exiting! There was a problem with the inputs. Please check input_dir and output_dir!');
 end
 
 
