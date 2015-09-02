@@ -1,0 +1,80 @@
+{ 
+    "input_dir": {
+                "type": "char"
+                },
+    "output_dir": {
+                "type": "char"
+                },
+    "dwi_file": {
+                "type": "char"
+                },
+    "bvec_file": {
+                "type": "char"
+                },
+    "bval_file": {
+                "type": "char"
+                },
+    "t1_file": {
+                "type": "char"
+                },
+    "params":  {
+        	"type": "struct"
+                },
+    "bvalue": {
+			 "type": "double"
+			   },
+	"gradDirsCode": {
+				"type": "double"
+				},
+	"clobber": {
+				"type": "double"
+				},
+	"dt6BaseName": {
+				"type": "char"
+				},
+	"flipLrApFlag": {
+				"type": "double"
+				},
+	"numBootStrapSamples": {
+				"type": "double"
+				},
+	"fitMethod": {
+				"type": "char"
+				},
+	"nStep": {
+				"type": "double"
+				},
+	"eddyCorrect": {
+				"type": "double"
+				},
+	"excludeVols": {
+				"type": "char"
+				},
+	"bsplineInterpFlag": {
+				"type": "double"
+				},
+	"phaseEncodeDir": {
+				"type": "char"
+				},
+	"dwOutMm": {
+				"type": "double"
+				},
+	"rotateBvecsWithRx": {
+				"type": "double"
+				},
+	"rotateBvecsWithCanXform": {
+				"type": "double"
+				},
+	"bvecsFile": {
+				"type": "char"
+				},
+	"bvalsFile": {
+				"type": "char"
+				},
+	"noiseCalcMethod": {
+				"type": "char"
+				},
+	"outDir": {
+				"type": "char"
+				}
+}

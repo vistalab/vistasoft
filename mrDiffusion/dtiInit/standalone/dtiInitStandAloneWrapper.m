@@ -20,7 +20,7 @@ function dtiInitStandAloneWrapper(json)
 %             { 
 %                 "input_dir": "/input",
 %                 "output_dir": "/output",
-%                 "dti_file": "",
+%                 "dwi_file": "",
 %                 "bvec_file": "",
 %                 "bval_file": "",
 %                 "t1_file": "",
@@ -77,6 +77,10 @@ function dtiInitStandAloneWrapper(json)
 % (C) Vista Lab, Stanford University, 2015
 % 
 
+% TODO:
+%   - Reproducibility
+%   - Remote download of input files
+%   - Json Structure validation
 
 %% Initial checks
 
@@ -105,7 +109,7 @@ elseif exist (json,'dir')
     else
         error('No JSON file could be found');
     end
-elseif ~isempty(json) && ischar(json) && ~strfind(json,'/')
+elseif ~isempty(json) && ischar(json) && sum(strfind(json,'/')) == 0
     J = loadjson(json);
 else
     error('Could not find/parse the json file/structure');
@@ -181,6 +185,12 @@ end
 
 disp(J);
 disp(dwParams);
+
+
+%% Validate the JSON structure against the JSON schema
+
+disp('Validating JSON input against schema...');
+dtiInitStandAloneValidateJson(J);
 
 
 %% Run dtiInit
