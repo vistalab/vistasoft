@@ -114,7 +114,6 @@ end
 if ~isfield(J, 't1_file') || ~exist(J.t1_file, 'file')
     template_t1 = '/templates/MNI_EPI.nii.gz'; 
     J.t1_file = template_t1;
-    disp('Using MNI template for DWI alignment...');
 end
 
 
@@ -122,7 +121,7 @@ end
 
 dwParams            = dtiInitParams;
 dwParams.outDir     = J.output_dir;
-dwParams.bvecsFile  = J.dwi_file;
+dwParams.bvecsFile  = J.bvec_file;
 dwParams.bvalsFile  = J.bval_file;
 dwParams.bvalue     = dw.bvalue;
 
@@ -140,6 +139,7 @@ else
     disp('Using default dtiInit params')
 end
 
+disp(J);
 disp(dwParams);
 
 
