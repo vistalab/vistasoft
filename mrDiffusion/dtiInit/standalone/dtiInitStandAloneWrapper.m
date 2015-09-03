@@ -100,17 +100,22 @@ end
 
 %% Parse the JSON file or object
 
-if exist(json,'file')
+if exist(json, 'file')
     J = loadjson(json);
-elseif exist (json,'dir')
+elseif exist (json, 'dir')
     jsonFile = mrvFindFile('*.json', json);
     if ~isempty(jsonFile)
         J = loadjson(jsonFile);
     else
         error('No JSON file could be found');
     end
-elseif ~isempty(json) && ischar(json) && sum(strfind(json,'/')) == 0
-    J = loadjson(json);
+elseif ~isempty(json) && ischar(json)
+    try
+        J = loadjson(json);
+    catch ME
+        disp(ME.message); 
+        return
+    end
 else
     error('Could not find/parse the json file/structure');
 end
@@ -189,8 +194,9 @@ disp(dwParams);
 
 %% Validate the JSON structure against the JSON schema
 
-disp('Validating JSON input against schema...');
+fprintf('Validating JSON input against schema... ');
 dtiInitStandAloneValidateJson(J);
+fprintf('Success.\n');
 
 
 %% Run dtiInit

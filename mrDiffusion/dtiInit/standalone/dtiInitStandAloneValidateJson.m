@@ -8,7 +8,7 @@ function dtiInitStandAloneValidateJson(J)
 
 %% Load the JSON schema from file
 
-S = loadjson(which('dtiInitStandAloneJsonSchema.json'));
+S = loadjson('/template/dtiInitStandAloneJsonSchema.json');
 
 
 %% Validate the JSON struct against the schema
