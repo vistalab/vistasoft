@@ -67,7 +67,7 @@ function dtiInitStandAloneWrapper(json)
 %        docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit /input/<JSON_filename>.json
 % 
 %       % Using a JSON string
-%        docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit {"input_dir":"/input", "output_dir": "/output"}
+%        docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit '{"input_dir":"/input", "output_dir": "/output"}'
 % 
 %       % Using a directory (in the container), containing a JSON (.json)
 %        docker run --rm -ti -v `pwd`/input:/input -v `pwd`/output:/output vistalab/dtiinit /input/
@@ -81,6 +81,7 @@ function dtiInitStandAloneWrapper(json)
 %   - Reproducibility
 %   - Remote download of input files
 %   - Json Structure validation
+%   - Zip the results.
 
 %% Initial checks
 
@@ -100,9 +101,9 @@ end
 
 %% Parse the JSON file or object
 
-if exist(json, 'file')
+if exist(json, 'file') == 2
     J = loadjson(json);
-elseif exist (json, 'dir')
+elseif exist(json, 'dir') == 7
     jsonFile = mrvFindFile('*.json', json);
     if ~isempty(jsonFile)
         J = loadjson(jsonFile);
