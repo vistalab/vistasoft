@@ -8,7 +8,14 @@ function dtiInitStandAloneValidateJson(J)
 
 %% Load the JSON schema from file
 
-S = loadjson('/template/dtiInitStandAloneJsonSchema.json');
+schemaFile = which('dtiInitStandAloneJsonSchema.json');
+
+if isempty(schemaFile)
+    % This path must match the one in the docker container
+    schemaFile = '/templates/dtiInitStandAloneJsonSchema.json';
+end
+
+S = loadjson(schemaFile);
 
 
 %% Validate the JSON struct against the schema
