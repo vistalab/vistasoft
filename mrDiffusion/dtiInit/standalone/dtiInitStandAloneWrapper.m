@@ -3,13 +3,19 @@ function dtiInitStandAloneWrapper(json)
 % dtiInitStandAloneWrapper(json)
 %
 % Read a JSON object, a JSON file, or a directory containing a json file
-% and run dtiInit inside of a docker container (vistalab/dtiinit).
+% and run dtiInit inside of a docker container (vistalab/dtiinit). 
 % 
 % 
 % INPUTS:
 %       json - a JSON string, a JSON file, or a directory containing a json
 %              file, in the following format (Note that 'input_dir' and
-%              'output_dir' are the only REQUIRED inputs):
+%              'output_dir' are the only REQUIRED inputs)
+%
+% OUTPUTS: 
+%       A docker run produces a zip file containing all of the outputs
+%       from the algorithm. The name of the output zip file is:
+%           'dtiInit[date-time].zip'
+%
 %
 % JSON SCHEMA:
 %       Below is an example JSON file with the defaults show for 'params'.
@@ -104,7 +110,9 @@ end
 if exist(json, 'file') == 2
     J = loadjson(json);
 elseif exist(json, 'dir') == 7
-    jsonFile = mrvFindFile('*.json', json);
+    jsonFile = dir(fullfile(json, '*.json'));
+    jsonFile = fullfile(json, jsonFile.name);
+    disp(jsonFile);
     if ~isempty(jsonFile)
         J = loadjson(jsonFile);
     else
@@ -141,6 +149,11 @@ end
 if err 
     error('Exiting! There was a problem with the inputs. Please check input_dir and output_dir!');
 end
+
+% Create an output subfolder for the outputs 
+outputSubFolder = ['dtiInit_', strrep(strrep(datestr(now),' ', '_'),':','-')];
+J.output_dir = fullfile(J.output_dir, outputSubFolder);
+mkdir(J.output_dir);
 
 
 %% Get a list of diffusion files from the input directory
@@ -203,6 +216,24 @@ fprintf('Success.\n');
 %% Run dtiInit
 
 dtiInit(J.dwi_file, J.t1_file, dwParams);
+
+
+%% Permissions
+
+fileattrib(J.output_dir,'+w +x', 'o'); 
+
+
+%% Compress the outputs
+
+fprintf('Compressing output [%s]... ', J.output_dir);
+cd(mrvDirup(J.output_dir));
+zip([outputSubFolder, '.zip'], J.output_dir);
+fprintf('Done.\n');
+
+
+%% Remove uncompressed output files
+
+rmdir(J.output_dir, 's');
 
 
 %% TODO: REPRODUCIBILITY!
