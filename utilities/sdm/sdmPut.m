@@ -5,7 +5,7 @@ function [status, result] = sdmPut(pLink,uName,fName)
 %
 % Inputs: 
 %  pLink:   Permalink from an SDM instance, session or acquisition file
-%  fname:   Name of the file on disk to attach 
+%  fname:   Name of the file on disk to attach/put/upload 
 %  uName:   Login ID of the user with permission to upload to the pLink
 % 
 % Outputs:
