@@ -54,7 +54,7 @@
 				"type": "double"
 				},
 	"phaseEncodeDir": {
-				"type": "char"
+				"type": "double"
 				},
 	"dwOutMm": {
 				"type": "double"
