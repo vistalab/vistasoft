@@ -93,7 +93,12 @@ function dtiInitStandAloneWrapper(json)
 
 % If nothing was passed in, display help and return
 if nargin == 0;
-    help(mfilename);
+    help_file = '/opt/help.txt';
+    if exist(help_file, 'file')
+        system(['cat ', help_file]);
+    else
+        help(mfilename);
+    end
     return
 end
 
@@ -240,3 +245,4 @@ rmdir(J.output_dir, 's');
 
 
 return 
+
