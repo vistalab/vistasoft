@@ -51,7 +51,7 @@ if ~isfield(vw,'rightPath'), vw = viewSet(vw,'rightPath','(none assigned)');   e
 % if external file paths are provided, attach them to the view, so that
 % they'll be the default files accessed when building the
 if isempty(classPth)
-    startDir = getAnatomyPath(mrSESSION.subject);
+    startDir = getAnatomyPath();
     filterspec = {'*.nii.gz;*.nii', 'NIFTI class file'; '*.*', 'All files'};
     classPth = getPathStrDialog(startDir, 'Select class file', filterspec);    
 end
