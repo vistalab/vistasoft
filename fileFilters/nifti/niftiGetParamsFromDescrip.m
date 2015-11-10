@@ -110,12 +110,11 @@ params.tr = tr;
 if isfield(params,'name')
     params = rmfield(params,'name');
 end
-% if isfield(params,'niftiFile')
-%     params = rmfield(params,'niftiFile');
-% end
 
 % Remove the temp file
-delete(name);
+if exist(name, 'file')
+    delete(name);
+end
 
 return
 
