@@ -19,6 +19,12 @@ function fName = sdmGet(pLink,uName,fName)
 
 
 %% Combine permalink and username to generate the download link
+
+% Handle new permalinks which don't have '?user='
+if isempty(strfind(pLink, '?user='))
+    pLink = [pLink, '?user='];
+end
+
 link = [pLink, uName];
 
 

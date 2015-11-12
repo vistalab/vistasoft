@@ -25,6 +25,11 @@ function [status, result] = sdmPut(pLink,uName,fName)
 
 %% Parse inputs
 
+% Handle new permalinks which don't have '?user='
+if isempty(strfind(pLink, '?user='))
+    pLink = [pLink, '?user='];
+end
+
 % Build the url from the permalink by removing the endpart
 url = fileparts(pLink);
 
