@@ -18,11 +18,21 @@ for slice=loopSlices,
     % now we extract only the data from that slice
     s = rmSliceGet(model,slice);
     
+    % if we have more than one slice, then check which voxels to process in
+    % each slice
+    if length(loopSlices) > 1
+        wProcessSlice = wProcess{slice};
+        varexpSlice  = varexp{slice};
+    else
+        wProcessSlice = wProcess;
+        varexpSlice  = varexp;
+    end
+    
     % store
-    tmp.x = [tmp.x s{1}.x0(wProcess)];
-    tmp.y = [tmp.y s{1}.y0(wProcess)];
-    tmp.s = [tmp.s s{1}.s(wProcess)];
-    tmp.ve = [tmp.ve varexp(wProcess)];
+    tmp.x = [tmp.x s{1}.x0(wProcessSlice)];
+    tmp.y = [tmp.y s{1}.y0(wProcessSlice)];
+    tmp.s = [tmp.s s{1}.s(wProcessSlice)];
+    tmp.ve = [tmp.ve varexpSlice(wProcessSlice)];
 end
 
 

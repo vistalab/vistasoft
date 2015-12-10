@@ -83,6 +83,9 @@ switch lower(param),
 	case {'sigma2theta','sigma2 theta'}
 		model.sigma2.theta = val;
 
+    case {'exponent'}
+        model.exponent = val;
+        
 		% fit
     case {'b', 'beta'}
         model.beta            = val;

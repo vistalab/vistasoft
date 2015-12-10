@@ -39,12 +39,11 @@ try
             val = model.hrf.params;
         case {'hrfmax','peak hrf response value'}
             val = model.hrf.maxresponse;
-
         case {'s','sigma'}
-            val = (model.sigma.major + model.sigma.minor)./2;
-            if strcmpi(model.description, 'fitprf'),
+            val = (model.sigma.major + model.sigma.minor)./2;             
+            if isfield(model, 'exponent'),
                 val = model.sigma.major./sqrt(model.exponent);
-            end
+            end            
         case {'sigmamajor','sigma major','s_major'}
             val = model.sigma.major;
         case {'sigmaminor','sigma minor','s_minor'}
@@ -380,13 +379,9 @@ try
         case {'n','npoints','number of data points'}
             val = model.npoints;
 
-            % fitprf parameters (kendrick style models)
-        case 'gain'
-            val = model.gain;
-        case {'sigmaexp', 'sigmaexponent', 'sigma.exponentiated', 'sigmacorrectedforexponent'}
-            val = model.sigma.exponentiated;
         case 'exponent'
-            val = model.exponent;
+            if isfield(model, 'exponent'),  val = model.exponent;
+            else                            val = ones(size(model.sigma.major)); end
             
         otherwise,
             error('[%s]:Unknown parameter: %s.',mfilename,param);

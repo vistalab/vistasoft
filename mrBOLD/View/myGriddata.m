@@ -47,7 +47,8 @@ else
     warning off;
     
     if (checkML7)
-            im = griddata(x,y,z,xi,yi,'linear',{'QJ'});
+%             im = griddata(x,y,z,xi,yi,'linear',{'QJ'});
+            im = griddata(x,y,z,xi,yi,'linear');
      else         
             im = griddata(x,y,z,xi,yi,'linear');
      end

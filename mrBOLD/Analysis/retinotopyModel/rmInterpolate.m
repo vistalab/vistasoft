@@ -44,7 +44,7 @@ end;
 
 
 % now we have to loop over models and parameters
-rp = {'x','y','s','rss','rawrss','x02','y02','s2','rss2','rawrss2'};
+rp = {'x','y','s','rss','rawrss','x02','y02','s2','rss2','rawrss2', 'exponent'};
 for n=1:numel(model),
     % reset for different models (should be the same i think)
     fulval = myzeros;
@@ -69,8 +69,11 @@ for n=1:numel(model),
             end;
         elseif ~isempty(val) && numel(val)==numel(fulval),
             model{n} = rmSet(model{n},rp{p},val);
-        end;
+        end;        
     end;
+    if isfield(model{n}, 'exponent') && ~isempty(model{n}.exponent)
+        model{n} = rmSet(model{n}, 's', model{n}.sigma.major .* sqrt(model{n}.exponent));
+    end
 end;
 
 % separate loop for the betas, because they are saved in a different way

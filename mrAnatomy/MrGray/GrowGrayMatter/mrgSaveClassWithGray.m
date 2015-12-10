@@ -16,7 +16,7 @@ end
 
 if(~isstruct(classNi))
     try
-        classNi = niftiRead(classNi);
+        classNi = readFileNifti(classNi);
     catch ME
         warning(ME.message);
         disp(sptintf('[%s]: Cannot load class file %s.', mfilename, classNi));
@@ -25,12 +25,12 @@ end
 
 % left hemisphere
 class = readClassFile(classNi,0,0,'left');
-[nodes,edges,classData] = mrgGrowGray(class,nGrayLayers);
+[~,~,classData] = mrgGrowGray(class,nGrayLayers);
 lGM = classData.data==classData.type.gray;
 
 % right hemisphere
 class = readClassFile(classNi,0,0,'right');
-[nodes,edges,classData] = mrgGrowGray(class,nGrayLayers);
+[~,~,classData] = mrgGrowGray(class,nGrayLayers);
 rGM = classData.data==classData.type.gray;
 
 % you may need to flip some dimensions to get the correct orientation
@@ -41,6 +41,6 @@ classNi.data(lGM) = l.leftGray;
 classNi.data(rGM) = l.rightGray;
 
 classNi.fname = classFileOut;
-niftiWrite(classNi);
+writeFileNifti(classNi);
 
 return

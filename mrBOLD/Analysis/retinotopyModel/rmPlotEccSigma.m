@@ -87,7 +87,7 @@ end
 
 % bin size (eccentricity range) of the data
 if max([rmParams.stim(:).stimSize])>4,
-    binsize = 0.5;
+    binsize = 1;
     %binsize = 1;
 else
     %binsize = 0.25;
@@ -102,7 +102,9 @@ thresh.varexp  = max(viewGet(v,'cothresh'), rmParams.analysis.fmins.vethresh);
 
 % take all data within the stimulus range, and decrease it by a small 
 % amount to be more conservative.
-thresh.ecc = [0 max([rmParams.stim(:).stimSize])] + [0.5 -0.5];% * binsize/2; 
+thresh.ecc = [0 max([rmParams.stim(:).stimSize])] + [.5 -2];% * binsize/2; 
+thresh.ecc = viewGet(v, 'mapclip') + [0.5 -0.5];
+% thresh.ecc = [0 max([rmParams.stim(:).stimSize])] + [0.5 -0.5];% * binsize/2; 
 
 % thresh.ecc = [0 30];
 % basically no sigma threshold

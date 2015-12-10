@@ -189,7 +189,7 @@ return;
 function [scans, typeName, str] = averageTSeriesGUI(vw, scans, typeName, str)
 % Dialog to get the scan selection and type name for averageTSeries
 for ii = 1:viewGet(vw, 'numScans')
-    scanList{ii} = sprintf('(%i) %s', ii, annotation(vw, ii));
+    scanList{ii} = sprintf('(%i) %s', ii, viewGet(vw, 'annotation', ii));
 end
 
 dlg(1).fieldName = 'scans';

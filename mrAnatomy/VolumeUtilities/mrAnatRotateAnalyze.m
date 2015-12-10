@@ -44,6 +44,12 @@ end
 
 % at heart, what this does is very simple...
 img = permute(img, [3 2 1]);
-img = flipdim(flipdim(img, 2), 1);
+
+if verLessThan('matlab', '8.2'),
+    img = flipdim(flipdim(img, 2), 1);
+else
+    img = flip(flip(img, 2), 1);
+end
+
 
 return

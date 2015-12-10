@@ -101,8 +101,9 @@ params = rmMakeStimulus(params);
 
 % record the annotation for this stimulus, for reference
 % (kept outside rmMakeStimulus, so that function won't need the view)
+dt = viewGet(view, 'dt struct');
 for n = 1:length(params.stim)
-	params.stim(n).annotation = annotation(view, n);
+	params.stim(n).annotation = dtGet(dt, 'annotation', n);
 end
 
 %-----------------------------------
@@ -143,7 +144,7 @@ switch lower(wSearch)
         view = rmSearchFit(view,params);
 
 
-    case {'6','HRF coarse to fine fit','hrf'}
+    case {'6','hrf coarse to fine fit','hrf'}
         [view, params] = rmHrfSearchFit(view, params);
         view = rmFinalFit(view,params);
         view = rmSearchFit(view, params);

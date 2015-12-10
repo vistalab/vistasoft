@@ -56,7 +56,7 @@ ydim = find(abs(img2stdRot(2,:))==1);
 zdim = find(abs(img2stdRot(3,:))==1);
 dimOrder = [xdim, ydim, zdim];
 dimFlip = [0 0 0];
-if(exist('mmPerVox','var'))
+if exist('mmPerVox','var')
     mmPerVoxNew = [mmPerVox(xdim), mmPerVox(ydim), mmPerVox(zdim)];
 else
     mmPerVoxNew = [];
@@ -66,26 +66,26 @@ end
 img = permute(img, [dimOrder, 4, 5]);
 
 % Now do any necessary mirror flips (indicated by negative rotation matrix values).
-if(img2stdRot(1,xdim)<0)
+if img2stdRot(1,xdim)<0
     dimFlip(xdim) = 1;
     % flip each slice ud (ie. along matlab's first dimension- our x-axis)
     %for(jj=1:size(img,3)) img(:,:,jj) = flipud(squeeze(img(:,:,jj))); end
     img = flipdim(img, 1);
 end
-if(img2stdRot(2,ydim)<0)
+if img2stdRot(2,ydim)<0
     dimFlip(ydim) = 1;
     % flip each slice lr (ie. along matlab's second dimension- our y-axis)
     %for(jj=1:size(img,3)) img(:,:,jj) = fliplr(squeeze(img(:,:,jj))); end
     img = flipdim(img, 2);
 end   
-if(img2stdRot(3,zdim)<0)
+if img2stdRot(3,zdim)<0
     dimFlip(zdim) = 1;
     % reorder slices (ie. flip along the 3rd dim)
     %for(jj=1:size(img,1)) img(jj,:,:) = fliplr(squeeze(img(jj,:,:))); end
     img = flipdim(img, 3);
 end
 
-if(insertMarkerFlag&&ndims(img)==3)
+if insertMarkerFlag&&ndims(img)==3
     % insert a marker at 1,end,end (should be left, anterior, superior 
     % given stdCoords of [0,0,0; 0,-1,0; 0,0,-1; -1,0,0])
     img(1,end,end) = max(img(:));

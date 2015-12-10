@@ -53,15 +53,13 @@ evalin('base','mrGlobals');
 
 % Check Matlab version number
 % Change list after testing Matlab upgrades
-expectedMatlabVersion = {'7.7' '7.8' '7.9' '7.10' '7.11' '7.13' '7.14' '8.0' ...
-    '8.1' '8.2' '8.3'};  
-version = ver('Matlab');
-matlabVersion = version.Version;        
-if ~ismember(matlabVersion, expectedMatlabVersion);    % (matlabVersion ~= expectedMatlabVersion)
-    warning('Matlab version %s not on supported list (mrVista %s).', ...
-        matlabVersion, num2str(mrLoadRetVERSION));
-else
-    fprintf('mrVista version: %s\nMatlab version: %s\n',num2str(mrLoadRetVERSION),version.Version);
+earliestSupportedMatlabversion = '7.9';
+notYetSupportedMatlabversion = '8.6';
+if verLessThan('matlab', earliestSupportedMatlabversion)
+    warning('Matlab version %s is less than the earliest supported Matlab version in vistasoft, %s.', version, earliestSupportedMatlabversion);
+end
+if ~verLessThan('matlab', notYetSupportedMatlabversion)
+    warning('Matlab version %s is not yet supported in vistasoft.', version);
 end
 
 %% set global variables/properties
