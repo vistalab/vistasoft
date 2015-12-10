@@ -1,10 +1,14 @@
-function [data trendBetas]=rmEstimateDC(data,trendBetas,params,trends,dcid)
+function [data, trendBetas]=rmEstimateDC(data,trendBetas,params,trends,dcid)
 % rmEstimateDC - estimate DC component for each scan from a selected period
 % of data
 %
-% dc=rmEstimateDC(data,params)
+%  [data, trendBetas]=rmEstimateDC(data,trendBetas,params,trends,dcid)
 %
-
+% More comment needed.
+%
+% Not sure if it is used a lot.
+%
+% Probably originally from SOD
 
 % check flag
 if params.analysis.dc.datadriven==false
@@ -56,6 +60,7 @@ data = data - trends(:,dcid)*dcBetas;
 
 % add dc component to trendBetas
 trendBetas(dcid,:) = trendBetas(dcid,:)+dcBetas;
+
 end
  
  

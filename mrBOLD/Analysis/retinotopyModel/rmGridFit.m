@@ -6,8 +6,8 @@ function view = rmGridFit(view,params)
 % Brute force fitting of predictions based upon premade receptive fields
 % (rmDefineParams, x, y, sigma)
 %
-% Output is saved in structure model, which should be accessed
-% through rmSet and rmGet.
+% Output is saved in structure model, which should be accessed through
+% rmSet and rmGet.
 %
 %
 % 2005/12 SOD: wrote it.
@@ -72,13 +72,25 @@ nSlices = length(loopSlices);
 %-----------------------------------
 %--- make all predictions first
 %-----------------------------------
-n = numel(params.analysis.x0);
+n = numel(params.analysis.x0);  % Is this the position?
+
+% What is s?  Something about the grid?  Why is this always 1000?
 s = [[1:ceil(n./1000):n-2] n+1]; %#ok<NBRAK>
+
+% A version of the stimulus?  Not sure we ever decimate any more.
 allstimimages = rmDecimate(params.analysis.allstimimages,...
     params.analysis.coarseDecimate);
+
+% Where we store the prediction
 prediction = zeros(size(allstimimages,1),n,'single');
+
+%
 fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
 drawnow;tic;
+
+% This is where the model predictions are calculated.  We want to pull this
+% out and be able to take a fitted model and calculate the predictions
+% directly.
 for n=1:numel(s)-1,
     % make rfs
     rf   = rfGaussian2d(params.analysis.X, params.analysis.Y,...
@@ -87,7 +99,9 @@ for n=1:numel(s)-1,
         params.analysis.theta(s(n):s(n+1)-1), ...
         params.analysis.x0(s(n):s(n+1)-1), ...
         params.analysis.y0(s(n):s(n+1)-1));
-    % convolve with stimulus
+    
+    % convolve with stimulus - Check whether this is a convolution or an
+    % inner product (BW).
     pred = allstimimages*rf;
 
     % store
@@ -95,7 +109,8 @@ for n=1:numel(s)-1,
     if ismember(n, round((1:10)/10* numel(s)-1)), % every 10% draw a dot
         fprintf(1,'.');drawnow;
     end
-end;
+end
+
 clear n s rf pred;
 fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
 drawnow;
@@ -129,11 +144,13 @@ for slice=loopSlices,
     trends = single(trends);
 
 
+    % The "trends" are cosine functions placed into the columns of a
+    % matrix.  The betas for these are solved by the matrix multiplication
+    % done here.  
     trendBetas = pinv(trends)*data;
-    %if isfield(params.analysis,'allnuisance')
-    %    trendBetas(ntrends+1:end) = 0;
-    %    ntrends = ntrends + size(params.analysis.allnuisance,2);
-    %end
+    
+    % Calculate the low frequency terms (trends) and subtract them from the
+    % data.
     data       = data - trends*trendBetas;
     
     % reset DC component by specific data-period (if requested)
@@ -142,10 +159,13 @@ for slice=loopSlices,
     end
     
     % decimate (if requested)
+    % This could be a problem because the Matlab decimate function doesn't
+    % exist in 2013b and subsequent.  See what is up with coarseDecimate.
     data   = rmDecimate(data,params.analysis.coarseDecimate);
     trends = rmDecimate(trends,params.analysis.coarseDecimate);
   
-    % compute rss raw data for variance computation later
+    % Sum of Squares of the raw data for variance computation later.
+    % Row sum of squares (rss).
     rssdata        = sum(data.^2);
 
     %-----------------------------------
@@ -154,23 +174,28 @@ for slice=loopSlices,
     if slice == 1,
         fprintf(1,'[%s]:Number of voxels: %d.\n',mfilename,size(data,2));drawnow;
         model = initiateModel(params, nSlices, size(data,2), ntrends);
-        % This seems double but it is not because modifications to the
-        % params struct are not saved but to the model struct are.
+        
+        % These sets are necessary because the params struct is not saved.  Hence,
+        % we need to pull out the critical values from params and put them
+        % specifically in each model{mm}.
+        
+        % If there are roi data, get the coordinates.
         if strcmp(params.wData,'roi');
             for mm = 1:numel(model),
                 model{mm} = rmSet(model{mm},'roiCoords',rmGet(params,'roiCoords'));
                 model{mm} = rmSet(model{mm},'roiIndex',rmGet(params,'roiIndex'));
                 model{mm} = rmSet(model{mm},'roiName',rmGet(params,'roiName'));
-            end;
-        end;
-        % put in number of data points. 
+            end
+        end
+        
+        % For all cases, put in number of data points. 
         for mm = 1:numel(model),
             model{mm} = rmSet(model{mm},'npoints',size(data,1));
-        end;
-    end;
+        end
+    end
 
     %-----------------------------------
-    % now we extract only the data from that slice and put it in a
+    % Extract  the data from a slice and put it in a
     % temporary structure that will be modified throughout.
     %-----------------------------------
     s = rmSliceGet(model,slice);
@@ -182,8 +207,8 @@ for slice=loopSlices,
     end;
 
     %-----------------------------------
-    %--- fit different pRF models
-    %--- another loop --- and a slow one too
+    % At this point, we have a slice of data and we will fit fit different
+    % pRF models.  This is the part of the code that is the slowest.
     %-----------------------------------
     if params.analysis.dc.datadriven
         t.trends = [];
@@ -192,6 +217,8 @@ for slice=loopSlices,
         t.trends = trends(:,dcid);
         t.dcid   = dcid;
     end
+    
+    % Run the grid fit estimate for this slice, s{}.
     for n=1:numel(params.analysis.pRFmodel)
         switch lower(params.analysis.pRFmodel{n}),
             case {'onegaussian','one gaussian','default'}
