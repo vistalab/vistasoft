@@ -1,6 +1,6 @@
 function this = addStatistic(this,agg_name,local_name, ile, icpp, ivs, uid,val,valarray)
 
-if( exist( 'ile','var' )
+if( exist( 'ile','var' ) )
     this = addStatisticHeader(this,agg_name,local_name, ile, icpp, ivs, uid);
 else
     this = addStatisticHeader(this,agg_name,local_name, ile, icpp, ivs, uid);

@@ -9,6 +9,8 @@ function [dataType,ok] = EditDataType(dataType)
 % djh, 9/2001 (modified from EditSession)
 % ras, 2/2003 (Rory's local version: bigger fields/fonts, for longer scan
 % descriptions)
+% arw, 06/15/15 Modify to cope with graphic handle behavior in R2014b onwards
+
 
 
 % The following cell arrays determine the field names to
@@ -93,10 +95,17 @@ topH = figure(...
     'NumberTitle', 'off' ...
     );
 bkColor = get(topH, 'color');
-topHS = num2str(topH);
+
+if (verLessThan('matlab','8.4')) % New object/handle behavior for graphics objects in 2014b
+    tHandle=topH;
+else
+    tHandle=topH.Number;
+end
+
+topHS = num2str(tHandle);
 
 % center the figure in the screen (ras, 03/06):
-centerOnscreen(topH);
+centerOnscreen(tHandle);
 
 %%%%%%%%%%%%%%%%%%%%%%
 % Scan parameters:   %
@@ -210,7 +219,7 @@ y = y - dy;
 % Create the top-level fields:
 for iField=1:nScanFields
   labelPos = [x, y, 200, height];
-  h = CreateEditRow(scanData(iField), labelPos, maxLabelWidth, topH, ...
+  h = CreateEditRow(scanData(iField), labelPos, maxLabelWidth, tHandle, ...
       fontSize, 'UpdateEditDataType', 40);
   scanData(iField).handle = h;
   y = y - dy;
@@ -234,7 +243,7 @@ y = y - dy;
 % Create the scan-related fields:
 for iField=1:nBlockFields
   labelPos = [x, y, length(blockData(iField).label)*xs, height];
-  h = CreateEditRow(blockData(iField), labelPos, maxLabelWidth, topH, fontSize, 'UpdateEditDataType');
+  h = CreateEditRow(blockData(iField), labelPos, maxLabelWidth, tHandle, fontSize, 'UpdateEditDataType');
   blockData(iField).handle = h;
   y = y - dy;
 end
@@ -258,7 +267,7 @@ y = y - dy;
 % Create the scan-related fields:
 for iField=1:nEventFields
   labelPos = [x, y, length(eventData(iField).label)*xs, height];
-  h = CreateEditRow(eventData(iField), labelPos, maxLabelWidth, topH, fontSize, 'UpdateEditDataType');
+  h = CreateEditRow(eventData(iField), labelPos, maxLabelWidth, tHandle, fontSize, 'UpdateEditDataType');
   eventData(iField).handle = h;
   y = y - dy;
 end

@@ -26,10 +26,10 @@ niftiname = [fname '.nii.gz'];
 mifname = [fname '.mif'];
 
 % Load file
-class = niftiRead(classfile);
+classseg = niftiRead(classfile);
 
 % Make new nifti structure and set file name
-nii = class;
+nii = classseg;
 nii.fname = niftiname;
 
 %% Make binary white matter mask. 
@@ -37,11 +37,11 @@ nii.fname = niftiname;
 % 1 for all white matter voxels and 0 for all other voxels.
 
 % Set zero for all voxels
-nii.data = zeros(size(class.data));
+nii.data = zeros(size(classseg.data));
 
 % Set one for white matter voxels
-nii.data(class.data == 3) = 1;
-nii.data(class.data == 4) = 1;
+nii.data(classseg.data == 3) = 1;
+nii.data(classseg.data == 4) = 1;
 
 % Save binary nifti file
 niftiWrite(nii);

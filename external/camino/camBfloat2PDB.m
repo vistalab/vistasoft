@@ -20,7 +20,7 @@ if ~exist(ctr_filename,'file') && exist(fa_filename,'file')
     
 end
 
-cmd = ['contrack_score' opt_ctr opt_pdb '  --thresh 100000 --seq --bfloat_no_stats' opt_bfloat];
+cmd = ['contrack_score.glxa64' opt_ctr opt_pdb '  --thresh 100000 --seq --bfloat_no_stats' opt_bfloat];
 display(cmd);
 system(cmd,'-echo');
 
