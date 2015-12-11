@@ -1,5 +1,12 @@
 %% s_qaOddEvenAnatomical
 %
+% For anatomical testing, we look at the odd and even planes in various
+% directions, find the points above a threshold level for the brain mask,
+% and compute the slice-to-slice correlation.  When the level is low, we
+% worry.
+%
+% For diffusion, we should use mean diffusivity as a first test
+%
 % We compute the mean diffusivity of the diffusion data set
 % We compare the MD between odd and even slices.
 % We write out the correlation between the mean(MD(:,even)) mean(MD(:,odd)
@@ -13,18 +20,18 @@
 % LM/BW Vistasoft Team, 2015
 
 %%
-T = 0.93;    % Threshold for the memprage correlation test.  This seems OK for T1
+chdir('~/Desktop')
+[plinkList,delimiter] = importdata('memprage_nifti_files.txt');
 
-% This might be OK for diffusion, which has a larger voxel size and we are
-% actually changing the direction of the gradient
-% T = 0.88;
+%%  This is the value we use to decide whether we are in the brain
 
+% By setting this level, we don't use the background as part of the
+% correlation calculation
+maskLevel = 120;
 
 %% Download a file from LMP's nift file list using sdmGet
-chdir('~/Desktop')
-[A,delimiter] = importdata('memprage_nifti_files.txt');
 
-nFiles = length(A);
+nFiles = length(plinkList);
 minList = zeros(1,nFiles);
 fullList = cell(1,nFiles);
 
@@ -32,7 +39,7 @@ figure;
 for nn=1:nFiles
     tic
 
-    pLink = A{nn};
+    pLink = plinkList{nn};
     sdmFile = sdmGet(pLink,'wandell@stanford.edu');
     
     
@@ -59,17 +66,17 @@ for nn=1:nFiles
                 if dim == 3
                     odd = anat1.data(:,:,1:2:sz(3),ii);
                     even = anat1.data(:,:,2:2:sz(3),ii);
-                    R = corrcoef(single(odd(:)),single(even(:)));
                 elseif dim == 2
                     odd = anat1.data(:,1:2:sz(3),:,ii);
                     even = anat1.data(:,2:2:sz(3),:,ii);
-                    R = corrcoef(single(odd(:)),single(even(:)));
                 elseif dim ==1
                     % Is this Axial?  Or What?
                     odd = anat1.data(1:2:sz(3),:,:,ii);
                     even = anat1.data(2:2:sz(3),:,:,ii);
-                    R = corrcoef(single(odd(:)),single(even(:)));
                 end
+                odd = odd(:); even = even(:);
+                keep = (odd > maskLevel); odd = odd(keep); even = even(keep);
+                R = corrcoef(single(odd(:)),single(even(:)));
                 thisList(dim,ii)  = R(2,1);
             end
         end
@@ -78,24 +85,16 @@ for nn=1:nFiles
     
     
     %% Maybe force display by a flag
-    % cList
-    thisMin = min(thisList(:));
-    if thisMin < T
-        fprintf('Minimum correlation %.3f\n',thisMin);
-        %         [v,idx] = min(thisList(:));
-        %         thisMin.pos = ind2sub(idx,size(thisList));
-    else
-        fprintf('All even/odd correlations exceed %.3f correlation\n',T);
-        % thisMin.pos = [0,0];
-    end
     
     % Store for future returns
     fullList{nn} = thisList;
-    minList(nn) = thisMin;
+    minList(nn) = min(thisList(:));
     
     % Running plot for user
     plot(minList,'-o'); set(gca,'ylim',[0.7 1]);
-    line([1 nFiles],[T T],'color','r'); grid on; drawnow
+    xlabel('File number');
+    ylabel('Min r across conditions')
+    % line([1 nFiles],[T T],'color','r'); grid on; drawnow
     
     % Get rid of downloaded file
     delete(sdmFile);
@@ -105,16 +104,30 @@ save memprage fullList minList
 
 %% Have a look at the worst one
 
-nn = 153;   % Worst one
+% nn = 153;   % Worst one
+% nn = 58, 121 are both pretty low
+% 74 is really bad arcs.  See what looks odd about this
 
-nn = 147;   % Best one
-pLink = A{nn};
+nn = 64;   % Best one
+pLink = plinkList{nn};
+fullList{nn}
 sdmFile = sdmGet(pLink,'wandell@stanford.edu','tmp.nii.gz');
 anat1 = niftiRead(sdmFile);
-showMontage(anat1.data);
+showMontage(anat1.data(:,:,:,1));
 
 % Just called tmp.nii.gz
 % delete(sdmFile);
 
+mrvNewGraphWin;
+plot(minList,'-o');
 
+%
+bad = 'https://sni-sdm.stanford.edu/api/acquisitions/55b705089173fc362ab00639/file/9999.109235058875865466036129522252016025427_nifti.nii.gz'
+for ii=1:length(plinkList)
+    if isequal(bad,plinkList{ii})
+        disp(ii)
+    end
+end
+
+    
 %%
