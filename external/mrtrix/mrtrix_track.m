@@ -2,7 +2,7 @@ function [status, results, fg, pathstr] = mrtrix_track(files, roi, mask, mode, n
 %
 % function [status, results, fg, pathstr] = mrtrix_track(files, roi, mask, mode, nSeeds, bkgrnd, verbose)
 %
-% Provided a csd estimate, generate estimates of the starting in roi 
+% Provided a csd estimate, generate estimates of the streamlines/fascicles starting in roi 
 % and terminating when they reach the boundary of mask
 %
 % Parameters
