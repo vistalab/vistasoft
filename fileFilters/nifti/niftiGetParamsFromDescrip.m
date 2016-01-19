@@ -77,21 +77,21 @@ if ( s(2) >= 4 )
     tr = ni.pixdim(4);
 else
 	fprintf('Warning: Could not determine a TR for %s\n',niftiFile);
-    fprintf('\tpixdim field does not contain a 4th dimension for TR! Setting tr = nan \n');
+    fprintf('\tpixdim field does not contain a 4th dimension for TR! Setting tr = 0 \n');
     clear err
-    tr = nan;
+    tr = 0;
 end
 
 % Convert units of tr to milliseconds if in seconds
 if ~isnan(tr)
-	switch lower(ni.time_units)
-		case 'sec'
-    		tr = tr * 1000;
-    		fprintf('\t%s: \n\tSetting TR units to milliseconds: TR = %.3f ms\n',ni.fname,tr);
-    	case 'msec'
-    		fprintf('\t%s: \n\tTR units are in milliseconds: %.2f ms\n',ni.fname,tr);
-		otherwise
-			fprintf('\t%s: \n\tUnknown units for TR: %.2f %s\n',ni.fname, tr,ni.time_units);
+    switch lower(ni.time_units)
+        case 'sec'
+            tr = tr * 1000;
+            fprintf('\t%s: \n\tSetting TR units to milliseconds: TR = %.3f ms\n',ni.fname,tr);
+        case 'msec'
+            fprintf('\t%s: \n\tTR units are in milliseconds: %.2f ms\n',ni.fname,tr);
+        otherwise
+            fprintf('\t%s: \n\tUnknown units for TR: %.2f %s\n',ni.fname, tr,ni.time_units);
     end
 end
 
@@ -110,9 +110,11 @@ params.tr = tr;
 if isfield(params,'name')
     params = rmfield(params,'name');
 end
-% if isfield(params,'niftiFile')
-%     params = rmfield(params,'niftiFile');
-% end
+
+% Remove the temp file
+if exist(name, 'file')
+    delete(name);
+end
 
 return
 

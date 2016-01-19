@@ -43,7 +43,7 @@ if notDefined('dt6File') || ~exist(dt6File,'file')
     dt6File = [b a];
 end
 
-[baseD jk] = fileparts(dt6File); %#ok<NASGU>
+[baseD, ~] = fileparts(dt6File); 
 
 if notDefined('saveMap'), 
     saveMap = 0; 
@@ -74,12 +74,12 @@ end
 
 %% Return and write out the nifti file 
 % 
-niMap       = niftiGetStruct(stat, dt.xformToAcpc);
+%niMap      = niftiGetStruct(stat, dt.xformToAcpc);
+niMap       = niftiCreate('data', stat, 'qto_xyz', dt.xformToAcpc);
 niMap.fname = fName;
-% niMap     = dtiWriteNiftiWrapper(stat,dt.xformToAcpc,fName);
 
 if saveMap 
-    fprintf('Writing %s.nii.gz...',fName);
+    fprintf('Writing %s...',fName);
     niftiWrite(niMap);
 end
 fprintf('Done.\n');
