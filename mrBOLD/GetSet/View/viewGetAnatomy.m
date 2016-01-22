@@ -42,7 +42,7 @@ switch param
         %'PRS' for Posterior/Right/Superior as indices increase in dims
         %1-3)
         if isfield(vw, 'inplaneOrientation'), val = vw.inplaneOrientation; 
-        else warning('Inplane orientation not set'); val = []; end               
+        else val = []; end               
     case 'anatclip'
         % Return anatomy clipping values from anatMin and anatMax sliders.
         %   anataomyClip = viewGet(vw, 'Anatomy Clip');

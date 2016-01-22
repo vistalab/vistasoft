@@ -19,7 +19,6 @@ function vw = labelInplaneLR(vw)
 %
 % written 03/11/04 by ras.
 if ~exist('vw','var') || isempty(vw), vw=getSelectedInplane; end
-global mrSESSION
 
 if ~isequal(vw.viewType,'Inplane')
     error('Sorry, this requires an Inplane view ... hence the name. :)');
@@ -37,7 +36,7 @@ end
 
 %Let's find out the orientation of our nifti
 
-[vectorString, xform] = niftiCurrentOrientation(viewGet(vw,'anatomynifti'));
+vectorString = niftiCurrentOrientation(viewGet(vw,'anatomynifti'));
 
 %Now that we have the vector string, we know that it is formatted in Y, X, Z
 % Thus, we can make assumptions about what we put in to dirLabel
@@ -55,7 +54,7 @@ else
     dirTextRL = 'Right  \leftrightarrow  Left';
 end
 
-if (strcmp(vectorString(Rdim),'A'))
+if (strcmp(vectorString(Adim),'A'))
     %We have an A, so the left side is Anterior:
     dirTextAP = 'Ant  \leftrightarrow  Pos';
 else

@@ -21,18 +21,19 @@ if notDefined('show_res'), show_res = true; end
 mmPerPix = view.mmPerVox;
 
 % get all gray coords, nodes and edges
-nodes   = double(view.nodes);
-edges   = double(view.edges);
-coords  = double(view.coords);
+nodes   = viewGet(view, 'nodes');
+edges   = viewGet(view, 'edges');
+coords  = viewGet(view, 'coords');
 %numNeighbors = double(view.nodes(4,:));
 %edgeOffsets  = double(view.nodes(5,:));
 
 % Get nearest gray node
-allNodeIndices = zeros(1,size(roi.coords,2));
-for ii=1:size(roi.coords,2)
-    grayNode = find(nodes(2,:) == roi.coords(1,ii) & ...
-                    nodes(1,:) == roi.coords(2,ii) & ...
-                    nodes(3,:) == roi.coords(3,ii));
+ROIcoords = viewGet(view, 'ROI coords');
+allNodeIndices = zeros(1,size(ROIcoords,2));
+for ii=1:size(ROIcoords,2)
+    grayNode = find(nodes(2,:) == ROIcoords(1,ii) & ...
+                    nodes(1,:) == ROIcoords(2,ii) & ...
+                    nodes(3,:) == ROIcoords(3,ii));
    
     % Catch errors. 
     if(isempty(grayNode))
@@ -119,7 +120,7 @@ newcoords = coords(:,allNodeIndices(p));
 % plot results
 if show_res
     figure;
-    xyz = roi.coords';
+    xyz = viewGet(view, 'ROI coords')';
     plot3(xyz(:,1),xyz(:,2),xyz(:,3),'k.');hold on
     xyz = coords(:,allNodeIndices(p))';
     plot3(xyz(:,1),xyz(:,2),xyz(:,3),'ro-');

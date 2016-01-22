@@ -76,7 +76,8 @@ switch param
         % Example:
         %   vw = viewSet(vw, 'flip updown', true);
         if checkfields(vw, 'ui'),   vw.ui.flipUD = val; end
-        
+    case 'zoom'
+        vw.ui.zoom = val;        
     otherwise
         error('Unknown view parameter %s.', param);
         

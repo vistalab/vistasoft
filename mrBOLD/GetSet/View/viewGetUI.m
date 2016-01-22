@@ -29,7 +29,8 @@ switch param
         end
     case 'fignum'
         if (checkfields(vw, 'ui', 'figNum'))
-            val = vw.ui.figNum;
+            if isnumeric(vw.ui.figNum), val = vw.ui.figNum;
+            else                           val = vw.ui.figNum.Number; end
         else
             warning('vista:viewError','No figure number found. Returning empty...');
         end

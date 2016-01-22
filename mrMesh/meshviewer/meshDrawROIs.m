@@ -1,4 +1,4 @@
-function [colors, allRoiVertInds, dataMask, v, newColors] = meshDrawROIs(v, colors, v2g, perimThickness, dataMask, prefs)
+function [colors, allRoiVertInds, dataMask, vw, newColors] = meshDrawROIs(vw, colors, v2g, perimThickness, dataMask, prefs)
 %
 % Overlay ROI colors on top of the data color overlay
 %
@@ -26,14 +26,14 @@ newColors = zeros(size(colors));
 % not drawing the ROIs as translucent patches, then make the weight 1 such
 % that we are painting the ROI voxels (presumably just the boundaries) only
 % the color of the ROI, with no underlay.
-if strcmpi('patches', viewGet(v, 'roidrawmethod'))
+if strcmpi('patches', viewGet(vw, 'roidrawmethod'))
     w = .3;
 else 
     w = 1;
 end
 
 % get list of ROIs to show
-roiList = viewGet(v, 'ROIsToDisplay');
+roiList = viewGet(vw, 'ROIsToDisplay');
 
 % roiList can (should) not be 0
 if(roiList == 0)
@@ -42,10 +42,11 @@ end
 
 % Put any mask ROIs at the end of the list.
 if ~isempty(roiList)
-    maskRoiIndex = strmatch('mask',{v.ROIs(roiList).name});
+    ROInames = viewGet(vw, 'ROI names');
+    maskRoiIndex = strcmpi('mask',ROInames(roiList));
     if any(maskRoiIndex)
         maskRoiIndex = ismember(roiList, maskRoiIndex);
-        [junk,inds] = sort(maskRoiIndex);
+        [~,inds] = sort(maskRoiIndex);
         roiList = roiList(inds);
     end
 end
@@ -54,8 +55,8 @@ if notDefined('perimThickness')
     % Option to display only the ROI perimeter.
     % '1' is a good number to use here.
     % ras 01/06: inherits from the view's settings
-    if checkfields(v, 'ui', 'roiDrawMethod')
-        switch lower(v.ui.roiDrawMethod)
+    if checkfields(vw, 'ui', 'roiDrawMethod')
+        switch lower(viewGet(vw, 'roi draw method'))
             case 'boxes', perimThickness = 0;  % filled
             case 'perimeter', perimThickness = 1; % thin outlines
             case 'filled perimeter', perimThickness = 2; % thick outlines
@@ -76,17 +77,17 @@ end
 %%%%%%Main part:
 % Substitute the ROI color for appropriate nearest neighbor vertices
 allRoiVertInds = [];
-if (~isempty(v.ROIs))
+if ~isempty(viewGet(vw, 'ROIs'))
 
     %% loop across ROIs
     for iR = roiList
-        roi = v.ROIs(iR);
+        roi = viewGet(vw, 'ROIs', iR);
         %% find indices of those mesh vertices belonging to this ROI:
         % Note this is a new method of getting roiVertInds. We now use a
         % viewGet. We can also use a viewSet in order to store the indices
         % so that they do not need to be calculated each time. See, e.g,
         % roiSetVertInds.m
-        roiVertInds = viewGet(v, 'roiVertInds', iR, prefs);
+        roiVertInds = viewGet(vw, 'roiVertInds', iR, prefs);
 
         %% modify mesh colors using roiVertInds
 		% If this is a mask ROI, don't show the ROI, just mask the data. 
@@ -95,9 +96,10 @@ if (~isempty(v.ROIs))
 			tmp(roiVertInds) = true;
 			dataMask = dataMask & tmp;
 			clear tmp;
-            roiMaskIndices = roiVertInds;
-            roiMaskIndices = adjustPerimeter(roiMaskIndices, [], v, prefs);
-            dataMask(roiMaskIndices) = 1;
+            % The lines below 
+            % roiMaskIndices = roiVertInds;
+            % roiMaskIndices = adjustPerimeter(roiMaskIndices, [], vw, prefs);
+            % dataMask(roiMaskIndices) = 1;
 			continue
 		end		
 
@@ -105,11 +107,9 @@ if (~isempty(v.ROIs))
         %   if the roi name contains the string 'fill', we display the ROI
         %   as a solid color instead of a perimeter
         if strfind(lower(roi.name), 'fill'), p = []; else p = perimThickness; end        
-        roiVertInds = adjustPerimeter(roiVertInds, p, v, prefs);
+        roiVertInds = adjustPerimeter(roiVertInds, p, vw, prefs);
         
 		% expand dataMask so that the entire ROI will be drawn
-        % or don't (jw's pref)
-		% dataMask(roiVertInds) = 1;
         if exist('roiMaskIndices', 'var'),
     		dataMask(intersect(roiVertInds,roiMaskIndices)) = 1;
         else    
@@ -118,7 +118,7 @@ if (~isempty(v.ROIs))
         
 		%% modify the colors for this ROI's vertices
         if (ischar(roi.color))
-            colVal = stdColVals(:, findstr(stdColLabs, roi.color));
+            colVal = stdColVals(:, strfind(stdColLabs, roi.color));
         else
             % Check to see if we have a 3x1 vector.
             colVal = roi.color(:);

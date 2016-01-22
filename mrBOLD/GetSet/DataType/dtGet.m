@@ -80,6 +80,8 @@ switch param
             if isempty(varargin), val = dt.scanParams(:).annotation;
             else val = dt.scanParams(varargin{1}).annotation;
             end
+        else
+           val = '(Empty Data Type)';
         end
         
     case {'blockedanalysisparams','blockparams','bparams','bparms'}
@@ -187,7 +189,9 @@ switch param
     case {'rmparams','retinomodelparams','retinotopymodelparams'}
         if checkfields(dt,'retinotopyModelParams')
             if isempty(varargin), val = dt.retinotopyModelParams;
-            else val = dt.retinotopyModelParams(varargin{1});
+            elseif length(dt.retinotopyModelParams) >= varargin{1},
+                val = dt.retinotopyModelParams(varargin{1});
+            else val = [];
             end
         end
         

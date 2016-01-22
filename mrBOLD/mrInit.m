@@ -229,7 +229,14 @@ fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
     mfilename, datestr(now));
 
 %%%%%%%%%%%%%%%%%%%%%%%
-% (5)  pre-processing %
+% (3)  VOLUME anatomy %
+%%%%%%%%%%%%%%%%%%%%%%%
+if isfield(params,'vAnatomy') && ~isempty(params.vAnatomy)
+    setVAnatomyPath(params.vAnatomy);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% (4)  pre-processing %
 %%%%%%%%%%%%%%%%%%%%%%%
 % update dataTYPES as needed.
 
@@ -419,16 +426,16 @@ return
 % /-----------------------------------------------------------------/ %
 function params = scanParamsDefaults(mrSESSION, scan, annotation)
 % Default scan parameters for a new scan.
-params.annotation = annotation;
-params.nFrames = mrSESSION.functionals(scan).nFrames;
-params.framePeriod = mrSESSION.functionals(scan).framePeriod;
-params.slices = mrSESSION.functionals(scan).slices;
-params.cropSize = mrSESSION.functionals(scan).cropSize;
-params.PfileName = mrSESSION.functionals(scan).PfileName;
-params.inplanePath = mrSESSION.functionals(scan).PfileName;
-params.keepFrames = mrSESSION.functionals(scan).keepFrames;
-params.parfile = '';
-params.scanGroup = sprintf('Original: %i',scan);
+params.annotation   = annotation;
+params.nFrames      = mrSESSION.functionals(scan).nFrames;
+params.framePeriod  = mrSESSION.functionals(scan).framePeriod;
+params.slices       = mrSESSION.functionals(scan).slices;
+params.cropSize     = mrSESSION.functionals(scan).cropSize;
+params.PfileName    = mrSESSION.functionals(scan).PfileName;
+params.inplanePath  = mrSESSION.functionals(scan).PfileName;
+params.keepFrames   = mrSESSION.functionals(scan).keepFrames;
+params.parfile      = '';
+params.scanGroup            = sprintf('Original: %i',scan);
 return
 % /-----------------------------------------------------------------/ %
 
@@ -437,11 +444,11 @@ return
 % /-----------------------------------------------------------------/ %
 function params = blockedAnalysisDefaults
 % Default values for the blocked analyses.
-params.blockedAnalysis = 1;
-params.detrend = 1;
-params.inhomoCorrect = 1;
+params.blockedAnalysis       = 1;
+params.detrend               = 1;
+params.inhomoCorrect         = 1;
 params.temporalNormalization = 0;
-params.nCycles = 6;
+params.nCycles               = 6;
 return
 % /-----------------------------------------------------------------/ %
 

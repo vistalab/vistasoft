@@ -69,6 +69,7 @@ function vw = viewSet(vw,param,val,varargin)
 %      'roiname'
 %      'roicoords'
 %      'roimodified'
+%      'roicomments'
 %
 % %%%%% Time-series related properties
 %      'tseries'
@@ -152,7 +153,7 @@ function vw = viewSet(vw,param,val,varargin)
 
 
 if notDefined('vw'),  error('No view defined.'); end
-if notDefined('val'),   val = []; end
+if notDefined('val'), val = []; end
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 % Big SWITCH Statement %

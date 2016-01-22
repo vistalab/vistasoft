@@ -154,11 +154,8 @@ end
 
 % volume anatomy
 defaultVolAnatPath1 = fullfile(params.sessionDir, '3DAnatomy', 't1.nii.gz');
-defaultVolAnatPath2 = fullfile(params.sessionDir, '3DAnatomy', 'vAnatomy.dat');
 if exist(defaultVolAnatPath1, 'file')
     params.vAnatomy = defaultVolAnatPath1;
-elseif exist(defaultVolAnatPath2, 'file')
-    params.vAnatomy = defaultVolAnatPath2;
 end
 
 

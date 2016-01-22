@@ -1,7 +1,7 @@
 function fName = sdmGet(pLink,uName,fName)
 % Retrieve a file from an sdm instance
 %
-%   fName = sdmGet(pLink,uName,[fName])
+%   sdmFile = sdmGet(pLink,uName,[sdmFile])
 %
 % Inputs
 %  pLink:  Permalink from the SDM

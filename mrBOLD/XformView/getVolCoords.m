@@ -1,6 +1,6 @@
 function vw = getVolCoords(vw, rootDir)
 %
-% view = getVolCoords(view);
+% vw = getVolCoords(vw);
 %
 % Transforms the coordinates of the inplane voxels to the volume
 % coordinate frame.  Fills the view.coords field and saves the
@@ -42,12 +42,11 @@ if ~exist(fileparts(pathStr), 'dir')
 end 
 
 
-if check4File(pathStr)
-  
+if check4File(pathStr)  
   % Load 'em
   %
   load(pathStr);
-  vw.coords = coords;
+  vw = viewSet(vw, 'coords', coords);
 
 else
 

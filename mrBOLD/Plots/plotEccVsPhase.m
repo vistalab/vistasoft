@@ -124,7 +124,7 @@ symbolSize = 4;
 
 % polar plot
 subX = subEcc.*cos(subPh);
-subY = subEcc.*sin(subPh);
+subY = -subEcc.*sin(subPh);
 
 % polar plot params
 params.grid = 'on';

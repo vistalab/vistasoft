@@ -1,4 +1,4 @@
-function selectedVIEW = viewSelected(viewType);
+function selectedVIEW = viewSelected(viewType)
 %
 %   selectedVIEW = viewSelected(viewType);
 %
@@ -29,7 +29,7 @@ switch lower(viewType)
                 return;
             else
                str = 'Enter GRAY/VOLUME view figure number';
-                view = VOLUME;  % Query will follow below
+                vw = VOLUME;  % Query will follow below
             end
         else
             selectedVIEW = selectedVOLUME;
@@ -42,8 +42,8 @@ switch lower(viewType)
         
         if     isempty(INPLANE), errordlg('mrVista INPLANE structure required.'); 
         elseif isempty(selectedINPLANE) | isempty(INPLANE{selectedINPLANE}),
-            str = 'Enter INPLANE view figure number'
-            view = INPLANE;
+            str = 'Enter INPLANE view figure number';
+            vw = INPLANE;
         else
             selectedVIEW = selectedINPLANE;
             return;
@@ -54,8 +54,8 @@ switch lower(viewType)
         global selectedFLAT
         if     isempty(FLAT), errordlg('mrVista FLAT structure required.'); 
         elseif isempty(selectedFLAT) | isempty(FLAT{selectedFLAT}),
-            str = 'Enter FLAT view figure number'
-            view = FLAT;
+            str = 'Enter FLAT view figure number';
+            vw = FLAT;
         else
             selectedVIEW = selectedFLAT;
             return;

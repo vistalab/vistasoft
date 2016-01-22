@@ -1,5 +1,5 @@
 function [vData,mmPerPix,volSize,fileName] = readVolAnat(fileName)
-% Loads the vAnatomy.dat file specified by fileName (full path!)
+% Loads the vAnatomy nifti file specified by fileName (full path!)
 %
 % [img,mmPerPix,volSize,fileName] = readVolAnat([fileName])
 %
@@ -10,12 +10,12 @@ function [vData,mmPerPix,volSize,fileName] = readVolAnat(fileName)
 % RETURNS:
 %   * img is the [rows,cols,planes] intensity array
 %   * mmPerPix is the voxel size (in mm/pixel units)
-%   * fileName is the full-path to the vAnatomy.dat file. (If 
-%     you pass fileName in, you obviously don't need this. But 
+%   * fileName is the full-path to the vAnatomy.dat file. (If
+%     you pass fileName in, you obviously don't need this. But
 %     it may be useful when the user selects the file.)
 %
 % 2000.01.28 RFD
-% 2001.02.21 RFD: modified it to try the UnfoldParams.mat if the 
+% 2001.02.21 RFD: modified it to try the UnfoldParams.mat if the
 %            mmPerPix was not found in the vAnatomy header. It also
 %            now returns the full path with filename, rather than
 %            just the directory.
@@ -33,80 +33,54 @@ function [vData,mmPerPix,volSize,fileName] = readVolAnat(fileName)
 % (c) Stanford VISTA Team 2000
 
 if(~exist('fileName','var'))
-    [mmPerPix,volSize,fileName,fileFormat] = readVolAnatHeader;
+    [mmPerPix,volSize,fileName] = readVolAnatHeader;
 else
-    [mmPerPix,volSize,fileName,fileFormat] = readVolAnatHeader(fileName);
+    [mmPerPix,volSize,fileName] = readVolAnatHeader(fileName);
 end
 
-if(strcmpi(fileFormat,'nifti'))
-    % Just load the header
-    ni = mrLoad(fileName, 'nifti');
-    % Scale intensities to 0-255 range
-    switch class(ni.data)
-        case 'uint8'
-            vData = double(ni.data);
-        case 'int8'
-            vData = double(ni.data)+127;
-        otherwise
-            % if possible, apply nifti-specified scale/slope and windowing
-            if      checkfields(ni, 'hdr', 'scl_slope') && ...
-                    checkfields(ni, 'hdr', 'scl_inter') && ...
-                    checkfields(ni, 'hdr', 'cal_max') && ...
-                    checkfields(ni, 'hdr', 'cal_min')
+% Load the vANATOMY
+ni = niftiRead(fileName);
 
-                if ni.hdr.scl_slope~=0
-                    vData = ni.hdr.scl_slope * double(ni.data) + ni.hdr.scl_inter;
-                else
-                    vData = double(ni.data) + ni.hdr.scl_inter;
-                end
-                if ~(ni.hdr.cal_max >0), ni.hdr.cal_max = max(vData(:)); end
-                
-                vData(vData<ni.hdr.cal_min) = ni.hdr.cal_min;
-                vData(vData>ni.hdr.cal_max) = ni.hdr.cal_max;
+% ensure oriention is canonical
+ni = niftiApplyCannonicalXform(ni);
+
+% Scale intensities to 0-255 range
+switch class(ni.data)
+    case 'uint8'
+        vData = double(ni.data);
+    case 'int8'
+        vData = double(ni.data)+127;
+    otherwise
+        % if possible, apply nifti-specified scale/slope and windowing
+        if      checkfields(ni, 'scl_slope') && ...
+                checkfields(ni, 'scl_inter') && ...
+                checkfields(ni, 'cal_max') && ...
+                checkfields(ni, 'cal_min')
             
-            else                
-                vData =double(ni.data);
+            if ni.scl_slope~=0
+                vData = ni.scl_slope * double(ni.data) + ni.scl_inter;
+            else
+                vData = double(ni.data) + ni.scl_inter;
             end
+            if ~(ni.cal_max >0), ni.cal_max = max(vData(:)); end
             
-            % put data in range [0 255]
-            vData = vData-min(vData(:));            
-            vData = vData./max(vData(:)).*255;
-    end
-    % Flip voxel order to conform the vAnatomy spec
-    % NOTE: this assumes that the nifti data are in the cannonical axial
-    % orientation. If they might not be, call niftiAppyCannonicalXform.
-    % vAnatomy is [Z Y X] but the cannonical NFTI is [X Y Z], so we need to
-    % permute the dims. We also need to flip Z and Y.
-    vData = mrAnatRotateAnalyze(vData);
-else
-    % Load old vAnatomy format
-
-    % open file for reading (little-endian mode)
-    vFile = fopen(fileName,'r');
-    if vFile==-1
-        myErrorDlg(['Couldn''t open ',fileName,'!'])
-        return;
-    end
-
-    % skip over header (already read it and checked that it was valid in readVolAnatHeader)
-    nextLine = fgets(vFile);
-    nextLine = fgets(vFile);
-    nextLine = fgets(vFile);
-    nextLine = fgets(vFile);
-
-    % read volume
-    [vData cnt] = fread(vFile,prod(volSize),'uint8');
-    fclose(vFile);
-
-    % *** HACK!  Sometimes the vAnatomy is missing the last byte (???)
-    if length(vData) == prod(volSize)-1
-        vData(end+1) = 0;
-    end
-    
-    % Return vData permuted to maintain correct orientations. The old way was
-    % very inefficient.
-    vData=reshape(vData,[volSize(2),volSize(1),volSize(3)]);
-    vData=double(permute(vData,[2,1,3])); % This double cast is required for routines that expect readVolAnat to return a double.
+            vData(vData<ni.cal_min) = ni.cal_min;
+            vData(vData>ni.cal_max) = ni.cal_max;
+            
+        else
+            vData =double(ni.data);
+        end
+        
+        % put data in range [0 255]
+        vData = vData-min(vData(:));
+        vData = vData./max(vData(:)).*255;
 end
+% Flip voxel order to conform the vAnatomy spec
+% NOTE: this assumes that the nifti data are in the cannonical axial
+% orientation. If they might not be, call niftiAppyCannonicalXform.
+% vAnatomy is [Z Y X] but the cannonical NFTI is [X Y Z], so we need to
+% permute the dims. We also need to flip Z and Y.
+vData = mrAnatRotateAnalyze(vData);
+
 
 return

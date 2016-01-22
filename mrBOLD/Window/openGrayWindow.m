@@ -1,6 +1,6 @@
-function [s vw] = openGrayWindow
+function [s, vw] = openGrayWindow
 %
-%   [s vw] = openGrayWindow
+%   [s, vw] = openGrayWindow
 %
 % Calls openRawVolumeWindow to set up the VOLUME data structure,
 % opens and initializes the volume window.  Then calls switch2Gray.

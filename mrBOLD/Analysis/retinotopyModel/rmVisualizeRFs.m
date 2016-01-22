@@ -83,11 +83,15 @@ for r = 1:nRois
 			error(sprintf('ROI %s not contained in view''s coords.', rois(r).name));
 		end
 
-		anal.x0{r} = model.x0(I);
-		anal.y0{r} = model.y0(I);
-		anal.sigma{r} = model.sigma.major(I);
-		anal.beta{r} = model.beta(1,I,1);
-		anal.varexp{r} = varexp(I);
+		anal.x0{r} = rmCoordsGet('Gray', model, 'x0', coords);
+		anal.y0{r} = rmCoordsGet('Gray', model, 'y0', coords);
+		anal.sigma{r} = rmCoordsGet('Gray', model, 'sigma', coords);
+		anal.beta{r} = rmCoordsGet('Gray', model, 'bcomp1', coords);
+        anal.varexp{r} = rmCoordsGet('Gray', model, 'varexp', coords);
+        % 		anal.y0{r} = model.y0(I);
+        % 		anal.sigma{r} = model.sigma.major(I);
+        % 		anal.beta{r} = model.beta(1,I,1);
+        %		anal.varexp{r} = varexp(I);
 		
 		% if 2-Gaussian model, grab 2nd sigma as well
 		if strncmp(model.description, 'Double', 6)==1

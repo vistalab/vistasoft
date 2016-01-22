@@ -42,7 +42,7 @@ if ismember(vw.viewType, {'Volume', 'Gray'})
 	% option to update all mesh displays
 	cb = [vw.name ' = meshUpdateAll(' vw.name '); '];
 	uimenu(h, 'Label', 'Update All Meshes', 'Callback', cb, ...
-			  'Enable', 'off');
+			  'Enable', 'off', 'Accelerator', '9');
 	
 	% option to toggle cursor visibility
 	cb = sprintf('meshToggleCursor( viewGet(%s, ''Mesh'' ) ); ', vw.name);
