@@ -56,9 +56,9 @@ cd(curDir)
 
 assertEqual(storedTSeries.dim, size(tSeries));
 
-assertAlmostEqual(storedTSeries.mn, mean(double(tSeries(:))), 1e-10);
+assertVectorsAlmostEqual(storedTSeries.mn, mean(double(tSeries(:))), 'relative', 1e-10);
 
-assertAlmostEqual(storedTSeries.sd, std(double(tSeries(:))), 1e-10);
+assertVectorsAlmostEqual(storedTSeries.sd, std(double(tSeries(:))),'relative',  1e-10);
 
 
 mrvCleanWorkspace;

@@ -53,12 +53,12 @@ ts = val.ts;
 
 
 % Test that each way of detrending gives the expected answers
-assertAlmostEqual(val.ts1, [mean(ts1)  std(ts1)  median(ts1)]);
-assertAlmostEqual(val.ts2, [mean(ts2)  std(ts2)  median(ts2)]);
-assertAlmostEqual(val.ts3, [mean(ts3)  std(ts3)  median(ts3)]);
+assertElementsAlmostEqual(val.ts1, [mean(ts1)  std(ts1)  median(ts1)], 'relative');
+assertElementsAlmostEqual(val.ts2, [mean(ts2)  std(ts2)  median(ts2)], 'relative');
+assertElementsAlmostEqual(val.ts3, [mean(ts3)  std(ts3)  median(ts3)], 'relative');
 
-assertAlmostEqual(val.fit1, [mean(fit1) std(fit1) median(fit1)]);
-assertAlmostEqual(val.fit2, [mean(fit2) std(fit2) median(fit2)]);
-assertAlmostEqual(val.fit3, [mean(fit3) std(fit3) median(fit3)]);
+assertVectorsAlmostEqual(val.fit1, [mean(fit1) std(fit1) median(fit1)], 'relative');
+assertVectorsAlmostEqual(val.fit2, [mean(fit2) std(fit2) median(fit2)], 'relative');
+assertVectorsAlmostEqual(val.fit3, [mean(fit3) std(fit3) median(fit3)], 'relative');
 
 mrvCleanWorkspace;

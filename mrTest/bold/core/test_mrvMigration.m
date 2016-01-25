@@ -73,8 +73,8 @@ migrated.meanMap = viewGet(vw, 'map');
 
 
 %% Compare the pre-migrated and the post-migrated data sets 
-assertAlmostEqual(orig.meanMap{1}, migrated.meanMap{1}, .001);
-assertAlmostEqual(single(orig.anat), single(migrated.anat));
+assertVectorsAlmostEqual(orig.meanMap{1}, migrated.meanMap{1}, 'relative', .001);
+assertVectorsAlmostEqual(single(orig.anat), single(migrated.anat),'relative');
 
 
 % clean up vistadata repository because this test script wrote new data

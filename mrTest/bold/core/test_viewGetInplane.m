@@ -155,14 +155,14 @@ vw = viewSet(vw, 'map window', [0 5000]);
 
 % map
 tmp       =  viewGet(vw, 'map');
-assertAlmostEqual(stored.map, nanmean(tmp{1}(:)));
+assertVectorsAlmostEqual(stored.map, nanmean(tmp{1}(:)), 'relative');
 
 % scanmap
 tmp       =  viewGet(vw, 'scanmap');
-assertAlmostEqual(stored.scanmap, nanmean(tmp(:)));
+assertVectorsAlmostEqual(stored.scanmap, nanmean(tmp(:)), 'relative');
 
 % mapwin
-assertAlmostEqual(stored.mapwin, viewGet(vw, 'mapwin'));
+assertVectorsAlmostEqual(stored.mapwin, viewGet(vw, 'mapwin'), 'relative');
 
 % mapname
 assertEqual(stored.mapname, length(viewGet(vw, 'mapname')));

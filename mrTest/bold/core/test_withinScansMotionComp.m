@@ -74,7 +74,7 @@ motionEstimates = dtGet(dataTYPES(dtNum), 'within scan motion', scansToCorrect);
 
 
 % Now check that the motion estimates agree with stored estimates
-assertAlmostEqual(motionEstimates, stored.motionEstimates, relTol);
+assertVectorsAlmostEqual(motionEstimates, stored.motionEstimates, 'relative', relTol);
 
 % Check that the new dataTYPE got the proper name
 assertEqual(typeName, dtGet(dataTYPES(dtNum),'Name'));
