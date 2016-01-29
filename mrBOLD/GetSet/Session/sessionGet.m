@@ -118,7 +118,7 @@ switch param
         if isfield(s, 'functionals') && isfield(s.functionals, 'orientation')
             val = s.functionals(1).orientation;
         else
-            warning('Functional orientation has not been defined')
+            % warning('Functional orientation has not been defined')
             val = [];
         end
             

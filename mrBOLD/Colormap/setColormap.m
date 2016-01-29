@@ -8,7 +8,7 @@ function mode = setColormap(mode,cmapFn)
 %   this routine builds a color map entry for that mode using the hsv function.
 %
 
-numGrays = mode.numGrays;
+numGrays  = mode.numGrays;
 numColors = mode.numColors;
 
 % mode.cmap=cmapFn(numGrays,numColors);

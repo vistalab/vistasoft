@@ -116,7 +116,12 @@ switch param
         end
         
     case 'pixdim'
-        if isfield(ni, 'pixdim'), val = ni.pixdim;
+        if isfield(ni, 'pixdim'), 
+            val = ni.pixdim;
+            % if time untis are ms, convert to seconds
+            if isfield(ni, 'time_units') && strcmp(ni.time_units, 'msec') && length(val) >= 4
+                val(4) = val(4)/1000; 
+            end                
         else
             warning('vista:niftiError', 'No pixdim information found in nifti. Returning empty');
             val = [];

@@ -71,18 +71,19 @@ switch modelName,
         rfParams(2,2) = rmCoordsGet(viewType, model, 'y02', coords);
         rfParams(2,3) = rmCoordsGet(viewType, model, 's2',coords);
         
-    case 'fitprf'
+    case {'fitprf' 'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)' ...
+            '2D nonlinear pRF fit with boxcar (x,y,sigma,exponent, positive only)'}
         rfParams = zeros(1,6);
         
         
         rfParams(1) =  rmCoordsGet(viewType, model, 'x0', coords);        % x coordinate (in deg)        
         rfParams(2) = rmCoordsGet(viewType, model, 'y0', coords);         % y coordinate (in deg)        
         rfParams(3) =  rmCoordsGet(viewType, model, 'sigmamajor',coords); % sigma (in deg)   
-        rfParams(5) =  rmCoordsGet(viewType, model, 'sigmaexp',coords);   % sigma adjusted by exponent (not for calculations - just for diplay)
         rfParams(6) =  rmCoordsGet(viewType, model, 'sigmatheta',coords); % sigma theta (0 unless we have anisotropic Gaussians)
         rfParams(7) =  rmCoordsGet(viewType, model, 'exponent'  ,coords); % pRF exponent
-        rfParams(8) =  rmCoordsGet(viewType, model, 'bcomp1',    coords); % gain ?
-      
+        rfParams(8) =  rmCoordsGet(viewType, model, 'bcomp1',    coords); % gain ?                      
+        rfParams(5) =  rfParams(3) / sqrt(rfParams(7));                   % sigma adjusted by exponent (not for calculations - just for diplay)
+
     otherwise,
         error('Unknown modelName: %s',modelName{M.modelNum});
 end;

@@ -6,8 +6,8 @@ function view = rmGridFit(view,params)
 % Brute force fitting of predictions based upon premade receptive fields
 % (rmDefineParams, x, y, sigma)
 %
-% Output is saved in structure model, which should be accessed
-% through rmSet and rmGet.
+% Output is saved in structure model, which should be accessed through
+% rmSet and rmGet.
 %
 %
 % 2005/12 SOD: wrote it.
@@ -26,17 +26,19 @@ if notDefined('params'), error('Need params'); end;
 %--- For speed we do our computations in single precision.
 %--- But we output in double (for compatibility).
 %-----------------------------------
-params.analysis.x0         = single(params.analysis.x0);
-params.analysis.y0         = single(params.analysis.y0);
-params.analysis.sigmaMajor = single(params.analysis.sigmaMajor);
-params.analysis.sigmaMinor = single(params.analysis.sigmaMinor);
-params.analysis.theta = single(params.analysis.theta);
-params.analysis.X          = single(params.analysis.X);
-params.analysis.Y          = single(params.analysis.Y);
+params.analysis.x0               = single(params.analysis.x0);
+params.analysis.y0               = single(params.analysis.y0);
+params.analysis.sigmaMajor       = single(params.analysis.sigmaMajor);
+params.analysis.sigmaMinor       = single(params.analysis.sigmaMinor);
+params.analysis.theta            = single(params.analysis.theta);
+params.analysis.exponent         = single(params.analysis.exponent);
+params.analysis.X                = single(params.analysis.X);
+params.analysis.Y                = single(params.analysis.Y);
 params.analysis.allstimimages    = single(params.analysis.allstimimages);
 params.analysis.sigmaRatio       = single(params.analysis.sigmaRatio);
 params.analysis.sigmaRatioInfVal = single(params.analysis.sigmaRatioInfVal);
 params.analysis.sigmaRatioMaxVal = single(params.analysis.sigmaRatioMaxVal);
+
 
 % Accessing the trends needs to move inside the slice loop. This is because
 % the size of trends can change inside the loop, causing errors upon the
@@ -72,34 +74,89 @@ nSlices = length(loopSlices);
 %-----------------------------------
 %--- make all predictions first
 %-----------------------------------
-n = numel(params.analysis.x0);
+n = numel(params.analysis.x0);  % Is this the position?
+
+% What is s?  Something about the grid?  Why is this always 1000?
 s = [[1:ceil(n./1000):n-2] n+1]; %#ok<NBRAK>
-allstimimages = rmDecimate(params.analysis.allstimimages,...
-    params.analysis.coarseDecimate);
-prediction = zeros(size(allstimimages,1),n,'single');
-fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
-drawnow;tic;
-for n=1:numel(s)-1,
-    % make rfs
-    rf   = rfGaussian2d(params.analysis.X, params.analysis.Y,...
-        params.analysis.sigmaMajor(s(n):s(n+1)-1), ...
-        params.analysis.sigmaMinor(s(n):s(n+1)-1), ...
-        params.analysis.theta(s(n):s(n+1)-1), ...
-        params.analysis.x0(s(n):s(n+1)-1), ...
-        params.analysis.y0(s(n):s(n+1)-1));
-    % convolve with stimulus
-    pred = allstimimages*rf;
 
-    % store
-    prediction(:,s(n):s(n+1)-1) = pred;
-    if ismember(n, round((1:10)/10* numel(s)-1)), % every 10% draw a dot
-        fprintf(1,'.');drawnow;
+% if we have a nonlinear model, then we cannot pre-convolve the stimulus
+% with the hRF. instead we make predictions with the unconvolved images and
+% then convolve with the hRF afterwards
+if ~checkfields(params, 'analysis', 'nonlinear') || ~params.analysis.nonlinear
+   
+    % for a lineaer model, use the pre-convolved stimulus images
+    % the decimate function is not Matlab 2013b
+    allstimimages = rmDecimate(params.analysis.allstimimages,...
+        params.analysis.coarseDecimate);
+    
+    prediction = zeros(size(allstimimages,1),n,'single');
+    fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
+    drawnow;tic;
+    for n=1:numel(s)-1,
+        % make rfs
+        rf   = rfGaussian2d(params.analysis.X, params.analysis.Y,...
+            params.analysis.sigmaMajor(s(n):s(n+1)-1), ...
+            params.analysis.sigmaMinor(s(n):s(n+1)-1), ...
+            params.analysis.theta(s(n):s(n+1)-1), ...
+            params.analysis.x0(s(n):s(n+1)-1), ...
+            params.analysis.y0(s(n):s(n+1)-1));
+        % convolve with stimulus
+        pred = allstimimages*rf;
+        
+        % store
+        prediction(:,s(n):s(n+1)-1) = pred;
+        if ismember(n, round((1:10)/10* numel(s)-1)), % every 10% draw a dot
+            fprintf(1,'.');drawnow;
+        end
+    end;
+    
+    clear n s rf pred;
+    fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
+    drawnow;
+else
+    allstimimages = params.analysis.allstimimages_unconvolved;
+    prediction = zeros(size(allstimimages,1),n,'single');
+    fprintf(1,'[%s]:Making %d model samples:',mfilename,n);
+    drawnow;tic;
+    for n=1:numel(s)-1,
+        % make rfs
+        rf   = rfGaussian2d(params.analysis.X, params.analysis.Y,...
+            params.analysis.sigmaMajor(s(n):s(n+1)-1), ...
+            params.analysis.sigmaMinor(s(n):s(n+1)-1), ...
+            params.analysis.theta(s(n):s(n+1)-1), ...
+            params.analysis.x0(s(n):s(n+1)-1), ...
+            params.analysis.y0(s(n):s(n+1)-1));
+        % convolve with stimulus
+        pred = allstimimages*rf;
+        
+        % store
+        prediction(:,s(n):s(n+1)-1) = pred;
+        if ismember(n, round((1:10)/10* numel(s)-1)), % every 10% draw a dot
+            fprintf(1,'.');drawnow;
+        end
+    end;
+    
+    scans = params.analysis.scan_number;
+    
+    % for nonlinear model, do the hRF convolution after the prediction
+    if checkfields(params, 'analysis', 'nonlinear') && params.analysis.nonlinear
+        prediction = bsxfun(@power, prediction, params.analysis.exponent');
+        for scan = 1:numel(params.stim)
+            inds = scans == scan;
+            hrf = params.analysis.Hrf{scan};
+            prediction(inds,:) = filter(hrf, 1, prediction(inds,:));
+        end
     end
-end;
-clear n s rf pred;
-fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
-drawnow;
+    
+    % decimate predictions after convolution instead of before
+    fprintf(1,'[%s]:Decimating data\n',mfilename);
+    prediction = rmDecimate(prediction, params.analysis.coarseDecimate);
 
+    clear n s rf pred;
+    fprintf(1, 'Done[%d min].\t(%s)\n', round(toc/60), datestr(now));
+    drawnow;
+    
+end
 
 % go loop over slices
 for slice=loopSlices,
@@ -120,33 +177,37 @@ for slice=loopSlices,
     % remove trends from data so they do not count in the percent variance
     % explained calculation later.
     data(isnan(data)) = 0;
-    data       = single(data);
+    data = single(data);
     
     %-----------------------------------
     %--- make trends to fit with the model (discrete cosine set)
     %-----------------------------------
-    [trends, ntrends, dcid]  = rmMakeTrends(params);
+    [trends, ntrends, dcid] = rmMakeTrends(params);
     trends = single(trends);
 
 
+    % The "trends" are cosine functions placed into the columns of a
+    % matrix.  The betas for these are solved by the matrix multiplication
+    % done here.  
     trendBetas = pinv(trends)*data;
     %if isfield(params.analysis,'allnuisance')
     %    trendBetas(ntrends+1:end) = 0;
     %    ntrends = ntrends + size(params.analysis.allnuisance,2);
     %end
-    data       = data - trends*trendBetas;
+    data = data - trends*trendBetas;
     
     % reset DC component by specific data-period (if requested)
     if params.analysis.dc.datadriven
         [data, trendBetas] = rmEstimateDC(data,trendBetas,params,trends,dcid);
     end
-    
     % decimate (if requested)
+
+    fprintf('[%s]: Decimating data:...\n', mfilename)
     data   = rmDecimate(data,params.analysis.coarseDecimate);
     trends = rmDecimate(trends,params.analysis.coarseDecimate);
   
     % compute rss raw data for variance computation later
-    rssdata        = sum(data.^2);
+    rssdata = sum(data.^2);
 
     %-----------------------------------
     % initiate stuff on first loop
@@ -154,23 +215,28 @@ for slice=loopSlices,
     if slice == 1,
         fprintf(1,'[%s]:Number of voxels: %d.\n',mfilename,size(data,2));drawnow;
         model = initiateModel(params, nSlices, size(data,2), ntrends);
-        % This seems double but it is not because modifications to the
-        % params struct are not saved but to the model struct are.
+        
+        % These sets are necessary because the params struct is not saved.  Hence,
+        % we need to pull out the critical values from params and put them
+        % specifically in each model{mm}.
+        
+        % If there are roi data, get the coordinates.
         if strcmp(params.wData,'roi');
             for mm = 1:numel(model),
                 model{mm} = rmSet(model{mm},'roiCoords',rmGet(params,'roiCoords'));
                 model{mm} = rmSet(model{mm},'roiIndex',rmGet(params,'roiIndex'));
                 model{mm} = rmSet(model{mm},'roiName',rmGet(params,'roiName'));
-            end;
-        end;
-        % put in number of data points. 
+            end
+        end
+        
+        % For all cases, put in number of data points. 
         for mm = 1:numel(model),
             model{mm} = rmSet(model{mm},'npoints',size(data,1));
-        end;
-    end;
+        end
+    end
 
     %-----------------------------------
-    % now we extract only the data from that slice and put it in a
+    % Extract  the data from a slice and put it in a
     % temporary structure that will be modified throughout.
     %-----------------------------------
     s = rmSliceGet(model,slice);
@@ -182,16 +248,18 @@ for slice=loopSlices,
     end;
 
     %-----------------------------------
-    %--- fit different pRF models
-    %--- another loop --- and a slow one too
+    % At this point, we have a slice of data and we will fit fit different
+    % pRF models.  This is the part of the code that is the slowest.
     %-----------------------------------
     if params.analysis.dc.datadriven
         t.trends = [];
         t.dcid   = [];
     else
         t.trends = trends(:,dcid);
-        t.dcid   = dcid;
+        t.dcid   = dcid;       
     end
+    
+    % Run the grid fit estimate for this slice, s{}.
     for n=1:numel(params.analysis.pRFmodel)
         switch lower(params.analysis.pRFmodel{n}),
             case {'onegaussian','one gaussian','default'}
@@ -285,6 +353,9 @@ for slice=loopSlices,
             case {'oneovalgaussian','one oval gaussian','one oval gaussian without theta'}
                 s{n}=rmGridFit_oneOvalGaussian(s{n},prediction,data,params,t);
                 
+            case {'css' 'onegaussiannonlinear', 'onegaussianexponent' }
+                s{n}=rmGridFit_oneGaussianNonlinear(s{n},prediction,data,params,t);
+                  
             otherwise
                 fprintf('[%s]:Unknown pRF model: %s: IGNORED!',mfilename,params.analysis.pRFmodel{n});
         end
@@ -443,6 +514,16 @@ for n=1:numel(params.analysis.pRFmodel),
             model{n} = rmSet(model{n},'rawrss2',fillwithinfs);
             model{n} = rmSet(model{n},'b'   ,zeros(d1,d2,nt+2));
             model{n} = rmSet(model{n},'desc','Linked sequential 2D pRF fit (2*(x,y,sigma, positive only))');
+
+         case {'css' 'onegaussiannonlinear', 'onegaussianexponent'}
+            model{n} = rmSet(model{n},'b'   ,zeros(d1,d2,nt+1));
+            model{n} = rmSet(model{n},'desc','2D nonlinear pRF fit (x,y,sigma,exponent, positive only)');
+            model{n} = rmSet(model{n},'exponent', fillwithzeros+1);
+              
+         case {'cssboxcar' 'onegaussiannonlinearboxcar', 'onegaussianexponentboxcar'}
+            model{n} = rmSet(model{n},'b'   ,zeros(d1,d2,nt+2));
+            model{n} = rmSet(model{n},'desc','2D nonlinear pRF fit with boxcar (x,y,sigma,exponent, positive only)');
+            model{n} = rmSet(model{n},'exponent', fillwithzeros+1);
 
         otherwise
             fprintf('Unknown pRF model: %s: IGNORED!',mfilename,params.analysis.pRFmodel{n})

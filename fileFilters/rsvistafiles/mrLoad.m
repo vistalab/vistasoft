@@ -160,15 +160,6 @@ switch format
             end
         end
         
-        % temp bug fix: frame period not saved right;
-        % see if we can get it from elsewhere
-%         if checkfields(mr,'params','event','framePeriod')
-%             mr.voxelSize(4) = mr.params.event.framePeriod;
-%         end
-%         if checkfields(mr,'hdr','voxelSize')
-%             mr.voxelSize(1:3) = mr.hdr.voxelSize;
-%         end
-        
     case 'analyze',     
 		mr = mrLoadAnalyze(pth);
         

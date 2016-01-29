@@ -26,7 +26,7 @@ end
 M.modelNum = get(M.ui.model, 'Value');
 
 %% compute RF, get tSeries for this voxel
-[pred RF rfParams variance_explained blanks] = rmPlotGUI_makePrediction(M, coords);
+[pred, RF, rfParams, variance_explained, blanks] = rmPlotGUI_makePrediction(M, coords);
 
 % check if the prediction for this voxel is empty. If so, don't plot it:
 if all( isnan(pred) | isinf(pred) )

@@ -18,6 +18,13 @@ function [c,ia,ib] = intersectCols(a,b)
 % See also UNIONCOLS, INTERSECT
 %
 % djh, 8/4/99
-[cTrans,ia,ib] = intersect(a',b','rows');
+
+if verLessThan('matlab', '8.2'), 
+    [cTrans,ia,ib] = intersect(a',b','rows');
+else
+    [cTrans,ia,ib] = intersect(a',b','rows', 'legacy');
+end
+
 c = cTrans';
+
 return

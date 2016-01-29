@@ -37,7 +37,7 @@ case 'Inplane',
 case {'Volume','Gray','generalGray'}
     if ~exist('pathStr','var'), pathStr = vANATOMYPATH;   end
     if ~exist(pathStr,'file'), pathStr = getVAnatomyPath; end
-    [vw.anat vw.mmPerVox] = readVolAnat(pathStr); 
+    [vw.anat, vw.mmPerVox] = readVolAnat(pathStr); 
 	vw.anat = uint8(vw.anat); % if not uint8...
     
 case 'SS',

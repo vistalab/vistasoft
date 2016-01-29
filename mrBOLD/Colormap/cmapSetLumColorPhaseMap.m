@@ -27,28 +27,27 @@ function vw = cmapSetLumColorPhaseMap(vw, hemi)
 % salient in both dorsal (lower field) and ventral upper field) maps.
 
 
-if notDefined('vw'), vw = getCurView; end
-if notDefined('hemi'), hemi = inputdlg('Which hemisphere (r/l)?'); end
-if iscell(hemi), hemi = hemi{1}; end
+if notDefined('vw'),    vw = getCurView; end
+if notDefined('hemi'),  hemi = inputdlg('Which hemisphere (r/l)?'); end
+if iscell(hemi),        hemi = hemi{1}; end
 
 switch lower(hemi(1))
     case 'l', cmap = 'WedgeMapLeft_pRF.mat';
     case 'r', cmap = 'WedgeMapRight_pRF.mat';        
 end
 
-vw = resetDisplayModes(vw);
 vw = setPhWindow(vw, [0 2*pi]);
-vw=cmapImportModeInformation(vw, 'phMode', cmap);
+vw = cmapImportModeInformation(vw, 'phMode', cmap);
 
 
-cmap = viewGet(vw, 'cmap');
-ngrays = viewGet(vw, 'n grays');
-ncols = viewGet(vw, 'n colors');
+cmap    = viewGet(vw, 'cmap');
+ngrays  = viewGet(vw, 'n grays');
+ncols   = viewGet(vw, 'n colors');
 
-cols  = cmap(ncols+(1:ngrays),:);
-amp = .25;
-grays = (1-amp)+(amp*sin(pi/2+linspace(0,4*pi, ncols)));
-cmap2 = bsxfun(@times, cols, grays');
+cols    = cmap(ncols+(1:ngrays),:);
+amp     = .25;
+grays   = (1-amp)+(amp*sin(pi/2+linspace(0,4*pi, ncols)));
+cmap2   = bsxfun(@times, cols, grays');
 
 vw = viewSet(vw, 'cmap', cmap2);
 

@@ -15,20 +15,22 @@ function vw = selectCurROISlice(vw,findPeakOfMap)
 % 2007.02.06 RFD & MBS: added option to select the peak map value instead
 % of center-of-mass.
 
-if ~strcmp(vw.viewType,'Volume') & ~strcmp(vw.viewType,'Gray')
+if ~strcmp(vw.viewType,'Volume') && ~strcmp(vw.viewType,'Gray')
     myErrorDlg('selectSliceCoords only for Volume view.');
 end
-if ~exist('findPeakOfMap','var') findPeakOfMap = []; end
+if ~exist('findPeakOfMap','var'), findPeakOfMap = []; end
 
 if vw.selectedROI==0
-    myErrorDlg('No selected ROI.');
+    % Exit gracefully
+    fprintf('No selected ROI.\n');
+    return
 end
 
 roi = vw.ROIs(vw.selectedROI);
 if(size(roi.coords,2)==1)
     centerOfMass = roi.coords;
 else
-    centerOfMass = round(mean(roi.coords'))';
+    centerOfMass = round(mean(roi.coords,2));
 end
 
 if(~isempty(findPeakOfMap))
@@ -70,7 +72,7 @@ vw = viewSet(vw, 'CursorLoc', setLoc);
    	 
 % Set the 3d cursor coordinates, if appropriate. 	 
 % (Reinstated by ras, 06/06, but only if a pref is set):
-if ispref('VISTA', 'sessionCursor') & getpref('VISTA', 'sessionCursor')==1    
+if ispref('VISTA', 'sessionCursor') && getpref('VISTA', 'sessionCursor')==1    
      if isfield(vw, 'mesh')
          for i = 1:length(vw.mesh)	 
             mrmSetCursorCoords(vw.mesh{i}, centerOfMass); 	 

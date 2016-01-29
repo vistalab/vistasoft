@@ -77,14 +77,15 @@ if strcmp(extension, '.nii') || strcmp(extension,'.gz')
     nii = niftiApplyAndCreateXform(nii,'Inplane');
     
     % Set the data into the view structure
-    vw.map = {niftiGet(nii,'Data')};
+    mapData = {niftiGet(nii,'Data')};    
+    vw = viewSet(vw, 'map', mapData);
     
     % To deal with with the double-extension in .nii.gz files
     dot_idx = find(name=='.', 1);
     if ~isempty(dot_idx), name = name(1:find(name=='.')-1); end
     
     % It will be named according to the name of the nifti file:
-    vw.mapName = name;
+    vw = viewSet(vw, 'map Name', name);
     
     % Save it in the right place for the DATATYPE:
     saveParameterMap(vw)

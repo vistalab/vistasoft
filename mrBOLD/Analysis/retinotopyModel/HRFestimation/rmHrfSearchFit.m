@@ -163,6 +163,12 @@ for slice=loopSlices,
         ecc>=thresh.ecc(1) & ecc<=thresh.ecc(2) & ...
         s{1}.s>=thresh.sigma(1) & s{1}.s<=thresh.sigma(2);
     
+    tmp.wProcess{slice} = wProcess;
+    tmp.varexp{slice}   = varexp;
+    
+    % if no voxel in the slice is valid, move on to the next slice
+    if all(wProcess==0), continue; end
+    
     % get data, limit, detrend, and store
     data     = rmLoadData(view,params,slice);
     data     = data(:,wProcess);
@@ -191,6 +197,12 @@ data = tmp.data;
 
 % somehow this can happen.... fix me...
 data(~isfinite(data))=1;
+
+% aggregate across slices
+wProcess = tmp.wProcess; 
+varexp   = tmp.varexp;
+if numel(wProcess) == 1, wProcess = wProcess{1}; end
+if numel(varexp) == 1, varexp = varexp{1}; end
 
 %-----------------------------------
 % make predictions for each voxel using allstimimages _without_ hrf. This

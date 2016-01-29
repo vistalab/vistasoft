@@ -88,6 +88,7 @@ if isempty(DictViewSplit)
     DictViewSplit('roiindices') =  'roi';
     DictViewSplit('roimodified') =  'roi';
     DictViewSplit('roiname') =  'roi';
+    DictViewSplit('roicomments') =  'roi';    
     DictViewSplit('roioptions') =  'roi';
     DictViewSplit('rois') =  'roi';
     DictViewSplit('roistodisplay') =  'roi';
