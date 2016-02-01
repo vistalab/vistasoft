@@ -15,7 +15,7 @@ function [token, status] = sdmAuth(action, sdmInstance)
 %          Those libs are:
 %               oauth2client, httplib2, cStringIO, contextlib.
 %       3) Have access to port 9000 to open a browser window/tab. By
-%          defualt this should work just fine.
+%          default this should work just fine.
 % 
 %  INPUTS: 
 %       action - Token action to perform.
@@ -44,7 +44,8 @@ function [token, status] = sdmAuth(action, sdmInstance)
 %
 %  Python code url: https://github.com/scitran/scripts/blob/master/oauth2cli.py
 % 
-% 
+%  Example:
+%    LMP to check:  token = sdmAuth('create','sni-sdm');
 % 
 % (C) Stanford VISTA Lab, 2016 - LMP
 % 
