@@ -1,12 +1,13 @@
 function ni = niftiRead(fileName, volumesToLoad)
 % Matlab wrapper to call the mex readFileNifti
 %
-%   niftiImage = readFileNifti(fileName)
+%   niftiImage = niftiRead(fileName,volumesToLoad)
 %
-% Reads a NIFTI image and populates a structure that should resemble the
+% Reads a NIFTI image and populates a structure that should be the
 % NIFTI 1 standard 
 %
-% If volumesToLoad is not included in the arguments, the data are returned.
+% If volumesToLoad is not included in the arguments, all the data
+% are returned.
 %    volumesToLoad is empty [] returns only the header
 %
 % Web Resources
@@ -24,11 +25,26 @@ function ni = niftiRead(fileName, volumesToLoad)
 % This normally calls the mex file for your system
 if ~exist('fileName','var') || isempty(fileName)
     % Return the default structure.  Equivalent to niftiCreate
+    % ni = niftiRead;
     ni = readFileNifti;
-elseif exist('volumesToLoad','var')
-    ni = readFileNifti(fileName,volumesToLoad);
+elseif ischar(fileName) && exist(fileName,'file')
+    % fileName is a string and the file exists. 
+    % For some reason, the volumeToLoad is not yet implemented.
+    % We should just implement it here, by reading the whole
+    % thing and only returning the relevant volumes.  I think
+    % that is represented by the 4th dimension, but I should ask
+    % someone who knows.
+    if exist('volumesToLoad','var')
+        % ni = niftiRead('foo.nii.gz',1:20);
+        % We let readFileNifti complain about not implemented for
+        % now.
+        ni = readFileNifti(fileName,volumesToLoad);
+    else
+        % ni = niftiRead('foo.nii.gz');
+        ni = readFileNifti(fileName);
+    end
 else
-    ni = readFileNifti(fileName);
+    error('Cannot find the file %s\n',fileName);
 end
 
 % When there is a niftiGet, this can go away.

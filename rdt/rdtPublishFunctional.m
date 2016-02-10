@@ -26,6 +26,7 @@ baseDir = pwd;
 %% Base mrBOLD_01 directory
 
 rd.crp('/functional/mrBOLD_01');
+
 fullDirectory = baseDir;   % Requires full path
 cd(fullDirectory)
 localFiles = dir('*.mat');
