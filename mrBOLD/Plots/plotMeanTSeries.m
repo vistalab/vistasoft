@@ -46,6 +46,7 @@ for scan = scans;
 
     nCycles   = viewGet(vw, 'numCycles', scan);
     frameRate = viewGet(vw, 'framerate', scan);
+    framesToUse = viewGet(vw, 'frames to use', scan);
     
     % Get ROI coords
     if viewGet(vw, 'selected ROI'), ROIcoords = viewGet(vw, 'ROI coords');
@@ -62,6 +63,7 @@ for scan = scans;
         if iscell(tSeries), tSeries = tSeries{1}; end
     end
     
+    %tSeries
     nFrames = length(tSeries);
     
     % plot it
@@ -72,7 +74,7 @@ for scan = scans;
     headerStr = ['Mean tSeries, ROI ',ROIname,', scan ',num2str(scans)];
     set(gcf,'Name',headerStr);    
     h(ind) = plot(t,tSeries,'LineWidth',2);
-    xtick = 0:nFrames*frameRate/nCycles:nFrames*frameRate;
+    xtick = 0:length(framesToUse)*frameRate/nCycles:length(framesToUse)*frameRate;
     set(gca,'xtick',xtick)
     set(gca,'FontSize',fontSize)
     xlabel('Time (sec)','FontSize',fontSize)
@@ -106,8 +108,9 @@ if length(scans) > 1
     [nFrames, whichscan] = max(viewGet(vw, 'nFrames', scans));        
     frameRate = viewGet(vw, 'frameRate', whichscan);
     nCycles = viewGet(vw, 'nCycles', whichscan);
-    set(gca,'XLim',[0,nFrames*frameRate]);
-    xtick = 0:nFrames*frameRate/nCycles:nFrames*frameRate;
+    framesToUse = viewGet(vw, 'framesToUse', whichscan);
+    set(gca,'XLim',[0,nFrames*frameRate]);    
+    xtick = 0:length(framesToUse)*frameRate/nCycles:length(framesToUse)*frameRate;
     set(gca,'xtick',xtick)
 end
 
