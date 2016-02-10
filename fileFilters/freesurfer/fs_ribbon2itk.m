@@ -116,8 +116,7 @@ if exist('alignTo', 'var')
     [~, ~, ext] = fileparts(alignTo);
     if strcmpi(ext, '.mgz'),
         newT1 = fullfile(fileparts(alignTo), 't1.nii.gz');
-        str = sprintf('!mri_convert --out_orientation RAS -rt %s %s %s', ...
-            resample_type, alignTo, newT1);
+        str = sprintf('!mri_convert -rt %s %s %s', resample_type, alignTo, newT1);
         alignTo = newT1;
         eval(str)
     end
@@ -128,7 +127,7 @@ if exist('alignTo', 'var') && exist('in_orientation','var'),
 elseif exist('alignTo', 'var'),
     str = sprintf('!mri_convert  --reslice_like %s -rt %s %s %s', alignTo, resample_type, ribbon, outfile);
 else
-    str = sprintf('!mri_convert  --out_orientation RAS -rt %s %s %s', resample_type, ribbon, outfile);
+    str = sprintf('!mri_convert  -rt %s %s %s', resample_type, ribbon, outfile);
 end
 eval(str)
     
