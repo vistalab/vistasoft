@@ -34,7 +34,7 @@ end
 
 % get vAnatomy / xformed volume
 vANATOMYPATH = getVAnatomyPath(mrSESSION.subject);
-[vol volVoxelSize] = readVolAnat(vANATOMYPATH);
+[vol, volVoxelSize] = readVolAnat(vANATOMYPATH);
 
 % get anatomy / reference volume
 if ~isfield(inplane,'anat') || isempty(inplane.anat)
