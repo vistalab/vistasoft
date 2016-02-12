@@ -1,10 +1,11 @@
-%%
-%  Publish vistasoft functional data on remote data server
+%%  Publish vistasoft functional data on remote data server
 %  (Archiva)
 %
-%  These functional data are used as part of the mrvTest
-%  protocol. They accompany the validation data that are also
-%  stored on the remote site.
+% These functional data are used as part of the mrvTest protocol. They
+% accompany the validation data that are also stored on the remote site.
+%
+% BW did an svn update on the vistadata directory.  Then ran through this
+% script.
 %
 % BW/ Copyright Vistasoft Team 2016
 
@@ -19,26 +20,24 @@ rd.credentialsDialog;
 % Theses are the paths on the remote data server
 p = rd.listRemotePaths;
 
-% On my system vistadata is at the same level as vistasoft
-cd(fullfile(vistaRootPath,'..','vistadata','functional','mrBOLD_01'));
-baseDir = pwd;
+%% First, copy the elements in the mrBOLD_01 directory
+baseDir = fullfile(vistaRootPath,'..','vistadata','functional');
+cd(baseDir);
 
-%% Base mrBOLD_01 directory
-
+% Note the the remote path and the local path match.
 rd.crp('/functional/mrBOLD_01');
+fullDirectory = fullfile(baseDir,'mrBOLD_01');
 
-fullDirectory = baseDir;   % Requires full path
-cd(fullDirectory)
-localFiles = dir('*.mat');
+% Publish the files in the mrBOLD_01 directory.
+rd.publishArtifacts(fullDirectory);
 
-% Note that the file name must be the full path
-for ii=1:length(localFiles);
-    artifact = rd.publishArtifact(fullfile(fullDirectory,localFiles(ii).name), ...
-        'description', 'VISTASOFT validation data.', ...
-        'name', localFiles(ii).name);
-end
-a = rd.listArtifacts;
-a(:).artifactId
+
+%% Now make the base mrBOLD_01 directory and publish the various subdirs
+
+% Sometimes we have to go two deep.
+baseDir = fullfile(vistaRootPath,'..','vistadata','functional','mrBOLD_01');
+cd(baseDir)
+
 
 %% Gray
 rd.crp('/functional/mrBOLD_01/Gray');

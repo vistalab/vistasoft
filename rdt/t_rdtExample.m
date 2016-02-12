@@ -30,7 +30,7 @@ rd.openBrowser;
 
 % You can see the structure just by typing rd
 
-%% To see the full list of artifacts 
+%% To see the list of artifacts in the validate directory
 
 % Change into the validate working directory.  This way you will only see
 % the validation artifacts
@@ -39,8 +39,14 @@ rd.crp('/validate');
 % Which can be listed here.  In addition to list, you can
 % rd.searchArtifacts
 a = rd.listArtifacts;
+fprintf('%d artifacts found\n',length(a));
+for ii=1:5
+    fprintf('The first five artifacts are ID: %s, type: %s\n',a(ii).artifactId,a(ii).type);
+end
 
-%%  How to retrieve a data set from a remote path
+%% To see how we uploaded these data, read rdtPublishFunctional.m
+
+%%  Retrieve a data set from the validate directory
 
 % The validation data are in this directory
 rd.crp('/validate');
@@ -48,66 +54,35 @@ rd.crp('/validate');
 % If you are not sure which one you want, you can list
 a = rd.listArtifacts;
 
-% Read the first one
+% The first example is a matlab file (betweenScansMotionComp.mat)
+% In this case, we know how to read the data and the values are returned as
+% data.
 data = rd.readArtifact(a(1).artifactId, 'type', 'mat');
 
 disp(data);
-
-%% This is how wepublished the validate files
-% Just for record keeping and in case we need to do it again
-% BW did an svn update on the vistadata directory.  Then ...
-
-% Create object
-rd = RdtClient('vistasoft');
-
-% Set up the object and to write you must have login credentials
-rd.credentialsDialog;
-
-% I changed to the local svn repository with the validation files
-localD = '/home/wandell/github/vistadata/validate';
-cd(localD);
-
-rd.crp('/validate');
-
-% First upload the files
-localFiles = dir('*.mat');
-
-% each artifact must have a version, the default is version '1'
-version = '1';
-
-% Note that the file name must be the full path
-for ii=1:length(localFiles);
-    artifact = rd.publishArtifact(fullfile(pwd,localFiles(ii).name), ...
-        'version', version, ...
-        'description', 'VISTASOFT validation data.', ...
-        'name', localFiles(ii).name);
-end
-
-a = rd.listArtifacts;
-
-% Here is a dump of the artifactId, which we use to retrieve them later
-a(:).artifactId
-
-% The repository is a little complicated to navigate.  But it doesn't hurt
-rd.openBrowser;
+% This should be
+%                name: 'BetweenScansMotionComp'
+%          annotation: '8 bars with blanks, 3 degrees'
+%             nFrames: 128
+%         framePeriod: 1.5000
+%           numSlices: 20
+%            numScans: 2
+%     MotionEstimates: [4x4x2 double]
 
 
-%%  Bulk upload example for files within the two sub-directories
+%% Retrieve a nii.gz file
 
-% These are fmri 
-rd.crp('/validate/fmri');
-source = fullfile(pwd,'fmri');
-artifacts = rd.publishArtifacts(source);
-nArtifacts = numel(artifacts);
-fprintf('We published %d files from the fmri folder.\n', nArtifacts);
+% In this case, the file type is 
+[fname, aReturned] = rd.readArtifacts(a(5));
 
-%% Now the dwi folder
-rd.crp('/validate/dwi');
-source = fullfile(pwd,'dwi');
-artifacts = rd.publishArtifacts(source);
-nArtifacts = numel(artifacts);
-fprintf('We published %d files from the dwi folder.\n', nArtifacts);
+% In this case fname is also equal to the local path in the updated
+% artifact
+isequal(fname{1}, aReturned.localPath)
 
+% Notice that the file name is not the same as the original file.
+% You might copy the file to a proper name that you can read and process
+
+disp(data);
 
 %%
 
