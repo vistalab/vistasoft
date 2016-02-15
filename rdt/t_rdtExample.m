@@ -1,21 +1,29 @@
 %% t_rdtExample
 %
-% Illustrates how to download a validation file from the remote data client
-% set up by BSH and the ISETBIO team.  We are using this for VISTASOFT
+% Illustrates how to download a validation file from the
+% <https://github.com/isetbio/RemoteDataToolbox remote data client> created
+% by Ben Heasly and the ISETBIO team.  We are using the RDT for VISTASOFT
 % data, as well.
 %
-% 1. Make sure the Remote Data Toolbox is on your path. It can be cloned
-% from ISETBIO on github as 
+% Make sure the Remote Data Toolbox is on your path. It can be cloned from
+% ISETBIO on github as
 %
-%   git clone https://github.com/isetbio/RemoteDataToolbox.git
-%  
-% 2. For now, we are testing in the rdt branch.
+%    git clone https://github.com/isetbio/RemoteDataToolbox.git
 %
-% The first section creates a remote data object
-% Then we illustrate how to list the artifacts in the remote data server
+% This script 
 %
-% The section below shows how BW uploaded the validation data in the first
-% place.
+%    * Creates a remote data object
+%    * Opens a browser so you can click around
+%    * Lists the artifacts in the remote data server
+%    * Downloads a Matlab artifact as a struct
+%    * Downloads a .nii.gz file to a specific destination folder
+%
+% None of these download operations require credentials.  To move data up
+% to the archive, however, you must have a login and be authorized.
+%
+% TODO:
+%   I think we should have some functions to help us search for files
+%   (artfiacts) the command line.
 % 
 % BW/VISTASOFT Team
 
@@ -25,10 +33,14 @@
 % rdt/rdt-config-vistasoft.json
 rd = RdtClient('vistasoft');
 
-% You can open a web-browser to view the repository this way
-rd.openBrowser;
-
 % You can see the structure just by typing rd
+disp(rd)
+
+% You can open a web-browser to view the repository this way
+rd.openBrowser('fancy',true);
+% If you don't use the 'fancy' option, then you will get a useful
+% functional browser, too.
+
 
 %% To see the list of artifacts in the validate directory
 
@@ -41,7 +53,7 @@ rd.crp('/validate');
 a = rd.listArtifacts;
 fprintf('%d artifacts found\n',length(a));
 for ii=1:5
-    fprintf('The first five artifacts are ID: %s, type: %s\n',a(ii).artifactId,a(ii).type);
+    fprintf('The first five artifacts are ID: %s, \ttype: %s\n',a(ii).artifactId,a(ii).type);
 end
 
 %% To see how we uploaded these data, read rdtPublishFunctional.m
@@ -60,7 +72,9 @@ a = rd.listArtifacts;
 data = rd.readArtifact(a(1).artifactId, 'type', 'mat');
 
 disp(data);
-% This should be
+
+% The data should be the Matlab struct:
+%
 %                name: 'BetweenScansMotionComp'
 %          annotation: '8 bars with blanks, 3 degrees'
 %             nFrames: 128
@@ -82,7 +96,35 @@ isequal(fname{1}, aReturned.localPath)
 % Notice that the file name is not the same as the original file.
 % You might copy the file to a proper name that you can read and process
 
-disp(data);
+disp(fname{1});
+
+%% We think that adding destination folder will restore the file name
+
+[fname, aReturned] = rd.readArtifacts(a(5),'destinationFolder',pwd);
+
+ni = niftiRead(fname{1});
+
+disp(ni)
+
+% Should be something like:
+%
+%              data: [4-D int16]
+%              fname: '/Users/wandell/Github/vistasoft/rdt/epi01.nii.gz'
+%               ndim: 4
+%                dim: [64 64 22 136]
+%             pixdim: [2.5000 2.5000 2.5000 1.5000]
+%          scl_slope: 0
+%          scl_inter: 0
+%            cal_min: 0
+%            
+
+%% Finally, read a specific file from a specific remote path
+%  Place the file in a specific destination folder.
+
+rd.crp('/validate/fmri');
+fname =rd.readArtifact('inplane.nii','type','gz','destinationFolder',pwd);
+ni = niftiRead(fname);
+disp(ni)
 
 %%
 
