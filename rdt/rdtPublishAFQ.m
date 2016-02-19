@@ -24,6 +24,18 @@ rd.crp('/AFQ/templates/');
 a = rd.listArtifacts;
 
 %% Now the data sets
+
+% First the afq.mat file
+cd(vistaRootPath);
+cd(fullfile('..','AFQ'))
+baseDir = pwd;
+fullDir = fullfile(baseDir,'data');
+
 rd.crp('/AFQ/data');
-rd.publishArtifacts('data');
+
+rd.publishArtifacts(fullDir);
+
+
+
+
 
