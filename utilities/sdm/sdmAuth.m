@@ -7,17 +7,23 @@ function [token, status] = sdmAuth(action, sdmInstance)
 %  will open a browser where you will be prompted to enter your google
 %  credentials. The token will be saved in the user's home directory.
 % 
+% 
 %  NOTE: The python code requires that:
 %       1) Start matlab from a terminal (to inheret your ENV) or
 %          otherwise properly set your ENV (PATH) to include paths to
 %          python & required libs.
 %       2) Have certain python libs installed and on your path. 
 %          Those libs are:
-%               oauth2client, httplib2, cStringIO, contextlib.
+%               oauth2client. * Hint: "pip install oauth2client" *
 %       3) Have access to port 9000 to open a browser window/tab. By
 %          default this should work just fine.
+%       4) Note that you will be prompted for the client secret
+%          (which will be saved for you in an sdmAuth.mat file). This
+%          secret can only be given by an administrator of the instance you
+%          wish to connect to.
 % 
-%  INPUTS: 
+% 
+% INPUTS: 
 %       action - Token action to perform.
 %                   'create'  - [default] generate a new token. This will
 %                               refresh the token if one exists.
@@ -33,19 +39,27 @@ function [token, status] = sdmAuth(action, sdmInstance)
 %                     chosen. Default='sni_sdm' (sni-sdm.stanford.edu). New
 %                     instances will have to be added to this repo in the
 %                     correct format, with the client_id and client_secret
-%                     stored as vars in the mat file.
+%                     stored as vars in the mat file (for new connections
+%                     users are prompted for the client_secret.
 %       
-%       * Note that for default usage no inputs are required.
-% 
+%       
 %  OUTPUTS:
 %       token   - string containing the token
 % 
 %       status  - boolean where 0=success and >0 denotes failure.
-%
-%  Python code url: https://github.com/scitran/scripts/blob/master/oauth2cli.py
 % 
-%  Example:
-%    LMP to check:  token = sdmAuth('create','sni-sdm');
+% 
+%  EXAMPLE USAGE:
+%       [token, status] = sdmAuth('create','sni-sdm'); 
+%             
+%           * Note that for default usage no inputs are required.
+%       
+% 
+%  SEE ALSO:
+%       sdmGet.m, sdmPut.m, 
+%       https://github.com/scitran/scripts/blob/master/oauth2cli.py
+% 
+% 
 % 
 % (C) Stanford VISTA Lab, 2016 - LMP
 % 
@@ -190,7 +204,7 @@ end
 
 if (~isempty(strfind(lower(token), 'error')) || status > 0) 
     status = 1;
-    warning('Check that you have python dependencies installed and on your path!');
+    warning('Check that you have python dependencies installed and on your path. HINT: Try "pip install oauth2client"');
     error(token);
 end
 
