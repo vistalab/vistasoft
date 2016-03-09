@@ -13,7 +13,9 @@ function test_nifti(function_type)
 %
 % RETURNS: No returns, results are displayed on matlab output.
 %
-% Example: test_nifti()
+% Example: 
+%   test_nifti()
+%   test_nifti('mex')
 %
 % See also MRVTEST
 %
