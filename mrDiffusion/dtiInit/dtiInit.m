@@ -151,8 +151,9 @@ end
 % compute it in dtiInit. If clobber is set to ask, then we prompt the user. 
 computeB0 = dtiInitB0(dwParams,dwDir);
 
-% If computeB0 comes back true, do the (mean b=0) computation 
-if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name); end
+% If computeB0 comes back true, do the (mean b=0) computation
+if dwParams.eddyCorrect==-1, doAlign=0; else doAlign=1; end
+if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name, doAlign); end
 
 
 %% IX. Eddy current correction
