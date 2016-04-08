@@ -1,9 +1,8 @@
-%% t_rdtExample
-%
-% Illustrates how to download a validation file from the
+%% Illustrates how to download a validation file from the
 % <https://github.com/isetbio/RemoteDataToolbox remote data client> created
-% by Ben Heasly and the ISETBIO team.  We are using the RDT for VISTASOFT
-% data, as well.
+% by Ben Heasly and the ISETBIO team.  
+%
+% We are using the RDT for VISTASOFT data, as well.
 %
 % Make sure the Remote Data Toolbox is on your path. It can be cloned from
 % ISETBIO on github as
