@@ -66,7 +66,7 @@ switch mode_str
     
     % Generate the mrtrix-unix command.
     cmd_str = sprintf('streamtrack %s %s -seed %s -mask %s -curvature %s -cutoff %s %s -num %d', ...
-                                mode_str, files.csd, roi, mask, curvature, cutoff, tck_file, nSeeds); 
+                                mode_str, files.csd, roi, mask, num2str(curvature), num2str(cutoff), tck_file, nSeeds); 
     
   case {'DT_STREAM'}
           % Build a file name for the tracks that will be generated.
@@ -78,7 +78,7 @@ switch mode_str
               
     % Generate the mrtrix-unix command.
     cmd_str = sprintf('streamtrack %s %s -seed %s -grad %s -mask %s -curvature %s -cutoff %s %s -num %d', ...
-                                mode_str, files.dwi, roi, files.b, mask, curvature, cutoff, tck_file, nSeeds); 
+                                mode_str, files.dwi, roi, files.b, mask, num2str(cutoff), num2str(cutoff), tck_file, nSeeds); 
 
   otherwise
     error('Input "%s" is not a valid tracking mode', mode_str);

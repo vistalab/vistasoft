@@ -71,10 +71,12 @@ else
     end
 end
 
+bet = strtrim(bet); % The name of the bet funciton on the system
 
-bet = strtrim(bet);
-out = fullfile(tempdir,'bet_tmp');
-betScript = fullfile(tempdir,['bet_script_' getDateAndTime '.sh']);
+% Set temporary file names for the out file and bet script. These will be
+% removed at the end of the function run.
+out = [tempname, '_bet_temp'];
+betScript = [tempname, '_bet_script.sh'];
 
 if(ischar(img))
     out = img;
@@ -101,7 +103,6 @@ for ii=1:numel(betLevel)
     fprintf(fid,'#!/bin/bash\nexport FSLOUTPUTTYPE=NIFTI_GZ\n%s\n',betCmd);
     fclose(fid);
     unix([bash ' ' betScript]);
-    %unix(['export FSLOUTPUTTYPE=NIFTI_GZ ; ' betCmd]);
     betOut = [betOut '_mask.nii.gz'];
     if(nargout==0)
         if(numel(betLevel)>1)
@@ -142,9 +143,27 @@ else
     clear all;
 end
 
+
+%% Clean up
+
+% Remove the betScript from the tempdir
+delete(betScript)
+
+% If img and out are the same then it is a path to  the 'out' file is in the temp directory, remove it, otherwise it was
+% passed in from a location on disk and should be preserved
+if ~strcmp(img, out) && strfind(out, tempdir)
+    delete(out)
+end
+
+
+%% Return
+
 return
 
-%%
+
+
+
+%% Example script
 
 bd = pwd;
 d = dir('*0*');
