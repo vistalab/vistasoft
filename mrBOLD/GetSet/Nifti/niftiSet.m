@@ -1,15 +1,34 @@
 function ni = niftiSet(ni,param,val,varargin)
 % Set data for various nifti data structures
+%   
+%     ni = niftiSet(ni,param,val,varargin)
 %
+% Parameter values
+%
+%  'pixdim'    - Voxel dimensions in millimeters (though settable)
+%  'dim'       - Number of pixels in each dimension (row,col, depth, time/orientation)
+%  'data'      - The data
+%  'voxelsize' - What is this?  Why isn't it pixdim?
+%
+%  'checkqto'
+%
+% Example:
+%  
+%   ni = niftiCreate;
+%   ni = niftiSet(ni,'voxel size',[0.375, 0.375, 2]);
+%
+%
+% EKA/BW Vistasoft Team, 2015
 
+%% Check the parameters
 if notDefined('ni'), error('Nifti data structure variable required'); end
 if notDefined('param'), error('Parameter field required.'); end
 if ~exist('val','var'), error('Val required'); end
 
+%% Squeeze spaces out, force lower case
 param = mrvParamFormat(param);
 
 %TODO: Add a nifti paramaterMapField
-
 switch param
     case 'checkqto'
         
