@@ -2,8 +2,8 @@ function gitinfo = gitInfo(rootpath)
 % 
 %  gitinfo = gitInfo(rootpath)
 % 
-% Return the origin and checkusm of a git repository. Works on linux or
-% osx. 
+% Return the origin (on github) and checkusm of a git repository. Works on
+% linux or osx.
 % 
 % INPUT:
 %       rootpath:   Location of the .git directory
