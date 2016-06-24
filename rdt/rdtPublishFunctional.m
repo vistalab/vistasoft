@@ -17,6 +17,9 @@ rd = RdtClient('vistasoft');
 % To write to the archive, you must have a password
 rd.credentialsDialog;
 
+% Act with lots of printouts
+rd.configuration.verbosity=0;
+
 % Theses are the paths on the remote data server
 p = rd.listRemotePaths;
 
@@ -25,12 +28,17 @@ baseDir = fullfile(vistaRootPath,'..','vistadata','functional');
 cd(baseDir);
 
 % Note the the remote path and the local path match.
-rd.crp('/functional/mrBOLD_01');
+rd.crp('/vistadata/functional/mrBOLD_01');
 fullDirectory = fullfile(baseDir,'mrBOLD_01');
 
 % Publish the files in the mrBOLD_01 directory.
-rd.publishArtifacts(fullDirectory);
+rd.publishArtifacts(fullDirectory,'print',true);
 
+% You can check for the files in that remote path
+a = rd.listArtifacts('print',true);
+
+% Read one of the ones in the remote path
+d = rd.readArtifact(a(12));
 
 %% Now make the base mrBOLD_01 directory and publish the various subdirs
 
@@ -40,11 +48,11 @@ cd(baseDir)
 
 
 %% Gray
-rd.crp('/functional/mrBOLD_01/Gray');
+rd.crp('/vistadata/functional/mrBOLD_01/Gray');
 fullDirectory = fullfile(baseDir,'Gray');
 dir(fullDirectory)
 
-rd.publishArtifacts(fullDirectory);
+rd.publishArtifacts(fullDirectory,'verbose',true);
 a = rd.listArtifacts;
 a(:).artifactId
 
