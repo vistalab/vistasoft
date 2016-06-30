@@ -116,6 +116,10 @@ if exist('alignTo', 'var')
     [~, ~, ext] = fileparts(alignTo);
     if strcmpi(ext, '.mgz'),
         newT1 = fullfile(fileparts(alignTo), 't1.nii.gz');
+        if ~exist(alignTo, 'file') && exist(fullfile(subdir, subjID, 'mri', alignTo), 'file')
+            alignTo = fullfile(subdir, subjID, 'mri', alignTo);            
+            newT1  = fullfile(fileparts(outfile), newT1);
+        end
         str = sprintf('!mri_convert -rt %s %s %s', resample_type, alignTo, newT1);
         alignTo = newT1;
         eval(str)
