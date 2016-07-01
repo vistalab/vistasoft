@@ -9,11 +9,9 @@ rd.credentialsDialog;
 %% Change remote path to the functional area
 
 % Local file
-baseDir = '/Users/wandell/Github/vistadata/functional/';
-fullDirectory = fullfile(baseDir,'mrBOLD_01.zip');
-
+folder = '/Users/wandell/Github/vistasoft/local/functional/';
 rd.crp('/vistadata/functional');
-rd.publishArtifact(fullDirectory,'type','zip');
+rd.publishArtifacts(folder,'type','zip');
 
 %% Get it down to the local folder like this
 

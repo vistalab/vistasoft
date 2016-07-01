@@ -70,6 +70,12 @@ disp(fname)
 % And niftiRead works on the downloaded fname.
 ni = niftiRead(fname)
 
+%% Recursive listing
+
+rd.crp('/vistadata/anatomy');
+
+a = rd.listArtifacts('print',true,'recursive',true);
+
 %% To upload vista data files requires a credential.
 
 % See the files rdtPublishFunctional and rdtPublishAFQ for the methods used
