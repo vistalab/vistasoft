@@ -68,7 +68,7 @@ for iScan = 1:nScans
     
     % Load tSeries from all slices into one big matrix
     [~, ni] = loadtSeries(vw, scan);
-    volSeries = ni.data; clear ni;
+    volSeries = niftiGet(ni, 'data'); clear ni;
 
 	if verbose > 1, close(waitHandle); end
 
