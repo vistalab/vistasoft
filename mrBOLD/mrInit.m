@@ -202,12 +202,10 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         % select keepFrames if they're provided
         if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
             %Put keepFrames into func so that we can save it into mrSESSION
-            func.keepFrames = params.keepFrames;
+            func.keepFrames = params.keepFrames(scan,:);
         else
-            %We will need to create keepFrames if it doesn't exist
-            keepFrames = zeros(length(params.functionals),2);
-            keepFrames(:,2) = -1; %By default, skip 0 initial frames, keep the
-            func.keepFrames = keepFrames;
+            %We will need to create keepFrames if it doesn't exist            
+            func.keepFrames = [0 -1];
         end
         
         % assign annotation if it's provided
@@ -361,12 +359,12 @@ if checkfields(mr, 'info', 'time'), f.time = mr.info.time; end
 
 f.junkFirstFrames = 0; %This always appears to be 0. perhaps remove it?
 
-if mr.keepFrames(scan,2) == -1, 
+if mr.keepFrames(2) == -1, 
     % if 2nd column of keepframes is -1, keep all frames after drop frames
-    nFrames = mr.dims(4) - mr.keepFrames(scan,1);   
+    nFrames = mr.dims(4) - mr.keepFrames(1);   
 else
     % if 2nd column of keepframes is +n, keep n frames after drop frames
-    nFrames = mr.keepFrames(scan,2); 
+    nFrames = mr.keepFrames(2); 
 end
     
 f.nFrames   = nFrames;
