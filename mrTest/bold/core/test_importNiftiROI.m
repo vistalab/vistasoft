@@ -20,8 +20,9 @@ function test_importNiftiROI()
 %
 
 
-% Use the sample data set for testing
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+% Use a sample data set for testing
+dataDir = mrtInstallSampleData('functional', 'mrBOLD_01');
+
 
 % Retain original directory, change to data directory
 curDir = pwd;

@@ -20,12 +20,11 @@ function test_viewGetInplane
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+dataDir = mrtInstallSampleData('functional','mrBOLD_01');
 
-% This is the validation file (note that this is the same validation file
-% used for the test file test_viewGetHidden)
-vFile = fullfile(mrvDataRootPath,'validate','viewGetHidden');
-stored = load(vFile);
+% This is the validation file
+stored = mrtGetValididationData('viewGetHidden');
+
 
 %% Retain original directory, change to data directory
 curDir = pwd;

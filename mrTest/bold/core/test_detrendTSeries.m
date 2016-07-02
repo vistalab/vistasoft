@@ -19,8 +19,7 @@ function test_detrendTSeries
 
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','detrendedTSeries');
-val = load(vFile);
+val = mrtGetValididationData('detrendedTSeries');
 
 % we stored a time series in the validation file
 ts = val.ts;

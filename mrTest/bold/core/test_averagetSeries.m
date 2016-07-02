@@ -27,12 +27,11 @@ function test_averagetSeries
 % Initialize the key variables and data path
 
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+dataDir = mrtInstallSampleData('functional','mrBOLD_01');
 
 % This is the validation file
 % TODO: change the name of the file
-vFile = fullfile(mrvDataRootPath,'validate','viewCreateDataType');
-stored = load(vFile);
+stored = mrtGetValididationData('viewCreateDataType');
 
 % dtNum = viewGet(vw,'Current Data Type');
 % dtNum = 2;
@@ -92,6 +91,7 @@ assertEqual(stored.blockedAnalysisParams, dtGet(dataTYPES(dtNum),'Blocked Analys
 assertEqual(stored.eventAnalysisParams, dtGet(dataTYPES(dtNum),'Event Analysis Params'));
 
 % clean up vistadata repository because this test script wrote new data
-test_CleanUpSVN
+% test_CleanUpSVN
+mrvCleanWorkspace;
 
 cd(curDir);

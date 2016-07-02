@@ -11,8 +11,6 @@ function rootPath=mrvTestRootPath()
 % This function MUST reside in the directory at the base of the vistatest
 % directory structure.
 %
-% You should add vistadata and all its subdirectories to your path.
-%
 % mrVista Team
 
 rootPath = which('mrvTestRootPath');

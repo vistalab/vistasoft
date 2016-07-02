@@ -1,9 +1,6 @@
 function logfile = mrvTest(logfile, whichTests, extended)
 % Run the vistasoft test-suite. This function wraps matlab_xunit's `runtest` 
 %
-% We might create separate processing for bold, diffusion, anatomy.
-% This one runs them all.
-%
 % Inputs
 % ---------
 %   logfile:    Full path to logfile that will be produced by the test-suite. 
@@ -11,7 +8,7 @@ function logfile = mrvTest(logfile, whichTests, extended)
 %               directory is specified in the file-name. Defaults to a
 %               generic file-name with a time-stamp, generated in the pwd.
 %
-%   whichTests: string specificying which functions to test. Either 'bold',
+%   whichTests: string specifying which functions to test. Either 'bold',
 %               'diffusion', 'anatomy' [default = 'bold']
 %
 %   extended:   boolean. If true, then run extended tests as well as core
@@ -26,7 +23,10 @@ function logfile = mrvTest(logfile, whichTests, extended)
 %   mrvTest();
 %   mrvTest([], 'bold');
 %   mrvTest('~/myLogFile.m', 'bold', true);
-
+%
+% Dependency: Remote Data Toolbox 
+%   https://github.com/isetbio/RemoteDataToolbox/
+%
 % Jon (c) Copyright Stanford team, mrVista, 2011 
 
 %% Check inputs and paths
@@ -38,12 +38,7 @@ end
 if notDefined('whichTests'), whichTests = 'bold'; end
 if notDefined('extended'), extended = false; end
 
-% Check whether vistadata is on the path
-if isempty(which('mrvDataRootPath')) || ~exist(mrvDataRootPath, 'dir'),
-   error(...
-       '[%s] Need vistdata repository on the path.\nSee: %s', ...
-       mfilename, 'http://white.stanford.edu/newlm/index.php/Vistadata')
-end
+
 %%
 curdir = pwd;
 
@@ -61,7 +56,6 @@ end
 
 % Run the tests, return whether or not they passed: 
 OK = runtests(test_dir, '-logfile',logfile, '-verbose');
-OK = runtests('test_CleanUpSVN', '-verbose');
 
 fid = fopen(logfile,'a+');
 fprintf(fid, '-----------------------------------------\n');

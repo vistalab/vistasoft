@@ -19,11 +19,10 @@ function test_prf()
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','prfInplane');
+dataDir = mrtInstallSampleData('functional','prfInplane');
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','prfInplane');
-storedPRF = load(vFile);
+storedPRF = mrtGetValididationData('prfInplane');
 
 % These are the items we stored in the validation file
 % 
@@ -87,8 +86,7 @@ assertElementsAlmostEqual(storedPRF.coordsSz, length(coords));
 
 
 % clean up vistadata repository because this test script wrote new data
-test_CleanUpSVN
-
+%test_CleanUpSVN
 mrvCleanWorkspace;
 
 %% End Script

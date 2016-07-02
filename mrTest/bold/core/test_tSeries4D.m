@@ -19,7 +19,17 @@ function test_tSeries4D
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+dataDir = mrtInstallSampleData('functional','mrBOLD_01');
+
+% This is the validation file
+storedTSeries = mrtGetValididationData('tSeries4D');
+%
+% storedTSeries.dim = size(tSeries);
+% storedTSeries.mn =  mean(double(tSeries(:)));
+% storedTSeries.sd = std(double(tSeries(:)));
+% save(vFile, '-struct',  'storedTSeries')
+
+
 
 %% Retain original directory, change to data directory
 curDir = pwd;
@@ -41,15 +51,6 @@ vw = viewSet(vw, 'CurrentDataType', dataType); % Data type
 % Format returned is rows x cols x slices x time
 % Setting 'usedefaults' to false means we get raw tseries (no detrending)
 tSeries = tSeries4D(vw, scan, [], 'usedefaults', 0);
-
-% This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','tSeries4D');
-storedTSeries = load(vFile);
-%
-% storedTSeries.dim = size(tSeries);
-% storedTSeries.mn =  mean(double(tSeries(:)));
-% storedTSeries.sd = std(double(tSeries(:)));
-% save(vFile, '-struct',  'storedTSeries')
 
 % Get back to the testing directory: 
 cd(curDir)

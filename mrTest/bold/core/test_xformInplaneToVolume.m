@@ -20,11 +20,11 @@ function test_xformInplaneToVolume
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+dataDir = mrtInstallSampleData('functional','mrBOLD_01');
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','ipToVolumeData');
-val = load(vFile);
+val = mrtGetValididationData('ipToVolumeData');
+
 
 % These are the items we stored in the validation file
 %
@@ -97,7 +97,7 @@ assertElementsAlmostEqual(val.tSmax,nanmax(tSeries(:)));
 
 %% Cleanup
 % clean up vistadata repository because this test script wrote new data
-test_CleanUpSVN
+% test_CleanUpSVN
 
 mrvCleanWorkspace;
 

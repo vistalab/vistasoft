@@ -19,11 +19,10 @@ function test_glm
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','vwfaLoc');
+dataDir = mrtInstallSampleData('functional','vwfaLoc');
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','glm');
-storedGLM = load(vFile);
+storedGLM = mrtGetValididationData('glm');
 
 % These are the items we stored in the validation file
 % 
@@ -84,4 +83,6 @@ assertElementsAlmostEqual(storedGLM.contrastMax,  nanmax(contrastMap(:)));
 assertElementsAlmostEqual(storedGLM.contrastVoc,  contrastMap(40,40,10));
 
 %% Clean up vistadata repository because this test script wrote new data
-test_CleanUpSVN
+%test_CleanUpSVN
+mrvCleanWorkspace;
+

@@ -38,12 +38,11 @@ function test_viewGetHidden
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+dataDir = mrtInstallSampleData('functional','mrBOLD_01');
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','viewGetHidden');
-stored = load(vFile);
-%
+stored = mrtGetValididationData('viewGetHidden');
+
 % [pth, tmp]  = fileparts(viewGet(vw, 'Home Directory')); %#ok<ASGLU>\
 % stored.homedir        = length(tmp);
 % stored.sessionName    = length(viewGet(vw, 'session name'));

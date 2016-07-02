@@ -19,11 +19,10 @@ function test_getCurDataROI
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+dataDir = mrtInstallSampleData('functional','mrBOLD_01');
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','getCurDataROIfromINPLANE');
-storedROIdata = load(vFile);
+storedROIdata = mrtGetValididationData('getCurDataROIfromINPLANE');
 
 % These are the items we stored in the validation file
 % 

@@ -26,11 +26,10 @@ relTol = 1e-10;
 % Initialize the key variables and data path
 
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','prfInplane');
+dataDir = mrtInstallSampleData('functional','prfInplane');
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','betweenScansMotionComp');
-stored = load(vFile);
+stored = mrtGetValididationData('betweenScansMotionComp');
 
 % 
 % dtNum = 2;
@@ -96,10 +95,8 @@ assertEqual(stored.numSlices, length(dtGet(dataTYPES(dtNum),'slices', nScans)));
 % Check that the new dataTYPE got the proper number of scans
 assertEqual(stored.numScans, dtGet(dataTYPES(dtNum),'N Scans'));
 
-% clean up vistadata repository because this test script wrote new data
-test_CleanUpSVN
-
-
-
+% % clean up vistadata repository because this test script wrote new data
+% test_CleanUpSVN
+mrvCleanWorkspace;
 
 cd(curDir);

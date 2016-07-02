@@ -18,12 +18,12 @@ function test_corAnalFromInplane
 % Copyright Stanford team, mrVista, 2011
 
 %% Initialize the key variables and data path
+
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrBOLD_01');
+dataDir = mrtInstallSampleData('functional','mrBOLD_01');
 
 % This is the validation file
-vFile = fullfile(mrvDataRootPath,'validate','coranalFromInplane');
-storedCorAnal = load(vFile);
+storedCorAnal = mrtGetValididationData('coranalFromInplane');
 
 % These are the items we stored in the validation file
 % 
@@ -82,7 +82,7 @@ assertElementsAlmostEqual(storedCorAnal.ampmax, max(ampSeries));
 assertElementsAlmostEqual(storedCorAnal.phmax, max(phSeries));
 
 % clean up vistadata repository because this test script wrote new data
-test_CleanUpSVN
+% test_CleanUpSVN
 
 mrvCleanWorkspace;
 

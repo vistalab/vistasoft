@@ -22,8 +22,7 @@ function test_mrvMigration
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','mrMigration_test');
-
+dataDir = mrtInstallSampleData('functional','mrMigration_test');
 
 %% Retain original directory, change to data directory
 curDir = pwd;
@@ -78,8 +77,7 @@ assertVectorsAlmostEqual(single(orig.anat), single(migrated.anat),'relative');
 
 
 % clean up vistadata repository because this test script wrote new data
-test_CleanUpSVN
-
+% test_CleanUpSVN
 mrvCleanWorkspace;
 
 cd(curDir)
