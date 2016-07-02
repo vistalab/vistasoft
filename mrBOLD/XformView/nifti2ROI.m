@@ -47,7 +47,7 @@ assert(isequal(data, round(data)));
 % define ROIs
 labels = setdiff(unique(data(:)),0);
 
-fprintf('[%s]: Creating %d ROIs from file %s', mfilename, length(labels), mappth);
+fprintf('[%s]: Creating %d ROIs from file %s\n', mfilename, length(labels), mappth);
 
 for ii = 1:length(labels)
    [x, y, z] = ind2sub(size(data), find(data == labels(ii)));
