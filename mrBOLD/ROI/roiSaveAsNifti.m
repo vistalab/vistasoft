@@ -70,6 +70,6 @@ end
 writeFileNifti(ni);
 
 message = (['file saved as ' fname]);
-msgbox(message)
+disp(message)
 
 return
