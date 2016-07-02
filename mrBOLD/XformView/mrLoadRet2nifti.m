@@ -40,6 +40,6 @@ dataOUT = flip(flip(permute(dataIN,[3 2 1]),2),3);
 xform = [diag(1./mmPerVox), size(dataOUT)'/2; 0 0 0 1];
 
 % Create a nifti struct so that it can be returned, if requested 
-ni = niftiGetStruct(dataOUT, inv(xform));
+ni = niftiCreate('data', dataOUT, 'qto_xyz', inv(xform));
 
 return
