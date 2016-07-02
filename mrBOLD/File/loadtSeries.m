@@ -45,8 +45,8 @@ if strcmp(viewType,'Inplane')
     keepFrames = dtGet(dataTYPES(dtNum),'Keep Frames', scan);
     %Let's also implement keepFrames
     if ~isempty(keepFrames)
-        nSkip = keepFrames(scan,1);
-        nKeep = keepFrames(scan,2);
+        nSkip = keepFrames(1);
+        nKeep = keepFrames(2);
         if nKeep==-1
             % flag to keep all remaining frames
             nKeep = size(niftiGet(nii,'Data'), 4) - nSkip;
