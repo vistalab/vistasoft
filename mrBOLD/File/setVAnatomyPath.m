@@ -23,7 +23,7 @@ if notDefined('vANATOMYPATH')
 	% linux box or a Windows box (despite the different path name
 	% conventions). We want to keep this path relative, so we trim the
 	% first part, and only include the link part.
-	if ~isempty(HOMEDIR) & strfind(pth, [HOMEDIR filesep])
+	if ~isempty(HOMEDIR) && strfind(pth, [HOMEDIR filesep])
 		ii = strfind(pth, HOMEDIR);
 		vANATOMYPATH = pth(ii + length(HOMEDIR) + 1:end);
     else 
