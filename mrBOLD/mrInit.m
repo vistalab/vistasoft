@@ -169,23 +169,18 @@ save mrInit_params params   % stash the params in case we crash
 
 if isfield(params,'functionals') && ~isempty(params.functionals)
     if ischar(params.functionals), params.functionals = {params.functionals}; end
-    func = mrLoadHeader(params.functionals{1});
     
     for scan = 1:length(params.functionals)
         
-        func.path = mrGet(params.functionals{scan}, 'filename');
-        
-        %We will need to replace this code with something that adds the paths to
-        %the session variable and then performs these data processes on-the-fly
-        %when functional data is called
-        %We will need to move all of the necessary data into dataTYPES and
-        %mrSESSION, the previous work of mrSave
-        
+        func.path = params.functionals{scan};
+                
         %Read in the nifti to the tS struct, then apply the same transform as
         %the inplane data. Then, transfer the necessary components to the
         %local func struct.
         tS = niftiRead(func.path);
         tS = niftiApplyAndCreateXform(tS,'Inplane');
+        
+        func.hdr = rmfield(tS, 'data');
         
         %Store the orientation of the functional data. We will need the
         %anatomical Inplane to have the same orientation.
@@ -197,7 +192,7 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         %Dims
         func.dims = niftiGet(tS, 'Dim');
         %PixDims
-        func.pixdims = niftiGet(tS, 'Pix Dim');
+        func.pixdims = niftiGet(tS, 'Pix Dim', 'xyz_units', 'mm', 'time_units', 's');
         
         % select keepFrames if they're provided
         if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
@@ -368,17 +363,17 @@ else
 end
     
 f.nFrames   = nFrames;
-f.slices    =  1:mr.dims(3);
+f.slices    = 1:mr.dims(3);
 f.fullSize  = mr.dims(1:2);
 f.cropSize  = mr.dims(1:2);
 f.crop      = [1 1; mr.dims(1:2)];
-f.voxelSize = mr.voxelSize(1:3);
-f.effectiveResolution = mr.voxelSize(1:3);
+f.voxelSize = mr.pixdims(1:3);
+f.effectiveResolution = mr.pixdims(1:3);
 f.keepFrames = mr.keepFrames; %Keep Frames will now be udpated in both mrSESSION and dataTYPES
 if checkfields(mr, 'info', 'effectiveResolution')
     f.effectiveResolution = mr.info.effectiveResolution;
 end
-f.framePeriod = mr.voxelSize(4);
+f.framePeriod = mr.pixdims(4);
 f.reconParams = mr.hdr;
 
 if scan==1
