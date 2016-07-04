@@ -20,10 +20,9 @@ function test_mrInit
 
 
 %% Set up the data: 
+mrvCleanWorkspace;
 
 nifti_path = mrtInstallSampleData('functional','mrBOLD_01');
-
-
 
 %Sample CNI dataset using the new Inplane processing pipeline which stores
 %only the path to the nifti inplane rather than writing out anat.mat file
@@ -127,6 +126,4 @@ cd(currDir);
 assertEqual(viewGet(vw,'View Type'),'Inplane');
 assertEqual(viewGet(vw,'Name'),'hidden');
 
-% clean up vistadata repository because this test script wrote new data
-% test_CleanUpSVN
 mrvCleanWorkspace;

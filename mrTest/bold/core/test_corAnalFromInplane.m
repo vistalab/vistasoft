@@ -81,9 +81,6 @@ assertElementsAlmostEqual(storedCorAnal.ampmax, max(ampSeries));
 
 assertElementsAlmostEqual(storedCorAnal.phmax, max(phSeries));
 
-% clean up vistadata repository because this test script wrote new data
-% test_CleanUpSVN
-
 mrvCleanWorkspace;
 
 %% End Script
