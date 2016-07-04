@@ -29,7 +29,7 @@ storedGLM = mrtGetValididationData('glm');
 % val.dim             = size(contrastMap);
 % val.contrastMean    = nanmean(contrastMap(:));
 % val.contrastMed     = median(contrastMap(:));
-% val.contrastMax     = nanmax(contrastMap(:));
+% val.contrastMax     = max(contrastMap(:));
 % val.contrastVoc     = contrastMap(40,40,10);
 % 
 % save(vFile, '-struct', 'val')
@@ -79,10 +79,8 @@ cd(curDir)
 assertEqual(storedGLM.dim, size(contrastMap));
 assertElementsAlmostEqual(storedGLM.contrastMean, nanmean(contrastMap(:)));
 assertElementsAlmostEqual(storedGLM.contrastMed,  median(contrastMap(:)));
-assertElementsAlmostEqual(storedGLM.contrastMax,  nanmax(contrastMap(:)));
+assertElementsAlmostEqual(storedGLM.contrastMax,  max(contrastMap(:)));
 assertElementsAlmostEqual(storedGLM.contrastVoc,  contrastMap(40,40,10));
 
-%% Clean up vistadata repository because this test script wrote new data
-%test_CleanUpSVN
 mrvCleanWorkspace;
 
