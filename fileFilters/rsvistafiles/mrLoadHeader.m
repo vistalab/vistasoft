@@ -70,7 +70,7 @@ switch lower(format)
         mr = rmfield(mr, 'data');
         
     case 'vanat',
-        [mr.voxelSize mr.dims mr.path] = readVolAnatHeader(pth);
+        [mr.voxelSize, mr.dims, mr.path] = readVolAnatHeader(pth);
         mr.extent = mr.voxelSize .* mr.dims;
 		mr.spaces = mrStandardSpaces(mr);
 
