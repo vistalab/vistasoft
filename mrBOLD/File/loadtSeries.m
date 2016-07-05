@@ -6,7 +6,8 @@ function [tSeries,nii] = loadtSeries(vw,scan,slice)
 %       tSeries = loadtSeries(vw,scan,slice)
 %
 % If scan or slice are not specified, then the routine uses the current
-% scan or slice
+% scan or slice. For Inplane views, if slice is set to 0, then get data
+% from all slices.
 %
 % This routine handles various views
 %
@@ -22,6 +23,7 @@ if strcmp(viewType,'Gray'),  slice = 1; end
 if notDefined('scan'),  scan  = viewGet(vw, 'curScan'); end
 if notDefined('slice'), slice = viewGet(vw, 'curSlice'); end
 
+    
 %Now loaded since we need dataTYPES for the file information
 mrGlobals;
 
@@ -31,6 +33,8 @@ mrGlobals;
 
 if strcmp(viewType,'Inplane')
     
+    if slice == 0, slice = 1:viewGet(vw, 'num slices', scan); end
+
     dtNum = viewGet(vw,'Current Data Type');
     fileName = dtGet(dataTYPES(dtNum),'Inplane Path', scan);
     
@@ -74,9 +78,11 @@ if strcmp(viewType,'Inplane')
     
     nFrames = dims(4);
     voxPerSlice = prod(dims(1:2));
+    nSlices = length(slice);
     
-    tSeries = squeeze(data(:,:,slice,:)); % rows x cols x time
-    tSeries = reshape(tSeries, [voxPerSlice nFrames])'; % time x voxels
+    tSeries = data(:,:,slice,:); % limit to selected slices
+    tSeries = permute(tSeries, [4 1 2 3]); % time x rows x cols x slice
+    tSeries = reshape(tSeries, [nFrames voxPerSlice  nSlices]); % time x voxels x slice
     
 elseif strcmp(viewType,'Gray')
     
