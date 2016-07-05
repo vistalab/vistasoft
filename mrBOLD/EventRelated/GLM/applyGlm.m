@@ -1,40 +1,41 @@
 function [vw, newScan] = applyGlm(vw, dt, scans, params, newDtName)
 %Apply a General Linear Model (GLM) to view data
 %
-% [view, newScan] = applyGlm([view], [dataType], [scans], [params], [newDtName])
+% [vw, newScan] = applyGlm([vw], [dataType], [scans], [params], [newDtName])
 %
 % The results are saved for further analyses in a GLM data type.
 %
 % INPUTS:
-% view: mrVista view structure. Defaults to current view if omitted.
+%   vw:     mrVista view structure. Defaults to current view if omitted.
 %
-% dt: name or number of the data type from which to take the scans.
-% Defaults to current data type.
+%   dt:     name or number of the data type from which to take the scans.
+%           Defaults to current data type.
 %
-% scans: scans from which to take data for GLM. Defaults
-% to scan group assigned to V's current scan. (If the scan group is
-% in a different data type, it will use that data type, overriding the
-% second argument.)
+%   scans:  scans from which to take data for GLM. Defaults
+%             to scan group assigned to V's current scan. (If the scan
+%             group is in a different data type, it will use that data
+%             type, overriding the second argument.)
 %
-% params: extended event-related analysis params. This has the same
-% fields as the standard event-related parameters (see er_getParams,
-% er_defaultParams), but may also have some extra fields:
-%	'lowPassFilter',  which if set to 1 will result in a temporal 
-%		smoothing of the data, cutting off frequencies above ~20 
-%		cycles per scan. 
+%   params: extended event-related analysis params. This has the same
+%             fields as the standard event-related parameters (see
+%             er_getParams, er_defaultParams), but may also have some extra
+%             fields: 'lowPassFilter',  which if set to 1 will result in a
+%             temporal smoothing of the data, cutting off frequencies above
+%             ~20 cycles per scan.
+%
 %   'annotation': text to describe the GLM analysis. (E.g., 'Custom HRF,
-%       All Scans', 'Scan 5 Omitted, whitened'.) When setting up the new scan,
-%       the code will automatically add the original data type name and scan
-%       numbers to this annotation. 
+%             All Scans', 'Scan 5 Omitted, whitened'.) When setting up the
+%             new scan, the code will automatically add the original data
+%             type name and scan numbers to this annotation.
 %
-%   [If omitted, the code pops up a GUI to get the params].
+%               [If omitted, the code pops up a GUI to get the params].
 %
 % newDtName: string to name the new data type (default GLM is good in
-%       most cases)
+%             most cases)
 %
 % OUTPUTS:
-% newScan: scan # in which results are saved. Default appends
-% a new scan to the 'GLMs' data type.
+%   newScan: scan # in which results are saved. Default appends
+%               a new scan to the 'GLMs' data type.
 %
 % ras 06/06.
 % ras, 02/06: fixed bug w/ 'newDtName' vs. 'newDtName'.
@@ -45,15 +46,15 @@ function [vw, newScan] = applyGlm(vw, dt, scans, params, newDtName)
 %% Initialize variables and scan information
 if notDefined('vw'), vw = getCurView; end
 if notDefined('dt'), dt = viewGet(vw, 'curDataType');  end
-if notDefined('scans'), [scans dt] = er_getScanGroup(vw); end
-if notDefined('params') 
-    params = applyGlmGUI(vw, scans, dt); 
+if notDefined('scans'), [scans, dt] = er_getScanGroup(vw); end
+if notDefined('params')
+    params = applyGlmGUI(vw, scans, dt);
     if isempty(params), return; end
 end
 if notDefined('newDtName'), newDtName = 'GLMs';end
 if (ischar(dt)) % Added support for string data type names
     tmp = existDataType(dt);
-    if (~tmp) error(['Data type ''' dt ''' does not exist.']); end
+    if ~tmp, error(['Data type ''' dt ''' does not exist.']); end
     dt = tmp;
 end
 
@@ -61,14 +62,14 @@ end
 selectedSlice = viewGet(vw, 'curSlice');
 
 % initialize the new scan,
-[vw newScan tgtDt] = initScan(vw, newDtName, [], {dt scans(1)});
+[vw, newScan, tgtDt] = initScan(vw, newDtName, [], {dt scans(1)});
 
 % set name (annotation) of the new scan
 global dataTYPES
 names = {dataTYPES.name};
 newScanAnnotation = sprintf('%s: %s', names{dt}, num2str(scans));
-if isfield(params, 'annotation') & ~isempty(params.annotation)
-	newScanAnnotation = sprintf('%s (%s)', params.annotation, newScanAnnotation);
+if isfield(params, 'annotation') && ~isempty(params.annotation)
+    newScanAnnotation = sprintf('%s (%s)', params.annotation, newScanAnnotation);
 end
 dataTYPES(tgtDt).scanParams(newScan).annotation = newScanAnnotation;
 saveSession;
@@ -86,17 +87,6 @@ vw = er_groupScans(vw, scans, 1, dt);
 vw = viewSet(vw, 'curDataType', dt);
 vw = viewSet(vw, 'curScan', scans(1));
 
-% set up a wait bar (a little higher than other waitbars
-% which will appear when running GLM on each slice)
-verbose = prefsVerboseCheck;
-if verbose
-    msg = sprintf('Applying GLM to %s...', newScanAnnotation);
-    hwait = waitbar(0, msg);
-    pos = get(hwait, 'Position');
-    pos(2) = pos(2) + 1.2 * pos(4);
-    set(hwait, 'Position', pos);
-end
-
 % put some informative text in command window
 fprintf('\n\n\t****** Applying GLM: %s ******\n', newScanAnnotation);
 fprintf('\t(This will be saved in %s data type scan %i)\n', newDtName, newScan);
@@ -105,45 +95,43 @@ fprintf('\t(This will be saved in %s data type scan %i)\n', newDtName, newScan);
 stim = er_concatParfiles(vw, scans);
 glm_trial_report(stim, 1);
 
-% init variables:
-% in the main loop, we will collect some information, like betas and
-% residuals, in separate volumes and save as maps, for fast contrast
-% map calculations down the line.
-betas  = {};    % beta values for each condition
-resStd = {};    % residual standard deviation for each condition
-resVar = {};    % sum^2 of the residual variance explained
-r2     = {};    % proportion variance explained per voxel by the model
 
-%%   ***** Main Loop:  *****                                 
-% Go through each slice, load data, apply GLM, save results
+%%   ***** Main Loop:  *****
+% Slice loop eliminated: we now compute GLM on all slices at once. For
+% backwards compatibility, we still save results as separate files for
+% eachs slice.
+
 
 tic;
 nSlices = viewGet(vw, 'numSlices');
-dims = viewGet(vw, 'sliceDims');
-for slice = 1:nSlices
-    fprintf('Slice %i, %5.0f min %2.2f sec\n', slice, floor(toc/60), mod(toc, 60));
+dims    = viewGet(vw, 'sliceDims');
 
-    [model vw] = applyGlmSlice(vw, slice, scans, params);
-    saveGlmSlice(vw, model, newDtName, newScan, params);
+% fprintf('Slice %i, %5.0f min %2.2f sec\n', sliceNum, floor(toc/60), mod(toc, 60));
+sliceNum = 1:nSlices;
+[model, vw] = applyGlmSlice(vw, sliceNum, scans, params);
+saveGlmSlice(vw, model, newDtName, newScan, params);
 
-    % store some info which will also get saved as maps
-	% (the "sum" commands in lines 126-127 deal with the special case of
-	% deconvolution -- many betas per condition -- but doesn't affect other
-	% cases.)
-    for c = 1:size(model.betas, 2)
-        betas{c}(:,:,slice) = reshape(sum(model.betas(:,c,:), 1), dims);
-        resStd{c}(:,:,slice) = reshape(sum(model.stdevs(:,c,:), 1), dims);
-        resVar{c}(:,:,slice) = reshape(sum(model.residual.^2) / model.dof, dims);
-        r2{c}(:,:,slice) = reshape(model.varExplained, dims);
-    end
 
-    % save the updated session params
-    saveSession;
+% init variables:
+% Collect some information, like betas and residuals, in separate volumes
+% and save as maps, for fast contrast map calculations down the line.
+% (the "sum" commands in lines 129-131 deal with the special case of
+% deconvolution -- many betas per condition -- but doesn't affect other
+% cases.)
+betas  = cell(1,size(model.betas, 2));  % beta values for each condition
+resStd = cell(1,size(model.betas, 2));  % residual standard deviation for each condition
+resVar = cell(1,size(model.betas, 2));  % sum^2 of the residual variance explained
+r2     = cell(1,size(model.betas, 2));  % proportion variance explained per voxel by the model
 
-    if verbose, waitbar(slice/nSlices,hwait); end
+for c = 1:size(model.betas, 2)
+    betas{c}  = reshape(sum(model.betas(:,c,:,:), 1), [dims nSlices]);
+    resStd{c} = reshape(sum(model.stdevs(:,c,:,:), 1), [dims nSlices]);
+    resVar{c} = reshape(sum(model.residual.^2) / model.dof, [dims nSlices]);
+    r2{c}     = reshape(model.varExplained, [dims nSlices]);
 end
 
-if verbose, close(hwait); end
+% save the updated session params
+saveSession;
 
 
 %% *** Save extra parameter map info ***
@@ -153,10 +141,10 @@ nScans = viewGet(vw, 'nScans');
 % save proportion variance explained
 mapName = 'Proportion Variance Explained';
 mapPath = fullfile(dataDir(vw), mapName);
-if check4File(mapPath), 
-	load(mapPath, 'map'); 
+if check4File(mapPath),
+    load(mapPath, 'map');
 else
-	map = cell(1, nScans);
+    map = cell(1, nScans);
 end
 map{newScan} = r2{c};
 save(mapPath, 'mapName', 'map');
@@ -165,10 +153,10 @@ fprintf('Saved prop. variance explained in %s\n', mapPath);
 % save residual variance
 mapName = 'Residual Variance';
 mapPath = fullfile(dataDir(vw), mapName);
-if check4File(mapPath), 
-	load(mapPath, 'map'); 
+if check4File(mapPath),
+    load(mapPath, 'map');
 else
-	map = cell(1, nScans);
+    map = cell(1, nScans);
 end
 map{newScan} = resVar{c};
 save(mapPath, 'mapName', 'map');
@@ -179,29 +167,29 @@ for c = 1:size(model.betas, 2)
     mapName = sprintf('betas_predictor%i', c);
     mapPath = fullfile(dataDir(vw), 'RawMaps', mapName);
     if check4File(mapPath)
-		load(mapPath, 'map'); 
-	else
-		map = cell(1, nScans);
-	end
-	map{newScan} = betas{c};
+        load(mapPath, 'map');
+    else
+        map = cell(1, nScans);
+    end
+    map{newScan} = betas{c};
     if c==1
         fprintf('Beta weights saved in %s\n', mapName(1:end-1));
         ensureDirExists(fileparts(mapPath));
-	end
+    end
     save(mapPath, 'mapName', 'map');
-
+    
     mapName = sprintf('stdDev_predictor%i', c);
     mapPath = fullfile(dataDir(vw), 'RawMaps', mapName);
-	if check4File(mapPath)
-		load(mapPath, 'map'); 
-	else
-		map = cell(1, nScans);
-	end
-	map{newScan} = resStd{c};
+    if check4File(mapPath)
+        load(mapPath, 'map');
+    else
+        map = cell(1, nScans);
+    end
+    map{newScan} = resStd{c};
     save(mapPath, 'mapName', 'map');
     if c==1
         fprintf('Saved standard deviation in %s\n', mapPath);
-	end  
+    end
 end
 
 % select the originally-selected slice
@@ -239,9 +227,9 @@ for s = 1:length(runs)
 end
 
 % report the sum of each trial type
-fprintf(fid, [repmat('-', [1 80]) '\n\t\tTOTAL\t']); 
+fprintf(fid, [repmat('-', [1 80]) '\n\t\tTOTAL\t']);
 for c = stim.condNums
-	fprintf(fid, '%i\t', sum(stim.cond==c));
+    fprintf(fid, '%i\t', sum(stim.cond==c));
 end
 fprintf(fid, '\n');
 
@@ -301,7 +289,7 @@ params = er_getParams(vw, scans(1), dt);
 
 if resp.setParams==1
     p = er_editParams(params);
-	if isempty(p), params = []; return; end
+    if isempty(p), params = []; return; end
     params = mergeStructures(params, p);
 end
 params.lowPassFilter = resp.lowPassFilter;
