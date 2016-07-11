@@ -15,8 +15,6 @@ function [figH,m,cbH] = showMontage(imVol, slices, cmap, crop, numCols, figNum, 
 % Bob (c) VISTASOFT Team
 % 
 
-
-
 %% Handle the Inputs
 
 % If a file was passed in then we try to read it with niftiRead
@@ -43,7 +41,7 @@ if(~exist('cmap','var') || isempty(cmap))
 end
 
 if(exist('crop','var') && ~isempty(crop))
-    newSz = [diff(crop')+1 size(imVol,3)];
+    % newSz = [diff(crop')+1 size(imVol,3)];
     imVol = imVol(crop(1,1):crop(1,2),:,:);
     imVol = imVol(:,crop(2,1):crop(2,2),:);
 end
@@ -65,7 +63,7 @@ if(~exist('flip','var') || isempty(flip))
 end
 
 if(strcmpi(flip(1),'a'))
-    imVol = flipdim(permute(imVol,[2 1 3 4]),1);
+    imVol = flip(permute(imVol,[2 1 3 4]),1);
 end
 
 
