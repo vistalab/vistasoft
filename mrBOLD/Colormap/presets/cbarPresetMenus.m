@@ -23,9 +23,10 @@ w = what(presetsDir);
 if isempty(w.mat), return; end  % no presets saved
 
 for i = 1:length(w.mat)
-	[p f ext] = fileparts(w.mat{i});
+	[p, f, ext] = fileparts(w.mat{i});
 	if i==1, sep = 'on'; else, sep = 'off'; end
 	
+    % Fails with new version of figure handle as a struct.  To fix.
 	cb = sprintf('cbarLoadPreset(''%s'', %i, get(gca, ''UserData'')); ', f, ...
 				 viewer);
 	
