@@ -1,6 +1,6 @@
-function cb = helpFindCallback(V)
+function cb = helpFindCallback(vw)
 %
-% cb = helpFindCallback([view, handle or menu label]);
+% cb = helpFindCallback([vw, handle or menu label]);
 %
 % Find out what the callback text is to a menu selection
 % in a GUI. The input argument can be a mrVista 1.0 view, a
@@ -24,16 +24,18 @@ function cb = helpFindCallback(V)
 %
 %
 % ras, 11/07/2005.
-if ~exist('V', 'var') || isempty(V), V = gcf; end
+if ~exist('vw', 'var') || isempty(vw), vw = gcf; end
 
 cb = '';
 
-if isstruct(V)
+if isstruct(vw)
     % view specified -- not yet implemented
     
-elseif ishandle(V)
+elseif ishandle(vw)
     % handle to figure -- get child uimenus
-    h = getChildUimenus(V);
+    tic, 
+    h = getChildUimenus(vw);
+    toc
     
     % record callbacks to each item
     cbList = get(h, 'Callback');
@@ -42,8 +44,8 @@ elseif ishandle(V)
     % Set up a uiwait / uiresume dialog %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % set figure yellow for highlighting
-    figColor = get(V, 'Color');
-    set(V, 'Color', 'y');
+    figColor = get(vw, 'Color');
+    set(vw, 'Color', 'y');
     
     % put up a message
     msg = 'Select the menu item whose callback you''d like.';
@@ -65,7 +67,7 @@ elseif ishandle(V)
         
     % restore the menu callbacks / other settings
     for i=1:length(h), set(h(i), 'Callback', cbList{i}); end
-    set(V, 'Color', figColor);
+    set(vw, 'Color', figColor);
     close(hmsg);        
     
     % report the callback in the command window:
@@ -76,11 +78,11 @@ elseif ishandle(V)
     % clean up the temp variable
     evalin('base', 'clear SEL');
     
-elseif ischar(V)
+elseif ischar(vw)
     % label for menu item 
-	h = findobj('Label', V);
+	h = findobj('Label', vw);
 	
-	fprintf('%i objects found with label %s', length(h), V);
+	fprintf('%i objects found with label %s', length(h), vw);
 	
 	for ii = 1:length(h)
 		fprintf('Selected Menu Item: \n ');
@@ -111,7 +113,18 @@ function h = getChildUimenus(par)
 % Find all uimenus that belong to a parent figure or uimenu, 
 % or a submenu of the parent, and return as a vector in h.
 % ras, 11/05
-h = findobj('Parent', par, 'Type', 'uimenu');
+
+if isprop(par, 'Callback') && ~isempty(par.Callback)
+    % If we find a callback function, this is a terminal node and findobj
+    % will return an empty variable when looking for a uimenu. Skipping the
+    % uneeded call to findobj can speed up the code greatly
+    h = [];
+else
+    h = findobj('Parent', par, 'Type', 'uimenu');
+end
+    
+
+% if any(isprop(h, 'Label')), disp({h(:).Label}'); end
 for i = h(:)'
     subh = getChildUimenus(i); 
     h = [h; subh];
