@@ -33,9 +33,7 @@ if isstruct(vw)
     
 elseif ishandle(vw)
     % handle to figure -- get child uimenus
-    tic, 
     h = getChildUimenus(vw);
-    toc
     
     % record callbacks to each item
     cbList = get(h, 'Callback');
@@ -114,7 +112,8 @@ function h = getChildUimenus(par)
 % or a submenu of the parent, and return as a vector in h.
 % ras, 11/05
 
-if isprop(par, 'Callback') && ~isempty(par.Callback)
+parH = get(par);
+if isfield(parH, 'Callback') && ~isempty(parH.Callback)
     % If we find a callback function, this is a terminal node and findobj
     % will return an empty variable when looking for a uimenu. Skipping the
     % uneeded call to findobj can speed up the code greatly
