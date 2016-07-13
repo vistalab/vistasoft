@@ -51,7 +51,7 @@ end
 
 % Set dataTYPES.scanParams so that new average scan has the same params as
 % the 1st scan on scanList.
-src = {vw.curDataType scanList(1)};
+src = {viewGet(vw, 'curDataType') scanList(1)};
 [hiddenView, newScanNum, ndataType] = initScan(hiddenView, typeName, [], src);
 %dataTYPES(ndataType).scanParams(newScanNum).annotation = annotation;
 dataTYPES(ndataType) = dtSet(dataTYPES(ndataType), 'Annotation', annotation, ...
