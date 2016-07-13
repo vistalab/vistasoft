@@ -42,4 +42,6 @@ for iScan = 1:length(mrSESSION.functionals)
     dataTYPES.eventAnalysisParams(iScan) = er_defaultParams;
 end
 
+dataTYPES.retinotopyModelParams = [];
+
 return
