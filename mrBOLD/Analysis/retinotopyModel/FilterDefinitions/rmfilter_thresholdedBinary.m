@@ -14,7 +14,12 @@ catch
     bk   = round(mean(images(:)));
 end
 
+% pixel values more than 1% different from the background value will be set
+% to 1, else 0
 thresh = 1/100 * bk;
+
+% make images double to allow for negative values
+images = double(images);
 
 images = (abs(images - bk) > thresh);
 
