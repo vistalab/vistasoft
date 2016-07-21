@@ -41,7 +41,7 @@ if notDefined('dFolder'), dFolder = fullfile(vistaRootPath, 'local'); end
 rd = RdtClient('vistasoft');
 
 % Change remote path to requested folder
-rd.crp(sprintf('/vistadata/%s/', sourceFolder));
+rd.crp(sprintf('/vistadata/%s', sourceFolder));
 
 % Download the zip file
 rd.readArtifact(projectName, 'type','zip', 'destinationFolder',dFolder);
