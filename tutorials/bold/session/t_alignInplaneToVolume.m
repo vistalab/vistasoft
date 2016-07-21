@@ -23,7 +23,9 @@
 % Winawer lab (NYU)
 
 
-%% Download ernie raw MRI data
+%% Start
+% Clean start in case we have a vista session open
+mrvCleanWorkspace();
 
 % Remember where we are
 curdir = pwd();

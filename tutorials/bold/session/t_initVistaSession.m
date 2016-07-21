@@ -26,6 +26,9 @@
 
 %% Download ernie raw MRI data
 
+% Clean start in case we have a vista session open
+mrvCleanWorkspace();
+
 % Remember where we are
 curdir = pwd();
 
