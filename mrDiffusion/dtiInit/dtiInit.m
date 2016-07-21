@@ -1,14 +1,11 @@
 function [dt6FileName, outBaseDir] = dtiInit(dwRawFileName, t1FileName, dwParams)
 % function [dt6FileName, outBaseDir] = dtiInit([dwRawFileName], [t1FileName], [dwParams])
 % 
-%   A function for running the mrDiffusion pre-processing steps on raw
-%   DWI data. This function replaces dtiRawPreprocess. See:
-%   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing for more
-%   info regarding the pipeline.
-% 
-%   This fucntion will run with the default parameters unless the user
-%   passes in dwParams with alternate parameters. This can be done with a
-%   call to 'dtiInitParams'. See dtiInitParams.m for default parameters.
+%   Run the mrDiffusion pre-processing steps on raw DWI and T1 data.
+%
+%  This function runs with the default parameters unless the user passes in
+%  dwParams with alternate parameters. To create a new set of dwParams use
+%  'dtiInitParams'. See dtiInitParams.m for default parameters.
 % 
 % INPUTS:
 %   dwRawFileName = Raw dti data in nifti format.
@@ -22,26 +19,26 @@ function [dt6FileName, outBaseDir] = dtiInit(dwRawFileName, t1FileName, dwParams
 %                   more information. 
 %
 % WEB resources:
-%   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
-% 
+%   vistaBrowseGit('dtiInit');
+%   https://github.com/vistalab/vistasoft/wiki/DWI-Initialization 
 % 
 % Example Usage: 
-%       % Using default params
-%       dtiInit 
-%  <or> dtiInit('rawDti.nii.gz','t1.nii.gz') 
+%   % Using default params
+%   dtiInit 
+% <or> 
+%   dtiInit('rawDti.nii.gz','t1.nii.gz') 
 %  
-%       % Using varargin to set specific params
-%       dwParams = dtiInitParams('clobber',1,'phaseEncodeDir',2);
-%       dtiInit('rawDti.nii.gz','t1.nii.gz', dwParams)
-%  <or> dtiInit([],[],dwParams);
+% % Using varargin to set specific params
+%   dwParams = dtiInitParams('clobber',1,'phaseEncodeDir',2);
+%   dtiInit('rawDti.nii.gz','t1.nii.gz', dwParams)
+%    <or> 
+%  dtiInit([],[],dwParams);
 % 
 % See Also:
 %       dtiInitParams.m
 % 
 % (C) Stanford VISTA, 8/2011 [lmp]
 % 
-% 
-
 
 %% I. Load the diffusion data, set up parameters and directories structure
 
@@ -68,7 +65,6 @@ fprintf('Dims = [%d %d %d %d] \nData Dir = %s \n', size(dwRaw.data), dwDir.dataD
 fprintf('Output Dir = %s \n', dwDir.subjectDir);
 
 
-
 %% II. Select the anatomy file
 
 % Check for the case that the user wants to align to MNI instead of T1.
@@ -84,9 +80,10 @@ end
 fprintf('t1FileName = %s;\n', t1FileName);
 
 
-
 %% III. Reorient voxel order to a standard, unflipped, axial order
 
+% Canonical form has the first through third dimensions represented as
+% RAS: (Right-left, Anterior-posterior, Superior-inferior) 
 [dwRaw,canXform] = niftiApplyCannonicalXform(dwRaw);
 
 
@@ -118,8 +115,10 @@ bvals = dlmread(dwDir.bvalsFile);
 
 [doResamp, bvecs, bvals, dwRaw] = dtiInitCheckVols(bvecs, bvals, dwRaw, dwParams);
 
-%% VII. Rotate bvecs using Rx or CanXform: * More comments from RFD needed.
+%% VII. Rotate bvecs using Rx or CanXform
 
+% We rotated the data. Now we need to rotate the bvecs to correspond to the
+% new, rotated directions.  That happens here.
 if dwParams.rotateBvecsWithRx 
     bvecXform = affineExtractRotation(dwRaw.qto_xyz);
 else
@@ -127,22 +126,15 @@ else
 end
 
 if dwParams.rotateBvecsWithCanXform 
-    % This was added in because the conditional statement in the next loop
-    % this cell was not being met and therefore the xform was not being
-    % applied.
     bvecXform = bvecXform * canXform(1:3,1:3);
-    for ii=1:size(bvecs,2) 
-        bvecs(:,ii) = bvecXform * bvecs(:,ii);
-    end
-end
-% I'm not sure about this condition - it's not met in the rotateCanXform
-% case so the xform is never applied, which seems to be causing problems**
-if all(bvecXform ~= eye(3)) 
-    for ii=1:size(bvecs,2) 
-        bvecs(:,ii) = bvecXform * bvecs(:,ii);
-    end
 end
 
+% Apply the transform to each of the bvecs
+if ~isequal(bvecXform,eye(3)) 
+    for ii=1:size(bvecs,2) 
+        bvecs(:,ii) = bvecXform * bvecs(:,ii);
+    end
+end
 
 %% VIII. Compute mean b=0: used for e-c correction and alignment to t1
 
@@ -152,6 +144,7 @@ end
 computeB0 = dtiInitB0(dwParams,dwDir);
 
 % If computeB0 comes back true, do the (mean b=0) computation
+% This gets saved as a B0 file.
 if dwParams.eddyCorrect==-1, doAlign=0; else doAlign=1; end
 if computeB0, dtiRawComputeMeanB0(dwRaw, bvals, dwDir.mnB0Name, doAlign); end
 
@@ -174,7 +167,8 @@ end
 %% X. Compute the dwi -> structural alignment
 
 % Based on user selected params decide if we align the raw dwi data to a
-% reference image (t1). If the alignment is computed doResamp will be true.
+% reference T1 image. If the alignment is computed the diffusion data will
+% also be resampled to the T1 resolution.
 [doAlign, doResamp] = dtiInitAlign(dwParams,dwDir,doResamp);
 
 if doAlign, dtiRawAlignToT1(dwDir.mnB0Name, t1FileName, dwDir.acpcFile); end
@@ -206,6 +200,8 @@ dtiInitReorientBvecs(dwParams, dwDir, doResamp, doBvecs, bvecs, bvals);
 
 %% XIII. Load aligned raw data and clear unaligned raw data
 
+% This dwAlignedRawFile should be saved so we can crop it along with the T1
+% and just do analyses on a smaller chunk of the diffusion data.
 dwRawAligned = niftiRead(dwDir.dwAlignedRawFile);
 clear dwRaw;  
 

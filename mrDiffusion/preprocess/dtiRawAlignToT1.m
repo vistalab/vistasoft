@@ -2,8 +2,14 @@ function acpcXform = dtiRawAlignToT1(b0File, t1, outAcpcXform, t1MaskFile, useSt
 %
 % acpcXform = dtiRawAlignToT1([b0File=uigetfile], [t1=uigetfile], [outAcpcXform], [t1MaskFile=[]], [useStdXformFlag=true], [figNum=0], [unwarpDti=false])
 %
-% Aligns the B0 image to the t1-weighted image.
+% Returns a transforms that aligns the B0 image to the t1-weighted image in
+% acpc space.  It also writes that matrix to disk in the file ::
 %
+% b0File:  File name
+% t1:      File name
+% outAcpcXform: The output file name containing the transform.  Default is
+% XX
+% 
 % If useStdXformFlag==false, the b0 qto_xyz transform will be used for the
 % coarse alignment. Otherwise, this transform will be used to estimate
 % mirror-flips, but it's detailed rotation and translations components will
