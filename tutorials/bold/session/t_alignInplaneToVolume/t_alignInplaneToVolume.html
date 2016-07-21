@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>t_alignInplaneToVolume</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-07-21"><meta name="DC.source" content="t_alignInplaneToVolume.m"><style type="text/css">
+      --><title>t_alignInplaneToVolume</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-07-21"><meta name="DC.source" content="t_alignInplaneToVolume.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -93,7 +93,8 @@ alignMtrx = <span class="keyword">...</span>
 
 mrSESSION = sessionSet(mrSESSION, <span class="string">'alignment'</span>, alignMtrx);
 saveSession();
-</pre><pre class="codeoutput">[niftiCheckQto] NIFTI header origin is at or outside the image volume.
+</pre><pre class="codeoutput">Initializing HIDDEN Inplane view
+[niftiCheckQto] NIFTI header origin is at or outside the image volume.
 [niftiCheckQto] Origin to the image center [80.000,104.000,12.000] pix.
 </pre><h2>Visualize<a name="4"></a></h2><pre class="codeinput"><span class="comment">% open a 3D volume view</span>
 vol = open3ViewWindow(<span class="string">'volume'</span>);
@@ -120,12 +121,12 @@ Attaching buttons
 Attaching popup menus
 Attaching sliders
 Done initializing Volume view
-Could not find /Users/jonathanwinawer/matlab/git/vistasoft/local/scratch/erniePRF/Volume/userPrefs.mat
+Could not find /Users/winawerlab/matlab/git/vistasoft/local/scratch/erniePRF/Volume/userPrefs.mat
 freq_dim not set correctly in NIFTI header.
 phase_dim not set correctly in NIFTI header.
 [mrLoad]: mr.voxelSize has length&lt;4: concatenating a "1" to it
 [mrLoad]: mr.dims has length&lt;4: concatenating a "1" to it
-</pre><img vspace="5" hspace="5" src="t_alignInplaneToVolume_01.png" alt=""> <h2>Clean up<a name="5"></a></h2><p>mrvCleanWorkspace cd(curdir)</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="t_alignInplaneToVolume_01.png" style="width:720px;height:450px;" alt=""> <h2>Clean up<a name="5"></a></h2><p>mrvCleanWorkspace cd(curdir)</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% t_alignInplaneToVolume
 %
