@@ -38,3 +38,12 @@ params.outDir = fullfile(vistaRootPath,'local');         % Stash output
 [dt6FileName, outBaseDir] = dtiInit(dwRawFileName,t1FileName,params);
 
 %%
+slices = 50:59;
+niftiView('dti_aligned_trilin_noMEC.nii.gz','slices',slices);
+niftiView('t1.nii.gz','slices',slices);
+
+% Original, before upsampling
+niftiView('dti_b0.nii.gz','slices',slices);
+
+% Can we show the white matter mask on top of the dti_aligned?
+
