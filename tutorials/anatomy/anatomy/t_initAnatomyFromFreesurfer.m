@@ -73,17 +73,21 @@ cl = niftiGet(ni, 'data');
 
 fH = figure('Color','w');
 
+% Choose one slice to visualize from the middle of head
+sliceNum = size(t1,3)/2;
+
+% Volume anatomy, 
 subplot(1,3,1)
-imagesc(t1(:,:,128), [0 255]); colormap gray; axis image
+imagesc(t1(:,:,sliceNum), [0 255]); colormap gray; axis image
 title('Volume anatomy')
 
 subplot(1,3,2)
-imagesc(cl(:,:,128), [1 6]);   axis image
+imagesc(cl(:,:,sliceNum), [1 6]);   axis image
 title('Class file')
 
 subplot(1,3,3)
-mask = cl(:,:,128) > 1;
-imagesc(t1(:,:,128) .* uint8(mask));   axis image
+mask = cl(:,:,sliceNum) > 1;
+imagesc(t1(:,:,sliceNum) .* uint8(mask));   axis image
 title('Masked anatomy')
 
 %% Clean up

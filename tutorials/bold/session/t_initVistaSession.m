@@ -30,7 +30,7 @@
 curdir = pwd();
 
 % If we find the directory, do not bother unzipping again
-forceOverwrite = true; 
+forceOverwrite = false; 
 
 % Get it
 erniePRFOrig = mrtInstallSampleData('functional', 'erniePRF', [], forceOverwrite);
