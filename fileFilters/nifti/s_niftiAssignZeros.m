@@ -11,22 +11,22 @@ nii = niftiRead(niiFile);
 niiDims = nii.dim
 niiPixDims = nii.pixdim
 
-%%  modify -- dimensions we want to zero out
+%%  modify this cell --
 % the dimension we want to ZERO out
 % increasing RAS
 zeroLR = 91:187; % left
 zeroPA = 81:245; % posterior 1/3rd
 zeroIS = 1; 
 
-% description for naming
-descript = 'leftOccipital';
+% newNiftiName
+newName = 'wmMask_leftOccipital';
 
-%% name of new zerofied brain mask
+% directory to save new nifti
+[pathStr, ~, ~] = fileparts(niiFile); 
+saveDir = pathStr; 
 
-[pathStr, fname, ~] = fileparts(niiFile);
-[~, fname, ~] = fileparts(fname);
 
-newName = [fname '_' descript '.nii.gz']; 
+%% this part should be functionalized ----------
 
 %% the new data field
 newData = nii.data; 
