@@ -44,6 +44,9 @@ erniePRFOrig = mrtInstallSampleData('functional', 'erniePRF', [], forceOverwrite
 % Create a new directory in 'scratch' for the tutorial
 erniePathTemp = fullfile(vistaRootPath, 'local', 'scratch', 'erniePRF');
 
+% make directory
+mkdir(erniePathTemp)
+
 % Navigate and create a directory
 cd(erniePathTemp)
 
