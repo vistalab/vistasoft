@@ -95,6 +95,7 @@ if status ~= 0
 end
 
 file = readFileList(tn);
+delete(tn);
 
 % Return an empty string if there were no results. 
 if isempty(file)
