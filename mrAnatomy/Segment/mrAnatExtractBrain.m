@@ -151,7 +151,7 @@ delete(betScript)
 
 % If img and out are the same then it is a temporary file and should be removed.
 % If not, then it was passed in from a location on disk and should be preserved
-if ~strcmp(img, out) && strfind(out, tempdir) && exists(out,'file')
+if ~strcmp(img, out) && strfind(out, tempdir) && exist(out,'file')
     delete(out)
 end
 
