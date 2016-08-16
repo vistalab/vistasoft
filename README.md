@@ -37,13 +37,12 @@ For detailed documentation, please visit the [VISTA lab wiki](http://vistalab.st
 ### Installation
 
 To install Vistasoft:
-
-1) Clone the Vistasoft repository on your local machine; for example:
+1. Clone the Vistasoft repository on your local machine; for example:
    ```sh
    > cd ~/matlab
    > git clone https://github.com/vistalab/vistasoft
    ```
-2) Start Matlab and Add the Vistasoft repository's base directory to your Matlab path:
+2. Start Matlab and Add the Vistasoft repository's base directory to your Matlab path:
    ```matlab
    addpath(genpath('~/matlab/vistasoft'));
    ```
