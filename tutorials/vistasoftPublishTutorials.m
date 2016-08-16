@@ -16,7 +16,7 @@ tdir = fullfile(vistaRootPath,'tutorials');
 cd(tdir)
 
 % List of tutorials to publish
-tlist = {'testPublishing.m'};
+tlist = {'t_initAnatomyFromFreesurfer.m','t_initVistaSession'};
 
 % Publish tutorial list
 opts.format = 'html';
