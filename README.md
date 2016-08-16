@@ -37,6 +37,7 @@ For detailed documentation, please visit the [VISTA lab wiki](http://vistalab.st
 ### Installation
 
 To install Vistasoft:
+
 1) Clone the Vistasoft repository on your local machine; for example:
    ```sh
    > cd ~/matlab
