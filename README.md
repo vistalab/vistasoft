@@ -17,7 +17,7 @@ And in addition:
 - utilities
 - setup
 - tutorials 
-- external: functions written by others that we use as dependencies (see optional software).
+- external: functions written by others that we use as dependencies (see optional packages).
 
 ### External dependencies
 Vistasoft depends on the following packages:
