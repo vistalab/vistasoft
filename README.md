@@ -52,7 +52,7 @@ To install Vistasoft:
    addpath(genpath('~/matlab/vistasoft'));
    ```
 
-Note that if you have installed additional Matlab packages (such as the RemoteDataToolbox), you will have to ensure that these packages are on your path as well.
+   Note that if you have installed additional Matlab packages (such as the RemoteDataToolbox), you will have to ensure that these packages are on your path as well.
 
 For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
 
