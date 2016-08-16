@@ -50,6 +50,8 @@ To install Vistasoft:
 
 For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
 
+### License
+
 (c) Vista lab, Stanford University.
 
 Unless otherwise noted, all our code is released under the [GPL](http://www.gnu.org/copyleft/gpl.html) 
