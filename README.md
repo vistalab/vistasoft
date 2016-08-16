@@ -39,15 +39,20 @@ For detailed documentation, please visit the [VISTA lab wiki](http://vistalab.st
 To install Vistasoft:
 
 1. Clone the Vistasoft repository on your local machine; for example:
-       ```sh
-       > cd ~/matlab
-       > git clone https://github.com/vistalab/vistasoft
-       ```
+
+   ```sh
+   > cd ~/matlab
+   > git clone https://github.com/vistalab/vistasoft
+
+   ```
+   
 2. Start Matlab and Add the Vistasoft repository's base directory to your Matlab path:
-       ```matlab
-       addpath(genpath('~/matlab/vistasoft'));
-       ```
-   Note that if you have installed additional Matlab packages (such as the RemoteDataToolbox), you will have to ensure that these packages are on your path as well.
+
+   ```matlab
+   addpath(genpath('~/matlab/vistasoft'));
+   ```
+
+Note that if you have installed additional Matlab packages (such as the RemoteDataToolbox), you will have to ensure that these packages are on your path as well.
 
 For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
 
