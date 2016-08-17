@@ -78,5 +78,6 @@ vol = ip2volCurROI(vw ,vol);
 vol = refreshScreen(vol, 0);
 
 %% Clean up
-% mrvCleanWorkspace
-% cd(curdir)
+close(viewGet(vol, 'figure number')); 
+mrvCleanWorkspace
+cd(curdir)

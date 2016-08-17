@@ -79,5 +79,6 @@ vw = refreshScreen(vw,0);
 updateGlobal(vw)
 
 %% Clean up
-% mrvCleanWorkspace
-% cd(curdir)
+close(viewGet(vw, 'figure number')); 
+mrvCleanWorkspace
+cd(curdir)

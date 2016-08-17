@@ -99,6 +99,6 @@ ok = mrInit(params);
 vw = mrVista('inplane');
 
 %% Clean up
-% close(viewGet(vw, 'figure number'); 
-% mrvCleanWorkspace
-% cd(curdir)
+close(viewGet(vw, 'figure number')); 
+mrvCleanWorkspace
+cd(curdir)
