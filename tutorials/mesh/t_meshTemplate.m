@@ -56,7 +56,7 @@ if isempty(subjects_dir)
     % sometimes, Matlab doesn't get the environment, but we can pull it out of
     % a system command like so:
     [retval, output] = system('/bin/bash -ci ''echo -n $SUBJECTS_DIR''');
-    if retval == 0, fs_home = output; end
+    if retval == 0, subjects_dir = output; end
 end
 if isempty(subjects_dir)
     error(['FreeSurfer subject directory not found; make sure you have your' ...
