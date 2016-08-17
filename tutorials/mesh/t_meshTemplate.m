@@ -28,9 +28,9 @@
 %% Configuration:
 freesurfer_subject = 'ernie'; % on which FreeSurfer subject have we run the
                               % atlas Docker?
-display_mesh       = 'white'; % which FreeSurfer mesh surface should we use?
+display_mesh       = 'pial'; % which FreeSurfer mesh surface should we use?
 hemi               = 'lh';    % which hemisphere?
-plot_colors        = 'eccen'; % plot the label, angle, or eccen?
+plot_colors        = 'label'; % plot the label, angle, or eccen?
 max_eccen          = 20;      % the max eccentricity to plot
 
 
