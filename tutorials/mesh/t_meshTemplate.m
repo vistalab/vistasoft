@@ -41,7 +41,7 @@ fs_home = getenv('FREESURFER_HOME');
 if isempty(fs_home)
     % sometimes, Matlab doesn't get the environment, but we can pull it out of
     % a system command like so:
-    [retval, output] = system('/bin/bash -c ''echo -n $FREESURFER_HOME''');
+    [retval, output] = system('/bin/bash -ci ''echo -n $FREESURFER_HOME''');
     if retval == 0, fs_home = output; end
 end
 if isempty(fs_home)
@@ -55,7 +55,7 @@ subjects_dir = getenv('SUBJECTS_DIR');
 if isempty(subjects_dir)
     % sometimes, Matlab doesn't get the environment, but we can pull it out of
     % a system command like so:
-    [retval, output] = system('/bin/bash -c ''echo -n $SUBJECTS_DIR''');
+    [retval, output] = system('/bin/bash -ci ''echo -n $SUBJECTS_DIR''');
     if retval == 0, fs_home = output; end
 end
 if isempty(subjects_dir)
