@@ -36,6 +36,13 @@ function dataDir = mrtInstallSampleData(sourceFolder, projectName, dFolder, forc
 if notDefined('forceOverwrite'), forceOverwrite = true; end
 if notDefined('dFolder'), dFolder = fullfile(vistaRootPath, 'local'); end
 
+% Make sure there is a decent error message if RdtClient is not found
+if exist('RdtClient') ~= 2
+    error(['The RdtClient function is not on your Matlab path; make' ...
+           ' sure that you''ve installed the RemoteDataToolbox:' ...
+           ' https://github.com/isetbio/RemoteDataToolbox'])
+end
+
 % This creates the object, using the configuration data in the file
 % rdt/rdt-config-vistasoft.json
 rd = RdtClient('vistasoft');
