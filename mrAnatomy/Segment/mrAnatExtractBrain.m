@@ -2,7 +2,7 @@ function [brainMask,checkSlices] = mrAnatExtractBrain(img, mmPerVox, betLevel, o
 %Uses the FSL BET tool to compute a brain mask for the given image volume.
 %
 % [brainMask,checkSlices] = mrAnatExtractBrain([img], [mmPerVox=[1,1,1]], [betLevel=0.5], [outFile])
-% 
+%
 % The betLevel is the BET fractional intensity threshold parameter. It
 % should be [0-1]. The default of 0.5 usually works well. Smaller values
 % will yield a larger brain estimate. If you get brain stuff chopped off,
@@ -18,7 +18,7 @@ function [brainMask,checkSlices] = mrAnatExtractBrain(img, mmPerVox, betLevel, o
 %
 % img can be a string, in which case it is assumed to be a NIFTI filename.
 % or, it can be a NIFTI struct (as from niftiRead). In both cases,
-% mmPerVox is ignored and instead gleaned from the NIFTI header. 
+% mmPerVox is ignored and instead gleaned from the NIFTI header.
 %
 % If no output arguments are captured, the brain mask is saved in the same
 % place as the input file, but with '_mask' appended to the name.
@@ -34,7 +34,7 @@ if(~exist('mmPerVox','var') || isempty(mmPerVox)), mmPerVox = [1 1 1]; end
 if(~exist('img','var') || isempty(img))
     [f,p] = uigetfile({'*.nii.gz';'*.*'},'Select a t1-weighted NIFTI file...');
     if(isnumeric(f)), disp('User canceled.'); return; end
-    img = fullfile(p,f); 
+    img = fullfile(p,f);
 end
 
 if(isstruct(img))
@@ -88,7 +88,7 @@ else
 end
 
 % We could specify a better starting position for the BET surface
-% sphere estiamte, e.g., by using the talairach landmarks. 
+% sphere estimate, e.g., by using the talairach landmarks.
 if(nargout==0)
     [p,f,e] = fileparts(ni.fname);
     [x,f,e2] = fileparts(f);
@@ -133,7 +133,7 @@ if(nargout>0)
         checkSlices{ii} = im;
     end
 end
-  
+
 if(nargout>0)
     if(length(betLevel)==1)
         brainMask = brainMask{1};
@@ -149,9 +149,9 @@ end
 % Remove the betScript from the tempdir
 delete(betScript)
 
-% If img and out are the same then it is a path to  the 'out' file is in the temp directory, remove it, otherwise it was
-% passed in from a location on disk and should be preserved
-if ~strcmp(img, out) && strfind(out, tempdir)
+% If img and out are the same then it is a temporary file and should be removed.
+% If not, then it was passed in from a location on disk and should be preserved
+if ~strcmp(img, out) && strfind(out, tempdir) && exist(out,'file')
     delete(out)
 end
 
