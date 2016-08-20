@@ -1,7 +1,7 @@
-function outNii = niftiAssignZeros(nii, varargin)
+function outNii = niftiSelect(nii, varargin)
 % Preserve data within a spatial cube and zero everything outside it
 %
-%    boxNii = niftiAssignZeros(nii, varargin)
+%    boxNii = niftiSelect(nii, varargin)
 %
 % Typical uses
 %    Select a portion of a volume in a white matter mask
@@ -34,12 +34,11 @@ function outNii = niftiAssignZeros(nii, varargin)
 %    nii = niftiRead(fullfile(vistaRootPath,'rdt','inplane.nii.gz'));
 %    niftiView(nii);
 %    clear p;  p.keepLR = 16:64; p.keepPA = 96:159; p.keepIS = 5:15;  p.saveFlag = false;
-%    boxNii = niftiAssignZeros(nii,p);
+%    boxNii = niftiSelect(nii,p);
 %    niftiView(boxNii);
 %
 %    p.saveFlag = true; p.niiNewName = 'deleteMe';
-%    niftiAssignZeros(nii,p);  boxNii = niftiRead(p.niiNewName);
-%    niftiView(boxNii);
+%    niftiSelect(nii,p);  boxNii = niftiRead(p.niiNewName); niftiView(boxNii);
 %
 % RL/BW Vistasoft Team, 2016
 
