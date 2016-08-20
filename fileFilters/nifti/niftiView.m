@@ -1,5 +1,5 @@
 function [montage, hdl] = niftiView(ni,varargin)
-% Read a NIfTI file or a nifti struct and display a volume
+% Read a NIfTI file or a nifti struct and display one of its volumes
 %
 %    hdl = niftiView(ni,'volume',number,'figure',handle,'gam',gamma);
 %
@@ -8,23 +8,25 @@ function [montage, hdl] = niftiView(ni,varargin)
 p = inputParser;
 p.KeepUnmatched = true;
 
-vFunc = @(x) (isstruct(x) || exist(x,'file') );
+vFunc = @(x) ((isstruct(x) && isfield(x,'nifti_type')) || (ischar(x) && exist(x,'file')));
 p.addRequired('ni',vFunc);
+if ischar(ni), ni = niftiRead(ni);  end
+
 p.addParameter('volume',1,@isnumeric);
 p.addParameter('hdl',[],@isgraphics);
-p.addParameter('gam',0.3,@isnumeric);
+p.addParameter('gam',0.5,@isnumeric);
 
 p.parse(ni,varargin{:});
 volume = p.Results.volume;
-hdl = p.Results.hdl;     %#ok<NASGU>
-gam = p.Results.gam;
+hdl    = p.Results.hdl;     %#ok<NASGU>
+gam    = p.Results.gam;
 
-if ischar(ni)
-    ni = niftiRead(ni);
+% Show it as montage.  Be alert that we are treating 3D data as if it could
+% have a fourth volume dimension, but make sure that volume is always 1.
+if length(ni.dim) == 3 && volume ~= 1
+    error('Volume parameter out of range')
 end
-
-% Show it as montage 
-[montage, hdl] = niftiMontage((double(ni.data(:,:,:,volume)).^gam),varargin{:});
+[montage, hdl] = niftiMontage((squeeze(double(ni.data(:,:,:,volume))).^gam),varargin{:});
 
 % Label the image
 [~,fname,~] = fileparts(ni.fname);
