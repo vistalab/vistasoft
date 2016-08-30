@@ -147,6 +147,9 @@ inds = sort(inds(:),'descend')';
 if isfield(fg,'params') && ~isempty(fg.params)
   % Remove fg.params entries from the largest to smallest, thus
   % avoiding an index exceeds matrix dimensions error.
+<<<<<<< HEAD
+  fg.params = [];
+=======
   % (This was not implemented in Feb 2015 correctly.  So I fixed it, BW).
   nParams = numel(fg.params);
   for kk = nParams:-1:1
@@ -163,6 +166,7 @@ if isfield(fg,'params') && ~isempty(fg.params)
       % idx(c) = kk; %#ok<AGROW>
     end
   end
+>>>>>>> b42e7ac552fd83cc634fe066c37904bce52eb82b
 end
 
 %% REMOVAL: fibers removed based on 'list' (inds)

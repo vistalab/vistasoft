@@ -11,37 +11,34 @@ function fg = fgRead(fgFile)
 %
 % EXAMPLE:
 %   fgRead('fgName.mat');
+%   fgRead('fgName.pdb')
+%   fgRead('fgName.tck')
 % 
 % See Also:
 %   fgWrite.m
 % 
 % 
-% (C) Stanford VISTA, 2011
+% (C) Stanford VISTA, 2016
 
 %% Check inputs
-
 % Check for name variable and use fg.name if empty
 if ~exist('fgFile','var') || isempty(fgFile) 
-    fgFile = mrvSelectFile('r',{'pdb','mat'},'Select FG File'); 
+    fgFile = mrvSelectFile('r',{'pdb','mat','tck'},'Select FG File'); 
 end
 
 % Get the file type
-if strcmp(fgFile(end-3:end),'.mat')
-    type = 'mat';
-end
-
-if strcmp(fgFile(end-3:end),'.pdb')
-    type = 'pdb';
-end
-
+[~,~,fileType] = fileparts(fgFile);
 
 %% Read the file
-
-switch type
-    case 'pdb'
+switch fileType
+    case '.pdb'
         fg = mtrImportFibers(fgFile);
-    case 'mat'
+    case '.mat'
         fg = dtiLoadFiberGroup(fgFile);
+    case '.tck'
+        fg = dtiImportFibersMrtrix(fgFile);
+    otherwise
+        error('[%s] Cannot parse file type for the tractogram.',mfilename)
 end
 
 return
