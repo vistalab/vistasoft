@@ -147,20 +147,7 @@ inds = sort(inds(:),'descend')';
 if isfield(fg,'params') && ~isempty(fg.params)
   % Remove fg.params entries from the largest to smallest, thus
   % avoiding an index exceeds matrix dimensions error.
-  for kk = 1:numel(fg.params)
-    if ~isfield(fg.params{kk}, 'stat')
-      % Remove the fg.params entry that does not have a 'stat'
-      % field.
-      fg.params(kk) = [];
-      % Add 1 to the counter and set the entry in idx - which
-      % will keep track of which params we removed. This will be
-      % used in the next cell to loop over the pathwayInfo field
-      % and remove the corresponding entries in the pathwayInfo.
-      % fields.
-      % c = c+1;
-      % idx(c) = kk; %#ok<AGROW>
-    end
-  end
+  fg.params = [];
 end
 
 %% REMOVAL: fibers removed based on 'list' (inds)
