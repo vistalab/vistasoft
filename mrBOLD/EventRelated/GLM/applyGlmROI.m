@@ -1,6 +1,6 @@
-function model = applyGlmROI(view,roi,scans,params);
+function model = applyGlmROI(vw,roi,scans,params)
 %
-% model = applyGlmROI(view,[roi],[scans],[params]);
+% model = applyGlmROI(vw,[roi],[scans],[params]);
 % 
 % Apply a General Linear Model to the time series
 % within an ROI, for the selected scans and
@@ -19,41 +19,38 @@ function model = applyGlmROI(view,roi,scans,params);
 % Returns a model struct with results of the GLM.
 %
 % ras, 04/18/05.
-if ieNotDefined('view')
-    view = getSelectedInplane;
-    if isempty(view)
+if ieNotDefined('vw')
+    vw = getSelectedInplane;
+    if isempty(vw)
         help(mfilename);
         return
     end
 end
 
 if ieNotDefined('scans')
-    scans = er_getScanGroup(view);
+    scans = er_getScanGroup(vw);
 end
 
 if ieNotDefined('params')
-    params = er_getParams(view,scans(1));
+    params = er_getParams(vw,scans(1));
 end
 
 if ieNotDefined('roi')
-    roi = viewGet(view,'selectedRoi');
+    roi = viewGet(vw,'selectedRoi');
 end
 
-roi = tc_roiStruct(view,roi);
+roi = tc_roiStruct(vw,roi);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Grab useful parameters for easy access
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 tr = params.framePeriod;
-trials = er_concatParfiles(view,scans);
-nConds = sum(trials.condNums>0);
+trials = er_concatParfiles(vw,scans);
 nScans = length(scans);
 for s = 1:nScans
-	framesPerRun(s) = numFrames(view,scans(s));
+	framesPerRun(s) = numFrames(vw,scans(s));
 end
-nFrames = max(framesPerRun);
-nVoxels = size(roi.coords,2);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Get Data Matrix Y
@@ -63,7 +60,7 @@ Y = []; %repmat(NaN,[nFrames nVoxels nScans]);
 
 % get voxel data from ROI:
 for s = 1:nScans
-    data = er_voxelData(view,roi,scans(s));
+    data = er_voxelData(vw,roi,scans(s));
     
     % this code
     % mimics what er_selxavg does:

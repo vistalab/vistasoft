@@ -1,6 +1,6 @@
-function [tSeries fit] = detrendTSeries(tSeries,detrendOption,smoothFrames)
+function [tSeries, trends] = detrendTSeries(tSeries,detrendOption,smoothFrames)
 %
-% [detrendedTSeries  fit] = detrendTSeries(tSeries,detrendOption,[smoothFrames])
+% [detrendedTSeries,  trends] = detrendTSeries(tSeries,detrendOption,[smoothFrames])
 %
 % detrendOption is one of the following:  
 %   0 no trend removal
@@ -18,7 +18,13 @@ function [tSeries fit] = detrendTSeries(tSeries,detrendOption,smoothFrames)
 %                   wgts = model\tSeries;
 
 %disp('Detrending tSeries...');
-nFrames = size(tSeries,1);  
+
+% reshape into matrix if tSeries is 3D array
+dims = size(tSeries);
+nFrames = dims(1);
+tSeries = reshape(tSeries, nFrames, []);
+
+
 switch detrendOption
 case 2
     % remove a quadratic function
@@ -30,8 +36,8 @@ case 2
     model = bsxfun(@rdivide, model, max(model));      
     wgts = model\tSeries;
     
-    fit = model*wgts;
-    tSeries = tSeries - fit;
+    trends = model*wgts;
+    tSeries = tSeries - trends;
     
 case -1  
     % remove a linear function
@@ -40,25 +46,31 @@ case -1
 
     wgts = model\tSeries;
     
-    fit = model*wgts;
-    tSeries = tSeries - fit;
+    trends = model*wgts;
+    tSeries = tSeries - trends;
     
 case 1
     % Do high-pass baseline removal
     calcstep = 1e4;
     if size(tSeries,2) <= calcstep;
-        [tSeries fit] = removeBaseline2(tSeries, smoothFrames);        
+        [tSeries, trends] = removeBaseline2(tSeries, smoothFrames);        
     else % solve the out of memory problem
+        trends = NaN(size(tSeries));
         for ii = 1:calcstep:size(tSeries,2);
             curRange = ii:min(ii+calcstep-1,size(tSeries,2));
-            [tSeries(:,curRange) fit] = removeBaseline2(tSeries(:,curRange), smoothFrames);
+            [tSeries(:,curRange), trends(:,curRange)] = ...
+                removeBaseline2(tSeries(:,curRange), smoothFrames);
         end
     end
 otherwise
     % Do nothing
-    fit = zeros(size(tSeries));
+    trends = zeros(size(tSeries));
     
 end
+
+% reshape tSeries in case we changed it from 3D array to matrix
+tSeries = reshape(tSeries, dims);
+trends    = reshape(trends, dims);
 
 return
 
@@ -106,7 +118,7 @@ legend({'linear', 'quadratic', 'highpass'}, 'Location', 'Best')
 n = length(ts);
 model = [(1:n).*(1:n);(1:n);ones(1,n)]';    
 wgts = model\ts;
-fit = model*wgts;
+trends = model*wgts;
 
 % new (divide each column of model by its max)
 n = length(ts);
@@ -116,4 +128,4 @@ wgts = model\ts;
 fit2 = model*wgts;
 
 figure(102); 
-plot(1:n, fit, 'r', 1:n, fit2, 'k')
+plot(1:n, trends, 'r', 1:n, fit2, 'k')

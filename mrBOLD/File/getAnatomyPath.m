@@ -94,11 +94,7 @@ if (ispref('VISTA','defaultAnatomyPath'))
 		disp(anatPath);
 	end
 else
-	if ~ispc
-		anatPath = '/biac2/wandell2/data/anatomy'; %
-	else
-		anatPath = 'X:';
-	end % end check on computer type
+    anatPath = '3DAnatomy'; %
 end % endif preference is set
 
 % ras 09/2006: see comments at top -- will remove this altogether if no one

@@ -218,12 +218,12 @@ VOLUME{s} = loadAnat(VOLUME{s});
 
 
 %% load prefs
-try, VOLUME{s} = loadPrefs(VOLUME{s}); end
+VOLUME{s} = loadPrefs(VOLUME{s});
 
 % if the prefs specify a coherence analysis-related mode (co, amp, ph),
 % then load a corAnal
 if ismember( VOLUME{s}.ui.displayMode, {'co' 'amp' 'ph'} )
-    try, VOLUME{s} = loadCorAnal(VOLUME{s}); end
+    VOLUME{s} = loadCorAnal(VOLUME{s});
 end
 
 

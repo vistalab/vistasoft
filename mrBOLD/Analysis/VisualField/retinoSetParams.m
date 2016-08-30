@@ -1,11 +1,11 @@
-function params = retinoSetParams(view, dt, scan, params);
+function params = retinoSetParams(vw, dt, scan, params)
 % Set visual field mapping ("retinotopic", though it doesn't need
 % to be) parameters for the selected scan, providing an input dialog
 % if the parameters aren't passed in as an input argument.
 %
-% params = retinoSetParams(view, <dt, scan, params>);
+% params = retinoSetParams(vw, <dt, scan, params>)
 %
-% view: mrVista view. <Defaults to cur inplane>
+% vw: mrVista view. <Defaults to cur inplane>
 % dt: data type <Defaults to cur dt>
 % scan: scan <Defaults to cur scan>
 % params: struct specifying the visual field mapping design. The
@@ -72,15 +72,15 @@ function params = retinoSetParams(view, dt, scan, params);
 % ras, 01/06: testing the waters if this code is needed. I see many
 % other places where similar parameters are set, but none of them
 % seem immediately useable to me.
-if notDefined('view'), view = getSelectedInplane;       end
-if notDefined('dt'), dt = viewGet(view, 'curdt');       end
-if notDefined('scan'), scan = viewGet(view, 'curscan'); end
+if notDefined('vw'), vw = getSelectedInplane;       end
+if notDefined('dt'), dt = viewGet(vw, 'curdt');       end
+if notDefined('scan'), scan = viewGet(vw, 'curscan'); end
 
-mrGlobals;
+global dataTYPES;
 
 if isnumeric(dt)
     dtNum = dt;
-    dt = dataTYPES(dtNum).name; 
+    dt = viewGet(vw, 'dt name', dtNum); 
 else
     dtNum = existDataType(dt);
 end
@@ -88,9 +88,9 @@ end
 % if many scans entered, iterate through each one
 if length(scan)>1
     if notDefined('params')
-        for s = scan, view = retinoSetParams(view, dt, s); end
+        for s = scan, vw = retinoSetParams(vw, dt, s); end
     else
-        for s = scan, view = retinoSetParams(view, dt, s, params); end
+        for s = scan, vw = retinoSetParams(vw, dt, s, params); end
     end
     return
 end
@@ -106,20 +106,22 @@ if notDefined('params')
     if isequal(resp, 'Cancel'), warning('User Aborted'); return; end
     
     if isequal(resp, 'Eccentricity')
-        params = eccentricityDialog(view, dt, scan);
+        params = eccentricityDialog(vw, dt, scan);
     else
-        params = polarAngleDialog(view, dt, scan);
+        params = polarAngleDialog(vw, dt, scan);
     end
 elseif isequal(params, 'none')
     params = [];
 end
 
+if isempty(params), return; end
+
 dataTYPES(dtNum).blockedAnalysisParams(scan).visualFieldMap = params;
 saveSession(0);
 
 % if there's a UI, re-set the color bar
-if checkfields(view, 'ui', 'colorbarHandle') & isequal(view.ui.displayMode, 'ph')
-	setColorBar(view, 'on');
+if checkfields(vw, 'ui', 'colorbarHandle') && isequal(vw.ui.displayMode, 'ph')
+	setColorBar(vw, 'on');
 end
 
 return
@@ -129,11 +131,11 @@ return
 
 
 % /---------------------------------------------------------------------/ %
-function params = eccentricityDialog(view, dt, scan);
+function params = eccentricityDialog(vw, dt, scan)
 % param] = eccentricityDialog;
 % put up a dialog to get parameters for an eccentricity-mapping scan.
 % checks if any existing params are already assigned to use as defaults.
-defaults = retinoGetParams(view, dt, scan);
+defaults = retinoGetParams(vw, dt, scan);
 if ~isfield(defaults, 'startAngle'),    defaults.startAngle = 0;       end
 if ~isfield(defaults, 'endAngle'),      defaults.endAngle = 3;         end
 if ~isfield(defaults, 'width'),         defaults.width = 1.2;          end
@@ -183,12 +185,12 @@ resp = generalDialog(dlg, 'Eccentricity Parameters');
 % parse the response 
 % (could just set resp = params, except I want the 'type' field first)
 params.type = 'eccentricity';
-params.startAngle = str2num(resp.startAngle);
-params.endAngle = str2num(resp.endAngle);
-params.width = str2num(resp.width);
-params.blankPeriod = resp.blankPeriod;
-params.dutyCycle = 1 - str2num(resp.dutyCycle);
-params.startPhase = str2num(resp.startPhase);
+params.startAngle   = str2double(resp.startAngle);
+params.endAngle     = str2double(resp.endAngle);
+params.width        = str2double(resp.width);
+params.blankPeriod  = resp.blankPeriod;
+params.dutyCycle    = 1 - str2double(resp.dutyCycle);
+params.startPhase   = str2double(resp.startPhase);
 
 return
 % /---------------------------------------------------------------------/ %
@@ -198,15 +200,15 @@ return
 
 
 % /---------------------------------------------------------------------/ %
-function params = polarAngleDialog(view, dt, scan);
+function params = polarAngleDialog(vw, dt, scan)
 % param] = polarAngleDialog;
 % put up a dialog to get parameters for a polar-angle-mapping scan.
 % checks if any existing params are already assigned to use as defaults.
-defaults = retinoGetParams(view, dt, scan);
+defaults = retinoGetParams(vw, dt, scan);
 if ~isfield(defaults, 'startAngle'),    defaults.startAngle = 90;    end
 if ~isfield(defaults, 'direction'), defaults.direction = 'clockwise'; end
 if ~isfield(defaults, 'width'),         defaults.width = 0;        end
-if ~isfield(defaults, 'visualField') | isequal(defaults.visualField, 360)
+if ~isfield(defaults, 'visualField') || isequal(defaults.visualField, 360)
     defaults.visualField = 'both';  
 else
     defaults.visualField = 'left';
@@ -229,7 +231,7 @@ dlg(3).fieldName = 'visualField';
 dlg(3).style = 'popup';
 dlg(3).string = 'Visual Field covered?';
 dlg(3).list = {'left' 'right' 'both'};
-dlg(3).value = cellfind(dlg(3).list, defaults.visualField);;
+dlg(3).value = cellfind(dlg(3).list, defaults.visualField);
 
 dlg(4).fieldName = 'width';
 dlg(4).style = 'edit';
@@ -238,11 +240,12 @@ dlg(4).value = num2str(defaults.width);
 
 % put up the dialog
 resp = generalDialog(dlg, 'Polar Angle Parameters');
+if isempty(resp), params = []; return; end
 
 % parse the response
 % (could just set resp = params, except I want the 'type' field first)
 params.type = 'polar_angle';
-params.startAngle = str2num(resp.startAngle);
+params.startAngle = str2double(resp.startAngle);
 params.direction = resp.direction;
 if isequal(resp.visualField, 'left')
     params.visualField = 180;
@@ -251,7 +254,7 @@ elseif isequal(resp.visualField, 'right')
 else
     params.visualField = 360;
 end
-params.width = str2num(resp.width);
+params.width = str2double(resp.width);
 
 return
 % /---------------------------------------------------------------------/ %

@@ -1,4 +1,4 @@
-function fig = centerOnscreen(fig, par);
+function fig = centerOnscreen(fig)
 % Center a figure onscreen, or relative to a parent figure.
 %
 % fig = centerOnscreen(fig, <parent>);

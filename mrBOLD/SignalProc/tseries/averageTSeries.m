@@ -51,7 +51,7 @@ end
 
 % Set dataTYPES.scanParams so that new average scan has the same params as
 % the 1st scan on scanList.
-src = {vw.curDataType scanList(1)};
+src = {viewGet(vw, 'curDataType') scanList(1)};
 [hiddenView, newScanNum, ndataType] = initScan(hiddenView, typeName, [], src);
 %dataTYPES(ndataType).scanParams(newScanNum).annotation = annotation;
 dataTYPES(ndataType) = dtSet(dataTYPES(ndataType), 'Annotation', annotation, ...
@@ -189,7 +189,7 @@ return;
 function [scans, typeName, str] = averageTSeriesGUI(vw, scans, typeName, str)
 % Dialog to get the scan selection and type name for averageTSeries
 for ii = 1:viewGet(vw, 'numScans')
-    scanList{ii} = sprintf('(%i) %s', ii, annotation(vw, ii));
+    scanList{ii} = sprintf('(%i) %s', ii, viewGet(vw, 'annotation', ii));
 end
 
 dlg(1).fieldName = 'scans';

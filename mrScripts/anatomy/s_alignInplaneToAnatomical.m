@@ -3,10 +3,10 @@
 % This script is used to align a T1- or T2-weighted to a high resolution,
 % whole brain anatomical scan. It requires two code repositories:
 %
-%   vistasoft
-%   kendrick
+%   knkutils (https://github.com/kendrickkay/knkutils)
+%   alignvolumedata (https://github.com/kendrickkay/alignvolumedata)
 %
-% We assume there is already an mrSESSION file (i.e., a vista session has
+% We assume there is already a mrSESSION file (i.e., a vista session has
 % been initiated). Manual intervention is required in two steps - step 1
 % and step 4b below. Otherwise it is automated.
 

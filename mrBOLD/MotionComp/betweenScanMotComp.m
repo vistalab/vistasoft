@@ -36,9 +36,11 @@ meanMap = vw.map;
 % if the number of slices is too small, repeat the first and last slice
 % to avoid running out of data (the derivative computation discards the
 % borders in z, typically 2 slices at the begining and 2 more at the end)
-if size(meanMap,3)<=8
-    meanMap = cat(3, meanMap(:,:,1,:), meanMap(:,:,1,:), meanMap,...
-        meanMap(:,:,end,:), meanMap(:,:,end,:));
+for scan = 1:length(meanMap)
+    if size(meanMap{scan},3)<=8
+        meanMap{scan} = cat(3, meanMap{scan}(:,:,1,:), meanMap{scan}(:,:,1,:), meanMap{scan},...
+            meanMap{scan}(:,:,end,:), meanMap{scan}(:,:,end,:));
+    end
 end
 
 
@@ -68,7 +70,7 @@ for iScan = 1:nScans
     
     % Load tSeries from all slices into one big matrix
     [~, ni] = loadtSeries(vw, scan);
-    volSeries = ni.data; clear ni;
+    volSeries = niftiGet(ni, 'data'); clear ni;
 
 	if verbose > 1, close(waitHandle); end
 

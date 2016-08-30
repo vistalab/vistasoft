@@ -31,7 +31,11 @@ function [co, amp, ph] = computeCorAnalSeries(vw, scanNum, sliceNum, nCycles, fr
 
 % Call percentTSeries to load it, and remove dc and trend
 vw = percentTSeries(vw, scanNum, sliceNum);
-ptSeries = vw.tSeries;
+ptSeries = viewGet(vw, 'tSeries');
+
+% Rehsape ptSeries into matrix in case it is 3D array
+dims = size(ptSeries);
+ptSeries = reshape(ptSeries, dims(1), []);
 
 if exist('framesToUse','var')
     ptSeries=ptSeries(framesToUse,:);
@@ -75,8 +79,10 @@ clear scaledAmp
 ph = -(pi/2) - angle(ft(nCycles+1,:));
 ph(ph<0) = ph(ph<0)+pi*2;
 
-% Replace NaN's with zero
-% djh, 2/2001, commented this out because we don't want to confuse zeros with no data
-%co=replaceValue(co,NaN,0);
-%amp=replaceValue(amp,NaN,0);
+% Reshape into matrices in case we started with 3D arrays
+if numel(dims) > 2,
+    co  = reshape(co, dims(2), dims(3));
+    amp = reshape(amp, dims(2), dims(3));
+    ph  = reshape(ph, dims(2), dims(3));
+end
 

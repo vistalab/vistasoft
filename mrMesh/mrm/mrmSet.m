@@ -70,7 +70,7 @@ if isempty(windowID), error('Mesh must specify a window'); end
 param = mrvParamFormat(param);
 switch param
     case {'close','closeone','closecurrent'}
-        [tmp,foo,val] = mrMesh(host,windowID,'close');
+        mrMesh(host,windowID,'close');
         msh = meshSet(msh,'id',-1);
     case {'closeall','allclose'}
         % mrmSet(msh(),'closeall');
@@ -82,7 +82,7 @@ switch param
         % Add an actor to an existing window, or if no window is open
         % open one, set open an actor, and set its windowID. 
         p.class = 'mesh';
-        [id, stat, val] = mrMesh(host, windowID, 'add_actor', p);
+        [~, ~, val] = mrMesh(host, windowID, 'add_actor', p);
         if checkfields(val,'actor'), 
             msh = meshSet(msh,'actor',val.actor);
             msh = meshSet(msh,'windowid',windowID);
@@ -93,13 +93,13 @@ switch param
     case {'lightorigin'}
         % mrmSet(msh,'lightorigin',lightActor,origin);
         light.class  = 'light';        
-        if length(varargin) < 2 | isempty(varargin{2}), 
+        if length(varargin) < 2 || isempty(varargin{2}), 
             error('Require lightActor and origin');
         else
             light.actor  = varargin{1};
             light.origin = varargin{2};
         end
-        [id,stat,res] = mrMesh(host, windowID, 'set', light);
+        mrMesh(host, windowID, 'set', light);
                
     case {'showlight'}
         % Sets up a light defined by the three parameters in window of the
@@ -107,7 +107,7 @@ switch param
         
         % mrmSet(msh,'addlight',ambient,diffuse,origin);
         l.class = 'light';
-        [id,stat,res] = mrMesh(host, windowID, 'add_actor', l);
+        [~,stat,res] = mrMesh(host, windowID, 'add_actor', l);
         if stat < 0, error('Error adding light actor.'); end
         
         light.actor = res.actor;
@@ -129,11 +129,11 @@ switch param
         if nargout > 1, ret = light; end
         
     case {'addlight'}
-        if length(varargin) < 1 | isempty(varargin{1}), ambient = [.3,.3,.3]; 
+        if length(varargin) < 1 || isempty(varargin{1}), ambient = [.3,.3,.3]; 
         else ambient = varargin{1}; end
-        if length(varargin) < 2 | isempty(varargin{2}), diffuse = [0.5, 0.5, 0.6]; 
+        if length(varargin) < 2 || isempty(varargin{2}), diffuse = [0.5, 0.5, 0.6]; 
         else diffuse = varargin{2}; end
-        if length(varargin) < 3 | isempty(varargin{3}), origin = [500,0,300]; 
+        if length(varargin) < 3 || isempty(varargin{3}), origin = [500,0,300]; 
         else origin = varargin{3}; end
         
          [msh,ret] = mrmSet(msh,'showlight',ambient,diffuse,origin);
@@ -166,7 +166,7 @@ switch param
         else im.origin = [0 0 0]; end
         if checkfields(imgParameters,'actor'), im.actor = imgParameters.actor;
         else
-            [id,s,r] = mrMesh(imageMesh.host, imageMesh.id, 'add_actor', im);
+            [~,~,r] = mrMesh(imageMesh.host, imageMesh.id, 'add_actor', im);
             im.actor = r.actor;
         end
         imgData = imgParameters.img;
@@ -201,7 +201,7 @@ switch param
         im.texture(4,:) = ones(size(im.texture(1,:)));
         
         % Add the image data to the actor
-        [id,s,r] = mrMesh(host, windowID, 'set', im);
+        [~,~,~] = mrMesh(host, windowID, 'set', im);
         
     case {'removeactor','deleteactor','removeactors','deleteactors','removelistofactors','deletelistofactors'}
         % mrmSet(msh,'deleteActor',33)
@@ -211,11 +211,11 @@ switch param
         else  warning('mrmSet: No actors to delete.'); return;
         end
         
-        deleteList = deleteList(find(deleteList));
+        deleteList = deleteList(deleteList);
         
         for ii=1:length(deleteList)
             p.actor = deleteList(ii);
-            [s,r,c] = mrMesh(host, windowID, 'remove_actor', p);
+            mrMesh(host, windowID, 'remove_actor', p);
         end
     
     case {'builddecimatesmooth','buildmeshanddecimateandsmooth'}
@@ -227,7 +227,7 @@ switch param
         p = setSmooth(p,msh,1);
         p = setDecimate(p,msh,1);
         p.actor = meshGet(msh,'actor'); 
-        [id, stat, res] = mrMesh(host, windowID, 'build_mesh', p);
+        mrMesh(host, windowID, 'build_mesh', p);
         
     case {'buildnosmooth'}
         % mrmSet(msh,'buildMeshAndDecimateAndSmooth',voxels);
@@ -238,7 +238,7 @@ switch param
         p = setSmooth(p,msh,0);
         p = setDecimate(p,msh,1);
         p.actor = meshGet(msh,'actor'); 
-        [id, stat, res] = mrMesh(host, windowID, 'build_mesh', p);
+        mrMesh(host, windowID, 'build_mesh', p);
         
     case {'setmesh','setdata','data'}
         % mrmSet(msh,'setdata')
@@ -250,15 +250,15 @@ switch param
         % mrmSet(msh,'vertices');
         p.actor = actorCheck(msh);
         p.vertices = meshGet(msh,'vertices');
-        [id, stat, res] = mrMesh(host, windowID, 'modify_mesh', p);
+        mrMesh(host, windowID, 'modify_mesh', p);
 
     case 'camerarotation'
         if isempty(varargin); error('Must pass in rotation matrix.'); end
         p.actor = 0;
-        if size(varargin{1}) ~= [3,3], error('Rotation matrix is not 3x3');
+        if ~isequal(size(varargin{1}),[3,3]), error('Rotation matrix is not 3x3');
         else p.rotation = varargin{1};
         end
-        [tmp,foo,res] = mrMesh(host,windowID,'set',p);
+        mrMesh(host,windowID,'set',p);
         
     case 'cameraorigin'
         if isempty(varargin); error('Must pass in origin.'); end
@@ -266,12 +266,12 @@ switch param
         else p.origin = varargin{1};
         end
         p.actor = 0;
-        [tmp,foo,res] = mrMesh(host,windowID,'set',p);
+        mrMesh(host,windowID,'set',p);
         
     case 'cameraspace'
         p.actor = 0;
-        p.camera_space = val;
-        [tmp,foo,res] = mrMesh(host,windowID,'set',p);
+        p.camera_space = varargin{1}; % ?? val;
+        mrMesh(host,windowID,'set',p);
       
     case 'background'
         % Set the RGB color of the background.
@@ -281,23 +281,23 @@ switch param
         else error('color must be RGB or RGBalpha');
         end
         p.color = c;
-        [tmp,foo,val] = mrMesh(host,windowID,'background',p);
+        mrMesh(host,windowID,'background',p);
         
     case 'transparency'
         % mrmSet(mesh,'transparency',1/0);
         if ~isempty(varargin), p.enable = double(varargin{1});
         else  p.enable = 1; end
-        [tmp,foo,val] = mrMesh(host, windowID, 'transparency', p);
+        mrMesh(host, windowID, 'transparency', p);
             
     case {'windowsize','meshwindowsize','displaysize'}
         % mrmSet(msh,'windowSize',256,256);
         if length(varargin) < 2, error('Window size requires width and height'); end
         p.height = varargin{1};
         p.width =  varargin{2};
-        [tmp,foo,val] = mrMesh(host,windowID,'set_size',p);
+        mrMesh(host,windowID,'set_size',p);
 
     case {'refresh','windowrefresh'}
-        [tmp,ret,val] = mrMesh(host,windowID,'refresh');
+        [~,ret] = mrMesh(host,windowID,'refresh');
 
     case 'actorrotation'
         %  mrmSet(msh,'actorrotation',rMatrix);
@@ -319,24 +319,22 @@ switch param
     case {'applysmooth','applysmoothing'}
         % mrmSet(msh,'applysmooth');
         warning('Use meshSmooth, not mrmSet(msh,''applysmooth'') to smooth meshes')
-        return;
-        
-        p.smooth_iterations = msh.smooth_iterations;
-        p.smooth_relaxation = msh.smooth_relaxation;
-        p.smooth_sinc_method = msh.smooth_sinc_method;
-        p.actor = meshGet(msh,'actor');
-        [id,stat] = mrMesh(host, windowID, 'smooth', p);
+        return;        
+        %         p.smooth_iterations = msh.smooth_iterations;
+        %         p.smooth_relaxation = msh.smooth_relaxation;
+        %         p.smooth_sinc_method = msh.smooth_sinc_method;
+        %         p.actor = meshGet(msh,'actor');
+        %         [id,stat] = mrMesh(host, windowID, 'smooth', p);
 
     case {'smooth','smoothmesh','meshsmooth'}
         % mrmSet(msh,'smooth');
         warning('Use meshSmooth, not mrmSet(msh,''smoothlarge'') to smooth meshes')
-        return;
-        
-        p.smooth_iterations = meshGet(msh,'relaxIter');
-        p.smooth_relaxation = meshGet(msh,'relaxFactor');
-        p.smooth_sinc_method = meshGet(msh,'smoothMethod');
-        p.actor = meshGet(msh,'actor');
-        [id,stat] = mrMesh(host, windowID, 'smooth', p);
+        return;        
+        %         p.smooth_iterations = meshGet(msh,'relaxIter');
+        %         p.smooth_relaxation = meshGet(msh,'relaxFactor');
+        %         p.smooth_sinc_method = meshGet(msh,'smoothMethod');
+        %         p.actor = meshGet(msh,'actor');
+        %         [id,stat] = mrMesh(host, windowID, 'smooth', p);
         
     case {'smoothlarge','smoothmeshlarge','meshsmoothlarge'}
         % mrmSet(msh,'smoothlarge',[smoothFactor = 3]);
@@ -371,31 +369,31 @@ switch param
         % mesh data structure
         % Hunh?  This routine looks like it gets the curvature values from
         % the window and puts them into msh rather than setting them.
-%         warning('Use meshColor, to color the mesh with its curvature')
-%         return;
+        %         warning('Use meshColor, to color the mesh with its curvature')
+        %         return;
         
         p.actor =          meshGet(msh,'actor');
         p.modulate_color = meshGet(msh,'curvaturecolor'); 
         p.mod_depth = meshGet(msh,'curvaturemodulationdepth'); 
         p.get_values = 1;
         
-        [id, stat, v] = mrMesh(host, windowID, 'curvatures', p);
+        [~, ~, v] = mrMesh(host, windowID, 'curvatures', p);
         msh = meshSet(msh,'curvature',v.values);
         
     case {'originlines'}
         %mrmSet(mesh,'originlines',0)   (Turn off)
         %mrmSet(mesh,'originlines',1)   (Turn on)
-        if length(varargin) > 0, p.enable = varargin{1}; 
+        if ~isempty(varargin), p.enable = varargin{1}; 
         else p.enable=0; end
         p.actor = meshGet(msh,'Actor'); 
-        [id,stat,res] = mrMesh(host, windowID, 'enable_origin_arrows', p);
+         mrMesh(host, windowID, 'enable_origin_arrows', p);
         
     case {'cursorposition','cursor'}
         % msh = viewGet(VOLUME{1},'currentmesh');
         % mrmSet(msh,'cursorPosition',meshGet(msh,'origin'));
         % mrmSet(msh,'cursorPosition',[-100,-100,-100]);
 
-        if length(varargin) > 0, val = varargin{1};
+        if ~isempty(varargin), val = varargin{1};
         else error('Must provide a coordinate.'); end
         val = val(:)';
         if length(val) ~= 3, error('Cursor coordinates must be 3D'); end
@@ -405,38 +403,38 @@ switch param
         p.actor = 1;
         %p.origin = val([2,1,3]) .* mmPerVox + origin;
         %[id,stat,res] = mrMesh(msh.host,msh.id, 'set', p);
-        p.position = [val([2,1,3]) .* mmPerVox + origin]';
-        [id,stat,res] = mrMesh(host,windowID, 'set_selection', p);
+        p.position = (val([2,1,3]) .* mmPerVox + origin)';
+        [~,~,res] = mrMesh(host,windowID, 'set_selection', p);
         if(isfield(res,'error'))
             disp([mfilename ': mrMesh error "' res.error '"']);
         end
         mrmSet(msh,'refresh');
         
     case {'cursorvertex'}
-        if length(varargin) > 0, val = varargin{1};
+        if ~isempty(varargin), val = varargin{1};
         else error('Must provide a vertex.'); end
         vert = meshGet(msh,'vertices');
         origin = meshGet(msh,'origin');
         p.position = vert(:,val) + origin';
         p.actor = 1;
-        [id,stat,res] = mrMesh(host, windowID, 'set_selection', p);
+        [~,~,~] = mrMesh(host, windowID, 'set_selection', p);
 
     case {'cursorraw'}
-        if(length(varargin)==1&prod(size(varargin{1}))==3) val = varargin{1};
+        if(length(varargin)==1 && numel(varargin{1})==3), val = varargin{1};
         else error('Must provide a 1x3 coordinate.'); end
         p.position = val(:);
         p.actor = 1;
-        [id,stat,res] = mrMesh(host, windowID, 'set_selection', p);
-	%if(stat~=0) disp(res); end
+        mrMesh(host, windowID, 'set_selection', p);
+        %if(stat~=0) disp(res); end
 	
     case {'hidecursor','cursoroff'}
         % mrmSet(msh,'hidecursor');
         p.enable = 0;
-        [id,stat,res] = mrMesh(host,windowID, 'enable_3d_cursor', p);
+        mrMesh(host,windowID, 'enable_3d_cursor', p);
     case {'showcursor','cursoron'}
         % mrmSet(msh,'showcursor');
         p.enable = 1;
-        [id,stat,res] = mrMesh(host,windowID, 'enable_3d_cursor', p);
+        mrMesh(host,windowID, 'enable_3d_cursor', p);
         
     case {'colors','overlaycolors','overlay'}
         % mrmSet(mesh,'colors',rgbAlpha);
@@ -451,7 +449,7 @@ switch param
         if size(c,2) ~= 4, error('Bad color data.'); end
         p.actor = meshGet(msh,'actor');
         p.colors = uint8(c');
-        [id,stat,res] = mrMesh(host, windowID, 'modify_mesh', p);
+        mrMesh(host, windowID, 'modify_mesh', p);
         msh = meshSet(msh,'colors',p.colors);
         
      case {'alpha','alphachannel'}
@@ -464,12 +462,12 @@ switch param
         end
         p.actor = meshGet(msh,'actor');
         p.colors = uint8(msh.data.colors);
-        if(strcmp(class(c), 'uint8'))
+        if isa(c, 'uint8')
             p.colors(4,:) = c;
         else
             p.colors(4,:) = uint8(round(c*255));
         end
-        [id,stat,res] = mrMesh(host, windowID, 'modify_mesh', p);
+        mrMesh(host, windowID, 'modify_mesh', p);
         msh = meshSet(msh,'colors',p.colors);
         
     case {'windowtitle','title'}

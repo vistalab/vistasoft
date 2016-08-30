@@ -42,32 +42,19 @@ if notDefined('grayPath')
 	  startDir = getAnatomyPath(mrSESSION.subject);
     end
 
-    ttltxt = ['Select ',hemisphere,' hemisphere gray or class file'];
-    filterspec = {'*.gray;*.grey;*.Gray;*.Grey;*.?r?y', 'Gray file'; ...
-				  '*.nii.gz;*.nii', 'NIFTI class file'; ...
-				  '*.*', 'All files'};
-    grayPath = getPathStrDialog(startDir, ttltxt, filterspec);
+    filterspec = {'*.nii.gz;*.nii', 'NIFTI class file'; '*.*', 'All files'};
+    grayPath = getPathStrDialog(startDir, 'Select class file', filterspec);
 end 
 
 if exist(grayPath, 'file')
-    classType = mrGrayCheckClassType(grayPath);
-    switch(classType)
-        case 'g'
-            disp(['Loading gray graph from: ',grayPath]);
-            [nodes,edges] = readGrayGraph(grayPath);
-        case {'n','c'}
-            disp(['Building gray graph from: ', grayPath]);
-            class = readClassFile(grayPath, 0, 0, hemisphere);
-            if(~exist('numLayers','var')||isempty(numLayers)) 
-                a = inputdlg('Number of gray layers:','Gray Layers',1,{'5'});
-                if(isempty(a)), error('user canceled.'); end
-                numLayers = str2double(a{1});
-            end
-            [nodes,edges] = mrgGrowGray(class,numLayers);
-        otherwise
-            grayPath = [];
-            warning('Unrecognized gray file format!');   
+    disp(['Building gray graph from: ', grayPath]);
+    class = readClassFile(grayPath, 0, 0, hemisphere);
+    if(~exist('numLayers','var')||isempty(numLayers))
+        a = inputdlg('Number of gray layers:','Gray Layers',1,{'5'});
+        if(isempty(a)), error('user canceled.'); end
+        numLayers = str2double(a{1});
     end
+    [nodes,edges] = mrgGrowGray(class,numLayers);
 elseif isempty(grayPath)
     fprintf('No file selected, so no coords loaded. \n');
     nodes = [];

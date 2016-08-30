@@ -17,7 +17,7 @@ uimenu(editMenu,'Label','Edit/view mrSESSION','Separator','off',...
 
 % Edit alignment(using mrRx):
 uimenu(editMenu,'Label','Edit/View Alignment...','Separator','off',...
-    'Callback','rxAlign;');
+    'Callback','rxAlign;', 'Accelerator', '7');
 
 
 datatypeMenu = uimenu(editMenu,'Label','Data Type','Separator','off');

@@ -214,6 +214,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('roimodified') = 'roimodified';
     DictViewTranslate('roidatemodified') = 'roimodified';
     DictViewTranslate('roimodificationdate') = 'roimodified';
+    DictViewTranslate('roicomments') = 'roicomments';    
     DictViewTranslate('prevcoords') = 'prevcoords';
     DictViewTranslate('previouscoordinates') = 'prevcoords';
     DictViewTranslate('previouscoords') = 'prevcoords';

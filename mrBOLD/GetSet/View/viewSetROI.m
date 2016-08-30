@@ -114,6 +114,14 @@ switch param
         else                                        roi = varargin{1}; end
         vw.ROIs(roi).modified = val;
         
+    case 'roicomments'
+        if isempty(varargin) || isempty(varargin{1})
+            roi = vw.selectedROI;
+        else
+            roi = varargin{1};
+        end
+        vw.ROIs(roi).comments = val;
+        
     otherwise
         error('Unknown view parameter %s.', param);
         

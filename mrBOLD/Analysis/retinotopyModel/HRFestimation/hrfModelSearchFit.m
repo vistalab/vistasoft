@@ -94,9 +94,16 @@ fprintf(1,'\tGrid stage output:\t[%.4f %.4f %.4f %.4f %.4f] (%d min)\n',gridPara
 
 % search fit
 tic;
-hrfParams = ...
+try
+    hrfParams = ...
     fmincon(@(x) hrfFit(x,data,prediction,rawrss,FIR_time,estimate_dc),...
     gridParams,[],[],[],[],bndParams(:,1),bndParams(:,2),[],hrfParams.searchOptions);
+
+catch ME
+    warning(ME.identifier, ME.message)
+    fprintf('[%s]: HRF search failed due to error shown above. Using HRF grid solution\n', mfilename)
+    hrfParams = gridParams;
+end
 
 fprintf(1,'\tSearch stage output:\t[%.4f %.4f %.4f %.4f %.4f] (%d min)\n',hrfParams,round(toc./60));
 fprintf(1,'[%s]:Estimating HRF...Done. (%s)\n',mfilename,datestr(now));drawnow;
@@ -167,7 +174,7 @@ pred = lin_reg_matrix(pred,data,estimate_dc);
 rss = sum((data-pred).^2);
 %--- compute reverse of variance explained
 % error in percent
-e = mean(rss./rawrss).*1e6;
+e = double(mean(rss./rawrss).*1e6);
 
 return;
 %-----------------------------------------

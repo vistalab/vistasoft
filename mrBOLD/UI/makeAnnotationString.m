@@ -1,6 +1,6 @@
-function view = makeAnnotationString(view);
+function vw = makeAnnotationString(vw)
 %
-% function view = makeAnnotationString(view);
+% function vw = makeAnnotationString(vw)
 %
 % djh, 3/2001
 % ras, 11/2004: made it a uicontrol.
@@ -19,7 +19,7 @@ h = uicontrol('Style','text',...
               'HorizontalAlignment','center',...
               'String','');
 
-view.ui.annotationHandle = h;
+vw.ui.annotationHandle = h;
 
 return
 
@@ -34,7 +34,7 @@ return
 % text(0,0,'','FontSize',12,'HorizontalAlignment','center',...
 %      'FontWeight','bold');
 % annotationHandle = get(annotationAxis,'Children');
-% view.ui.annotationHandle = annotationHandle;
+% vw.ui.annotationHandle = annotationHandle;
 % 
 % % Return the current axes to the main image
-% set(gcf,'CurrentAxes',view.ui.mainAxisHandle);
+% set(gcf,'CurrentAxes',vw.ui.mainAxisHandle);

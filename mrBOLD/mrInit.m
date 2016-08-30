@@ -169,23 +169,18 @@ save mrInit_params params   % stash the params in case we crash
 
 if isfield(params,'functionals') && ~isempty(params.functionals)
     if ischar(params.functionals), params.functionals = {params.functionals}; end
-    func = mrLoadHeader(params.functionals{1});
     
     for scan = 1:length(params.functionals)
         
-        func.path = mrGet(params.functionals{scan}, 'filename');
-        
-        %We will need to replace this code with something that adds the paths to
-        %the session variable and then performs these data processes on-the-fly
-        %when functional data is called
-        %We will need to move all of the necessary data into dataTYPES and
-        %mrSESSION, the previous work of mrSave
-        
+        func.path = params.functionals{scan};
+                
         %Read in the nifti to the tS struct, then apply the same transform as
         %the inplane data. Then, transfer the necessary components to the
         %local func struct.
         tS = niftiRead(func.path);
         tS = niftiApplyAndCreateXform(tS,'Inplane');
+        
+        func.hdr = rmfield(tS, 'data');
         
         %Store the orientation of the functional data. We will need the
         %anatomical Inplane to have the same orientation.
@@ -197,17 +192,15 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         %Dims
         func.dims = niftiGet(tS, 'Dim');
         %PixDims
-        func.pixdims = niftiGet(tS, 'Pix Dim');
+        func.pixdims = niftiGet(tS, 'Pix Dim', 'xyz_units', 'mm', 'time_units', 's');
         
         % select keepFrames if they're provided
         if isfield(params, 'keepFrames') && ~isempty(params.keepFrames)
             %Put keepFrames into func so that we can save it into mrSESSION
-            func.keepFrames = params.keepFrames;
+            func.keepFrames = params.keepFrames(scan,:);
         else
-            %We will need to create keepFrames if it doesn't exist
-            keepFrames = zeros(length(params.functionals),2);
-            keepFrames(:,2) = -1; %By default, skip 0 initial frames, keep the
-            func.keepFrames = keepFrames;
+            %We will need to create keepFrames if it doesn't exist            
+            func.keepFrames = [0 -1];
         end
         
         % assign annotation if it's provided
@@ -229,7 +222,14 @@ fprintf('[%s]: Finished initializing mrVista session. \t(%s)\n', ...
     mfilename, datestr(now));
 
 %%%%%%%%%%%%%%%%%%%%%%%
-% (5)  pre-processing %
+% (3)  VOLUME anatomy %
+%%%%%%%%%%%%%%%%%%%%%%%
+if isfield(params,'vAnatomy') && ~isempty(params.vAnatomy)
+    setVAnatomyPath(params.vAnatomy);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% (4)  pre-processing %
 %%%%%%%%%%%%%%%%%%%%%%%
 % update dataTYPES as needed.
 
@@ -354,26 +354,26 @@ if checkfields(mr, 'info', 'time'), f.time = mr.info.time; end
 
 f.junkFirstFrames = 0; %This always appears to be 0. perhaps remove it?
 
-if mr.keepFrames(scan,2) == -1, 
+if mr.keepFrames(2) == -1, 
     % if 2nd column of keepframes is -1, keep all frames after drop frames
-    nFrames = mr.dims(4) - mr.keepFrames(scan,1);   
+    nFrames = mr.dims(4) - mr.keepFrames(1);   
 else
     % if 2nd column of keepframes is +n, keep n frames after drop frames
-    nFrames = mr.keepFrames(scan,2); 
+    nFrames = mr.keepFrames(2); 
 end
     
 f.nFrames   = nFrames;
-f.slices    =  1:mr.dims(3);
+f.slices    = 1:mr.dims(3);
 f.fullSize  = mr.dims(1:2);
 f.cropSize  = mr.dims(1:2);
 f.crop      = [1 1; mr.dims(1:2)];
-f.voxelSize = mr.voxelSize(1:3);
-f.effectiveResolution = mr.voxelSize(1:3);
+f.voxelSize = mr.pixdims(1:3);
+f.effectiveResolution = mr.pixdims(1:3);
 f.keepFrames = mr.keepFrames; %Keep Frames will now be udpated in both mrSESSION and dataTYPES
 if checkfields(mr, 'info', 'effectiveResolution')
     f.effectiveResolution = mr.info.effectiveResolution;
 end
-f.framePeriod = mr.voxelSize(4);
+f.framePeriod = mr.pixdims(4);
 f.reconParams = mr.hdr;
 
 if scan==1
@@ -419,16 +419,16 @@ return
 % /-----------------------------------------------------------------/ %
 function params = scanParamsDefaults(mrSESSION, scan, annotation)
 % Default scan parameters for a new scan.
-params.annotation = annotation;
-params.nFrames = mrSESSION.functionals(scan).nFrames;
-params.framePeriod = mrSESSION.functionals(scan).framePeriod;
-params.slices = mrSESSION.functionals(scan).slices;
-params.cropSize = mrSESSION.functionals(scan).cropSize;
-params.PfileName = mrSESSION.functionals(scan).PfileName;
-params.inplanePath = mrSESSION.functionals(scan).PfileName;
-params.keepFrames = mrSESSION.functionals(scan).keepFrames;
-params.parfile = '';
-params.scanGroup = sprintf('Original: %i',scan);
+params.annotation   = annotation;
+params.nFrames      = mrSESSION.functionals(scan).nFrames;
+params.framePeriod  = mrSESSION.functionals(scan).framePeriod;
+params.slices       = mrSESSION.functionals(scan).slices;
+params.cropSize     = mrSESSION.functionals(scan).cropSize;
+params.PfileName    = mrSESSION.functionals(scan).PfileName;
+params.inplanePath  = mrSESSION.functionals(scan).PfileName;
+params.keepFrames   = mrSESSION.functionals(scan).keepFrames;
+params.parfile      = '';
+params.scanGroup            = sprintf('Original: %i',scan);
 return
 % /-----------------------------------------------------------------/ %
 
@@ -437,11 +437,11 @@ return
 % /-----------------------------------------------------------------/ %
 function params = blockedAnalysisDefaults
 % Default values for the blocked analyses.
-params.blockedAnalysis = 1;
-params.detrend = 1;
-params.inhomoCorrect = 1;
+params.blockedAnalysis       = 1;
+params.detrend               = 1;
+params.inhomoCorrect         = 1;
 params.temporalNormalization = 0;
-params.nCycles = 6;
+params.nCycles               = 6;
 return
 % /-----------------------------------------------------------------/ %
 

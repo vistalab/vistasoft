@@ -46,6 +46,8 @@ switch param
         end
     case 'anatomynifti'
         vw.anat = val; %This means that we are passing in an entire Nifti!
+    case 'mmpervox'
+        vw.mmPerVox = val;
         
     otherwise
         error('Unknown view parameter %s.', param);

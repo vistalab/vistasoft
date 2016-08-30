@@ -65,7 +65,7 @@ if ~isempty(overlay)
     curCo=cropCurSlice(vw,'co',sliceNum,sliceOri);
     curPh=cropCurSlice(vw,'ph',sliceNum,sliceOri);
     curMap=cropCurSlice(vw,'map',sliceNum,sliceOri);
-    if ~isempty(curCo) && cothresh>0
+    if ~isempty(curCo) & cothresh>0
         ptsCo = curCo > cothresh;
         pts = pts & ptsCo;
     end
