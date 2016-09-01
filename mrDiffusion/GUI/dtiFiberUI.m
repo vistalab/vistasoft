@@ -65,6 +65,13 @@ if(nargin <= 1)  % LAUNCH GUI
     % Generate a structure of handles to pass to callbacks, and store it.
     handles = guihandles(fig);
     
+    if ~isnumeric(fig)
+        % In Matlab 2014b and up the figure handle is defined as an object.
+        % This new definition is not compatible with older versions of
+        % Matlab that treat the handle as a number.
+        fig = fig.Number;
+    end
+    
     % initialize variables
     
     % We should use the dtiGet/dtiSet more,using the form
@@ -76,10 +83,12 @@ if(nargin <= 1)  % LAUNCH GUI
     % Two figures are created by default.  The main dtiFiberUI figure and a
     % 2nd one (rarely used) for showing Matlab 3D renderings.
     handles.fig = fig;
+  
     handles.fig3d = figure;
     handles.title = sprintf('mrdMain%d',fig);
-    handles.type  = sprintf('mrdWindow');
+     handles.type  = sprintf('mrdWindow');
     set(fig,'Name',handles.title);
+    
     
     % Fiber group initialization
     handles.fiberGroups = [];
