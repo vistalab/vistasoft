@@ -147,6 +147,8 @@ inds = sort(inds(:),'descend')';
 if isfield(fg,'params') && ~isempty(fg.params)
   % Remove fg.params entries from the largest to smallest, thus
   % avoiding an index exceeds matrix dimensions error.
+
+  fg.params = [];
   % (This was not implemented in Feb 2015 correctly.  So I fixed it, BW).
   nParams = numel(fg.params);
   for kk = nParams:-1:1

@@ -18,6 +18,6 @@ if(~exist('versionNum','var') || isempty(versionNum))
   versionNum = 1.0;
 end
     
-save(fileName,'fg','versionNum','coordinateSpace');
+save(fileName,'fg','versionNum','coordinateSpace','-v7.3');
 
 return;
