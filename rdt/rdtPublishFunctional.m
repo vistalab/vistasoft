@@ -9,6 +9,23 @@
 %
 % BW/ Copyright Vistasoft Team 2016
 
+
+%% Open the remote data object
+
+% Create remote data toolbox object
+rd = RdtClient('vistasoft');
+
+% To write to the archive, you must have a password
+rd.credentialsDialog;
+
+rd.crp('/vistadata/functional');
+
+folder = fullfile(vistaRootPath,'local','functional');
+a = rd.publishArtifacts(folder,'type','zip','verbose',true);
+rdtPrintArtifactTable(a);
+
+%% OLD
+
 %% Open the remote data object
 
 % Create remote data toolbox object

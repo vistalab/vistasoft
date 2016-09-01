@@ -14,9 +14,6 @@ function niftiWrite(ni,fName)
 %   [something]'.nii' then compression is not performmed as it is presumed
 %   that the user does not want the file to be compressed.
 % 
-% Web Resources:
-%   To browse the latest code on github run: vistaBrowseGit('niftiWrite');
-%
 % EXAMPLE:
 %   ni = niftiRead('niftiFile.nii.gz');
 %   fName = 'myFile.nii.gz'

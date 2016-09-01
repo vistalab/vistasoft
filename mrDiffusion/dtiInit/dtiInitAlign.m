@@ -1,13 +1,13 @@
 function [doAlign, doResamp] = dtiInitAlign(dwParams,dwDir,doResamp)
 % 
-% function doAlign = dtiInitAlign(dwParams,dwDir)
+%  doAlign = dtiInitAlign(dwParams,dwDir)
 % 
 % Based on user selected params decide if we align the raw dwi data to a
 % reference image (t1).
 % 
 % WEB resources:
-%   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing
-%   mrvBrowseSVN('dtiInitAlign');
+%   https://github.com/vistalab/vistasoft/wiki/DWI-Initialization
+%   vistaBrowseGit('dtiInitAlign');
 % 
 % (C) Stanford VISTA, 8/2011 [lmp]
 % 
@@ -33,4 +33,4 @@ else
     end
 end
 
-return
+end

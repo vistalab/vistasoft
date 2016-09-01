@@ -1,10 +1,14 @@
 function [doECC doResamp] = dtiInitEddyCC(dwParams,dwDir,doResamp)
 % 
-% function doECC = dtiInitEddyCC(dwParams,dwDir)
+%   doECC = dtiInitEddyCC(dwParams,dwDir)
 % 
 % Based on user selected params decide if we do eddy current correction and
 % resampling. The two flags [doECC doResamp] are then returned to dtiInit
 % where the actual computation functions are called. 
+%
+% If eddyCorrect is 1 (the default), motion and eddy-current correction are done. 
+%                   0, then only motion correction is done
+%                  -1 then nothing is done
 % 
 % WEB resources:
 %   http://white.stanford.edu/newlm/index.php/DTI_Preprocessing

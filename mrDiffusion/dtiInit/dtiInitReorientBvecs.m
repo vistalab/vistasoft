@@ -1,6 +1,6 @@
 function dtiInitReorientBvecs(dwParams,dwDir,doResamp,doBvecs,bvecs,bvals)
 % 
-% function doRawResample = dtiInitResample(dwParams,dwDir)
+%  doRawResample = dtiInitResample(dwParams,dwDir)
 % 
 % Based on user selected params and the outputs of dtiInitAlign and
 % dtiInitEddyCC we reorient and save bvecs and bvals files

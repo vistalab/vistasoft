@@ -24,7 +24,7 @@ if(~exist('bvecs','var')||isempty(bvecs))
 end
 if(ischar(bvecs))
     [datDir,inBaseName,ext] = fileparts(bvecs);
-    if(isempty(datDir)) datDir = pwd; end
+    if(isempty(datDir)), datDir = pwd; end
 else
     datDir = pwd;
 end
@@ -71,7 +71,8 @@ end
 nvols = size(bvecs,2);
 
 if(isempty(ecXform))
-    for(ii=1:nvols) xform{ii} = eye(4); end
+    xform = cell(nvols,1);
+    for ii=1:nvols, xform{ii} = eye(4); end
 else
     if(ischar(ecXform))
         load(ecXform);
