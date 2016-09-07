@@ -1,29 +1,99 @@
-function fiberPath = dtiFiberFACT(seedPoint, vecImg, faImg, voxSize, direction, faThresh, rThresh, angleThresh, options)% fiberPath = dtiFiberFACT(seedPoint, vecImg, faImg, voxSize, direction, faThresh, rThresh, options)% Implementation of the Mori Fiber Assignment by Continuous Tracking (FACT)% algorithm. Eg:%    Mori et. al. (2002). Imaging cortical association tracts in the%    human brain using diffusion-tensor-based axonal tracking. Magnetic%    Resonance in Medicine, 47:215-223.%% options include:% 'noCrossPath'- stops tracking when a fiber tries to cross it's own path.% % HISTORY:%   2003.05.15 RFD (bob@white.stanford.edu) wrote it.%
-if(~exist('angleThresh','var') | isempty(angleThresh))    angleThresh = 180;end
-% Parse optionsif(~exist('options','var'))    options = {};endnoCrossPath = ~isempty(strmatch('nocrosspath',lower(options)));   
+function fiberPath = dtiFiberFACT(seedPoint, vecImg, faImg, voxSize, direction, faThresh, rThresh, angleThresh, options)
+% Fiber assignment by continuous tracking
+%
+% fiberPath = ...
+%    dtiFiberFACT(seedPoint, vecImg, faImg, voxSize, ...
+%            direction, faThresh, rThresh, options)
+%
+% Implementation of the Mori Fiber Assignment by Continuous Tracking (FACT)
+% algorithm.
+%
+%    Mori et. al. (2002). Imaging cortical association tracts in the
+%    human brain using diffusion-tensor-based axonal tracking. Magnetic
+%    Resonance in Medicine, 47:215-223.
+%
+% Inputs:
+%   seedPoint  - x,y,z coordinates of the seed points in the wmMask
+%   vecImg
+%   faImg
+%   voxSize
+%   direction
+%   faThresh
+%   rThresh
+%   angThresh
+%   options     - Cell array of strings that are options
+%
+% options include:
+%  'noCrossPath'- stops tracking when a fiber tries to cross it's own path.
+% 
+% HISTORY:
+%   2003.05.15 RFD (bob@white.stanford.edu) wrote it.
 
-% Mori likes to use '4' for this parameter, which is related to the% Coherence Index. It is used as a stopping criteria, to end a fiber trace% when the directions in a neighborhood get too incoherent.% This parameter determines the neighborhood size- it specifies the number% of neighbors to include.numNeighborsR = 4; 
-% voxel face coordinates (from center of voxel)vFace = [voxSize/2; -voxSize/2];
-% The coordinate ordering is x,y,z,-x,-y,-zvIndex =  [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1]';
+if(~exist('angleThresh','var') || isempty(angleThresh)), angleThresh = 180; end
+
+% Parse options
+if(~exist('options','var')), options = {}; end
+noCrossPath = ~isempty(strmatch('nocrosspath',lower(options)));   
+
+% Mori likes to use '4' for this parameter, which is related to the
+% Coherence Index. It is used as a stopping criteria, to end a fiber trace
+% when the directions in a neighborhood get too incoherent. This parameter
+% determines the neighborhood size- it specifies the number of neighbors to
+% include.
+numNeighborsR = 4; 
+
+% voxel face coordinates (from center of voxel)
+vFace = [voxSize/2; -voxSize/2];
+
+% The coordinate ordering is x,y,z,-x,-y,-z
+vIndex =  [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1]';
 inVoxThresh = voxSize/2 + 0.001;
-% set trace direction (order that faces in voxel are searched for closest)if (direction>0)    traceDir = 1:6;    % trace 'forward'else    traceDir = 6:-1:1; % trace 'backward'end
 
-% vCoord holds the coordinates of the current voxel and vPos holds the% current position of the origin of the tracing vector within that voxel. % That is, vCoords is the integer x,y,z coordinate of the voxel and vPos % is a real-valued position relative to the voxel center.vCoordNew = round(seedPoint(:));
-% We no longer start at the voxel center. Now, we let the caller specify% where to start by passing a non-integer start point.vPosNew = seedPoint(:)-vCoordNew;if(all(vPosNew==0))    vPosNew = [.5;.5;.5];end% array to hold positionInVoxel and voxel path historyvPosPath = vPosNew';vCoordPath = vCoordNew';
+% set trace direction (order that faces in voxel are searched for closest)
+if (direction>0),   traceDir = 1:6;    % trace 'forward'
+else                traceDir = 6:-1:1; % trace 'backward'
+end
+
+% vCoord holds the coordinates of the current voxel and vPos holds the
+% current position of the origin of the tracing vector within that voxel. 
+% That is, vCoords is the integer x,y,z coordinate of the voxel and vPos 
+% is a real-valued position relative to the voxel center.
+vCoordNew = round(seedPoint(:));
+
+% We no longer start at the voxel center. Now, we let the caller specify
+% where to start by passing a non-integer start point.
+vPosNew = seedPoint(:)-vCoordNew;
+if(all(vPosNew==0)), vPosNew = [.5;.5;.5]; end
+
+% array to hold positionInVoxel and voxel path history
+vPosPath = vPosNew';
+vCoordPath = vCoordNew';
 
 %==================
 % MAIN TRACING LOOP
 %==================
-iter = 0;done = 0;maxIter = 1000;imSize = size(vecImg(:,:,:,1));while (~done & iter<maxIter)    vPos = vPosNew;    vCoord = vCoordNew;
+iter = 0;
+done = 0;
+maxIter = 1000;
+imSize = size(vecImg(:,:,:,1));
+while (~done & iter<maxIter)
+    vPos = vPosNew;
+    vCoord = vCoordNew;
     if(any(vCoord<1) | any(vCoord>imSize'))
-        disp('Tracking terminated: path wandered outside image data.');        done = 1;    else
+        disp('Tracking terminated: path wandered outside image data.');
+        done = 1;
+    else
         
         % Get direction vector for this voxel
-        vDir = [ vecImg(vCoord(1), vCoord(2), vCoord(3), 1); ...                vecImg(vCoord(1), vCoord(2), vCoord(3), 2); ...                vecImg(vCoord(1), vCoord(2), vCoord(3), 3); ];
+        vDir = [ vecImg(vCoord(1), vCoord(2), vCoord(3), 1); ...
+                vecImg(vCoord(1), vCoord(2), vCoord(3), 2); ...
+                vecImg(vCoord(1), vCoord(2), vCoord(3), 3); ];
         
-        % Get the FA for this voxel        fa = faImg(vCoord(1), vCoord(2), vCoord(3));
+        % Get the FA for this voxel
+        fa = faImg(vCoord(1), vCoord(2), vCoord(3));
         
-        % Compute R, the sum of the inner-product of the neighbors        % Find the numNeighborsR nearest neighbors
+        % Compute R, the sum of the inner-product of the neighbors
+        % Find the numNeighborsR nearest neighbors
 
         
         % check vDir data is valid (we are in range)
@@ -54,11 +124,22 @@ iter = 0;done = 0;maxIter = 1000;imSize = size(vecImg(:,:,:,1));while (~done
                 done = 1;
             else            
                 vCoordNew = repmat(vCoord,1,length(index)) + vIndex(:,index);
-                % The position within the next voxel is the intersection                % point of this vector with the nearest face in the current                % voxel (vPos + voxFaces(index).*vDir), but shifted over to the                % new voxel's coordinate frame ( - voxSize.*vIndex(:,index)).                % The problem with the original code was that the small                % rounding errors would accumulate and eventually the vPos                % would fall quite a distance from the voxel face. So, we force                % it to realign with a voxel face.                vPosNew = repmat(vPos,1,length(index)) + vDir*voxFaces(index)' - repmat(voxSize,1,length(index)).*vIndex(:,index);
+                % The position within the next voxel is the intersection
+                % point of this vector with the nearest face in the current
+                % voxel (vPos + voxFaces(index).*vDir), but shifted over to the
+                % new voxel's coordinate frame ( - voxSize.*vIndex(:,index)).
+                % The problem with the original code was that the small
+                % rounding errors would accumulate and eventually the vPos
+                % would fall quite a distance from the voxel face. So, we force
+                % it to realign with a voxel face.
+                vPosNew = repmat(vPos,1,length(index)) + vDir*voxFaces(index)' - repmat(voxSize,1,length(index)).*vIndex(:,index);
 
                 if(size(vCoordPath,1)>1 & length(index)>1)
                     % select the direction that gives the smoothest fiber
-                    prevPos = vCoordPath(end-1,:) + vPosPath(end-1,:)./voxSize';                    dist1 = sum((prevPos - (vCoordNew(:,1)' + vPosNew(:,1)'./voxSize')).^2);                    dist2 = sum((prevPos - (vCoordNew(:,2)' + vPosNew(:,2)'./voxSize')).^2);                    if(dist1>dist2)
+                    prevPos = vCoordPath(end-1,:) + vPosPath(end-1,:)./voxSize';
+                    dist1 = sum((prevPos - (vCoordNew(:,1)' + vPosNew(:,1)'./voxSize')).^2);
+                    dist2 = sum((prevPos - (vCoordNew(:,2)' + vPosNew(:,2)'./voxSize')).^2);
+                    if(dist1>dist2)
                         vCoordNew = vCoordNew(:,1);
                         vPosNew = vPosNew(:,1);
                     else
@@ -93,7 +174,10 @@ iter = 0;done = 0;maxIter = 1000;imSize = size(vecImg(:,:,:,1));while (~done
                 end
                 
                 % Don't allow a fiber to loop back on itself
-                if(~done & ~noCrossPath | isempty(intersect(vCoordPath, vCoordNew', 'rows')))                    vPosPath = [vPosPath; vPosNew'];                    vCoordPath = [vCoordPath; vCoordNew'];                else
+                if(~done & ~noCrossPath | isempty(intersect(vCoordPath, vCoordNew', 'rows')))
+                    vPosPath = [vPosPath; vPosNew'];
+                    vCoordPath = [vCoordPath; vCoordNew'];
+                else
                     disp('Tracking terminated: path folded on itself');
                     done = 1;
                 end
@@ -102,15 +186,20 @@ iter = 0;done = 0;maxIter = 1000;imSize = size(vecImg(:,:,:,1));while (~done
     end
     iter = iter+1;
 end
+
 % Return the real-valued fiber path:
 fiberPath = vCoordPath + vPosPath./repmat(voxSize',size(vPosPath,1),1);
-%disp(fiberPath);return;
+%disp(fiberPath);
+
+return;
 
 
 % --------------------------------------------------------------------
-function  inVoxel = isInVoxel(point, Vsize)% returns 1 for point inside voxel, 0 for outside
+function  inVoxel = isInVoxel(point, Vsize)
+% returns 1 for point inside voxel, 0 for outside
 
 % Following is a fudge factor to allow for small precision-limit errors.
 epsilon = 0.01;
 inVoxel = all(abs(point) <= Vsize/2+epsilon);
+
 return;

@@ -8,17 +8,22 @@
 %% Go get a white matter mask from the Remote Data client
 
 rdt = RdtClient('vistasoft');
-rdt.crp('/vistadata/diffusion/sampleData/dti40/bin');
+rdt.crp('/vistadata/diffusion/zippedDirectory');
 
 % This is all of the artifacts
 a = rdt.listArtifacts('print',true);
 
 % Write the white matter mask out in the local directory
 dFolder = fullfile(vistaRootPath,'local');
-fname = rdt.readArtifact(a(7),'destinationFolder',dFolder);
+fname = rdt.readArtifact(a(1),'destinationFolder',dFolder);
+unzip(fname);
 
 %% Have a look
-nii = niftiRead(fname);
+% dwiFile = fullfile(vistaRootPath,'local','sampleData','dwi_aligned_trilin_noMEC');
+% nii = niftiRead(dwiFile);
+
+wmMask  = fullfile(vistaRootPath,'local','sampleData','dti40','bin','wmMask');
+nii = niftiRead(wmMask);
 montageAll = niftiView(nii);
 
 %% Select out a cube
