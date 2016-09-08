@@ -16,13 +16,13 @@ a = rdt.listArtifacts('print',true);
 % Write the white matter mask out in the local directory
 dFolder = fullfile(vistaRootPath,'local');
 fname = rdt.readArtifact(a(1),'destinationFolder',dFolder);
-unzip(fname);
+unzip(fname, fullfile(vistaRootPath,'local'));
 
 %% Have a look
 % dwiFile = fullfile(vistaRootPath,'local','sampleData','dwi_aligned_trilin_noMEC');
 % nii = niftiRead(dwiFile);
 
-wmMask  = fullfile(vistaRootPath,'local','sampleData','dti40','bin','wmMask');
+wmMask  = fullfile(vistaRootPath,'local','sampleData','dti40','bin','wmMask.nii.gz');
 nii = niftiRead(wmMask);
 montageAll = niftiView(nii);
 
@@ -31,6 +31,10 @@ montageAll = niftiView(nii);
 p.keepLR = 20:30; p.keepPA = 20:30; p.keepIS = 40:50;
 niiCube = niftiSelect(nii,p);
 montage = niftiView(niiCube);
+
+%% Save out the small wmMask
+chdir(fullfile(vistaRootPath,'local','sampleData','dti40','bin'))
+niftiWrite(niiCube,'wmMaskCube.nii.gz');
 
 %% Make an overlay from the
 montageOverlay(:,:,1) = montage(:,:);
