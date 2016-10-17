@@ -1,69 +1,66 @@
-function [coords, lineList,startPoints] = buildMNIObj(fg)
+function [coords, lineList,startPoints] = fg2MNIObj(fg,varargin)
+% Convert fg data to MNI Obj format that can be viewed in brainbrowser.
+%
+%   [coords, lineList,startPoints] = fg2MNIObj(fg)
+%
+% Example:
+%
+% RF/BW
 
-    nFibers = length(fg.fibers);
-    nPoints = zeros(nFibers,1);
-    for jj=1:nFibers
-        nPoints(jj)  = size(fg.fibers{jj},2);
-    end
-    coords = zeros(sum(nPoints),3);
-    startPoints = [0; cumsum(nPoints)]; 
-    lineList = cell(1,nFibers);
-    for ii=1:nFibers
-        lineList{ii} = (startPoints(ii)+1):startPoints(ii+1);
-        coords(lineList{ii},:) = fg.fibers{ii}';
-    end
-        
-    % Open the file
-    fileID = fopen('test.obj','w');
-    fprintf(fileID,'L 1 %d\n', size(coords,1));
-    % Write out the Coords   
-    fprintf(fileID,'%.4f %.4f %.4f\n',coords');
-    
-    % Put the color
-    fprintf(fileID,'\n%d\n',length(lineList));
-    
-    fprintf(fileID,'0 .5 .6 .7 1\n\n');
-    fprintf(fileID,'%d ',startPoints(2:end));
-    fprintf(fileID,'\n\n');
-    % Write out the lineList
-    for ii=1:nFibers
-        fprintf(fileID,'%d ',lineList{ii}-1);
-        fprintf(fileID,'\n');
-    end
-    
-    % Close the file
-    fclose(fileID);
+%% Parse file name and other parameters that may arise
+p = inputParser;
 
+p.addRequired('fg');
+p.addParameter('fname','test.obj',@ischar);
+p.parse(fg,varargin{:});
+fname = p.Results.fname;
+
+%%
+
+nFibers = length(fg.fibers);  % How many fibers are we writing out?
+nPoints = zeros(nFibers,1);   % How many points in each fiber?
+for jj=1:nFibers
+    nPoints(jj)  = size(fg.fibers{jj},2);
 end
 
-% lineList =
-%     
-%     
-%     for i = 1:3
-%         fiber = fg.fibers{i};
-%         endline = endline + size(fiber, 2);
-%         endlines = cat(1, endlines, endline);
-%         line = [];
-%         for j = 1:size(fiber, 2)
-%             count = count + 1;
-%             line = cat(1, line, count);
-%             points = cat(1, points, fiber(:, 1));
-%         end
-%         lines = cat(1, lines, line);
-%     end
-%     output = ['L 0.500' num2str(count)];
-%     h = waitbar(0,'Please wait...');
-%     for i = 1:length(points)
-%         point = points(i);
-%         output = strcat(output, '\n', sprintf(' %f', point));
-%         waitbar(i/length(points),h);
-%     end
-%     output = strcat(output, '\n\n', num2str(length(lines)));
-%     endlines = sprintf('%d ', endlines);
-%     endlines = endlines(1, end-1);
-%     output = strcat(output, '\n0', sprintf(' %d', fg.colorRgb), '\n\n', endlines, '\n\n');
-%     for i = 1:length(lines)
-%        line = sprintf('%d ', lines(1));
-%        output = strcat(output, line(1, end-1), '\n');
-%     end
-% end
+%% Store the coords and list of points in each line
+coords = zeros(sum(nPoints),3);
+startPoints = [0; cumsum(nPoints)];
+lineList = cell(1,nFibers);
+for ii=1:nFibers
+    lineList{ii} = (startPoints(ii)+1):startPoints(ii+1);
+    coords(lineList{ii},:) = fg.fibers{ii}';
+end
+
+%% Open the file for writing
+
+% We should probably test if the file exists already!
+fileID = fopen(fname,'w');
+fprintf(fileID,'L 1 %d\n', size(coords,1));
+
+% Write out the coords
+fprintf(fileID,'%.4f %.4f %.4f\n',coords');
+
+% Write the color of all the lines.
+% We need to figure out how to do each line, or ...
+% And this should become a parameter
+% And we should figure out what the 0 at the front means.  Renzo knows, and
+% it is important.
+% The others are R G B alpha
+fprintf(fileID,'\n%d\n',length(lineList));
+fprintf(fileID,'0 .5 .6 .7 1\n\n');
+
+% Now a list that counts the number of points in each fiber.
+fprintf(fileID,'%d ',startPoints(2:end));
+fprintf(fileID,'\n\n');
+
+% Write out the lineLists (points in each line)
+for ii=1:nFibers
+    fprintf(fileID,'%d ',lineList{ii}-1);
+    fprintf(fileID,'\n');
+end
+
+% Close the file and go home
+fclose(fileID);
+
+end
