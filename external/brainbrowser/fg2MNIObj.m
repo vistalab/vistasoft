@@ -1,9 +1,11 @@
 function [coords, lineList,startPoints] = fg2MNIObj(fg,varargin)
 % Convert fg data to MNI Obj format that can be viewed in brainbrowser.
 %
-%   [coords, lineList,startPoints] = fg2MNIObj(fg)
+%   [coords, lineList,startPoints] = fg2MNIObj(fg,'fname',fname,'color',c)
 %
 % Example:
+%
+% See also:
 %
 % RF/BW
 
@@ -11,9 +13,12 @@ function [coords, lineList,startPoints] = fg2MNIObj(fg,varargin)
 p = inputParser;
 
 p.addRequired('fg');
-p.addParameter('fname','test.obj',@ischar);
+p.addParameter('fname','test.obj',@ischar);      % Output file
+p.addParameter('color',[.5 .6 .7 1],@isvector);  % RGBa
+
 p.parse(fg,varargin{:});
 fname = p.Results.fname;
+color = p.Results.color;
 
 %%
 
@@ -48,7 +53,7 @@ fprintf(fileID,'%.4f %.4f %.4f\n',coords');
 % it is important.
 % The others are R G B alpha
 fprintf(fileID,'\n%d\n',length(lineList));
-fprintf(fileID,'0 .5 .6 .7 1\n\n');
+fprintf(fileID,'0 %.2f \n\n',color);
 
 % Now a list that counts the number of points in each fiber.
 fprintf(fileID,'%d ',startPoints(2:end));
