@@ -1,4 +1,4 @@
-function polarPlot(Z,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8)
+function polarPlot(Z,arg1)
 % polarPlot(Z,params)
 %   creates a polar plot using the parameters
 %   determined by the structure 'params'.
@@ -34,6 +34,8 @@ function polarPlot(Z,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8)
 % 3/20/09 ras updated many years later; more flexibility about specifying
 % the maximum amplitude of the data, small cleanup using newer matlab
 % features.
+% 9/17/2016 RL minor clean up to unused input variables, add option to not
+% print tick labels (when making figures for paper, often cleaner to add own labels)
 
 %set up default parameters
 defParams.grid            = 'on';
@@ -50,7 +52,7 @@ defParams.backgroundColor = 'w';
 defParams.maxAmp          = ceil(max(abs(Z(:)))*10)/10;
 defParams.ringTicks       = [0:0.1:defParams.maxAmp];
 defParams.sigFigs		  = 1;
-
+defParams.tickLabel       = true; 
 
 % also allow the user to override the default params with whatever fields
 % are provided
@@ -102,16 +104,20 @@ if strcmp(params.grid,'on')
 
 	%% labels
 	% offset from grid
-	if isempty(params.maxAmp), dx = 0.075;
-	else,	dx = 0.075 * params.maxAmp;
-	end
-	
-	% make labels
-	for i=params.ringTicks(2:length(params.ringTicks));
-		pattern = sprintf('%%3.%if', params.sigFigs);
-		text(dx, i+dx, sprintf(pattern,i), 'Color', params.gridColor, ...
-			'FontSize', params.fontSize);
-	end
+    
+    % check that we want labels to begin with
+    if params.tickLabel
+        if isempty(params.maxAmp), dx = 0.075;
+        else,	dx = 0.075 * params.maxAmp;
+        end
+
+        % make labels
+        for i=params.ringTicks(2:length(params.ringTicks));
+            pattern = sprintf('%%3.%if', params.sigFigs);
+            text(dx, i+dx, sprintf(pattern,i), 'Color', params.gridColor, ...
+                'FontSize', params.fontSize);
+        end
+    end
 end
 
 % %hack:  place four white points in the corners to fix image size

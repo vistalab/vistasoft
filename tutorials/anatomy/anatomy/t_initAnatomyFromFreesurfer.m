@@ -54,7 +54,7 @@ cd(erniePathTemp)
 mkdir 3DAnatomy;
 outfile = fullfile('3DAnatomy', 't1_class.nii.gz');
 fillWithCSF = true;
-alignTo = 'orig.mgz';
+alignTo = fullfile(dataDir, 'mri', 'orig.mgz');
 fs_ribbon2itk('ernie', outfile, fillWithCSF, alignTo);
  
 % Check that you created a t1 class file (ribbon) and t1 anatomy

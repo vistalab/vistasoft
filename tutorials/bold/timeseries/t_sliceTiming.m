@@ -7,10 +7,11 @@
 %   Remote Data Toolbox
 %
 % This tutorial is part of a sequence. Run 
-%   t_initAnatomyFromFreesurfer
+%   t_initAnatomyFromFreesurfer 
+%   t_meshesFromFreesurfer *optional
 %   t_initVistaSession
-%   t_alignInplaneToVolume
-%   t_installSegmentation
+%   t_alignInplaneToVolume *optional
+%   t_installSegmentation  *optional
 % prior to running this tutorial. 
 %
 % Summary
@@ -46,7 +47,7 @@ cd(erniePathTemp)
 
 %% Align inplane to t1 and install Gray/white segmentation
 
-% Open a hidden view
+% Open a hidden view (a session without graphical user interface)
 vw = initHiddenInplane();
 
     
