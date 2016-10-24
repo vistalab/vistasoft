@@ -60,7 +60,8 @@ if isempty(slice)
     [~,fname,~] = fileparts(ni.fname);
     fname = strrep(fname,'_','-');
     sz = size(ni.data);
-    title(sprintf('%s (%d,%d,%d) (Vol=%d)',fname(1:10),sz(1),sz(2),sz(3),volume));
+    lst = min(length(fname),12);
+    title(sprintf('%s (%d,%d,%d) (Vol=%d)',fname(1:lst),sz(1),sz(2),sz(3),volume));
 else
     % Show one slice from one volume of the nifti file
     
@@ -75,7 +76,8 @@ else
     [~,fname,~] = fileparts(ni.fname);
     fname = strrep(fname,'_','-');
     sz = size(ni.data);
-    title(sprintf('%s (%d,%d,%d) (V=%d, S=%d)',fname(1:10),sz(1),sz(2),sz(3),volume,slice));
+    lst = min(length(fname),12);
+    title(sprintf('%s (%d,%d,%d) (V=%d, S=%d)',fname(1:lst),sz(1),sz(2),sz(3),volume,slice));
 end
 
 end
