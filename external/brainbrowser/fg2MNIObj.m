@@ -4,21 +4,38 @@ function [coords, lineList,startPoints] = fg2MNIObj(fg,varargin)
 %   [coords, lineList,startPoints] = fg2MNIObj(fg,'fname',fname,'color',c)
 %
 % Example:
+%     rd = RdtClient('vistasoft');
+%     rd.crp('/vistadata/diffusion/sampleData/fibers');
+%     rd.readArtifact('leftArcuate','type','pdb','destinationFolder',pwd);
+%     fg = fgRead('leftArcuate.pdb');
 %
-% See also:
+%     fg2MNIObj(fg,'fname','remoteFiber.obj','color',[0.8 0.4 0.9 1]);
+% Or,
+%     [~,lineList] = fg2MNIObj(fg,'fname','myTest.obj');
 %
-% RF/BW
+%  You can view the MNI OBJ data in brainbrowser by loading the file to
+%  this site:  https://brainbrowser.cbrain.mcgill.ca/surface-viewer#dti
+%
+% See also: obj<> files.  Perhaps this should be grouped with those, but I
+% am not sure this format is viewable by meshlab.app, and a legitimate OBJ
+% file.
+%
+%
+% RF/BW, Vistasoft Team 2016
 
 %% Parse file name and other parameters that may arise
 p = inputParser;
 
 p.addRequired('fg');
 p.addParameter('fname','test.obj',@ischar);      % Output file
-p.addParameter('color',[.5 .6 .7 1],@isvector);  % RGBa
+p.addParameter('color',[.8 .4 .8 .4],@isvector);  % RGBa
 
 p.parse(fg,varargin{:});
 fname = p.Results.fname;
 color = p.Results.color;
+if ~isequal(length(color),4)
+    error('Color parameter should be RGBalpha, a 4D vector');
+end
 
 %%
 
@@ -39,6 +56,11 @@ end
 
 %% Open the file for writing
 
+if exist(fname,'file')
+    disp('The file already exists.  Press space bar to over-write');
+    pause
+end
+
 % We should probably test if the file exists already!
 fileID = fopen(fname,'w');
 fprintf(fileID,'L 1 %d\n', size(coords,1));
@@ -53,7 +75,7 @@ fprintf(fileID,'%.4f %.4f %.4f\n',coords');
 % it is important.
 % The others are R G B alpha
 fprintf(fileID,'\n%d\n',length(lineList));
-fprintf(fileID,'0 %.2f \n\n',color);
+fprintf(fileID,'0 %.2f %.2f %.2f %.2f\n\n',color(1),color(2),color(3),color(4));
 
 % Now a list that counts the number of points in each fiber.
 fprintf(fileID,'%d ',startPoints(2:end));

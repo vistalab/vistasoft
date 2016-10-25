@@ -21,7 +21,7 @@ function dt33 = dti6to33(dt6, icoord)
 
 sz = size(dt6);
 
-if ~exist('icoord','val'),
+if ~exist('icoord','var'),
   if(prod(sz)==6), 	icoord = find(max(sz)==sz);
   else              icoord = 4;
   end
