@@ -52,6 +52,8 @@ end
 
 % Initialize returns and possibly open the graph window
 uData = []; h = []; doPlot = 0;
+
+% Only make the plot if there are no output arguments
 if nargout == 0, h = mrvNewGraphWin(figTitle); doPlot = 1;end
 
 % Generic parameters
@@ -159,6 +161,10 @@ switch pType
         if length(varargin) > 1
             % User passed in Q, make the predicted peanut
             Q = varargin{2};
+            
+            % This is dangerous
+            if isvector(Q), Q = reshape(Q,3,3); end
+                
             [X,Y,Z] = sphere(15);
             [r,c] = size(X);
             
@@ -179,10 +185,11 @@ switch pType
         
         % The diffusion weighted bvecs
         bvecs = dwiGet(dwi,'diffusion bvecs');
-        
+         
         % Compute and plot vector of measured adcs
         adcV = diag(adc)*bvecs;
         uData.adcV = adcV;
+        uData.adcPredicted = diag(bvecs*Q*bvecs');
         if doPlot
             plot3(adcV(:,1),adcV(:,2),adcV(:,3),'.')
             grid on

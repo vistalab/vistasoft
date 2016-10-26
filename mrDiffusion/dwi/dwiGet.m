@@ -230,6 +230,9 @@ switch(mrvParamFormat(param))
         % direction.
         %
         %   dSig = S0 * exp(-b*ADC)
+        %
+        % ** PROBLEM WHEN MULTIPLE COORDS **
+        %
         val = - diag( (bvals).^-1 )*log(dSig(:)/S0);  % um2/ms
         
     case {'adcdataacpc'}
