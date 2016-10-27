@@ -191,7 +191,7 @@ switch pType
         uData.adcV = adcV;
         uData.adcPredicted = diag(bvecs*Q*bvecs');
         if doPlot
-            plot3(adcV(:,1),adcV(:,2),adcV(:,3),'.')
+            plot3(adcV(:,1),adcV(:,2),adcV(:,3),'o')
             grid on
             title(sprintf('%s Measured (points)',t));
         end

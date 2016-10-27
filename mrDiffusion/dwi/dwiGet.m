@@ -204,13 +204,18 @@ switch(mrvParamFormat(param))
         
     case {'adcdataimage'}
         % dwiGet(dwi,'adc data image',coord)
-        % Get the ADC values from a particular image coordinate location
+        % Get the ADC values from a image coordinates
         %
-        % See also: The function dtiADC predicts the ADC given a tensor fit
-        % to the data.
+        % The returned values are the ADC in each column of a matrix
+        % The row dimension is the number of bvec directions, 
+        % The column dimension is the number of coordinates
+        %
+        % See also: The function dtiADC predicts the ADC given a tensor
+        %
         % We could have cases 'adctensorimage' and 'adctensoracpc'.  Or, we
         % could just make up functions for doing this, such as dtiADC,
         % dwiQ, and the mess that is out there.  To think and discuss.
+        %
         
         if ~isempty(varargin), coords = varargin{1};
         else error('image coords required');
@@ -233,7 +238,11 @@ switch(mrvParamFormat(param))
         %
         % ** PROBLEM WHEN MULTIPLE COORDS **
         %
-        val = - diag( (bvals).^-1 )*log(dSig(:)/S0);  % um2/ms
+        val = -log(diag(1./S0)*dSig)*diag((bvals).^-1);
+        val = val';    % ADC for each voxel is in the columns
+        
+        % Only worked for 1 coord
+        % val = - diag( (bvals).^-1 )*log(dSig(:)/S0);  % um2/ms
         
     case {'adcdataacpc'}
         % dwiGet(dwi,'adc data acpc',coord)
