@@ -350,19 +350,20 @@ switch(mrvParamFormat(param))
         end
         val = nanmean(val,1);
         
-    case{'b0image','b0meanimage','s0image'}
-        % S0 = dwiGet(dwi,'b0 image',coords);
+    case{'meanb0'}
+        % S0 = dwiGet(dwi,'b0 mean image');
         %
-        % Return the S0 value for each voxel in coords
-        % Coords are in the rows (i.e., nCoords x 3)
-        if ~isempty(varargin), coords = varargin{1};
-        else error('coords required');
-        end
+        % Return the mean of the b=0 (non diffusion) images
+        % Was a duplicate of below, which made no sense.
+        % So LMP/BW changed this to do the right thing and return the mean
+        % of the b=0 images in dwi.nifti data
         
-        val = dwiGet(dwi,'b0 vals image',coords);
-        val = nanmean(val,2);
+        lst = dwiGet(dwi,'n nondiffusion images');
+        val = dwi.nifti.data(:,:,:,lst);
+        % Apparently, this runs even if there is only one element in lst
+        val = mean(val,4);
         
-    case {'b0valsimage','s0valsimage'}
+    case {'b0image','b0valsimage','s0valsimage'}
         % S0 = dwiGet(dwi,'b0 image',coords);
         % Return an S0 value for each voxel in coords
         % Coords are in the rows (i.e., nCoords x 3)

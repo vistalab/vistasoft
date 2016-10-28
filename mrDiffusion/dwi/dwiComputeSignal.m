@@ -4,6 +4,9 @@ function S = dwiComputeSignal(S0, bvecs, bvals, Q)
 %
 %  S = dwiComputeSignal(S0, bvals, bvecs, Q)
 %
+% The Q tensors implicitly define the coordinates where we are doing the
+% estaimte. 
+%
 % This function implements the Stejskal Tanner equation prediction given a
 % quadratic form.  There should also be a form of this equation that takes
 % in the ADC values, rather than the quadratic form.
@@ -15,7 +18,7 @@ function S = dwiComputeSignal(S0, bvecs, bvals, Q)
 %
 % Parameters
 % ----------
-% S0:    The signal measured in the non-diffusion weighted scans (B0)  
+% S0:    The signal measured in the non-diffusion weighted scans (B=0)  
 % bvals: the b values
 % bvecs: the b vectors
 % Q:     The tensors (quadratic forms) (e.g. see fgTensors) 
@@ -55,6 +58,12 @@ function S = dwiComputeSignal(S0, bvecs, bvals, Q)
 % S = S0 * exp(- (repmat(bvals, 1, size(Q,1)) .* ADC));
 %
 
-S = S0 * exp(- (repmat(bvals, 1, size(Q,1)) .* dtiADC(Q, bvecs)));
+% Previous code, which only ran for 1 Q, we think
+% S = S0 .* exp(- (repmat(bvals, 1, size(Q,1)) .* dtiADC(Q, bvecs)));
+
+% Rows:  Number of bvec directions
+% Cols:  Number of coordinates
+adc = dtiADC(Q, bvecs);
+S = exp(- diag(bvals) * adc) * diag(S0);
 
 end
