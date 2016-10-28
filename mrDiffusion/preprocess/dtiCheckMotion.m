@@ -38,7 +38,7 @@ t = vertcat(ec.xform(:).ecParams);
 % We make a plot of the motion correction during eddy current correction
 % but we do not show the figure. We only save it to disk.
 fh = mrvNewGraphWin([],[],visibility);
-if isstruct(fh)
+if isvalid(fh)
     fh = fh.Number;
 end
 subplot(2,1,1); 
