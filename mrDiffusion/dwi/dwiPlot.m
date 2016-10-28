@@ -191,7 +191,8 @@ switch pType
         uData.adcV = adcV;
         uData.adcPredicted = diag(bvecs*Q*bvecs');
         if doPlot
-            plot3(adcV(:,1),adcV(:,2),adcV(:,3),'o')
+            h = plot3(adcV(:,1),adcV(:,2),adcV(:,3),'o');
+            set(h,'MarkerFaceColor',[0 0 1]);
             grid on
             title(sprintf('%s Measured (points)',t));
         end
