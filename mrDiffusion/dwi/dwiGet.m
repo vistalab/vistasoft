@@ -363,7 +363,7 @@ switch(mrvParamFormat(param))
         % Apparently, this runs even if there is only one element in lst
         val = mean(val,4);
         
-    case {'b0image','b0valsimage','s0valsimage'}
+    case {'b0image','b0valsimage','s0valsimage','s0image'}
         % S0 = dwiGet(dwi,'b0 image',coords);
         % Return an S0 value for each voxel in coords
         % Coords are in the rows (i.e., nCoords x 3)
