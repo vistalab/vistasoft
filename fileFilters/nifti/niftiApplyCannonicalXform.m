@@ -1,5 +1,5 @@
 function [ni,canXform] = niftiApplyCannonicalXform(ni, canXform, phaseDir)
-% Reorient NIFTI data and metadata fields according to a simple xform 
+% Reorient NIFTI data and metadata fields into RAS space 
 %
 %    [ni,canXform] = ...
 %       niftiApplyCannonicalXform(ni, ...
@@ -8,7 +8,8 @@ function [ni,canXform] = niftiApplyCannonicalXform(ni, canXform, phaseDir)
 % Inputs:
 %       ni:  Nifti-1 data structure.  (Should allow a filename in future).
 % canXform:  Canonical transform from current form to RAS (Right-left,
-%            Anterior-posterior, Superior-inferior)
+%            Anterior-posterior, Superior-inferior).  If not passed in,
+%            then the transform is estimated
 % phaseDir:  ????  Phase encode direction.  (Columns, rows ... ???)
 %
 %  ** PLEASE EXPLAIN WHY WE NEED TO KNOW PHASE ENCODE DIRECTION ***
