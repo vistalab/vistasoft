@@ -62,6 +62,7 @@ fsPath      = getenv('SUBJECTS_DIR');
 fsSurface   = fullfile(fsPath, 'ernie', 'surf', 'lh.white');
 %   Convert it to vista style mesh
 msh         = fs_meshFromSurface(fsSurface);
+msh.name    = 'leftWhite';
 
 % Save the left mesh in our mrVista session
 savepth     = fullfile(erniePath, '3DAnatomy', 'Left', '3DMeshes');
@@ -75,6 +76,7 @@ leftMsh.title = 'Left Mesh, Gray/White Boundary';
 % Now do the same for the right mesh
 fsSurface = fullfile(fsPath, 'ernie', 'surf', 'rh.white');
 msh = fs_meshFromSurface(fsSurface);
+msh.name    = 'rightWhite';
 savepth = fullfile(erniePath, '3DAnatomy', 'Right', '3DMeshes');
 mkdir(savepth)
 save(fullfile(savepth, 'fsRightWhiteMeshUsmoothed'), 'msh');

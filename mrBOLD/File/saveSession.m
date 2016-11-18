@@ -11,6 +11,7 @@ function saveSession(queryFlag)
 global mrSESSION
 global HOMEDIR
 global dataTYPES
+global vANATOMYPATH
 
 if ~exist('queryFlag','var')
     queryFlag=0;
@@ -34,14 +35,14 @@ if exist(pathStr, 'file') && queryFlag
     but = questdlg('Over-write existing mrSESSION file?');
     switch but
     case 'Yes',
-        save(pathStr,'mrSESSION','dataTYPES');
+        save(pathStr,'mrSESSION','dataTYPES', 'vANATOMYPATH');
     otherwise
     end
 else
     if exist(pathStr,'file')
-        save(pathStr,'mrSESSION','dataTYPES', '-append');
+        save(pathStr,'mrSESSION','dataTYPES', 'vANATOMYPATH', '-append');
     else
-        save(pathStr,'mrSESSION','dataTYPES');
+        save(pathStr,'mrSESSION','dataTYPES', 'vANATOMYPATH');
     end        
 end
 

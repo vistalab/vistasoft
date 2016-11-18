@@ -77,12 +77,10 @@ end
 % First we make sure we add a .mat extension. Matlab does this most of
 % the times but not always, for example if your name contains a '.'.
 % It still saves the file but without '.mat' and consequently cannot load it.
-[p,n,ext]=fileparts(ROI.name);
-if ~strcmp(ext,'.mat')
-  ROIname = [ROI.name '.mat'];
-else,
-  ROIname = ROI.name;
-end;
+[~,~,ext]=fileparts(ROI.name);
+if ~strcmp(ext,'.mat'), ROIname = [ROI.name '.mat'];
+else                    ROIname = ROI.name;     end;
+
 pathStr = fullfile(roiDir(vw,local), ROIname);
 
 if check4File(pathStr) && forceSave==0
@@ -94,7 +92,9 @@ end
 
 switch saveFlag
     case 'Yes'
-        fprintf('Saving ROI "%s" in %s. \n', ROI.name, fileparts(pathStr));        
+        if verbose,
+            fprintf('Saving ROI "%s" in %s. \n', ROI.name, fileparts(pathStr));        
+        end
         save(pathStr,'ROI');
         status = 1;
         

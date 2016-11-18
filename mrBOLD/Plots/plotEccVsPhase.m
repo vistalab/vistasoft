@@ -1,4 +1,4 @@
-function [vw figHandle] = plotEccVsPhase(vw, newfig, colored, drawROI, varargin)
+function [vw, figHandle] = plotEccVsPhase(vw, newfig, colored, drawROI, varargin)
 %
 % [vw figHandle] = plotEccVsPhase(vw, newfig, co)
 %
@@ -111,7 +111,7 @@ subEcc = ecc(coIndices);
 if newfig
     figHandle = figure;
 else
-	figHandle = selectGraphWin;
+	%figHandle = selectGraphWin;
 end
 
 % selectGraphWin;
@@ -124,7 +124,7 @@ symbolSize = 4;
 
 % polar plot
 subX = subEcc.*cos(subPh);
-subY = -subEcc.*sin(subPh);
+subY = subEcc.*sin(subPh);
 
 % polar plot params
 params.grid = 'on';

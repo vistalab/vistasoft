@@ -17,7 +17,7 @@ if view.selectedROI==0
 end
 
 for r = 1:length(view.ROIs)
-    [view status forceSave] = saveROI(view, view.ROIs(r), local, forceSave);
+    [view, status, forceSave] = saveROI(view, view.ROIs(r), local, forceSave);
     if status==0        % abort saving
         return
     end

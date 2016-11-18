@@ -37,8 +37,24 @@ nii.hdr.dime.slice_start         = niiv.slice_start;
 nii.hdr.dime.slice_end           = niiv.slice_end;
 nii.hdr.dime.slice_duration      = niiv.slice_duration;
 nii.hdr.dime.toffset             = niiv.toffset;
-nii.hdr.dime.xyzt_units          = niiv.xyz_units;
-nii.hdr.dime.xyzt_units          = niiv.time_units;
+
+% XYZ units
+switch lower(niiv.xyz_units)
+    case 'microns', xyzscale = 3;
+    case 'mm',      xyzscale = 2;
+    case 'm',       xyzscale = 1;
+    otherwise, error('XYZ units cannot be determined');
+end
+
+switch lower(niiv.time_units)
+    case {'s' 'seconds' 'sec'},        tscale = 8;
+    case {'msec' 'millseconds' 'ms'},  tscale = 16;
+    case {'microsec' 'microseconds' 'us' 'usec'}, tscale = 32;
+    otherwise, error('Time units cannot be determined');
+end
+
+
+nii.hdr.dime.xyzt_units          = tscale + xyzscale;
 nii.hdr.dime.intent_code         = niiv.intent_code;
 nii.hdr.dime.intent_p1           = niiv.intent_p1;
 nii.hdr.dime.intent_p2           = niiv.intent_p2;

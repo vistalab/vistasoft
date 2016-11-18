@@ -1,8 +1,8 @@
-function view = deleteMultipleROIs(view)
+function vw = deleteMultipleROIs(vw)
 %
-% view = deleteROI(view,n)
+% vw = deleteROI(vw,n)
 %
-% Select multiple ROIs from view.ROIs for deletion
+% Select multiple ROIs from vw.ROIs for deletion
 % Actual deletion is done by deleteROI.
 
 %
@@ -13,36 +13,30 @@ function view = deleteMultipleROIs(view)
 
 
 % Select ROIs to delete
-nROIs=size(view.ROIs,2);
-if nROIs==0
-  myErrorDlg('No ROIs to delete')
-  return
-end
+nROIs=viewGet(vw, 'number of ROIs');
+if nROIs==0, warning('No ROIs to delete');return; end
+
 roiList=cell(1,nROIs);
-for r=1:nROIs
-    roiList{r}=view.ROIs(r).name;
-end
+for r=1:nROIs; roiList{r}=vw.ROIs(r).name; end
 
 %roiList
-
 selectedROIs = find(buttondlg('ROIs to delete',roiList));
+
 %selectedROIs
 nROIs=length(selectedROIs);
-if (nROIs==0)
-    error('No ROIs selected');
-end
+if nROIs==0, warning('No ROIs selected'); return; end
 
 % delete selected ROIs by name, as their numbers may change
 for r=1:nROIs
     s=selectedROIs(r);
-    n=findROI(view,roiList{s});
-    %fprintf( 'Deleting ROI: %d, %s (list: %d, %s)\n', n, view.ROIs(n).name, s, roiList{s} );
-    view=deleteROI(view, n);
+    n=findROI(vw,roiList{s});
+    %fprintf( 'Deleting ROI: %d, %s (list: %d, %s)\n', n, vw.ROIs(n).name, s, roiList{s} );
+    vw=deleteROI(vw, n);
 end
     
-if length(view.ROIs)>0
-   view = selectROI(view,1);
+if viewGet(vw, 'number of ROIs') > 0
+   vw = selectROI(vw,1);
 end
 
 % Set the ROI popup menu
-setROIPopup(view);
+setROIPopup(vw);
