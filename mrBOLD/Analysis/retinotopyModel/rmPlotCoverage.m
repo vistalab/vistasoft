@@ -418,7 +418,7 @@ if vfc.nboot>0
         otherwise
             error('Unknown method %s',vfc.method)
     end
-    RFcov=median(m)';
+    RFcov=median(m,1)';
     
 % no bootstrap
 else

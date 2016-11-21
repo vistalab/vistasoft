@@ -8,7 +8,7 @@ function this = gifti(varargin)
 % Copyright (C) 2008 Wellcome Trust Centre for Neuroimaging
 
 % Guillaume Flandin
-% $Id: gifti.m 3999 2010-07-19 10:54:18Z guillaume $
+% $Id: gifti.m 6347 2015-02-24 17:59:16Z guillaume $
 
 switch nargin
     
@@ -21,8 +21,8 @@ switch nargin
             this = varargin{1};
             
         elseif isstruct(varargin{1})
-            f       = {'faces', 'face', 'tri' 'vertices', 'vert', 'pnt', 'cdata'};
-            ff      = {'faces', 'faces', 'faces', 'vertices', 'vertices', 'vertices', 'cdata'};
+            f       = {'faces', 'face', 'tri' 'vertices', 'vert', 'pnt', 'cdata', 'indices'};
+            ff      = {'faces', 'faces', 'faces', 'vertices', 'vertices', 'vertices', 'cdata', 'indices'};
             [c, ia] = intersect(f,fieldnames(varargin{1}));
             if ~isempty(c)
                 this = gifti;
@@ -64,6 +64,9 @@ switch nargin
                 catch
                     error('[GIFTI] Loading of file %s failed.', varargin{1});
                 end
+            elseif strcmpi(e,'.asc') || strcmpi(e,'.srf')
+                this = read_freesurfer_file(varargin{1});
+                this = gifti(this);
             else
                 this = read_gifti_file_standalone(varargin{1},giftistruct);
                 this = class(this,'gifti');

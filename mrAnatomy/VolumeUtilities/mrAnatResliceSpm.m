@@ -1,5 +1,5 @@
-function [newImg,xform,deformField] = mrAnatResliceSpm(img, xform, bb, mmPerVox, bSplineParams, showProgress)
-%
+function [newImg,xform,deformField] = mrAnatResliceSpm(img, xform, bb, ...
+    mmPerVox, bSplineParams, showProgress)
 % Use SPM spline-based interpolation to reslice a volume image to a specific 
 % resolution in mm.
 %
@@ -39,10 +39,10 @@ function [newImg,xform,deformField] = mrAnatResliceSpm(img, xform, bb, mmPerVox,
 %     origin = (size(img)+1)/2;
 %     xform = inv([diag(1./mmPerVox), origin'; [0 0 0 1]]);
 % 
-%   This will ensure that you rotate about the center of the image. Note that 
-%   it's easiest to assemble the reverse transform (image space to mm space) and 
-%   then invert it to get the centered mm space to image space that we want. 
-%   Basically, what we want is an xform such that
+%   This will ensure that you rotate about the center of the image. Note
+%   that it's easiest to assemble the reverse transform (image space to mm
+%   space) and then invert it to get the centered mm space to image space
+%   that we want. Basically, what we want is an xform such that
 %
 %     inv(xform)*[0 0 0 1]'
 %
@@ -60,16 +60,19 @@ function [newImg,xform,deformField] = mrAnatResliceSpm(img, xform, bb, mmPerVox,
 %     bb = V.mat*[bb,[0;0]]';
 %     bb = bb(1:3,:)';
 %
-%   (note- you need -1 in there somewhere to make it work exactly, but I'm not sure 
-%   which side you should put it on to avoid a 1/2 voxel shift.)
+%   (note- you need -1 in there somewhere to make it work exactly, but I'm
+%   not sure which side you should put it on to avoid a 1/2 voxel shift.)
 %
 %   The call to mrAnatResliceSpm will be something like:
+%
 %   img2 = mrAnatResliceSpm(img, inv(V.mat), bb, mmPerVox);
 %
-%   Or, if you wanted to reslice to 1mm isotropic voxels with trilinear interp:
+%   Or, if you wanted to reslice to 1mm isotropic voxels with trilinear
+%   interp:
+%
 %   img2 = mrAnatResliceSpm(img, inv(V.mat), bb, [1 1 1], [1 1 1 0 0 0]);
 % 
-% (c) Stanford Vista Team 2012
+% (Stanford Vista Team 2012
 
 % HISTORY:
 % 2004.11.10 RFD: wrote it, after gaining some understanding of the spm
@@ -79,7 +82,7 @@ function [newImg,xform,deformField] = mrAnatResliceSpm(img, xform, bb, mmPerVox,
 % 2006.07.19 RFD: NOW the newXform is correct for mmPerVox ~= 1. 
 % 2007.10.30 RFD: Finally- newXform for mmPerVox ~= 1 is consistent with SPM.
 
-
+%% Establish parameters
 if(~exist('mmPerVox','var') || isempty(mmPerVox))
     mmPerVox = [1 1 1];
 end
@@ -120,8 +123,6 @@ end
 
 % x,y,z coordinates in the output image space
 x   = (bb(1,1):mmPerVox(1):bb(2,1));
-% br thinks this is weird
-% y   = (bb(1,2):abs(mmPerVox(2)):bb(2,2));
 y   = (bb(1,2):mmPerVox(2):bb(2,2));
 z   = (bb(1,3):abs(mmPerVox(3)):bb(2,3));
 
@@ -131,21 +132,26 @@ if(nargout>2), deformField = zeros([newSz,3]); end
 if(showProgress), h = waitbar(0,['Resampling with ' interpMethod ' interpolation...']); end
 totalNumSlices = length(z)*size(img,4);
 
-for(fourthDim=1:size(img,4))
+for fourthDim=1:size(img,4)
     if(showProgress), waitbar(0.005,h); end
     bsplineCoefs = spm_bsplinc(img(:,:,:,fourthDim), bSplineParams);
     if(showProgress), waitbar(0.1,h); end
     curSliceTotal = (fourthDim-1)*length(z);
-    for(ii=1:length(z))
+    for ii=1:length(z)
         [X,Y,Z] = ndgrid(x, y, z(ii));
         [sampleCoords,outMat] = mrAnatXformCoords(xform, [X(:) Y(:) Z(:)]);
+        
+        % Resampling the coordinates using the bspline method
         tmp = spm_bsplins(bsplineCoefs, ...
             sampleCoords(:,1), sampleCoords(:,2), sampleCoords(:,3), bSplineParams);
         tmp = reshape(tmp, newSz([1,2]));
         %figure; imagesc(tmp); axis image; colormap gray;
         
         newImg(:,:,ii,fourthDim) = tmp; %permute(tmp,[2,1]);
+        
         if(showProgress), waitbar((curSliceTotal+ii)/totalNumSlices*0.9+0.1,h); end
+        
+        % Return the deformation field
         if(exist('deformField','var'))
             if(~isempty(outMat))
                 % this is quite inefficient, but makes for cleaner code.

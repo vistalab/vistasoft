@@ -204,13 +204,18 @@ switch(mrvParamFormat(param))
         
     case {'adcdataimage'}
         % dwiGet(dwi,'adc data image',coord)
-        % Get the ADC values from a particular image coordinate location
+        % Get the ADC values from a image coordinates
         %
-        % See also: The function dtiADC predicts the ADC given a tensor fit
-        % to the data.
+        % The returned values are the ADC in each column of a matrix
+        % The row dimension is the number of bvec directions, 
+        % The column dimension is the number of coordinates
+        %
+        % See also: The function dtiADC predicts the ADC given a tensor
+        %
         % We could have cases 'adctensorimage' and 'adctensoracpc'.  Or, we
         % could just make up functions for doing this, such as dtiADC,
         % dwiQ, and the mess that is out there.  To think and discuss.
+        %
         
         if ~isempty(varargin), coords = varargin{1};
         else error('image coords required');
@@ -230,7 +235,14 @@ switch(mrvParamFormat(param))
         % direction.
         %
         %   dSig = S0 * exp(-b*ADC)
-        val = - diag( (bvals).^-1 )*log(dSig(:)/S0);  % um2/ms
+        %
+        % ** PROBLEM WHEN MULTIPLE COORDS **
+        %
+        val = -log(diag(1./S0)*dSig)*diag((bvals).^-1);
+        val = val';    % ADC for each voxel is in the columns
+        
+        % Only worked for 1 coord
+        % val = - diag( (bvals).^-1 )*log(dSig(:)/S0);  % um2/ms
         
     case {'adcdataacpc'}
         % dwiGet(dwi,'adc data acpc',coord)
@@ -338,19 +350,20 @@ switch(mrvParamFormat(param))
         end
         val = nanmean(val,1);
         
-    case{'b0image','b0meanimage','s0image'}
-        % S0 = dwiGet(dwi,'b0 image',coords);
+    case{'meanb0'}
+        % S0 = dwiGet(dwi,'b0 mean image');
         %
-        % Return the S0 value for each voxel in coords
-        % Coords are in the rows (i.e., nCoords x 3)
-        if ~isempty(varargin), coords = varargin{1};
-        else error('coords required');
-        end
+        % Return the mean of the b=0 (non diffusion) images
+        % Was a duplicate of below, which made no sense.
+        % So LMP/BW changed this to do the right thing and return the mean
+        % of the b=0 images in dwi.nifti data
         
-        val = dwiGet(dwi,'b0 vals image',coords);
-        val = nanmean(val,2);
+        lst = dwiGet(dwi,'n nondiffusion images');
+        val = dwi.nifti.data(:,:,:,lst);
+        % Apparently, this runs even if there is only one element in lst
+        val = mean(val,4);
         
-    case {'b0valsimage','s0valsimage'}
+    case {'b0image','b0valsimage','s0valsimage','s0image'}
         % S0 = dwiGet(dwi,'b0 image',coords);
         % Return an S0 value for each voxel in coords
         % Coords are in the rows (i.e., nCoords x 3)
