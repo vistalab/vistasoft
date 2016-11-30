@@ -255,7 +255,7 @@ if length(mr.dims)<4
 end
 
 mr.extent = mr.voxelSize .* mr.dims;
-mr.dataRange = minmax(mr.data);
+mr.dataRange = mrvMinmax(mr.data);
 if ~isfield(mr, 'params'), mr.params = []; end
 
 return
