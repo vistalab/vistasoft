@@ -54,7 +54,7 @@ mr.data = I;
 mr.dims = size(mr.data);  
 if length(mr.dims) < 4, mr.dims(4) = 1; end
 mr.extent = mr.dims .* mr.voxelSize;
-mr.dataRange = minmax(mr.data);
+mr.dataRange = mrvMinmax(mr.data);
 
 %% set other fields: coordinat spaces, etc.
 mr.spaces = mrStandardSpaces(mr);

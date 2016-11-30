@@ -146,7 +146,7 @@ if plotFlag==1
 		
 		f = fields{z};
 		
-		drawXCorrMatrix( T(:,:,z), minmax(T) + [-.2 .2], 1 );
+		drawXCorrMatrix( T(:,:,z), mrvMinmax(T) + [-.2 .2], 1 );
 		
 		% label each entry in the lower-left-hand plot
 % 		if z==7

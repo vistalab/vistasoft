@@ -77,7 +77,7 @@ if ~isempty(lineROIpoint)
 	% find all points with the same X and Y value as the anchor point, but
 	% a range of Z values which reflect the range spanned by the inplane
 	% coordinates:
-	zRange = minmax(scannerCoords(3,:));
+	zRange = mrvMinmax(scannerCoords(3,:));
 	zRange = zRange(1):zRange(2);
 	nPoints = length(zRange);
 	[xx, yy, zz] = meshgrid(anchor(2), anchor(1), zRange);

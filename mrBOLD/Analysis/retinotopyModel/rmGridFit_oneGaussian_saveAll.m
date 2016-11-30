@@ -124,7 +124,7 @@ for n=1:nFits
 			% this will lose precision (each value will have 256 discrete
 			% values, which we scale across the range of values), but save
 			% about 75% / file on storage.
-			cmd = sprintf('dataRange = minmax(%s);', varname);
+			cmd = sprintf('dataRange = mrvMinmax(%s);', varname);
 			eval(cmd);
 			
 			cmd = sprintf('%s = int16( rescale2(%s, dataRange, [-32768 32767]) );', ...
