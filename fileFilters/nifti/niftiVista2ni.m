@@ -1,5 +1,4 @@
 function nii = niftiVista2ni(niiv)
-% 
 % Transforms a VISTASOFT nifti structure to a NIFTI-1 structure.
 %
 % nii = niftiVista2ni(niiv)
