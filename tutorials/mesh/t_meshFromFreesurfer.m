@@ -43,10 +43,10 @@ end
 forceOverwrite = false; 
 
 % Do it
-dataDir = mrtInstallSampleData('anatomy/freesurfer', 'ernie', ...
+dFolder = mrtInstallSampleData('anatomy/freesurfer', 'ernie', ...
     fssubjectsdir, forceOverwrite);
 
-fprintf('Freesurfer directory for ernie installed here:\n %s\n', dataDir)
+fprintf('Freesurfer directory for ernie installed here:\n %s\n', dFolder)
 
 %% Create Freesurfer meshes
 
@@ -67,7 +67,7 @@ msh.name    = 'leftWhite';
 % Save the left mesh in our mrVista session
 savepth     = fullfile(erniePath, '3DAnatomy', 'Left', '3DMeshes');
 mkdir(savepth)
-save(fullfile(savepth, 'fsLeftWhiteMeshUsmoothed'), 'msh');
+save(fullfile(savepth, 'leftMeshUsmoothedFS'), 'msh');
 
 % rename the mesh for later visualization
 leftMsh = msh;
@@ -79,7 +79,7 @@ msh = fs_meshFromSurface(fsSurface);
 msh.name    = 'rightWhite';
 savepth = fullfile(erniePath, '3DAnatomy', 'Right', '3DMeshes');
 mkdir(savepth)
-save(fullfile(savepth, 'fsRightWhiteMeshUsmoothed'), 'msh');
+save(fullfile(savepth, 'rightMeshUsmoothedFS'), 'msh');
 
 
 % rename the mesh for later visualization

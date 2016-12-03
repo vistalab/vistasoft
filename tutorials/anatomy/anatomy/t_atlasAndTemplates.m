@@ -63,13 +63,13 @@ end
 % Get ernie freesurfer directory and install it in freesurfer subjects dir.
 %   If we find the directory, do not bother unzipping again.
 forceOverwrite = false;
-dataDir = mrtInstallSampleData('anatomy/freesurfer', 'ernie', ...
+dFolder = mrtInstallSampleData('anatomy/freesurfer', 'ernie', ...
     fssubjectsdir, forceOverwrite);
 
-fprintf('Freesurfer directory for ernie installed here:\n %s\n', dataDir)
+fprintf('Freesurfer directory for ernie installed here:\n %s\n', dFolder)
 
 % Now run the docker, first checking whether it has already been run. 
-wangAtlasPath = sprintf(fullfile(dataDir, 'mri',...
+wangAtlasPath = sprintf(fullfile(dFolder, 'mri',...
     'native.wang2015_atlas.mgz'));
 
 if exist(wangAtlasPath, 'file')
@@ -77,7 +77,7 @@ if exist(wangAtlasPath, 'file')
         ' We will proceed without re-running the docker.'))
 else
     % Run the docker using a system call
-    str = sprintf('docker run -ti --rm -v %s:/input \\nben/occipital_atlas:latest', dataDir);
+    str = sprintf('docker run -ti --rm -v %s:/input \\nben/occipital_atlas:latest', dFolder);
     system(str)
 end
 
@@ -121,8 +121,8 @@ end
 vw = mrVista('3');
 
 %% Open and smooth meshes
-mesh1 = fullfile('3DAnatomy', 'Left', '3DMeshes', 'fsLeftWhiteMeshUsmoothed.mat');
-mesh2 = fullfile('3DAnatomy', 'Right', '3DMeshes', 'fsRightWhiteMeshUsmoothed.mat');
+mesh1 = fullfile('3DAnatomy', 'Left', '3DMeshes', 'leftMeshUsmoothedFS.mat');
+mesh2 = fullfile('3DAnatomy', 'Right', '3DMeshes', 'rightMeshUsmoothedFS.mat');
 
 if ~exist(mesh1, 'file') || ~exist(mesh2, 'file')
     error('Meshes not found. Please run t_meshFromFreesurfer.')
@@ -175,7 +175,7 @@ vw = meshUpdateAll(vw);
 
 %% Benson ROIs
 % LOAD THE BENSON ATLAS AS ROIS (V1-V3)
-bensonROIsPath = sprintf(fullfile(dataDir, 'mri',...
+bensonROIsPath = sprintf(fullfile(dFolder, 'mri',...
     'native.template_areas.mgz'));
 
 [pth, fname] = fileparts(bensonROIsPath);
@@ -201,17 +201,24 @@ vw = meshUpdateAll(vw);
 
 
 %% Benson eccentricity and polar angle maps
-% LOAD THE BENSON ECC AND ANGLE MAPS AS MAPS
-bensonEccPath = sprintf(fullfile(dataDir, 'mri',...
+% LOAD THE BENSON ECC AND ANGLE MAPS AS MRVISTA PARAMETER MAPS
+bensonEccPath = sprintf(fullfile(dFolder, 'mri',...
     'native.template_eccen.mgz'));
-bensonAnglePath = sprintf(fullfile(dataDir, 'mri',...
+bensonAnglePath = sprintf(fullfile(dFolder, 'mri',...
     'native.template_angle.mgz'));
 
-[pth, fname, ext] = fileparts(bensonEccPath);
-bensonEccNifti = fullfile('Gray', sprintf('%s.nii.gz', fname));
+[~, fname] = fileparts(bensonEccPath);
+writePth = fullfile('Gray', 'Original');
+bensonEccNifti = fullfile(writePth, sprintf('%s.nii.gz', fname));
+mkdir(writePth);
+ni = MRIread(bensonEccPath); 
+MRIwrite(ni, bensonEccNifti);
 
-ni = MRIread(bensonROIsPath); 
-MRIwrite(ni, bensonROIsNifti);
+vw = viewSet(vw, 'display mode', 'map');
+vw = loadParameterMap(vw, bensonEccNifti);
+
+
+vw = refreshScreen(vw);
 %% Clean up
 mrvCleanWorkspace
 cd(curdir)
