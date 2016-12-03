@@ -127,7 +127,7 @@ uimenu(preprocessMenu,'Label','Preprocess (Scan Group)','Separator','on',...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % New Code GLM/Contrast submenu       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-newGLMMenu = uimenu(eventMenu,'Label', 'GLM/Contrast, New Code...',...
+newGLMMenu = uimenu(eventMenu,'Label', 'GLM/Contrast...',...
     'Separator', 'on');
 
 % apply GLM (new code) scan group callback:
@@ -150,54 +150,54 @@ uimenu(newGLMMenu,'Label','Compute Many Contrasts','Separator','off',...
 
 
 
-% GLM submenu:
-glmMenu = uimenu(eventMenu,'Label','Apply GLM (Old Version)...','Separator','off');
+% % GLM submenu:
+% glmMenu = uimenu(eventMenu,'Label','Apply GLM (Old Version)...','Separator','off');
+% 
+% % apply GLM (current scan) callback:
+% %   er_runSelxavgBlock(view);
+% %   view=refreshScreen(view);
+% cb=['er_runSelxavgBlock(',view.name,'); '...
+%     view.name,'=refreshScreen(',view.name,');'];
+% uimenu(glmMenu,'Label','Current Scan','Separator','off',...
+%     'Callback',cb);
+% 
+% % apply GLM (block-design) callback:
+% %   er_runSelxavgBlock(view,0);
+% %   view=refreshScreen(view);
+% cb=['er_runSelxavgBlock(',view.name,',0,1); '...
+%     view.name,'=refreshScreen(',view.name,');'];
+% uimenu(glmMenu,'Label','Select Scans','Separator','off',...
+%     'Callback',cb);
+% 
+% % apply GLM (scan group) callback:
+% %   er_runSelxavgBlock(view,-1);
+% %   view=refreshScreen(view);
+% cb=['er_runSelxavgBlock(',view.name,',-1,1); '...
+%     view.name,'=refreshScreen(',view.name,');'];
+% uimenu(glmMenu,'Label','Scan Group','Separator','off',...
+%     'Callback',cb);
 
-% apply GLM (current scan) callback:
-%   er_runSelxavgBlock(view);
-%   view=refreshScreen(view);
-cb=['er_runSelxavgBlock(',view.name,'); '...
-    view.name,'=refreshScreen(',view.name,');'];
-uimenu(glmMenu,'Label','Current Scan','Separator','off',...
-    'Callback',cb);
-
-% apply GLM (block-design) callback:
-%   er_runSelxavgBlock(view,0);
-%   view=refreshScreen(view);
-cb=['er_runSelxavgBlock(',view.name,',0,1); '...
-    view.name,'=refreshScreen(',view.name,');'];
-uimenu(glmMenu,'Label','Select Scans','Separator','off',...
-    'Callback',cb);
-
-% apply GLM (scan group) callback:
-%   er_runSelxavgBlock(view,-1);
-%   view=refreshScreen(view);
-cb=['er_runSelxavgBlock(',view.name,',-1,1); '...
-    view.name,'=refreshScreen(',view.name,');'];
-uimenu(glmMenu,'Label','Scan Group','Separator','off',...
-    'Callback',cb);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% contrast map submenu       %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-contrastMenu = uimenu(eventMenu,'Label','Contrast Map (Old Code)...','Separator','off');
-
-% contrast map (current scan) callback:
-% view = er_mkcontrast(view,0);
-cb = sprintf('%s = er_mkcontrast(%s,0);',view.name,view.name);
-uimenu(contrastMenu,'Label','Contrast Map (Current Scan)','Separator','off',...
-    'Callback',cb);
-
-% contrast map (select scans) callback:
-% view = er_mkcontrast(view);
-cb = sprintf('%s = er_mkcontrast(%s);',view.name,view.name);
-uimenu(contrastMenu,'Label','Contrast Map (Select Scans)','Separator','off',...
-    'Callback',cb);
-% contrast map (scan group) callback:
-% view = er_mkcontrast(view,-1);
-cb = sprintf('%s = er_mkcontrast(%s,-1);',view.name,view.name);
-uimenu(contrastMenu,'Label','Contrast Map (Scan Group)','Separator','off',...
-    'Callback',cb);
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % contrast map submenu       %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% contrastMenu = uimenu(eventMenu,'Label','Contrast Map (Old Code)...','Separator','off');
+% 
+% % contrast map (current scan) callback:
+% % view = er_mkcontrast(view,0);
+% cb = sprintf('%s = er_mkcontrast(%s,0);',view.name,view.name);
+% uimenu(contrastMenu,'Label','Contrast Map (Current Scan)','Separator','off',...
+%     'Callback',cb);
+% 
+% % contrast map (select scans) callback:
+% % view = er_mkcontrast(view);
+% cb = sprintf('%s = er_mkcontrast(%s);',view.name,view.name);
+% uimenu(contrastMenu,'Label','Contrast Map (Select Scans)','Separator','off',...
+%     'Callback',cb);
+% % contrast map (scan group) callback:
+% % view = er_mkcontrast(view,-1);
+% cb = sprintf('%s = er_mkcontrast(%s,-1);',view.name,view.name);
+% uimenu(contrastMenu,'Label','Contrast Map (Scan Group)','Separator','off',...
+%     'Callback',cb);
 
 
 
