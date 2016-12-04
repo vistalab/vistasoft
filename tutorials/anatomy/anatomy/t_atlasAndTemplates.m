@@ -217,8 +217,8 @@ MRIwrite(ni, bensonEccNifti);
 vw = viewSet(vw, 'display mode', 'map');
 vw = loadParameterMap(vw, bensonEccNifti);
 
-
 vw = refreshScreen(vw);
+
 %% Clean up
 mrvCleanWorkspace
 cd(curdir)
