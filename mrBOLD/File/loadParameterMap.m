@@ -1,5 +1,5 @@
-function [vw ok] = loadParameterMap(vw, mapPath)
-% function loadParameterMap(vw, [mapPath])
+function [vw, ok] = loadParameterMap(vw, mapPath)
+% function [vw, ok] = loadParameterMap(vw, [mapPath])
 %
 % load and set parameter map in a user specified file
 %
@@ -43,7 +43,7 @@ if ~check4File(mapPath)
 end
 
 
-[pathstr,name,extension] = fileparts(mapPath);
+[~,name,extension] = fileparts(mapPath);
 
 if strcmp(extension, '.mat')
     % check4File only works with .mat files:
@@ -74,30 +74,42 @@ if strcmp(extension, '.nii') || strcmp(extension,'.gz')
     nii = niftiRead(mapPath);
     
     % Apply the canonical xform for nifti data
-    nii = niftiApplyAndCreateXform(nii,'Inplane');
+    switch lower(viewGet(vw, 'viewType'))
+        case 'inplane'
+            nii = niftiApplyAndCreateXform(nii,'Inplane');
+            
+            
+            % Set the data into the view structure
+            mapData = {niftiGet(nii,'Data')};
+            vw = viewSet(vw, 'map', mapData);
+            
+            % To deal with with the double-extension in .nii.gz files
+            dot_idx = find(name=='.', 1);
+            if ~isempty(dot_idx), name = name(1:find(name=='.')-1); end
+            
+            % It will be named according to the name of the nifti file:
+            vw = viewSet(vw, 'map Name', name);
+            
+            % Save it in the right place for the DATATYPE:
+            saveParameterMap(vw)
+            
+            mapPath = fullfile(dataDir(vw),[vw.mapName,'.mat']);
+            
+            
+            
+            load(mapPath);
+            
+            vw = setParameterMap(vw,map,mapName);
+            
+            
+        case {'gray' 'volume'}
+            vw = nifti2functionals(vw, mapPath);
+            return;
+        otherwise
+            
+    end
     
-    % Set the data into the view structure
-    mapData = {niftiGet(nii,'Data')};    
-    vw = viewSet(vw, 'map', mapData);
-    
-    % To deal with with the double-extension in .nii.gz files
-    dot_idx = find(name=='.', 1);
-    if ~isempty(dot_idx), name = name(1:find(name=='.')-1); end
-    
-    % It will be named according to the name of the nifti file:
-    vw = viewSet(vw, 'map Name', name);
-    
-    % Save it in the right place for the DATATYPE:
-    saveParameterMap(vw)
-    
-    mapPath = fullfile(dataDir(vw),[vw.mapName,'.mat']);
-
 end
-
-load(mapPath);
-
-vw = setParameterMap(vw,map,mapName);
-
 nScans = viewGet(vw, 'numScans');
 if exist('co','var')
     for scan = 1:nScans
