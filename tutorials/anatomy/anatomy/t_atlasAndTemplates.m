@@ -201,12 +201,16 @@ vw = meshUpdateAll(vw);
 
 
 %% Benson eccentricity and polar angle maps
-% LOAD THE BENSON ECC AND ANGLE MAPS AS MRVISTA PARAMETER MAPS
+
+% Find the volumetric maps in the freesurfer directory made by the benson
+% docker
 bensonEccPath = sprintf(fullfile(dFolder, 'mri',...
     'native.template_eccen.mgz'));
 bensonAnglePath = sprintf(fullfile(dFolder, 'mri',...
     'native.template_angle.mgz'));
 
+% ECCENTRICITY -----------------------------------------------------
+% Load and display the eccentricity map
 [~, fname] = fileparts(bensonEccPath);
 writePth = fullfile('Gray', 'Original');
 bensonEccNifti = fullfile(writePth, sprintf('%s.nii.gz', fname));
@@ -217,8 +221,34 @@ MRIwrite(ni, bensonEccNifti);
 vw = viewSet(vw, 'display mode', 'map');
 vw = loadParameterMap(vw, bensonEccNifti);
 
-vw = refreshScreen(vw);
+% use truncated hsv colormap (fovea is red, periphery is blue)
+vw.ui.mapMode = setColormap(vw.ui.mapMode, 'hsvTbCmap'); 
 
+% limit to ecc > 0
+vw = viewSet(vw, 'mapwin', [eps 90]);
+vw = viewSet(vw, 'mapclip', [eps 90]);
+vw = refreshScreen(vw);
+vw = meshUpdateAll(vw); 
+
+% POLAR ANGLE -----------------------------------------------------
+% Load and display the angle map
+[~, fname] = fileparts(bensonAnglePath);
+writePth = fullfile('Gray', 'Original');
+bensonAngleNifti = fullfile(writePth, sprintf('%s.nii.gz', fname));
+mkdir(writePth);
+ni = MRIread(bensonAnglePath); 
+MRIwrite(ni, bensonAngleNifti);
+
+vw = viewSet(vw, 'display mode', 'map');
+vw = loadParameterMap(vw, bensonAngleNifti);
+
+% use  hsv colormap
+vw.ui.mapMode = setColormap(vw.ui.mapMode, 'hsvCmap'); 
+
+% limit to angles > 0
+vw = viewSet(vw, 'mapwin', [eps 180]);
+vw = viewSet(vw, 'mapclip', [eps 180]);
+vw = refreshScreen(vw);
 %% Clean up
 mrvCleanWorkspace
 cd(curdir)
