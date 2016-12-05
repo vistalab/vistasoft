@@ -314,11 +314,6 @@ for slice=loopSlices,
     %   unconvolved images and then convolve with the hRF afterwards
     if ~checkfields(params, 'analysis', 'nonlinear') || ~params.analysis.nonlinear
         % for a lineaer model, use the pre-convolved stimulus images
-        
-                
-        %foo = input('the net line may be a problem. check the size of original_allstimimages. it might already be decimated');
-        dbstop();
-        
         original_allstimimages = params.analysis.allstimimages;
         params.analysis.allstimimages = rmDecimate(params.analysis.allstimimages,...
             doDecimate);
