@@ -9,7 +9,13 @@
 %   Docker
 %   Remote Data Toolbox
 %
-% This tutorial is part of a sequence. Run 
+% This tutorial can either be run as a stand-alone tutorial, using the
+% fully processed ernie pRF directory, or as part of a sequence in which
+% the ernie pRF directory is built up from raw files.  is part of a
+% sequence. For the former, run
+%   t_initAnatomyFromFreesurfer
+% before running this tutorial. For the latter, run the following sequence
+% of tutorials
 %   t_initAnatomyFromFreesurfer
 %   t_meshFromFreesurfer 
 %   t_initVistaSession
@@ -20,15 +26,16 @@
 %   t_averageTSeries    
 % prior to running this tutorial. 
 %
-% Summary (ONE DESCRIPTOR PER CELL)
+% Summary
 %
-% - Do actiom A
-% - Do action B
-% - Visualize
-% - Clean up
+% - Run Noah Benson's template docker on ernie freesurfer directory
+% - Navigate and open the ernie vistasession
+% - Open and smooth meshes
+% - Create and visualize 25 ROIs from Wang et al maximum probability atlas
+% - Create and visualize V1-V3 ROIs from Benson atlas
+% - Load and visualize eccentricity and polar angle maps from Benson atlas
 %
-% Tested MM/DD/YYYY - MATLAB r2015a (REPLACE WITH VERSION), Mac OS 10.11.6
-% (REPLACE WITH YOUR OS)
+% Tested 12/5/2016 - MATLAB r2015b, Mac OS 10.12.1
 %
 %  See also: t_initAnatomyFromFreesurfer t_meshesFromFreesurfer
 %  t_initVistaSession t_alignInplaneToVolume t_installSegmentation
@@ -105,8 +112,7 @@ curdir = pwd();
 
 cd(erniePRF);
 
-
-%% Open a 3-view vista session
+% Open a 3-view vista session
 
 % Check that scratch ernie directory has been set up with a intialized
 % vistasession
@@ -163,6 +169,11 @@ vw = roiSetVertIndsAllMeshes(vw);
 
 vw = meshUpdateAll(vw); 
 
+% Copy the mesh to a Matlab figure
+hTmp = figure('Color', 'w');
+imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
+
+
 % For fun, color the meshes
 nROIs = length(viewGet(vw, 'ROIs'));
 colors = hsv(nROIs);
@@ -172,6 +183,10 @@ end
 vw = viewSet(vw, 'roi draw method', 'boxes');
 
 vw = meshUpdateAll(vw); 
+% Copy the mesh to a Matlab figure
+hTmp = figure('Color', 'w');
+imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
+
 
 %% Benson ROIs
 % LOAD THE BENSON ATLAS AS ROIS (V1-V3)
@@ -198,6 +213,10 @@ vw = viewSet(vw, 'ROI Name', 'BensonAtlas_V3', numROIs + 3);
 % Visualize Benson ROIs overlayed on Wang atlas
 vw = viewSet(vw, 'ROI draw method', 'perimeter');
 vw = meshUpdateAll(vw); 
+
+% Copy the mesh to a Matlab figure
+hTmp = figure('Color', 'w');
+imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
 
 
 %% Benson eccentricity and polar angle maps
@@ -230,6 +249,10 @@ vw = viewSet(vw, 'mapclip', [eps 90]);
 vw = refreshScreen(vw);
 vw = meshUpdateAll(vw); 
 
+% Copy the mesh to a Matlab figure
+hTmp = figure('Color', 'w');
+imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
+
 % POLAR ANGLE -----------------------------------------------------
 % Load and display the angle map
 [~, fname] = fileparts(bensonAnglePath);
@@ -249,6 +272,12 @@ vw.ui.mapMode = setColormap(vw.ui.mapMode, 'hsvCmap');
 vw = viewSet(vw, 'mapwin', [eps 180]);
 vw = viewSet(vw, 'mapclip', [eps 180]);
 vw = refreshScreen(vw);
+vw = meshUpdateAll(vw); 
+
+% Copy the mesh to a Matlab figure
+hTmp = figure('Color', 'w');
+imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
+
 %% Clean up
 mrvCleanWorkspace
 cd(curdir)
