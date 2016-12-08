@@ -1,9 +1,10 @@
 function savetSeries(tSeries,vw,scan,slice,nii)
+% Save time series to a nifti file
 %
-% function savetSeries(tSeries,vw,scan,[slice],[nii])
+%   savetSeries(tSeries,vw,scan,[slice],[nii])
 %
-% This function should be called everytime you save a tSeries.
-% Makes the tSeries directory and scan subdirectory if they don't already exist.
+% This function should be called everytime you save a tSeries. Makes the
+% tSeries directory and scan subdirectory if they don't already exist.
 % 
 % Nifti functionality has been added. In the directory
 % '[sessionDir]/[dataTYPE]/TSeries/tSeriesScan[Scan#]Slice[Slice#].nii.gz'

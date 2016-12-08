@@ -261,7 +261,7 @@ for n = 1:N
 	% set the color map and color limits
 	% (the saved param map may have over-set this):
 	V.ui.mapMode = mapMode;
-	V = setMapWindow(V, minmax(V.map{scan}));
+	V = setMapWindow(V, mrvMinmax(V.map{scan}));
 
 	for h = 1:length(whichMeshes)
 		% update the mesh

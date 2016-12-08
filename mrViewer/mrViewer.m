@@ -102,7 +102,7 @@ ui = mrViewSet(ui, 'space', ui.settings.space);
 
 % % guess a good initial clip value for the anatomies
 % [binCnt binCenters] = hist(ui.mr.data(:), 100);
-% clipvals = binCenters( minmax(find(binCnt>histThresh) ));
+% clipvals = binCenters( mrvMinmax(find(binCnt>histThresh) ));
 % ui = mrViewSetGrayscale(ui, 'clip', clipvals);
 
 % refresh view

@@ -37,12 +37,13 @@ disp('Initializing Volume view')
 s = getNewViewIndex(VOLUME); %#ok<NODEF>
 
 % Set name, viewType, & subdir
-VOLUME{s}.name = ['VOLUME{',num2str(s),'}'];
-VOLUME{s}.viewType = 'Volume';
-VOLUME{s}.subdir = 'Volume';
+VOLUME{s} = []; 
+VOLUME{s} = viewSet(VOLUME{s}, 'name', ['VOLUME{',num2str(s),'}']);
+VOLUME{s} = viewSet(VOLUME{s}, 'viewType',  'Volume');
+VOLUME{s} = viewSet(VOLUME{s}, 'subdir', 'Volume');
 
 % Refresh function, gets called by refreshScreen
-VOLUME{s}.refreshFn = 'volume3View'; 
+VOLUME{s} = viewSet(VOLUME{s}, 'refreshFn', 'volume3View'); 
 
 %%%%%%%%%%%%%%%%%%
 % Load Anatomies %

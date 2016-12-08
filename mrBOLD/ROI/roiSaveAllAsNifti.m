@@ -52,7 +52,7 @@ end
 
 
 % save the file
-roiFile = saveNifti(vw, roiData, fname);
+roiFile = niftiSaveVistaVolume(vw, roiData, fname);
 
 % create a label file for itkGray
 useV1V2V3V4colors = true;
@@ -63,41 +63,6 @@ message = sprintf...
 disp(message);
 
 %------------------------------------------------------------------------
-
-end
-
-function fname = saveNifti(vw, roiData, fname)
-% Convert mrVista format to our preferred axial format for NIFTI
-% roiData = flipdim(flipdim(permute(roiData,[3 2 1]),2),3);
-% mmPerVox = vw.mmPerVox([3 2 1]);
-% xform = [diag(1./mmPerVox), size(roiData)'/2; 0 0 0 1];
-% ni = niftiGetStruct(roiData, inv(xform));
-% ni.fname = fname;
-
-mrGlobals;
-
-
-mmPerVox = viewGet(vw, 'mmPerVox');
-[data, xform, ni] = mrLoadRet2nifti(roiData, mmPerVox);
-
-% If the volume anatomy file is a NIFTI, then we want to steal the header
-% information from the volume anatomy so that the ROI file and the anatomy
-% file have identical headers.
-[tmp, tmp, ext] = fileparts(vANATOMYPATH); %#ok<ASGLU>
-if ismember(ext, {'.nii', '.gz'}) 
-    if ~exist(vANATOMYPATH, 'file')
-        warning('vANATOMYPATH not found. Not using vANAT header') %#ok<WNTAG>
-    else
-        ni       = niftiRead(vANATOMYPATH);
-        ni.fname = fname;
-        ni.data  = data;
-    end
-end
-
-ni.fname = fname;
-
-% save it
-writeFileNifti(ni);
 
 end
 

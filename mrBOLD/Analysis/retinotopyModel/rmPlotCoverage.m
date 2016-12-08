@@ -35,6 +35,7 @@ function [RFcov, figHandle, all_models, weight, data] = rmPlotCoverage(vw, varar
 % 09/02 SD large rearrangments
 % 09/08 JW allow superposition of pRF centers; various minor debugs
 % 02/10 MB added method 'betasum'
+% 09/16 RL edited code to allow for the edge case of ROIs that are 1 or 2 voxels large
 if notDefined('vw'),       error('View must be defined.'); end
 if notDefined('varargin'), varargin{1} = 'dialog'; end
 
@@ -230,6 +231,13 @@ suby0    = y0(coIndices);
 
 % smooth sigma
 if vfc.smoothSigma
+    
+    % Cannot do sigma smoothing if the ROI has less than 3 voxels. 
+    if size(subx0,2) < 3
+        error('Cannot perform sigma smoothing when the ROI has less than 3 voxels. ')
+    end
+    
+    
     if vfc.smoothSigma == 1
         vfc.smoothSigma = 3; %default
     end
@@ -329,6 +337,16 @@ end
 % make in small steps so we don't go into swap space for large ROIs
 n = numel(subX);
 s = [(1:ceil(n./1000):n-2) n+1]; 
+
+% For the line above (which assumes that we have at least 3 voxels,
+% probably for median smoothing),  s is an empty vector when n < 3 
+% -- and an empty rfcov is  returned when we try to plot the 
+% coverage. So modify s accordingly for these edge cases: 
+% The definition of s is not very intuitive
+if n < 3
+    s = [1:n+1]; 
+end
+
 all_models = zeros( numel(X), n, 'single' );
 fprintf(1,'[%s]:Making %d pRFs:...', mfilename, n);
 drawnow;
@@ -375,6 +393,13 @@ end
 %% Different ways of combining them: 
 % 1) bootstrap (yes, no) 2) which statistic (sum, max, etc), 
 % bootstrap
+
+% If we are only working with 1 voxel, bootstrapping does not do anything. 
+% We turn it off because the bootstp function does not handle this case well. 
+if size(subX,2) == 1
+    vfc.nboot = 0; 
+end
+
 if vfc.nboot>0
     if isempty(which('bootstrp'))
         warndlg('Bootstrap requires statistics toolbox');
@@ -393,7 +418,7 @@ if vfc.nboot>0
         otherwise
             error('Unknown method %s',vfc.method)
     end
-    RFcov=median(m)';
+    RFcov=median(m,1)';
     
 % no bootstrap
 else

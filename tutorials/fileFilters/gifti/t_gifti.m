@@ -24,10 +24,16 @@
 
 %%  Set the vista data path and change into the gifti data directory
 % vistaDataPath
-chdir(fullfile(mrvDataRootPath,'gifti','BV_GIFTI','Base64'));
+% chdir(fullfile(mrvDataRootPath,'gifti','BV_GIFTI','Base64'));
+chdir(fullfile(vistaRootPath,'local'));
 
 %% 1. Run through the gifti team example
-g = gifti('sujet01_Lwhite.surf.gii');
+if exist('sujet01_Lwhite.surf.gii','file')
+    g = gifti('sujet01_Lwhite.surf.gii');
+else
+    error('FIle not found.');
+end
+
 
 % Blue shaded
 mrvNewGraphWin; plot(g);  

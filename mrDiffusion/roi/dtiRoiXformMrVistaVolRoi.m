@@ -73,7 +73,7 @@ if  ~isfield(dt6,'xformVAnatToAcpc') || isempty(dt6.xformVAnatToAcpc)
     disp('Computing mrVista Xform');
     
     % compute the xform
-    if strcmp(vAnatomy(end-6:end),'ii.gz') 
+    if strcmp(vAnatomy(end-6:end),'.nii.gz') 
         vAnatomy         = niftiRead(vAnatomy);
         xformVAnatToAcpc = vAnatomy.qto_xyz;
         

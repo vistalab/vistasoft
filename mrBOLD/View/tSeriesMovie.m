@@ -67,8 +67,8 @@ function [M, movie] = tSeriesMovie(vw, scans, anatFlag, varargin)
 % ras 12/04: wrote it.
 % ras 03/05: added avi export.
 % ras 11/06: added multiple slices option.
-if notDefined('scans'),    scans = getCurScan(vw);    end
-if notDefined('anatFlag'), anatFlag = 0;              end
+if notDefined('scans'),    scans = viewGet(vw, 'curScan'); end
+if notDefined('anatFlag'), anatFlag = 0;                   end
 
 %%%%% default params
 slices = viewGet(vw, 'curSlice');
@@ -120,7 +120,7 @@ end
 
 %%%%% check view type
 if isequal(viewType,'Flat')
-    [M movie] = flatLevelMovie(vw,scans,saveAvi);
+    [M, movie] = flatLevelMovie(vw,scans,saveAvi);
     return
 elseif isequal(viewType,'Volume') || isequal(viewType,'Gray')
     error('Volume/Gray support not provided yet.')
@@ -131,7 +131,7 @@ M = [];
 
 %%%%% if >1 slices, run recursively
 if length(slices) > 1
-    [M movie] = tSeriesMovieSlices(vw, scans, slices, anatFlag, opts);
+    [M, movie] = tSeriesMovieSlices(vw, scans, slices, anatFlag, opts);
     return
 end
 
@@ -229,7 +229,7 @@ if anatFlag==1
     
     % get the values for which the overlay > 0
     locs3D = find(overlay>0);
-    [yy xx zz] = ind2sub(size(overlay),locs3D);
+    [yy, xx, zz] = ind2sub(size(overlay),locs3D);
     
     % auto-scale the colormap
     if autoCmap==1
@@ -285,7 +285,7 @@ if ~isempty(saveAvi)
     end
     
     % check for .avi extension
-    [f p ext] = fileparts(saveAvi);
+    [~, p, ext] = fileparts(saveAvi);
     if ~isequal(lower(ext),'.avi')
         saveAvi = [saveAvi '.avi'];
     end
