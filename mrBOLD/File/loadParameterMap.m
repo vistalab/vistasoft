@@ -110,6 +110,13 @@ if strcmp(extension, '.nii') || strcmp(extension,'.gz')
     end
     
 end
+
+% Load it
+load(mapPath);
+
+% Set the parameters
+vw = setParameterMap(vw,map,mapName);
+            
 nScans = viewGet(vw, 'numScans');
 if exist('co','var')
     for scan = 1:nScans
@@ -124,17 +131,17 @@ end
 %  'units' or 'mapUnits'. 'mapUnits' is preferred, but for
 %  back-compatibility, I leave in a check for 'units' as well.)
 if exist('mapUnits', 'var')
-    vw.mapUnits = mapUnits;
+    vw = viewSet(vw, 'mapUnits', mapUnits);
 elseif exist('units', 'var')
-    vw.mapUnits = units;
+    vw = viewSet(vw, 'mapUnits', units);    
 else
-    vw.mapUnits = ''; % reset to empty
+        vw = viewSet(vw, 'mapUnits', ''); % reset to empty
 end
 
 % if parameters about the view mode are saved, load these in as well
-if exist('cmap','var'), vw.ui.mapMode.cmap = cmap; end
+if exist('cmap','var'),     vw.ui.mapMode.cmap = cmap; end
 if exist('clipMode','var'), vw.ui.mapMode.clipMode = clipMode; end
-if exist('numColors','var'), vw.ui.mapMode.numColors = numColors; end
+if exist('numColors','var'),vw.ui.mapMode.numColors = numColors; end
 if exist('numGrays','var'), vw.ui.mapMode.numGrays = numGrays; end
 
 ok = 1;
@@ -142,7 +149,6 @@ ok = 1;
 % refresh (if this isn't a hidden view -- no ui struct)
 if isfield(vw, 'ui')
     vw = setDisplayMode(vw,'map');
-    % 	refreshScreen(view);
 end
 
 return

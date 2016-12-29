@@ -45,9 +45,10 @@ elseif ischar(fileName) && exist(fileName,'file')
     end
 else
     % Did the person not include the .nii.gz extensions?
-    [~,n,e] = fileparts(fileName);
+    [~,n,e] = fileparts(r);
     if isempty(e), fileNameExtended = [n,'.nii.gz']; end
-    if exist(fileNameExtended,'file')
+    if exist('fileNameExtended', 'var') ...
+         && exist(fileNameExtended,'file')
         ni = readFileNifti(fileNameExtended);
     else
         error('Cannot find the file %s or %s\n',fileName,fileNameExtended);
