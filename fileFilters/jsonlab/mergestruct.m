@@ -14,7 +14,7 @@ function s=mergestruct(s1,s2)
 %      s: the merged struct object. fields in s1 and s2 will be combined in s.
 %
 % license:
-%     BSD license, see LICENSE_BSD.txt files for details 
+%     BSD or GPL version 3, see LICENSE_{BSD,GPLv3}.txt files for details 
 %
 % -- this function is part of jsonlab toolbox (http://iso2mesh.sf.net/cgi-bin/index.cgi?jsonlab)
 %
