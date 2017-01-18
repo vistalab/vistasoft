@@ -9,15 +9,18 @@ function json=saveubjson(rootname,obj,varargin)
 % Binary JSON (UBJSON) binary string
 %
 % author: Qianqian Fang (fangq<at> nmr.mgh.harvard.edu)
-%            created on 2013/08/17
+% created on 2013/08/17
 %
-% $Id: saveubjson.m 417 2014-01-21 22:34:49Z fangq $
+% $Id$
 %
 % input:
-%      rootname: name of the root-object, if set to '', will use variable name
-%      obj: a MATLAB object (array, cell, cell array, struct, struct array)
-%      filename: a string for the file name to save the output JSON data
-%      opt: a struct for additional options, use [] if all use default
+%      rootname: the name of the root-object, when set to '', the root name
+%        is ignored, however, when opt.ForceRootName is set to 1 (see below),
+%        the MATLAB variable name will be used as the root name.
+%      obj: a MATLAB object (array, cell, cell array, struct, struct array,
+%      class instance)
+%      filename: a string for the file name to save the output UBJSON data
+%      opt: a struct for additional options, ignore to use default values.
 %        opt can have the following fields (first in [.|.] is the default)
 %
 %        opt.FileName [''|string]: a file name to save the output JSON data
@@ -34,10 +37,13 @@ function json=saveubjson(rootname,obj,varargin)
 %                         parts, and also "_ArrayIsComplex_":1 is added. 
 %        opt.ParseLogical [1|0]: if this is set to 1, logical array elem
 %                         will use true/false rather than 1/0.
-%        opt.NoRowBracket [1|0]: if this is set to 1, arrays with a single
+%        opt.SingletArray [0|1]: if this is set to 1, arrays with a single
 %                         numerical element will be shown without a square
 %                         bracket, unless it is the root object; if 0, square
 %                         brackets are forced for any numerical arrays.
+%        opt.SingletCell  [1|0]: if 1, always enclose a cell with "[]" 
+%                         even it has only one element; if 0, brackets
+%                         are ignored when a cell has only 1 element.
 %        opt.ForceRootName [0|1]: when set to 1 and rootname is empty, saveubjson
 %                         will use the name of the passed obj variable as the 
 %                         root object name; if obj is an expression and 
@@ -49,21 +55,26 @@ function json=saveubjson(rootname,obj,varargin)
 %                         wrapped inside a function call as 'foo(...);'
 %        opt.UnpackHex [1|0]: conver the 0x[hex code] output by loadjson 
 %                         back to the string form
+%
 %        opt can be replaced by a list of ('param',value) pairs. The param 
-%        string is equivallent to a field in opt.
+%        string is equivallent to a field in opt and is case sensitive.
 % output:
-%      json: a string in the JSON format (see http://json.org)
+%      json: a binary string in the UBJSON format (see http://ubjson.org)
 %
 % examples:
-%      a=struct('node',[1  9  10; 2 1 1.2], 'elem',[9 1;1 2;2 3],...
-%           'face',[9 01 2; 1 2 3; NaN,Inf,-Inf], 'author','FangQ');
-%      saveubjson('mesh',a)
-%      saveubjson('',a,'ArrayIndent',0,'FloatFormat','\t%.5g')
+%      jsonmesh=struct('MeshNode',[0 0 0;1 0 0;0 1 0;1 1 0;0 0 1;1 0 1;0 1 1;1 1 1],... 
+%               'MeshTetra',[1 2 4 8;1 3 4 8;1 2 6 8;1 5 6 8;1 5 7 8;1 3 7 8],...
+%               'MeshTri',[1 2 4;1 2 6;1 3 4;1 3 7;1 5 6;1 5 7;...
+%                          2 8 4;2 8 6;3 8 4;3 8 7;5 8 6;5 8 7],...
+%               'MeshCreator','FangQ','MeshTitle','T6 Cube',...
+%               'SpecialData',[nan, inf, -inf]);
+%      saveubjson('jsonmesh',jsonmesh)
+%      saveubjson('jsonmesh',jsonmesh,'meshdata.ubj')
 %
 % license:
-%     BSD license, see LICENSE_BSD.txt files for details
+%     BSD or GPL version 3, see LICENSE_{BSD,GPLv3}.txt files for details
 %
-% -- this function is part of jsonlab toolbox (http://iso2mesh.sf.net/cgi-bin/index.cgi?jsonlab)
+% -- this function is part of JSONLab toolbox (http://iso2mesh.sf.net/cgi-bin/index.cgi?jsonlab)
 %
 
 if(nargin==1)
@@ -77,15 +88,22 @@ else
    varname=inputname(2);
 end
 if(length(varargin)==1 && ischar(varargin{1}))
-   opt=struct('FileName',varargin{1});
+   opt=struct('filename',varargin{1});
 else
    opt=varargin2struct(varargin{:});
 end
-opt.IsOctave=exist('OCTAVE_VERSION');
+opt.IsOctave=exist('OCTAVE_VERSION','builtin');
+if(isfield(opt,'norowbracket'))
+    warning('Option ''NoRowBracket'' is depreciated, please use ''SingletArray'' and set its value to not(NoRowBracket)');
+    if(~isfield(opt,'singletarray'))
+        opt.singletarray=not(opt.norowbracket);
+    end
+end
 rootisarray=0;
 rootlevel=1;
 forceroot=jsonopt('ForceRootName',0,opt);
-if((isnumeric(obj) || islogical(obj) || ischar(obj) || isstruct(obj) || iscell(obj)) && isempty(rootname) && forceroot==0)
+if((isnumeric(obj) || islogical(obj) || ischar(obj) || isstruct(obj) || ...
+        iscell(obj) || isobject(obj)) && isempty(rootname) && forceroot==0)
     rootisarray=1;
     rootlevel=0;
 else
@@ -107,9 +125,10 @@ if(~isempty(jsonp))
 end
 
 % save to a file if FileName is set, suggested by Patrick Rapin
-if(~isempty(jsonopt('FileName','',opt)))
-    fid = fopen(opt.FileName, 'wb');
-    fwrite(fid,json,'char');
+filename=jsonopt('FileName','',opt);
+if(~isempty(filename))
+    fid = fopen(filename, 'wb');
+    fwrite(fid,json);
     fclose(fid);
 end
 
@@ -122,6 +141,8 @@ elseif(isstruct(item))
     txt=struct2ubjson(name,item,level,varargin{:});
 elseif(ischar(item))
     txt=str2ubjson(name,item,level,varargin{:});
+elseif(isobject(item)) 
+    txt=matlabobject2ubjson(name,item,level,varargin{:});
 else
     txt=mat2ubjson(name,item,level,varargin{:});
 end
@@ -134,26 +155,39 @@ if(~iscell(item))
 end
 
 dim=size(item);
+if(ndims(squeeze(item))>2) % for 3D or higher dimensions, flatten to 2D for now
+    item=reshape(item,dim(1),numel(item)/dim(1));
+    dim=size(item);
+end
+bracketlevel=~jsonopt('singletcell',1,varargin{:});
 len=numel(item); % let's handle 1D cell first
-padding1='';
-padding0='';
-if(len>1) 
+if(len>bracketlevel) 
     if(~isempty(name))
-        txt=[S_(checkname(name,varargin{:})) '[']; name=''; 
+        txt=[N_(checkname(name,varargin{:})) '[']; name=''; 
     else
         txt='['; 
     end
 elseif(len==0)
     if(~isempty(name))
-        txt=[S_(checkname(name,varargin{:})) 'Z']; name=''; 
+        txt=[N_(checkname(name,varargin{:})) 'Z']; name=''; 
     else
         txt='Z'; 
     end
 end
-for i=1:len
-    txt=[txt obj2ubjson(name,item{i},level+(len>1),varargin{:})];
+for j=1:dim(2)
+    if(dim(1)>1)
+        txt=[txt '['];
+    end
+    for i=1:dim(1)
+       txt=[txt obj2ubjson(name,item{i,j},level+(len>bracketlevel),varargin{:})];
+    end
+    if(dim(1)>1)
+        txt=[txt ']'];
+    end
 end
-if(len>1) txt=[txt ']']; end
+if(len>bracketlevel)
+    txt=[txt ']'];
+end
 
 %%-------------------------------------------------------------------------
 function txt=struct2ubjson(name,item,level,varargin)
@@ -161,33 +195,49 @@ txt='';
 if(~isstruct(item))
 	error('input is not a struct');
 end
+dim=size(item);
+if(ndims(squeeze(item))>2) % for 3D or higher dimensions, flatten to 2D for now
+    item=reshape(item,dim(1),numel(item)/dim(1));
+    dim=size(item);
+end
 len=numel(item);
-padding1='';
-padding0='';
-sep=',';
+forcearray= (len>1 || (jsonopt('SingletArray',0,varargin{:})==1 && level>0));
 
 if(~isempty(name)) 
-    if(len>1) txt=[S_(checkname(name,varargin{:})) '[']; end
-else
-    if(len>1) txt='['; end
-end
-for e=1:len
-  names = fieldnames(item(e));
-  if(~isempty(name) && len==1)
-        txt=[txt S_(checkname(name,varargin{:})) '{']; 
-  else
-        txt=[txt '{']; 
-  end
-  if(~isempty(names))
-    for i=1:length(names)
-	txt=[txt obj2ubjson(names{i},getfield(item(e),...
-             names{i}),level+1+(len>1),varargin{:})];
+    if(forcearray)
+        txt=[N_(checkname(name,varargin{:})) '['];
     end
-  end
-  txt=[txt '}'];
-  if(e==len) sep=''; end
+else
+    if(forcearray)
+        txt='[';
+    end
 end
-if(len>1) txt=[txt ']']; end
+for j=1:dim(2)
+  if(dim(1)>1)
+      txt=[txt '['];
+  end
+  for i=1:dim(1)
+     names = fieldnames(item(i,j));
+     if(~isempty(name) && len==1 && ~forcearray)
+        txt=[txt N_(checkname(name,varargin{:})) '{']; 
+     else
+        txt=[txt '{']; 
+     end
+     if(~isempty(names))
+       for e=1:length(names)
+	     txt=[txt obj2ubjson(names{e},item(i,j).(names{e}),...
+             level+(dim(1)>1)+1+forcearray,varargin{:})];
+       end
+     end
+     txt=[txt '}'];
+  end
+  if(dim(1)>1)
+      txt=[txt ']'];
+  end
+end
+if(forcearray)
+    txt=[txt ']'];
+end
 
 %%-------------------------------------------------------------------------
 function txt=str2ubjson(name,item,level,varargin)
@@ -197,30 +247,31 @@ if(~ischar(item))
 end
 item=reshape(item, max(size(item),[1 0]));
 len=size(item,1);
-sep='';
-
-padding1='';
-padding0='';
 
 if(~isempty(name)) 
-    if(len>1) txt=[S_(checkname(name,varargin{:})) '[']; end
+    if(len>1)
+        txt=[N_(checkname(name,varargin{:})) '['];
+    end
 else
-    if(len>1) txt='['; end
+    if(len>1)
+        txt='[';
+    end
 end
-isoct=jsonopt('IsOctave',0,varargin{:});
 for e=1:len
     val=item(e,:);
     if(len==1)
-        obj=['' S_(checkname(name,varargin{:})) '' '',S_(val),''];
-	if(isempty(name)) obj=['',S_(val),'']; end
+        obj=[N_(checkname(name,varargin{:})) '' '',S_(val),''];
+        if(isempty(name))
+            obj=['',S_(val),''];
+        end
         txt=[txt,'',obj];
     else
         txt=[txt,'',['',S_(val),'']];
     end
-    if(e==len) sep=''; end
-    txt=[txt sep];
 end
-if(len>1) txt=[txt ']']; end
+if(len>1)
+    txt=[txt ']'];
+end
 
 %%-------------------------------------------------------------------------
 function txt=mat2ubjson(name,item,level,varargin)
@@ -228,37 +279,32 @@ if(~isnumeric(item) && ~islogical(item))
         error('input is not an array');
 end
 
-padding1='';
-padding0='';
-
 if(length(size(item))>2 || issparse(item) || ~isreal(item) || ...
-   isempty(item) || jsonopt('ArrayToStruct',0,varargin{:}))
+   (isempty(item) && any(size(item))) ||jsonopt('ArrayToStruct',0,varargin{:}))
       cid=I_(uint32(max(size(item))));
       if(isempty(name))
-    	txt=['{' S_('_ArrayType_'),S_(class(item)),padding0,S_('_ArraySize_'),I_a(size(item),cid(1)) ];
+    	txt=['{' N_('_ArrayType_'),S_(class(item)),N_('_ArraySize_'),I_a(size(item),cid(1)) ];
       else
           if(isempty(item))
-              txt=[S_(checkname(name,varargin{:})),'Z'];
+              txt=[N_(checkname(name,varargin{:})),'Z'];
               return;
           else
-    	      txt=[S_(checkname(name,varargin{:})),'{',S_('_ArrayType_'),S_(class(item)),padding0,S_('_ArraySize_'),I_a(size(item),cid(1))];
+    	      txt=[N_(checkname(name,varargin{:})),'{',N_('_ArrayType_'),S_(class(item)),N_('_ArraySize_'),I_a(size(item),cid(1))];
           end
       end
 else
     if(isempty(name))
     	txt=matdata2ubjson(item,level+1,varargin{:});
     else
-        if(numel(item)==1 && jsonopt('NoRowBracket',1,varargin{:})==1)
+        if(numel(item)==1 && jsonopt('SingletArray',0,varargin{:})==0)
             numtxt=regexprep(regexprep(matdata2ubjson(item,level+1,varargin{:}),'^\[',''),']','');
-           	txt=[S_(checkname(name,varargin{:})) numtxt];
+           	txt=[N_(checkname(name,varargin{:})) numtxt];
         else
-    	    txt=[S_(checkname(name,varargin{:})),matdata2ubjson(item,level+1,varargin{:})];
+    	    txt=[N_(checkname(name,varargin{:})),matdata2ubjson(item,level+1,varargin{:})];
         end
     end
     return;
 end
-dataformat='%s%s%s%s%s';
-
 if(issparse(item))
     [ix,iy]=find(item);
     data=full(item(find(item)));
@@ -269,33 +315,50 @@ if(issparse(item))
            % (Necessary for complex row vector handling below.)
            data=data';
        end
-       txt=[txt,S_('_ArrayIsComplex_'),'T'];
+       txt=[txt,N_('_ArrayIsComplex_'),'T'];
     end
-    txt=[txt,S_('_ArrayIsSparse_'),'T'];
+    txt=[txt,N_('_ArrayIsSparse_'),'T'];
     if(size(item,1)==1)
         % Row vector, store only column indices.
-        txt=[txt,S_('_ArrayData_'),...
+        txt=[txt,N_('_ArrayData_'),...
            matdata2ubjson([iy(:),data'],level+2,varargin{:})];
     elseif(size(item,2)==1)
         % Column vector, store only row indices.
-        txt=[txt,S_('_ArrayData_'),...
+        txt=[txt,N_('_ArrayData_'),...
            matdata2ubjson([ix,data],level+2,varargin{:})];
     else
         % General case, store row and column indices.
-        txt=[txt,S_('_ArrayData_'),...
+        txt=[txt,N_('_ArrayData_'),...
            matdata2ubjson([ix,iy,data],level+2,varargin{:})];
     end
 else
     if(isreal(item))
-        txt=[txt,S_('_ArrayData_'),...
+        txt=[txt,N_('_ArrayData_'),...
             matdata2ubjson(item(:)',level+2,varargin{:})];
     else
-        txt=[txt,S_('_ArrayIsComplex_'),'T'];
-        txt=[txt,S_('_ArrayData_'),...
+        txt=[txt,N_('_ArrayIsComplex_'),'T'];
+        txt=[txt,N_('_ArrayData_'),...
             matdata2ubjson([real(item(:)) imag(item(:))],level+2,varargin{:})];
     end
 end
 txt=[txt,'}'];
+
+%%-------------------------------------------------------------------------
+function txt=matlabobject2ubjson(name,item,level,varargin)
+if numel(item) == 0 %empty object
+    st = struct();
+else
+    % "st = struct(item);" would produce an inmutable warning, because it
+    % make the protected and private properties visible. Instead we get the
+    % visible properties
+    propertynames = properties(item);
+    for p = 1:numel(propertynames)
+        for o = numel(item):-1:1 % aray of objects
+            st(o).(propertynames{p}) = item(o).(propertynames{p});
+        end
+    end
+end
+txt=struct2ubjson(name,st,level,varargin{:});
 
 %%-------------------------------------------------------------------------
 function txt=matdata2ubjson(mat,level,varargin)
@@ -303,12 +366,9 @@ if(isempty(mat))
     txt='Z';
     return;
 end
-if(size(mat,1)==1)
-    level=level-1;
-end
 type='';
-hasnegtive=find(mat<0);
-if(isa(mat,'integer') || (isfloat(mat) && all(mod(mat(:),1) == 0)))
+hasnegtive=(mat<0);
+if(isa(mat,'integer') || isinteger(mat) || (isfloat(mat) && all(mod(mat(:),1) == 0)))
     if(isempty(hasnegtive))
        if(max(mat(:))<=2^8)
            type='U';
@@ -317,11 +377,11 @@ if(isa(mat,'integer') || (isfloat(mat) && all(mod(mat(:),1) == 0)))
     if(isempty(type))
         % todo - need to consider negative ones separately
         id= histc(abs(max(mat(:))),[0 2^7 2^15 2^31 2^63]);
-        if(isempty(find(id)))
+        if(isempty(id~=0))
             error('high-precision data is not yet supported');
         end
         key='iIlL';
-	type=key(find(id));
+	type=key(id~=0);
     end
     txt=[I_a(mat(:),type,size(mat))];
 elseif(islogical(mat))
@@ -329,7 +389,7 @@ elseif(islogical(mat))
     if(numel(mat)==1)
         txt=logicalval(mat+1);
     else
-        txt=['[$U#' I_a(size(mat),'l') typecast(uint8(mat(:)'),'uint8')];
+        txt=['[$U#' I_a(size(mat),'l') typecast(swapbytes(uint8(mat(:)')),'uint8')];
     end
 else
     if(numel(mat)==1)
@@ -365,7 +425,9 @@ if(isunpack)
     else
         pos=regexp(name,'(^x|_){1}0x([0-9a-fA-F]+)_','start');
         pend=regexp(name,'(^x|_){1}0x([0-9a-fA-F]+)_','end');
-        if(isempty(pos)) return; end
+        if(isempty(pos))
+            return;
+        end
         str0=name;
         pos0=[0 pend(:)' length(name)];
         newname='';
@@ -377,6 +439,9 @@ if(isunpack)
         end
     end
 end
+%%-------------------------------------------------------------------------
+function val=N_(str)
+val=[I_(int32(length(str))) str];
 %%-------------------------------------------------------------------------
 function val=S_(str)
 if(length(str)==1)
@@ -390,14 +455,14 @@ if(~isinteger(num))
     error('input is not an integer');
 end
 if(num>=0 && num<255)
-   val=['U' data2byte(cast(num,'uint8'),'uint8')];
+   val=['U' data2byte(swapbytes(cast(num,'uint8')),'uint8')];
    return;
 end
 key='iIlL';
 cid={'int8','int16','int32','int64'};
 for i=1:4
   if((num>0 && num<2^(i*8-1)) || (num<0 && num>=-2^(i*8-1)))
-    val=[key(i) data2byte(cast(num,cid{i}),'uint8')];
+    val=[key(i) data2byte(swapbytes(cast(num,cid{i})),'uint8')];
     return;
   end
 end
@@ -422,20 +487,22 @@ if(id==0)
   error('unsupported integer array');
 end
 
+% based on UBJSON specs, all integer types are stored in big endian format
+
 if(id==1)
-  data=data2byte(int8(num),'uint8');
+  data=data2byte(swapbytes(int8(num)),'uint8');
   blen=1;
 elseif(id==2)
-  data=data2byte(uint8(num),'uint8');
+  data=data2byte(swapbytes(uint8(num)),'uint8');
   blen=1;
 elseif(id==3)
-  data=data2byte(int16(num),'uint8');
+  data=data2byte(swapbytes(int16(num)),'uint8');
   blen=2;
 elseif(id==4)
-  data=data2byte(int32(num),'uint8');
+  data=data2byte(swapbytes(int32(num)),'uint8');
   blen=4;
 elseif(id==5)
-  data=data2byte(int64(num),'uint8');
+  data=data2byte(swapbytes(int64(num)),'uint8');
   blen=8;
 end
 
