@@ -51,10 +51,10 @@ switch param
         end
         
     case 'datatype'
-        if isfield(ni, 'data_type')
-            val = ni.data_type;
-        else
-            warning('vista:niftiError', 'No data_type information found in nifti. Returning empty');
+        if isfield(ni, 'data')
+            val = niftiClass2DataType(class(ni.data));
+        else            
+            warning('vista:niftiError', 'No data information found in nifti. Returning empty');
             val = [];
         end
         

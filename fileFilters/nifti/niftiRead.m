@@ -56,6 +56,7 @@ else
 end
 
 % When there is a niftiGet, this can go away.
-ni.data_type = niftiClass2DataType(class(ni.data));
+% There now is a niftiGet. So it can go away.
+%  ni.data_type = niftiClass2DataType(class(ni.data));
 
 return
