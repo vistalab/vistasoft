@@ -178,7 +178,7 @@ end
 
 % if the model has a nonlinearity, then store this explicitly
 switch lower(params.analysis.pRFmodel{1})
-    case {'onegaussiannonlinear' 'css' 'onegaussiannonlinearboxcar' 'cssboxcar'}
+    case {'onegaussiannonlinear' 'css' 'onegaussiannonlinearboxcar' 'cssboxcar','onegaussiannonlinear_gpu'}
         params.analysis.nonlinear = true;
 end
         
@@ -470,7 +470,7 @@ switch params.analysis.pRFmodel{1}
         params.analysis.theta(isnan(params.analysis.theta))=0;
         params.analysis.exponent = ones(size(params.analysis.x0));
         
-    case {'css' 'onegaussiannonlinear', 'onegaussianexponent'}
+    case {'css' 'onegaussiannonlinear', 'onegaussianexponent','onegaussiannonlinear_gpu'}
         % The number of exponents for nonlinear model (pred = (stim*prf)^exponent)
         params.analysis.numberExponents = 4 ;
         

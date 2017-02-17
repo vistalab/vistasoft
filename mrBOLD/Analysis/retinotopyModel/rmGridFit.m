@@ -84,7 +84,7 @@ s = [[1:ceil(n./1000):n-2] n+1]; %#ok<NBRAK>
 % then convolve with the hRF afterwards
 if ~checkfields(params, 'analysis', 'nonlinear') || ~params.analysis.nonlinear
    
-    % for a lineaer model, use the pre-convolved stimulus images
+    %ï¿½for a lineaer model, use the pre-convolved stimulus images
     % the decimate function is not Matlab 2013b
     allstimimages = rmDecimate(params.analysis.allstimimages,...
         params.analysis.coarseDecimate);
@@ -353,9 +353,15 @@ for slice=loopSlices,
             case {'oneovalgaussian','one oval gaussian','one oval gaussian without theta'}
                 s{n}=rmGridFit_oneOvalGaussian(s{n},prediction,data,params,t);
                 
-            case {'css' 'onegaussiannonlinear', 'onegaussianexponent' }
+            case {'css', 'onegaussiannonlinear', 'onegaussianexponent' }
                 s{n}=rmGridFit_oneGaussianNonlinear(s{n},prediction,data,params,t);
-                  
+                   
+            case {'onegaussiannonlinear_gpu'}
+                % TODO: should assert GPU works and default to regular...
+                
+                s{n}=rmGridFit_oneGaussianNonlinear_GPU(s{n},prediction,data,params,t);
+
+                
             otherwise
                 fprintf('[%s]:Unknown pRF model: %s: IGNORED!',mfilename,params.analysis.pRFmodel{n});
         end
@@ -515,7 +521,7 @@ for n=1:numel(params.analysis.pRFmodel),
             model{n} = rmSet(model{n},'b'   ,zeros(d1,d2,nt+2));
             model{n} = rmSet(model{n},'desc','Linked sequential 2D pRF fit (2*(x,y,sigma, positive only))');
 
-         case {'css' 'onegaussiannonlinear', 'onegaussianexponent'}
+         case {'css' 'onegaussiannonlinear', 'onegaussianexponent','onegaussiannonlinear_gpu'}
             model{n} = rmSet(model{n},'b'   ,zeros(d1,d2,nt+1));
             model{n} = rmSet(model{n},'desc','2D nonlinear pRF fit (x,y,sigma,exponent, positive only)');
             model{n} = rmSet(model{n},'exponent', fillwithzeros+1);
