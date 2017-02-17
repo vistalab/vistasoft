@@ -31,6 +31,7 @@ p.addParameter('fname','test.obj',@ischar);      % Output file
 p.addParameter('color',[.8 .4 .8 .4],@isvector); % RGBa
 p.addParameter('overwrite',false);               % Forces overwrite
 p.addParameter('jitterColor',true);              % Jitter the colors or not
+p.addParameter('jitterDev', 0.2);              % Jitter the colors or not
 
 p.parse(fg,varargin{:});
 fname = p.Results.fname;
@@ -40,6 +41,7 @@ if ~isequal(length(color),4)
 end
 overwrite   = p.Results.overwrite;
 jitterColor = p.Results.jitterColor;
+jitterDev = p.Results.jitterDev;
 
 %%
 
@@ -86,14 +88,15 @@ if ~jitterColor
 else
     % Jitter the color for each line
     % Make some random numbers to add to the color
-    randColors = repmat(color,nLines,1) + randn(nLines,4)*0.3;
+    jitterDev = mean(color)*jitterDev;
+    randColors = repmat(color,nLines,1) + randn(nLines,4)*jitterDev;
     randColors = min(randColors,1);
     randColors = max(randColors,0);
     
     fprintf(fileID,'1\n');
     for ii=1:nLines
         fprintf(fileID,'%.2f %.2f %.2f %.2f\n',...
-            randColors(1),randColors(2),randColors(3),randColors(4));
+            randColors(ii, 1),randColors(ii, 2),randColors(ii, 3),randColors(ii, 4));
     end
     % In principle, we could have '2\n' and then a color per vertex
 end
