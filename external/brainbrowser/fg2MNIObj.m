@@ -28,7 +28,9 @@ p = inputParser;
 
 p.addRequired('fg');
 p.addParameter('fname','test.obj',@ischar);      % Output file
-p.addParameter('color',[.8 .4 .8 .4],@isvector);  % RGBa
+p.addParameter('color',[.8 .4 .8 .4],@isvector); % RGBa
+p.addParameter('overwrite',false);               % Forces overwrite
+p.addParameter('jitterColor',true);              % Jitter the colors or not
 
 p.parse(fg,varargin{:});
 fname = p.Results.fname;
@@ -36,6 +38,8 @@ color = p.Results.color;
 if ~isequal(length(color),4)
     error('Color parameter should be RGBalpha, a 4D vector');
 end
+overwrite   = p.Results.overwrite;
+jitterColor = p.Results.jitterColor;
 
 %%
 
@@ -56,7 +60,7 @@ end
 
 %% Open the file for writing
 
-if exist(fname,'file')
+if exist(fname,'file') && ~overwrite
     disp('The file already exists.  Press space bar to over-write');
     pause
 end
@@ -74,8 +78,25 @@ fprintf(fileID,'%.4f %.4f %.4f\n',coords');
 % And we should figure out what the 0 at the front means.  Renzo knows, and
 % it is important.
 % The others are R G B alpha
-fprintf(fileID,'\n%d\n',length(lineList));
-fprintf(fileID,'0 %.2f %.2f %.2f %.2f\n\n',color(1),color(2),color(3),color(4));
+nLines = length(lineList);
+fprintf(fileID,'\n%d\n',nLines);
+if ~jitterColor
+    % All lines have the same color
+    fprintf(fileID,'0 %.2f %.2f %.2f %.2f\n\n',color(1),color(2),color(3),color(4));
+else
+    % Jitter the color for each line
+    % Make some random numbers to add to the color
+    randColors = repmat(color,nLines,1) + randn(nLines,4)*0.3;
+    randColors = min(randColors,1);
+    randColors = max(randColors,0);
+    
+    fprintf(fileID,'1\n');
+    for ii=1:nLines
+        fprintf(fileID,'%.2f %.2f %.2f %.2f\n',...
+            randColors(1),randColors(2),randColors(3),randColors(4));
+    end
+    % In principle, we could have '2\n' and then a color per vertex
+end
 
 % Now a list that counts the number of points in each fiber.
 fprintf(fileID,'%d ',startPoints(2:end));
