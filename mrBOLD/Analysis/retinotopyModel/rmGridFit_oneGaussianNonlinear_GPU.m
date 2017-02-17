@@ -1,8 +1,10 @@
 function model = rmGridFit_oneGaussianNonlinear_GPU(model,prediction,data,params,t)
 % rmGridFit_oneGaussianNonlinear - core of one non-linear (exponential) Gaussian fit
 % CSS or compressive spatial summation model
+% - updated to perform grid search on GPU, 15-40x speed improvement,
+%   depending on system speed (40 mins for whole brain, 500k models)
 %
-% model = rmGridFit_oneGaussian(model,prediction,data,params);
+% model = rmGridFit_oneGaussianNonlinear_GPU(model,prediction,data,params,trends);
 %
 % 2017.02.16 TCS duplicated from rmGridFit_oneGaussianNonlinear.m, replaced
 % linear gridfit operations with GPU-accelerated version; requires
@@ -12,7 +14,7 @@ function model = rmGridFit_oneGaussianNonlinear_GPU(model,prediction,data,params
 % model
 
 % input check 
-if nargin < 4,
+if nargin < 5,
     error('Not enough arguments');
 end
 
@@ -37,6 +39,8 @@ model.rss=single(model.rss./(size(prediction,1)-size(trends,2)+1));
 % b is the best-fit betas for each predictor (4)
 % rss is residual sum of squares
 [idx,b,rss] = gridfitgpu_test(data,model_preds,1); % 3rd arg: whether or not to truncate neg fits
+
+idx(isnan(idx)) = 1;
 
 
 
@@ -96,6 +100,20 @@ model.rss=single(model.rss./(size(prediction,1)-size(trends,2)+1));
 %     %-----------------------------------
 %     minRssIndex = rss < model.rss;
 
+model.rss      = rss;
+model.b([1 t_id],:) = b.';
+%model.b
+%warning('on', 'MATLAB:lscov:RankDefDesignMat')
+
+% Under some conditions, the grid fit never returns an acceptable fit, For
+% example for onegaussian fits with data driven DC component, when the DC
+% is artificially high. In this case some of the rss values remain Inf,
+% which fails to interpolate and compute correct variance explained values.
+% So we check it here and reset any Inf (bad fits) to rawrss, so the
+% variance explained will be 0.
+model.rss(model.rss==Inf)=model.rawrss(model.rss==Inf);
+
+
 % for each voxel, pull out the analysis params corresponding to
 % best-fitting model
 for ii = 1:length(idx)
@@ -111,23 +129,13 @@ for ii = 1:length(idx)
     
     %model.b([1 t_id],minRssIndex) = b(:,minRssIndex);
 end;
-model.rss      = rss;
-model.b([1 t_id],:) = b.';
-%model.b
-%warning('on', 'MATLAB:lscov:RankDefDesignMat')
 
-% Under some conditions, the grid fit never returns an acceptable fit, For
-% example for onegaussian fits with data driven DC component, when the DC
-% is artificially high. In this case some of the rss values remain Inf,
-% which fails to interpolate and compute correct variance explained values.
-% So we check it here and reset any Inf (bad fits) to rawrss, so the
-% variance explained will be 0.
-model.rss(model.rss==Inf)=model.rawrss(model.rss==Inf);
 
 % Correct lscov. It returns the mean rss. To maintain compatibility with the
 % sum rss this function expects, we have to multiply by the divisor. See
-% the lscov docs for details.
-model.rss=single(model.rss.*(size(prediction,1)-size(trends,2)+1));  
+% the lscov docs for details. NOTE TCS 2/17/2017 - I think it's just - size
+% trends, not +1, as that's the value used in line 227!!!!!
+%model.rss=single(model.rss.*(size(prediction,1)-size(trends,2)+1));  
 
 % end time monitor NOTE: all timing in gpuRegress
 % et  = toc;
