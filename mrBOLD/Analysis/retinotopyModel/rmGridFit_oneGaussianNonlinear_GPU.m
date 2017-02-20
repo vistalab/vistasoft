@@ -38,7 +38,7 @@ model.rss=single(model.rss./(size(prediction,1)-size(trends,2)+1));
 % idx is the idx within model_preds of the best-fit model for each voxel
 % b is the best-fit betas for each predictor (4)
 % rss is residual sum of squares
-[idx,b,rss] = gridfitgpu_test(data,model_preds,1); % 3rd arg: whether or not to truncate neg fits
+[idx,b,rss] = gridfitgpu(data,model_preds,1); % 3rd arg: whether or not to truncate neg fits
 
 idx(isnan(idx)) = 1;
 
