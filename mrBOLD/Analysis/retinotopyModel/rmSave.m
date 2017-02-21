@@ -150,7 +150,7 @@ if exist(pathStr,'file')
 end
 
 % save
-save(pathStr,'model','params');
+save(pathStr,'model','params','-v7.3'); % edit, TCS 2/20/2017, to ensure large files/vars don't get discarded
 fprintf(1,'[%s]:Saved %s.\n',mfilename,pathStr);
 return;
 %------------------------
@@ -164,8 +164,8 @@ if isequal(dims, size(param))
     mapdata = param;
     return
 end
-
-if ~isequal(length(coordsInd), prod(dims))
+% TS: should not be equal!!!!!
+if isequal(length(coordsInd), prod(dims))
     % otherwise
     mapdata = reshape(param.',dims);
 else
