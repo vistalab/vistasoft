@@ -100,7 +100,7 @@ idx(isnan(idx)) = 1;
 %     %-----------------------------------
 %     minRssIndex = rss < model.rss;
 
-model.rss      = rss;
+model.rss      = rss.';     % to make sure same dims as rawrss
 model.b([1 t_id],:) = b.';
 %model.b
 %warning('on', 'MATLAB:lscov:RankDefDesignMat')
