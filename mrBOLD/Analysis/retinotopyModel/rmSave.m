@@ -158,12 +158,20 @@ return;
 
 %------------------------
 function mapdata = myreshape(param,dims,coordsInd)
+% note: need to check numel(param), not size param!!!!
 
+% using all data
 if isequal(dims, size(param))
-    
+    % if param is in the right space already, just assign to mapdata
     mapdata = param;
     return
+elseif isequal(prod(dims),numel(param))
+    % if it's reshaped (in slices, as during inplane fits), reshape
+    mapdata = reshape(param.',dims);
+    return
 end
+
+% handle case where you're analyzing a subset of data (ROI, etc)
 % TS: should not be equal!!!!!
 if isequal(length(coordsInd), prod(dims))
     % otherwise
