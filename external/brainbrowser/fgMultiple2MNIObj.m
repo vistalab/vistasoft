@@ -44,10 +44,25 @@ jitterColor = p.Results.jitterColor;
 jitterDev = p.Results.jitterDev;
 
 %%
-nFibers = length(fg.fibers);  % How many fibers are we writing out?
+nGroups = length(fg);
+nFibers = 0; 
+for ii=1:nGroups, nFibers = nFibers + length(fg(ii).fibers); end
+
+color = zeros(nFibers,4);     % Initialize a color for each group
 nPoints = zeros(nFibers,1);   % How many points in each fiber?
-for jj=1:nFibers
-    nPoints(jj)  = size(fg.fibers{jj},2);
+
+kk = 0;
+for ff = 1:nGroups
+    for jj=1:length(fg(ff).fibers)
+        kk = kk + 1;
+        color(kk,:) = [fg(ff).colorRgb/255,1];
+        nPoints(kk)  = size(fg(ff).fibers{jj},2);
+    end
+end
+
+fgAll = fg(1);
+for ff = 2:nGroups
+    fgAll = fgMerge(fgAll,fg(ff),'all');
 end
 
 %% Store the coords and list of points in each line
@@ -56,7 +71,7 @@ startPoints = [0; cumsum(nPoints)];
 lineList = cell(1,nFibers);
 for ii=1:nFibers
     lineList{ii} = (startPoints(ii)+1):startPoints(ii+1);
-    coords(lineList{ii},:) = fg.fibers{ii}';
+    coords(lineList{ii},:) = fgAll.fibers{ii}';
 end
 
 %% Open the file for writing
@@ -81,24 +96,22 @@ fprintf(fileID,'%.4f %.4f %.4f\n',coords');
 % The others are R G B alpha
 nLines = length(lineList);
 fprintf(fileID,'\n%d\n',nLines);
-if ~jitterColor
-    % All lines have the same color
-    fprintf(fileID,'0 %.2f %.2f %.2f %.2f\n\n',color(1),color(2),color(3),color(4));
-else
-    % Jitter the color for each line
-    % Make some random numbers to add to the color
-    jitterDev = mean(color)*jitterDev;
-    randColors = repmat(color,nLines,1) + randn(nLines,4)*jitterDev;
-    randColors = min(randColors,1);
-    randColors = max(randColors,0);
-    
-    fprintf(fileID,'1\n');
-    for ii=1:nLines
-        fprintf(fileID,'%.2f %.2f %.2f %.2f\n',...
-            randColors(ii, 1),randColors(ii, 2),randColors(ii, 3),randColors(ii, 4));
-    end
-    % In principle, we could have '2\n' and then a color per vertex
+if ~jitterColor,     jitterDev = 0;
+else                 jitterDev = 0.1;
 end
+
+% Jitter the color for each line
+% Make some random numbers to add to the color
+randColors = color + randn(size(color))*jitterDev;
+randColors = min(randColors,1);
+randColors = max(randColors,0);
+
+fprintf(fileID,'1\n');
+for ii=1:nLines
+    fprintf(fileID,'%.2f %.2f %.2f %.2f\n',...
+        randColors(ii, 1),randColors(ii, 2),randColors(ii, 3),randColors(ii, 4));
+end
+% In principle, we could have '2\n' and then a color per vertex
 
 % Now a list that counts the number of points in each fiber.
 fprintf(fileID,'%d ',startPoints(2:end));
