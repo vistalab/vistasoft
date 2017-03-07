@@ -43,8 +43,16 @@ overwrite   = p.Results.overwrite;
 jitterColor = p.Results.jitterColor;
 jitterDev = p.Results.jitterDev;
 
-%%
+%% For a big group we subsample the fibers
+
 nGroups = length(fg);
+subSample = 8;
+for ii=1:nGroups
+    keep = 1:subSample:length(fg(ii).fibers);
+    fg(ii) = fgExtract(fg(ii),keep,'keep');
+end
+
+%%
 nFibers = 0; 
 for ii=1:nGroups, nFibers = nFibers + length(fg(ii).fibers); end
 
