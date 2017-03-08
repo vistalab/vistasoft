@@ -1,7 +1,7 @@
-function [coords, lineList,startPoints] = fg2MNIObj(fg,varargin)
+function [coords, lineList,startPoints] = fgMultiple2MNIObj(fg,varargin)
 % Convert fg data to MNI Obj format that can be viewed in brainbrowser.
 %
-%   [coords, lineList,startPoints] = fg2MNIObj(fg,'fname',fname,'color',c)
+%   [coords, lineList,startPoints] = fgMultiple2MNIObj(fg,'fname',fname,'color',c)
 %
 % Example:
 %     rd = RdtClient('vistasoft');
@@ -41,19 +41,11 @@ if ~isequal(length(color),4)
 end
 overwrite   = p.Results.overwrite;
 jitterColor = p.Results.jitterColor;
-jitterDev = p.Results.jitterDev;
-
-%% For a big group we subsample the fibers
-
-nGroups = length(fg);
-subSample = 8;
-for ii=1:nGroups
-    keep = 1:subSample:length(fg(ii).fibers);
-    fg(ii) = fgExtract(fg(ii),keep,'keep');
-end
+jitterDev   = p.Results.jitterDev;
 
 %%
-nFibers = 0; 
+nFibers = 0;
+nGroups = length(fg);
 for ii=1:nGroups, nFibers = nFibers + length(fg(ii).fibers); end
 
 color = zeros(nFibers,4);     % Initialize a color for each group
