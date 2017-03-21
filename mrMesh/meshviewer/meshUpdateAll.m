@@ -1,24 +1,24 @@
-function view = meshUpdateAll(view);
+function vw = meshUpdateAll(vw)
 % Update all mesh displays associated with a mrVista view.
 %
-% view = meshUpdateAll([view=cur gray view]);
+% vw = meshUpdateAll([vw=cur gray view]);
 % 
 % ras, 08/2008.
-if notDefined('view'),		view = getSelectedGray;		end
+if notDefined('vw'), vw = getSelectedGray; end
 
-if ~isfield(view, 'mesh') | isempty(view.mesh)
+if ~isfield(vw, 'mesh') || isempty(viewGet(vw, 'mesh'))
 	return
 end
 
-% remember the currently selected mesh, to restor it later
-curMesh = view.meshNum3d;
+% remember the currently selected mesh, to restore it later
+curMesh = viewGet(vw, 'mesh num');
 
-for ii = 1:length(view.mesh);
-	view.meshNum3d = ii;
-	view = meshColorOverlay(view);
+for ii = 1:length(viewGet(vw, 'allmeshes'))
+	vw = viewSet(vw, 'mesh num', ii);
+	vw = meshColorOverlay(vw);
 end
 
 % restore the originally-selected mesh
-view.meshNum3d = curMesh;
+vw = viewSet(vw, 'mesh num', curMesh);
 
 return
