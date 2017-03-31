@@ -1,24 +1,12 @@
 function [coords, lineList, startPoints] = fg2MNIObj(fg,varargin)
 % FG2MNIOBJ - Convert array of fg to MNI Obj file for visualization
 %
-%  [coords, lineList,startPoints] = fg2MNIObj(fg,'fname',fname,'color',c)
-%
 % Required Inputs
 %   fg:  An array of vistasoft fiber groups
 % Optional inputs
 %  fname:      Full path to output file name
 %  overwrite:  Overwrite existing file
 %  jitter:     Jitter the RGB colors by this random amount (0,1)
-%   
-% Example:
-%     rd = RdtClient('vistasoft');
-%     rd.crp('/vistadata/diffusion/sampleData/fibers');
-%     rd.readArtifact('leftArcuate','type','pdb','destinationFolder',pwd);
-%     fg = fgRead('leftArcuate.pdb');
-%
-%     fg2MNIObj(fg,'fname','remoteFiber.obj','color',[0.8 0.4 0.9 1]);
-% Or,
-%     [~,lineList] = fg2MNIObj(fg,'fname','myTest.obj');
 %
 %  You can view the MNI OBJ data in brainbrowser by loading the file to
 %  this site:  https://brainbrowser.cbrain.mcgill.ca/surface-viewer#dti
