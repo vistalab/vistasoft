@@ -32,6 +32,7 @@ function [vw, ok] = loadParameterMap(vw, mapPath)
 % map and clip modes, which may be saved along with the map.
 if ~exist('mapPath','var')
     mapPath = getPathStrDialog(dataDir(vw),'Choose parameter map file name',{'*.mat'; '*.nii';'*.nii.gz'});
+    if isempty(mapPath), ok = false; return; end
 end
 
 % if the map path doesn't exist, but a map file exists in the view's

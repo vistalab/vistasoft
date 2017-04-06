@@ -40,7 +40,7 @@ ni   = niftiApplyCannonicalXform(ni);
 % This is the map data
 data = niftiGet(ni, 'data');
 data = nifti2mrVistaAnat(data);
-
+data = round(data);
 % ensure data are integers
 assert(isequal(data, round(data)));
 

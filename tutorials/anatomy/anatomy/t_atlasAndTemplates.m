@@ -170,7 +170,7 @@ vw = roiSetVertIndsAllMeshes(vw);
 vw = meshUpdateAll(vw); 
 
 % Copy the mesh to a Matlab figure
-hTmp = figure('Color', 'w');
+hTmp(1) = figure('Color', 'w');
 imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
 
 
@@ -184,7 +184,7 @@ vw = viewSet(vw, 'roi draw method', 'boxes');
 
 vw = meshUpdateAll(vw); 
 % Copy the mesh to a Matlab figure
-hTmp = figure('Color', 'w');
+hTmp(2) = figure('Color', 'w');
 imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
 
 
@@ -215,7 +215,7 @@ vw = viewSet(vw, 'ROI draw method', 'perimeter');
 vw = meshUpdateAll(vw); 
 
 % Copy the mesh to a Matlab figure
-hTmp = figure('Color', 'w');
+hTmp(3) = figure('Color', 'w');
 imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
 
 
@@ -250,7 +250,7 @@ vw = refreshScreen(vw);
 vw = meshUpdateAll(vw); 
 
 % Copy the mesh to a Matlab figure
-hTmp = figure('Color', 'w');
+hTmp(4) = figure('Color', 'w');
 imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
 
 % POLAR ANGLE -----------------------------------------------------
@@ -275,9 +275,12 @@ vw = refreshScreen(vw);
 vw = meshUpdateAll(vw); 
 
 % Copy the mesh to a Matlab figure
-hTmp = figure('Color', 'w');
+hTmp(5) = figure('Color', 'w');
 imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
 
 %% Clean up
+vw = meshDelete(vw, inf);
+close(viewGet(vw, 'fignum'));
+close(hTmp)
 mrvCleanWorkspace
 cd(curdir)

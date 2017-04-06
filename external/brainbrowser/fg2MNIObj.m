@@ -1,17 +1,12 @@
-function [coords, lineList,startPoints] = fg2MNIObj(fg,varargin)
-% Convert fg data to MNI Obj format that can be viewed in brainbrowser.
+function [coords, lineList, startPoints] = fg2MNIObj(fg,varargin)
+% FG2MNIOBJ - Convert array of fg to MNI Obj file for visualization
 %
-%   [coords, lineList,startPoints] = fg2MNIObj(fg,'fname',fname,'color',c)
-%
-% Example:
-%     rd = RdtClient('vistasoft');
-%     rd.crp('/vistadata/diffusion/sampleData/fibers');
-%     rd.readArtifact('leftArcuate','type','pdb','destinationFolder',pwd);
-%     fg = fgRead('leftArcuate.pdb');
-%
-%     fg2MNIObj(fg,'fname','remoteFiber.obj','color',[0.8 0.4 0.9 1]);
-% Or,
-%     [~,lineList] = fg2MNIObj(fg,'fname','myTest.obj');
+% Required Inputs
+%   fg:  An array of vistasoft fiber groups
+% Optional inputs
+%  fname:      Full path to output file name
+%  overwrite:  Overwrite existing file
+%  jitter:     Jitter the RGB colors by this random amount (0,1)
 %
 %  You can view the MNI OBJ data in brainbrowser by loading the file to
 %  this site:  https://brainbrowser.cbrain.mcgill.ca/surface-viewer#dti
@@ -27,22 +22,35 @@ function [coords, lineList,startPoints] = fg2MNIObj(fg,varargin)
 p = inputParser;
 
 p.addRequired('fg');
-p.addParameter('fname','test.obj',@ischar);      % Output file
-p.addParameter('color',[.8 .4 .8 .4],@isvector);  % RGBa
+p.addParameter('fname','test.mni.obj',@ischar);  % Output file
+p.addParameter('overwrite',false);               % Forces overwrite
+p.addParameter('jitter', 0.1);                  % Jitter the colors
 
 p.parse(fg,varargin{:});
-fname = p.Results.fname;
-color = p.Results.color;
-if ~isequal(length(color),4)
-    error('Color parameter should be RGBalpha, a 4D vector');
-end
+fname     = p.Results.fname;
+overwrite = p.Results.overwrite;
+jitter    = p.Results.jitter;
 
 %%
+nFibers = 0;
+nGroups = length(fg);
+for ii=1:nGroups, nFibers = nFibers + length(fg(ii).fibers); end
 
-nFibers = length(fg.fibers);  % How many fibers are we writing out?
+color = zeros(nFibers,4);     % Initialize a color for each group
 nPoints = zeros(nFibers,1);   % How many points in each fiber?
-for jj=1:nFibers
-    nPoints(jj)  = size(fg.fibers{jj},2);
+
+kk = 0;
+for ff = 1:nGroups
+    for jj=1:length(fg(ff).fibers)
+        kk = kk + 1;
+        color(kk,:) = [fg(ff).colorRgb/255,1];
+        nPoints(kk)  = size(fg(ff).fibers{jj},2);
+    end
+end
+
+fgAll = fg(1);
+for ff = 2:nGroups
+    fgAll = fgMerge(fgAll,fg(ff),'all');
 end
 
 %% Store the coords and list of points in each line
@@ -51,12 +59,12 @@ startPoints = [0; cumsum(nPoints)];
 lineList = cell(1,nFibers);
 for ii=1:nFibers
     lineList{ii} = (startPoints(ii)+1):startPoints(ii+1);
-    coords(lineList{ii},:) = fg.fibers{ii}';
+    coords(lineList{ii},:) = fgAll.fibers{ii}';
 end
 
 %% Open the file for writing
 
-if exist(fname,'file')
+if exist(fname,'file') && ~overwrite
     disp('The file already exists.  Press space bar to over-write');
     pause
 end
@@ -74,8 +82,28 @@ fprintf(fileID,'%.4f %.4f %.4f\n',coords');
 % And we should figure out what the 0 at the front means.  Renzo knows, and
 % it is important.
 % The others are R G B alpha
-fprintf(fileID,'\n%d\n',length(lineList));
-fprintf(fileID,'0 %.2f %.2f %.2f %.2f\n\n',color(1),color(2),color(3),color(4));
+nLines = length(lineList);
+fprintf(fileID,'\n%d\n',nLines);
+
+% Jitter the color for each line
+% Make some random numbers to add to the color
+randColors = color;
+if jitter > 0
+    theseColors = randColors(:,1:3);
+    scale = mean(theseColors,2);
+    randFactor = 1 + randn(size(scale))*jitter;
+    theseColors = diag(randFactor)*theseColors ;
+    randColors = [theseColors,ones(nFibers,1)];
+    randColors = min(randColors,1);
+    randColors = max(randColors,0);
+end
+
+fprintf(fileID,'1\n');
+for ii=1:nLines
+    fprintf(fileID,'%.2f %.2f %.2f %.2f\n',...
+        randColors(ii, 1),randColors(ii, 2),randColors(ii, 3),randColors(ii, 4));
+end
+% In principle, we could have '2\n' and then a color per vertex
 
 % Now a list that counts the number of points in each fiber.
 fprintf(fileID,'%d ',startPoints(2:end));

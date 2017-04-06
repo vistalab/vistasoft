@@ -71,7 +71,7 @@ for i = 1:length(filename)
                     otherwise
                         error('nifti2ROI not yet implemented for viewtype %s', viewType);
                 end
-            case '.mat'
+            case {'.mat', ''}
                 load(pathStr, 'ROI');
                 
                 % Coerce to current format with viewType instead of viewName
