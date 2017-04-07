@@ -27,9 +27,15 @@ model_preds(:,1,:) = prediction;
 model_preds(:,1+(1:size(trends,2)),:) = repmat(trends,1,1,size(prediction,2)); % incl 3 trends, model is ~3 GB
 
 
+% only look at voxels with 'real' data (std dev or range is not 0)
+% - for surface files, this should reduce computation time by ~10-15x!
+
+
+goodvox = std(data,[],1)~=0;
+
 
 % we compute mean rss but we need sum rss (old convention)
-model.rss=single(model.rss./(size(prediction,1)-size(trends,2)+1));  
+model.rss=single(model.rss./(size(prediction,1)- (size(trends,2)+1)));  
 
 
 %------------------------------------
@@ -38,70 +44,21 @@ model.rss=single(model.rss./(size(prediction,1)-size(trends,2)+1));
 % idx is the idx within model_preds of the best-fit model for each voxel
 % b is the best-fit betas for each predictor (4)
 % rss is residual sum of squares
-[idx,b,rss] = gridfitgpu(data,model_preds,1); % 3rd arg: whether or not to truncate neg fits
-
+if sum(goodvox) > 0
+    [idx,b,rss] = gridfitgpu(data(:,goodvox),model_preds,1); % 3rd arg: whether or not to truncate neg fits
+else
+    fprintf('No signal voxels this run..., moving on....\n');
+    idx = []; b = []; rss = [];
+end
+    
+    
 idx(isnan(idx)) = 1;
 
 
 
 
-%-----------------------------------
-%--- fit different receptive fields profiles
-%--- another loop --- and a slow one too
-%-----------------------------------
-%tic; progress = 0;
-
-%warning('off', 'MATLAB:lscov:RankDefDesignMat')
-
-% for n=1:numel(params.analysis.x0),
-%     %-----------------------------------
-%     % progress monitor (10 dots) and time indicator
-%     %-----------------------------------
-%     if floor(n./numel(params.analysis.x0).*10)>progress,
-%         if progress==0,
-%             % print out estimated time left
-%             esttime = toc.*10;
-%             if floor(esttime./3600)>0,
-%                 fprintf(1,'[%s]:Estimated processing time: %d hours.\t(%s)\n',...
-%                     mfilename, ceil(esttime./3600), datestr(now));
-%             else
-%                 fprintf(1, '[%s]:Estimated processing time: %d minutes.\t(%s)\n',...
-%                     mfilename, ceil(esttime./60), datestr(now));
-%             end;
-%             fprintf(1,'[%s]:Grid (x,y,sigma) fit:',mfilename);drawnow;
-%         end;
-%         % progress monitor
-%         fprintf(1,'.');drawnow;
-%         progress = progress + 1;
-%     end;
-% 
-%     %-----------------------------------
-%     %--- now apply glm to fit RF
-%     %-----------------------------------
-%     % minimum RSS fit
-%     X    = [prediction(:,n) trends];
-%     % This line takes up 30% of the time
-%     % lscov takes as long as the pinv method but provides the rss as well...
-%     [b,~,rss]    = lscov(X,data); 
-%     
-%     % Compute RSS only for positive fits. The basic problem is
-%     % that if you have two complementary locations, you
-%     % could fit with a postive beta on the one that drives the signal or a
-%     % negative beta on the portion of the visual field that never sees the
-%     % stimulus. This would produce the same prediction. We don't like that
-%     nkeep   = b(1,:)<0; % Now we only set the negative fits to inf.
-%     
-%     % To save time limit the rss computation to those we care about.
-%     % This line is takes up 60% of the time.... (replaced by lscov)
-%     rss(nkeep) = inf('single');
-%     
-%     %-----------------------------------
-%     %--- store data with lower rss
-%     %-----------------------------------
-%     minRssIndex = rss < model.rss;
-
-model.rss      = rss.';     % to make sure same dims as rawrss
-model.b([1 t_id],:) = b.';
+model.rss(goodvox)      = rss.';     % to make sure same dims as rawrss
+model.b([1 t_id],goodvox) = b.';
 %model.b
 %warning('on', 'MATLAB:lscov:RankDefDesignMat')
 
@@ -113,19 +70,20 @@ model.b([1 t_id],:) = b.';
 % variance explained will be 0.
 model.rss(model.rss==Inf)=model.rawrss(model.rss==Inf);
 
+goodvox_idx = find(goodvox);
 
 % for each voxel, pull out the analysis params corresponding to
 % best-fitting model
 for ii = 1:length(idx)
 
     % now update
-    model.x0(ii)       = params.analysis.x0(idx(ii));
-    model.y0(ii)       = params.analysis.y0(idx(ii));
-    model.s(ii)        = params.analysis.sigmaMajor(idx(ii));
-    model.s_major(ii)  = params.analysis.sigmaMajor(idx(ii));
-    model.s_minor(ii)  = params.analysis.sigmaMajor(idx(ii));
-    model.s_theta(ii)  = params.analysis.theta(idx(ii));
-    model.exponent(ii) = params.analysis.exponent(idx(ii));
+    model.x0(goodvox_idx(ii))       = params.analysis.x0(idx(ii));
+    model.y0(goodvox_idx(ii))       = params.analysis.y0(idx(ii));
+    model.s(goodvox_idx(ii))        = params.analysis.sigmaMajor(idx(ii));
+    model.s_major(goodvox_idx(ii))  = params.analysis.sigmaMajor(idx(ii));
+    model.s_minor(goodvox_idx(ii))  = params.analysis.sigmaMajor(idx(ii));
+    model.s_theta(goodvox_idx(ii))  = params.analysis.theta(idx(ii));
+    model.exponent(goodvox_idx(ii)) = params.analysis.exponent(idx(ii));
     
     %model.b([1 t_id],minRssIndex) = b(:,minRssIndex);
 end;
@@ -144,7 +102,7 @@ end;
 % else
 %     fprintf(1,'Done[%d minutes].\t(%s)\n', ceil(et/60), datestr(now));
 % end;
-drawnow;
+%drawnow;
 return;
 
 

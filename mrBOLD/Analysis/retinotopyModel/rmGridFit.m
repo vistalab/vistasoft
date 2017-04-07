@@ -160,6 +160,10 @@ end
 
 % go loop over slices
 for slice=loopSlices,
+    
+    
+    fprintf('\nStarting slice %i\n',slice);
+    
     %-----------------------------------
     % Place datasets behind each other. This is a rather crude way of
     % stimultaneously fitting both. Due to this we cannot
