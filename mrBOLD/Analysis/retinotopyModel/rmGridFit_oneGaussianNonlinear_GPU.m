@@ -94,7 +94,7 @@ end;
 % the lscov docs for details. NOTE TCS 2/17/2017 - I think it's just - size
 % trends, not +1, as that's the value used in line 227!!!!!
 %model.rss=single(model.rss.*(size(prediction,1)-size(trends,2)+1));  
-
+ 
 % end time monitor NOTE: all timing in gpuRegress
 % et  = toc;
 % if floor(esttime/3600)>0,

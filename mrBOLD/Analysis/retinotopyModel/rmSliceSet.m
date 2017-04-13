@@ -5,6 +5,8 @@ function model = rmSliceSet(model,tmp,slice)
 % model = rmSliceSet(model,tmp,slice);
 %
 % 2008/01 SOD: extracted from rmGridFit.
+% 2017/4/12 TCS: fixed bug added w/ nonlinear models & in-plane/slice-based
+% fits
 
 % loop over models
 for n=1:numel(model),
@@ -16,7 +18,20 @@ for n=1:numel(model),
         % check whether data exists and has data in tmp structure
         if isfield(tmp{n},ftmp{fn}) && ~isempty(tmp{n}.(ftmp{fn}))
             % get data from model structure
-            val = rmGet(model{n},ftmp{fn});
+            % TCS, 4/12/2017 - if "s" and tmp has "exponent"
+            % field, request s_uncorrected rather than s; this will not
+            % apply the sqrt(n) correction, and should *only* change
+            % behavior of this function, no other get/set functions...
+            
+            if strcmpi(ftmp{fn},'s') && isfield(tmp{n},'exponent') % means we're workign w/ nonlinear model
+                param_to_get = 's_uncorrected'; % pass to rmGet, it'll know what to do
+            else
+                param_to_get = ftmp{fn};
+            end
+            
+            
+            %val = rmGet(model{n},ftmp{fn});
+            val = rmGet(model{n},param_to_get);
             % if no data in model structure make it (zeros)
             if isempty(val)
                 val = zeros(size(rmGet(model{n},'x0')));
@@ -34,7 +49,7 @@ for n=1:numel(model),
                     end
             end
             % save data in model
-            model{n}      = rmSet(model{n},ftmp{fn},val);
+            model{n}      = rmSet(model{n},ftmp{fn},val); % and set using original name ('s')
         end
     end
 

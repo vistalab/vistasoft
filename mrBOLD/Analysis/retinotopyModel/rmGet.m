@@ -39,11 +39,19 @@ try
             val = model.hrf.params;
         case {'hrfmax','peak hrf response value'}
             val = model.hrf.maxresponse;
-        case {'s','sigma'}
+        case {'s','sigma'}  % TCS 4/12/2017::::: NOTE, this is why in-plane size estimates fail
+                            % on each slice iteration, vista pulls out
+                            % sigma of the current model, adds a slice,
+                            % then saves that back in; but when it's
+                            % computed, it's altered, so the /sqrt(n)
+                            % happens n_slices-slice_num times! up to
+                            % 102!!!!
             val = (model.sigma.major + model.sigma.minor)./2;             
             if isfield(model, 'exponent'),
                 val = model.sigma.major./sqrt(model.exponent);
-            end            
+            end
+        case {'s_uncorrected'} % added TCS 4/12/2017, returns mean of sigma major/minor, but no correction applied
+            val = (model.sigma.major + model.sigma.minor)./2;    
         case {'sigmamajor','sigma major','s_major'}
             val = model.sigma.major;
         case {'sigmaminor','sigma minor','s_minor'}
