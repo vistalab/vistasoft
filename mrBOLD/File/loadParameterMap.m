@@ -30,6 +30,11 @@ function [vw, ok] = loadParameterMap(vw, mapPath)
 %
 % ras, 11/15/05: added ability to load map parameters, such as the color
 % map and clip modes, which may be saved along with the map.
+%
+% rkl, 04/17/17: Fixed a bug: the UI display mode did not get set to 'map'
+% when loading a nifti as a parameter map (though everything works smoothly
+% when loading a .mat file as parameter map). This resulted in the slider not
+% displaying the full range of values. 
 if ~exist('mapPath','var')
     mapPath = getPathStrDialog(dataDir(vw),'Choose parameter map file name',{'*.mat'; '*.nii';'*.nii.gz'});
     if isempty(mapPath), ok = false; return; end
@@ -105,6 +110,12 @@ if strcmp(extension, '.nii') || strcmp(extension,'.gz')
             
         case {'gray' 'volume'}
             vw = nifti2functionals(vw, mapPath);
+            
+            % refresh (if this isn't a hidden view -- no ui struct)
+            if isfield(vw, 'ui')
+                vw = setDisplayMode(vw,'map');
+            end
+            
             return;
         otherwise
             
