@@ -12,7 +12,7 @@ function ni = niftiRead(fileName, volumesToLoad)
 %
 % Web Resources
 %  web('http://nifti.nimh.nih.gov/nifti-1/','-browser')
-%  mrvBrowseSVN('niftiRead.m')
+%  web('https://brainder.org/2012/09/23/the-nifti-file-format/','-browser')
 %
 % See also:  niftiCreate, niftiGetStruct
 %
