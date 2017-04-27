@@ -207,6 +207,8 @@ if isfield(params,'functionals') && ~isempty(params.functionals)
         if length(params.annotations) >= scan && ...
                 ~isempty(params.annotations{scan})
             func.name = params.annotations{scan};
+        else
+            func.name = [];
         end
         
         %This call updates dataTYPES as well
