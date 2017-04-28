@@ -7,12 +7,10 @@ function ni = niftiRead(fileName, volumesToLoad)
 % NIFTI 1 standard
 %
 % If volumesToLoad is not included in the arguments, all the data
-% are returned.
-%    volumesToLoad is empty [] returns only the header
+% are returned. If volumesToLoad is empty ([]) returns only the header
 %
 % Web Resources
 %  web('http://nifti.nimh.nih.gov/nifti-1/','-browser')
-%  mrvBrowseSVN('niftiRead.m')
 %
 % See also:  niftiCreate, niftiGetStruct
 %
@@ -55,8 +53,5 @@ else
     end
 end
 
-% When there is a niftiGet, this can go away.
-% There now is a niftiGet. So it can go away.
-%  ni.data_type = niftiClass2DataType(class(ni.data));
 
-return
+end
