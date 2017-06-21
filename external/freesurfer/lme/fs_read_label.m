@@ -10,12 +10,12 @@ function [vtxs,nvtxs] = fs_read_label(labelf)
 % vtxs: Indices of the vertices (1-based). 
 % nvtxs: The number of vertices in the label.
 %
-% $Revision: 1.1.2.2 $  $Date: 2013/02/23 21:08:09 $
+% $Revision: 1.2 $  $Date: 2015/01/06 17:14:50 $
 % Original Author: Jorge Luis Bernal Rusiel 
 % CVS Revision Info:
-%    $Author: nicks $
-%    $Date: 2013/02/23 21:08:09 $
-%    $Revision: 1.1.2.2 $
+%    $Author: mreuter $
+%    $Date: 2015/01/06 17:14:50 $
+%    $Revision: 1.2 $
 %
 fid = fopen(labelf);
 tline = fgetl(fid);
