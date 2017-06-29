@@ -24,6 +24,7 @@ function tck = dtiExportFibersMrtrix(fg, tck_filename)
 %   have not yet.
 %
 % Brent McPherson, Indiana University (C), 2017
+% Updated by Lindsey Kitchell, Indiana University 2017
 % Edits to comments by Franco Pestilli
 
 % initialize output
@@ -31,32 +32,37 @@ tck = struct();
 
 % If the HEADER of the .tck file is found in the fg.params field we attempt to 
 % reconstruct the HEADER
-hdr = fg.params{1, 2};
-if strfind(hdr{1}, 'mrtrix fibers')
-
-    % for all the header fields
-    for ii = 2:length(hdr)
-        
-        % for each element
-        tmp = hdr{ii};
-        
-        % split string and value at delimiter
-        nvpair = strsplit(tmp, ': ');
-        
-        % skip 'file' field to exactly match the mrtrix header
-        if strcmp(nvpair{1}, 'file')
-            continue;
-        end
-
-        % add header info to output structure
-        tck.(nvpair{1}) = nvpair{2};
-        
+if ~isempty(fg.params)
+    if size(fg.params,1) == 1
+        fg.params = fg.params';
     end
-else
+    hdr = fg.params{2, 1};
+    if strfind(hdr{1}, 'mrtrix tracks')
+
+        % for all the header fields
+        for ii = 2:length(hdr)
+
+            % for each element
+            tmp = hdr{ii};
+
+            % split string and value at delimiter
+            nvpair = strsplit(tmp, ': ');
+
+            % skip 'file' field to exactly match the mrtrix header
+            if strcmp(nvpair{1}, 'file')
+                continue;
+            end
+
+            % add header info to output structure
+            tck.(nvpair{1}) = nvpair{2};
+
+        end
+    else
     
-    % print warning if there is no mrtrix header information
-    warning('The TCK file HEADER information was not found in fg.params. The HEADER will not be saved to file.');
-    
+        % print warning if there is no mrtrix header information
+        warning('The TCK file HEADER information was not found in fg.params. The HEADER will not be saved to file.');
+
+    end
 end
 
 % transpose the streamline order
@@ -73,6 +79,7 @@ clear ii
 write_mrtrix_fibers(tck, tck_filename);
 
 return
+end
 
 %%%%%%%%%%%%%%%%%%%%%%
 % AUXILIARY FUNCTION %
