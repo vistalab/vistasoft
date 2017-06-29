@@ -55,7 +55,7 @@ if strfind(hdr{1}, 'mrtrix fibers')
 else
     
     % print warning if there is no mrtrix header information
-    warning(‘The TCK file HEADER information was not found in fg.params. The HEADER will not be saved to file.’);
+    warning('The TCK file HEADER information was not found in fg.params. The HEADER will not be saved to file.');
     
 end
 
