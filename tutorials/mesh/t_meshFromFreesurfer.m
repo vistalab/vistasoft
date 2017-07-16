@@ -53,6 +53,12 @@ fprintf('Freesurfer directory for ernie installed here:\n %s\n', dFolder)
 % mrVista Project directory
 erniePath      = fullfile(vistaRootPath, 'local', 'scratch', 'erniePRF');
 
+if ~exist(erniePath, 'dir')
+    % If we did not find the temporary directory created by prior
+    % tutorials, then use the full directory, downloading if necessary        
+    erniePath = mrtInstallSampleData('functional', 'erniePRF');
+end
+
 % Install Ernie freesurfer directory and ernie vistasession
 cd(erniePath);
 
