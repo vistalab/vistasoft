@@ -88,25 +88,35 @@ switch param
         % Return the directory in which the currently selected mesh
         % resides. Default to anat dir if not found.
         %   meshDir = viewGet(vw, 'mesh directory');
-        val = fileparts(getVAnatomyPath);
         
-        % meshes are kept separately for each hemisphere
-        % try to guess the hemisphere based on cursor position
-        % but check whether this location actually exists!
-        pos = viewGet(vw, 'Cursor Position');
-        
-        if ~isempty(pos),			% infer from sagittal position (high=right, low=left)
-            vs = viewGet(vw,'Size');
-            if (pos(3) < vs(3)/2),	hemi = 'Left';
-            else					hemi = 'Right';
+        % Which hemi? Meshes are kept separately for each hemisphere
+        if ~isempty(varargin)
+            hemi = varargin{1}; 
+            switch hemi
+                case {'left' 'Left', 'L', 'l', 1}
+                    hemi = 'Left';
+                case {'right' 'Right', 'R', 'r', 2}
+                    hemi = 'Right';
             end
-            tmp = fullfile(val, hemi, '3DMeshes');
-            if exist(tmp,'dir'),
-                val = tmp;
+        else
+            
+            % try to guess the hemisphere based on cursor position
+            % but check whether this location actually exists!
+            pos = viewGet(vw, 'Cursor Position');
+            
+            if ~isempty(pos)			% infer from sagittal position (high=right, low=left)
+                vs = viewGet(vw,'Size');
+                if (pos(3) < vs(3)/2),	hemi = 'Left';
+                else,					hemi = 'Right';
+                end
             end
         end
         
-        
+        val = fileparts(getVAnatomyPath);
+        tmp = fullfile(val, hemi, '3DMeshes');
+        if exist(tmp,'dir'), val = tmp; end
+
+                
     otherwise
         error('Unknown viewGet parameter');
         
