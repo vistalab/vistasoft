@@ -320,9 +320,9 @@ extern "C" void mexFunction(int nlhs, mxArray *plhs[],
         mexErrMsgTxt("First arg must be a real 3xN array.");
     } else {
         /* Input matrices */
-        const mwSize *srcDims      = mxGetDimensions(prhs[0]);
+        const int *srcDims      = mxGetDimensions(prhs[0]);
         double    (*srcPtr)[3]  = (double (*)[3])mxGetPr(prhs[0]);
-        const mwSize *destDims     = mxGetDimensions(prhs[1]);
+        const int *destDims     = mxGetDimensions(prhs[1]);
         double    (*destPtr)[3] = (double (*)[3])mxGetPr(prhs[1]);
 
         /* Output vector */
