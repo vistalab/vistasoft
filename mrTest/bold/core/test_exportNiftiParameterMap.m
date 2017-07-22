@@ -32,7 +32,7 @@ dt = 'Averages';
 scan = 1;
 
 % open a hidden volume view
-vw = mrVista('3'); % initHiddenGray;
+vw = initHiddenGray;
 vw = viewSet(vw, 'current dt', dt); 
 vw = viewSet(vw, 'current scan', scan); 
 
