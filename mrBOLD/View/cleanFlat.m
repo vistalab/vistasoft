@@ -11,31 +11,14 @@ function cleanFlat(flatSubdir)
 %     cleanGray, cleanDataType
 %
 % djh, 2/2001
+% jw, 7/2017: now creates backup rather than deleting
 
 global HOMEDIR
-global dataTYPES
 
-delete(fullfile(HOMEDIR,flatSubdir,'coords.mat'));
-delete(fullfile(HOMEDIR,flatSubdir,'anat.mat'));
-delete(fullfile(HOMEDIR,flatSubdir,'coordsLevels.mat')); % flat level view
-for typeNum = 1:length(dataTYPES)
-    dataTypeName = dataTYPES(typeNum).name;
-    % Delete corAnal and parameter map files
-    datadir = fullfile(HOMEDIR,flatSubdir,dataTypeName);
-    delete(fullfile(datadir,'*.mat'));
-    % Delete tSeries (if there are any)
-    [nscans,scanDirList] = countDirs(fullfile(datadir,'TSeries','Scan*'));
-    for s=1:nscans
-        delete(fullfile(datadir,'TSeries',scanDirList{s},'*.mat'));
-    end
-end
+curFlatDir = fullfile(HOMEDIR,flatSubdir);
+backupFlatDir = fullfile(HOMEDIR,sprintf('deletedFlat_%s', ...
+    datestr(now, 'yyyy-dd-mm-hh_MM-ss')));
 
-% The flat ROIs query seems unnecessary -- esp. now that KGS
-% lab saves all ROIs in a central FlatROIs dir by the vAnat.
-% ras, 10/04
-% resp = questdlg(['Delete ',flatSubdir,'/ROIs/*.mat?']);
-% if strcmp(resp,'Yes')
-%     delete(fullfile(HOMEDIR,flatSubdir,'ROIs','*.mat'));
-% end
+movefile(curFlatDir, backupFlatDir);
  
 return
