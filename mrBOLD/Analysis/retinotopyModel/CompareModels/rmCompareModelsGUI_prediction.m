@@ -78,7 +78,7 @@ pred = [pred trends(:,dcid)] * beta;
 % search fit deciding not to keep the params. In this case, the RFvals will
 % be empty (or all zeros), making the prediction incorrectly flat, Correct
 % this case.
-tmp = minmax(RFvals);
+tmp = mrvMinmax(RFvals);
 if isempty(tmp) | (tmp(1)==0 & tmp(2)==0)
 	[T df RSS B] = rmGLM(tSeries, [pred trends(:,1)], [1 -1]);
 	pred = abs(B(1))*pred + B(2);

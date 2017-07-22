@@ -10,11 +10,11 @@ function p = identityLine(ax,varargin)
 %
 % (c) Stanford VISTA Team
 
-% if notDefined('ax'), ax = gca; end
+%% if notDefined('ax'), ax = gca; end
 p = inputParser;
 
 % First optional argument
-p.addOptional('ax',gca);
+p.addRequired('ax',@isgraphics);
 
 % Line color and style
 vFunc = @(x) isnumeric(x) && logical(length(x) == 3);

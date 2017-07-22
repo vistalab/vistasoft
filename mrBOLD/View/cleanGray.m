@@ -10,18 +10,13 @@ function cleanGray()
 % If you change this function make parallel changes in:
 %     cleanFlat, cleanDataType
 %
-% djh, 2/2001
+% djh, 2/2001
+% jw, 7/2017: now creates backup rather than deleting
+
 global HOMEDIR
-global dataTYPES
-delete(fullfile(HOMEDIR,'Gray','coords.mat'));
-for typeNum = 1:length(dataTYPES)
-    dataTypeName = dataTYPES(typeNum).name;
-    % Delete corAnal and parameter map files
-    datadir = fullfile(HOMEDIR,'Gray',dataTypeName);
-    delete(fullfile(datadir,'*.mat'));
-    % Delete tSeries (if there are any)
-    [nscans,scanDirList] = countDirs(fullfile(datadir,'TSeries','Scan*'));
-    for s=1:nscans
-        delete(fullfile(datadir,'TSeries',scanDirList{s},'*.mat'));
-    end
-end
+
+curGrayDir = fullfile(HOMEDIR,'Gray');
+backupGrayDir = fullfile(HOMEDIR,sprintf('deletedGray_%s', ...
+    datestr(now, 'yyyy-dd-mm-hh_MM-ss')));
+
+movefile(curGrayDir, backupGrayDir);

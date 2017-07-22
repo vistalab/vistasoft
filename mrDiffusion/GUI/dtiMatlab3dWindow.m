@@ -18,6 +18,11 @@ if ~exist('handles','var')||isempty(handles), error('dtiFiberUI handles required
 
 showTheseFgs = dtiFGShowList(handles);
 
+% Reopen the 3D figure if it was closed.
+if ~ishandle(handles.fig3d)
+    handles.fig3d = figure;
+end
+
 figure(handles.fig3d);
 set(handles.fig3d, 'NumberTitle', 'off');
 set(handles.fig3d, 'Name', [handles.title,' 3D']);

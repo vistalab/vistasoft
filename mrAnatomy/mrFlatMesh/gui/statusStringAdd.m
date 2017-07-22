@@ -9,7 +9,7 @@ function newStatusString=statusStringAdd(handle,message)
 %  program. (BW).
 %
 
-if (handle)
+if (~isempty(handle))
     oldStatusString = get(handle,'UserData');
     newStatusString = char(oldStatusString,message);
     [depthString,horizString]=size(newStatusString);

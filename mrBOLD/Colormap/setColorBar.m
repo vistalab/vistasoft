@@ -60,7 +60,7 @@ if strcmp(hideState,'on')
         %% Core part of code:
         % get range (color limits) for colorbar
         cbarRange = vw.ui.cbarRange;
-        if isempty(cbarRange) || isequal(cbarRange, [0 0])
+        if isempty(cbarRange) 
             setColorBar(vw, 'off');
             return
         end

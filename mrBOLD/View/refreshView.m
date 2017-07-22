@@ -88,7 +88,7 @@ end
 set(0,'CurrentFigure',vw.ui.windowHandle);
 
 % Update annotation string
-set(vw.ui.annotationHandle,'string',annotation(vw,getCurScan(vw)));
+vw=setAnnotation(vw,getCurScan(vw));
 
 %% Display final image %%
 % Change this to cope with different rotations in L and R flatmaps. For

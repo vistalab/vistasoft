@@ -2,6 +2,12 @@
 
 VISTASOFT is the main software repository of the [Vista lab](http://vistalab.stanford.edu) at [Stanford University](http://stanford.edu). It contains Matlab code to perform a variety of analysis on MRI data, including functional MRI and diffusion MRI.
 
+### License
+
+(c) Vista lab, Stanford University.
+
+Unless otherwise noted, all our code is released under the [GPL](http://www.gnu.org/copyleft/gpl.html) 
+
 ### Modules
 Vistasoft contains the following modules:
 
@@ -56,8 +62,3 @@ To install Vistasoft:
 
 For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
 
-### License
-
-(c) Vista lab, Stanford University.
-
-Unless otherwise noted, all our code is released under the [GPL](http://www.gnu.org/copyleft/gpl.html) 

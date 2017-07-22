@@ -81,7 +81,7 @@ for ii = 1:length(scans)
     numDim = 0;
     
     [~, nii] = loadtSeries(vw, scan);
-    tSeries = niftiGet(nii, 'data');
+    tSeries = double(niftiGet(nii, 'data'));
     tSeries = permute(tSeries, [4, 1, 2, 3]);
     tSeries = reshape(tSeries, size(tSeries,1), [], size(tSeries,4));
     for slice=slices

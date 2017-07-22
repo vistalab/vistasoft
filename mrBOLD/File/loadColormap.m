@@ -1,6 +1,6 @@
-function view = loadColormap(view, cmapFile);
+function vw = loadColormap(vw, cmapFile)
 %
-% view = loadColormap(view, <cmapFile>);
+% vw = loadColormap(vw, <cmapFile>);
 %
 % Loads a colormap as the (color/overlay part of the) cmap for the 
 % view's current mode. The cmapFile should be a path to a .mat file 
@@ -17,27 +17,27 @@ function view = loadColormap(view, cmapFile);
 %
 % ras, 01/06 
 if notDefined('cmapFile')
-    [f p] = myUiGetFile(dataDir(view), '*.mat', ...
+    [f, p] = myUiGetFile(dataDir(vw), '*.mat', ...
                         'Pick a file with a saved colormap');
     cmapFile = fullfile(p, f);
 end
 
-if ~exist(cmapFile, 'file') | exist([cmapFile '.mat'], 'file')
-    error(sprintf('File %s not found.', cmapFile));
+if ~exist(cmapFile, 'file') || exist([cmapFile '.mat'], 'file')
+    error('File %s not found.', cmapFile);
 end
 
 A = load(cmapFile);
 
-if ~isfield(A, 'cmap') | ~isnumeric(A.cmap)
+if ~isfield(A, 'cmap') || ~isnumeric(A.cmap)
     error('Cmap file must have a numeric ''cmap'' variable defined.');
 end
 
-mode = sprintf('%sMode', view.ui.displayMode);
-nG = view.ui.(mode).numGrays;
+mode = sprintf('%sMode', vw.ui.displayMode);
+nG = vw.ui.(mode).numGrays;
 
-view.ui.(mode).cmap = [view.ui.(mode).cmap(1:nG,:); A.cmap];
-view.ui.(mode).numColors = size(A.cmap, 1);
+vw.ui.(mode).cmap = [vw.ui.(mode).cmap(1:nG,:); A.cmap];
+vw.ui.(mode).numColors = size(A.cmap, 1);
 
-view = refreshScreen(view);
+vw = refreshScreen(vw);
 
 return

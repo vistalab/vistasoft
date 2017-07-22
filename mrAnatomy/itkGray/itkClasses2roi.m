@@ -15,6 +15,8 @@ function itkClasses2roi(ni, labelFile)
 %
 % see itkClass2roi.m, nifti2mrVistaAnat.m
  
+error('Obsolete. Use nifti2ROI instead.')
+
 if nargin < 1, help(mfilename); return; end
 
 %% Remember where we start so we can clean up at the end

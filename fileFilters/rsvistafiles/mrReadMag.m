@@ -47,7 +47,7 @@ mr.extent = mr.voxelSize .* mr.dims;
 mr.spaces = mrStandardSpaces(mr);
 mr.dimUnits = {'mm' 'mm' 'mm' 'sec'};
 mr.dataUnits = 'T2*-Weighted Intensity';
-mr.dataRange = minmax(mr.data);
+mr.dataRange = mrvMinmax(mr.data);
 
 % build a space defining the scanner coords, where the
 % xform maps from the pixCorners to the R|A|S coords of the

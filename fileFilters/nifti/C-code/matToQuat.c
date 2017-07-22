@@ -81,3 +81,4 @@
 	  mxSetField(plhs[0], 0, "dz", mxCreateDoubleScalar (dz));
 	  mxSetField(plhs[0], 0, "qfac", mxCreateDoubleScalar (qfac));
 	  mxSetField(plhs[0], 0, "blah", mxCreateString (str));	
+    }

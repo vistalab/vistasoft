@@ -6,7 +6,13 @@ function [dt6, xformToAcpc, mmPerVoxel, fileName, desc, intentName] = dtiLoadTen
 % The six entries are the diffusion tensor values, derived from the raw
 % data.  The raw data can be in many different directions.  The diffusion
 % tensor is a 3x3 positive-definite matrix, D.  The entries in the matrix
-% are stored in a vector: (Dxx Dyy Dzz Dxy Dxz Dyz)
+% are stored in a vector: 
+%
+%    Dxx Dyy Dzz Dxy Dxz Dyz
+%
+% or equivalently
+%
+%    D(1,1), D(2,2), D(3,3), D(1,2), D(1,3), D(2,3)
 %
 % HISTORY:
 %  2007.10.04 AJS: Wrote it.
@@ -26,6 +32,7 @@ if(ischar(ni))
 end
 
 fileName = ni.fname;
+
 % We convert from the 5d, lower-tri row order NIFTI tensor format used by
 % other groups, such as FSL, which stores (x,y,z,1,directions)
 %    direction ordering:  (Dxx Dxy Dyy Dxz Dyz Dzz)

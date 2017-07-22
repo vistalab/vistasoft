@@ -1,5 +1,5 @@
-function roiSaveForItkGray(vw, fname, roiColor)
-% function roiSaveForItkGray(vw, fname, roiColor)
+function roiSaveAsNifti(vw, fname, roiColor)
+% function roiSaveAsNifti(vw, fname, roiColor)
 %
 % Aug 2008: JW
 %
@@ -46,28 +46,8 @@ for ii = 1:len
     roiData(coords(1,ii), coords(2,ii), coords(3,ii)) = roiColor;
 end
 
-    
-% Convert mrVista format to our preferred axial format for NIFTI
-mmPerVox = viewGet(vw, 'mmPerVox');
-[data, xform, ni] = mrLoadRet2nifti(roiData, mmPerVox);  %#ok<ASGLU>
-ni.fname = fname;
-
-% if the volume anatomy file is a NIFTI, then we want to steal the header
-% information from the volume anatomy so that the ROI file and the anatomy
-% file have identical headers.
-[tmp, tmp, ext] = fileparts(vANATOMYPATH); %#ok<ASGLU>
-if ismember(ext, {'.nii', '.gz'}) 
-    if ~exist(vANATOMYPATH, 'file')
-        warning('vANATOMYPATH not found. Not using vANAT header') %#ok<WNTAG>
-    else
-        ni       = niftiRead(vANATOMYPATH);
-        ni.fname = fname;
-        ni.data  = data;
-        ni.scl_slope  = 1; % this appears to be necessary for the file to be readable in freesurfer
-    end
-end
-
-writeFileNifti(ni);
+% Create and save nifti file with roiData
+fname = niftiSaveVistaVolume(vw, roiData, fname);
 
 message = (['file saved as ' fname]);
 disp(message)

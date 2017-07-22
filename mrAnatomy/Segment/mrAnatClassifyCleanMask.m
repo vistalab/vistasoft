@@ -1,16 +1,12 @@
-function [mask]= mrAnatClassifyCleanMask(mask,minClusterSize);
+function [mask]= mrAnatClassifyCleanMask(mask,minClusterSize)
 % mrAnatClassifyCleanMask - remove small clusters
 % [mask]= mrAnatClassifyCleanMask(mask,minClusterSize);
 
 % 16-Jun-2005 SOD wrote it
 
-if nargin < 1,
-  help(mfilename);
-  return;
-end;
-if ieNotDefined('minClusterSize'),
-  minClusterSize = 9;
-end;
+if nargin < 1, help(mfilename); return; end;
+
+if ieNotDefined('minClusterSize'), minClusterSize = 9; end;
 
 % keep input
 orgmask = mask;
@@ -21,7 +17,7 @@ fprintf('[%s]:Removing clusters (1):',mfilename);
 for n=1:length(remove),
     mask(LabMask==remove(n))=0;
     fprintf('.');drawnow;
-end;
+end
 fprintf('Done.\n');drawnow;
 
 % clean mask background (0)
@@ -30,12 +26,12 @@ fprintf('[%s]:Removing clusters (0):',mfilename);
 for n=1:length(remove),
     mask(LabMask==remove(n))=1;
     fprintf('.');drawnow;
-end;
+end
 fprintf('Done.\n');drawnow;
 
 
 %-------------------------
-function [imgLabel, remove]=myClipCluster(m,t);
+function [imgLabel, remove]=myClipCluster(m,t)
 
 % connectivity
 %        6     three-dimensional six-connected neighborhood

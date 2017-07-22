@@ -241,7 +241,7 @@ x = [-mmBeyond:mmBeyond]';
 
 % plot for F values
 figure; plot(x,T);
-set(gca,'xlim',minmax(x'));
+set(gca,'xlim',mrvMinmax(x'));
 xlabel(['1-mm steps from ' whichPlane(alignPlaneInd) ' = ' num2str(alignPlane(alignPlaneInd))]);
 ylabel('F-value');
 title(['F-value for testing ' tensorComp ' in ' gpFiberTensorStats(fgID).name]);
@@ -249,7 +249,7 @@ title(['F-value for testing ' tensorComp ' in ' gpFiberTensorStats(fgID).name]);
 % plot for p-values
 figure; plot(x,pval);
 % log scale
-set(gca,'yscale','log','xlim',minmax(x'));
+set(gca,'yscale','log','xlim',mrvMinmax(x'));
 xlabel(['1-mm steps from ' whichPlane(alignPlaneInd) ' = ' num2str(alignPlane(alignPlaneInd))]);
 ylabel('p-value');
 title(['p-value for testing ' tensorComp ' in ' gpFiberTensorStats(fgID).name]);

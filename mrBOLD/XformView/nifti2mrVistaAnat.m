@@ -11,10 +11,16 @@ function anat = nifti2mrVistaAnat(ni)
 %
 % April, 2009: JW
 
-% Check format of input argument
+% Check format of input argument (Ideally, we shoudl require NIFTI and not
+% allow a data array with no header. But we don't want to break things.)
 if isnumeric(ni) || islogical(ni), data = ni; end
-if isstruct(ni), data = niftiGet(ni, 'data'); end
-if ischar(ni), niftiGet(niftiRead(ni), 'data'); end
+if ischar(ni), ni = niftiRead(ni); end
+
+% Reorient to RAS
+if isstruct(ni), 
+    ni = niftiApplyCannonicalXform(ni);
+    data = niftiGet(ni, 'data'); 
+end
 
 % Permute 
 anat = permute(data, [3 2 1]);

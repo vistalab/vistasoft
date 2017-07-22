@@ -42,8 +42,8 @@ msh = viewGet(vw,'currentmesh');
 % prefs). In this case, auto-set the view to anatomy mode, so these
 % functions don't go looking for data that aren't there. (ras, 11/05)
 switch vw.ui.displayMode
-    case 'anat', % do nothing
-    case 'map',
+    case 'anat' % do nothing
+    case 'map'
         if isempty(vw.map) || isempty(vw.map{viewGet(vw, 'curScan')})
             vw.ui.displayMode = 'anat';
         end
@@ -144,18 +144,18 @@ if(mapToAllLayers && size(vertexGrayMap,1)>1 && ~isempty(data))
         case 'mean'
             % take mean data across layers
 
-            if ~phaseFlag,
+            if ~phaseFlag
                 n = sum(allV,1);
-                for ii=1:size(vertexGrayMap,1),
+                for ii=1:size(vertexGrayMap,1)
                     % 03/2006 SOD: If we average over the vertexGrayMap layers we
                     % should start from layer 1 and not with the already existing
                     % dataOverlay. The existing dataOverlay is a mean of all data
                     % and will bias the layer-based average.
-                    if ii==1,
+                    if ii==1
                         dataOverlay(allV(ii,:)) = data(vertexGrayMap(ii,allV(ii,:)));
                     else
                         dataOverlay(allV(ii,:)) = dataOverlay(allV(ii,:)) + data(vertexGrayMap(ii,allV(ii,:)));
-                    end;
+                    end
                 end
                 dataOverlay(vertInds) = dataOverlay(vertInds)./n(vertInds);
 
@@ -166,14 +166,14 @@ if(mapToAllLayers && size(vertexGrayMap,1)>1 && ~isempty(data))
                 %dataOverlay = repmat(mean(-exp(i*data(vertexGrayMap(allV(:))))),1,sz);
                 n = sum(allV,1);
                 for ii=1:size(vertexGrayMap,1)
-                    if ii==1,
+                    if ii==1
                         dataOverlay(allV(ii,:)) = -exp(1i*data(vertexGrayMap(ii,allV(ii,:))));
                     else
                         dataOverlay(allV(ii,:)) = dataOverlay(allV(ii,:)) + -exp(1i*data(vertexGrayMap(ii,allV(ii,:))));
-                    end;
+                    end
                 end
                 dataOverlay(vertInds) = angle(dataOverlay(vertInds)./n(vertInds))+pi;
-            end;
+            end
 
         case 'max'
             % take max value across layers
@@ -181,7 +181,7 @@ if(mapToAllLayers && size(vertexGrayMap,1)>1 && ~isempty(data))
             for ii=1:size(vertexGrayMap,1)
                 curData(:) = -9999;
                 curData(allV(ii,:)) = data(vertexGrayMap(ii,allV(ii,:)));
-                biggerInds = abs(curData)>abs(dataOverlay);
+                biggerInds = curData>dataOverlay;
                 dataOverlay(biggerInds) = curData(biggerInds);
             end
         case 'min'
@@ -254,14 +254,14 @@ if(dataSmoothIterations>0)
         % 09/2005 SOD: smoothing the data can only be done if the
         % data is non-circular (ie not valid for phase maps). So
         % two ways depending on the data:
-        if ~phaseFlag,
+        if ~phaseFlag
             dataOverlay = connectionBasedSmooth(conMat,double(dataOverlay));
         else
             % phase data, so go complex, smooth and go back
             dataOverlay = -exp(1i*dataOverlay);
             dataOverlay = connectionBasedSmooth(conMat,double(dataOverlay));
             dataOverlay = angle(dataOverlay)+pi;
-        end;
+        end
     end
 end
 
