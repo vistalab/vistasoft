@@ -32,11 +32,14 @@ function [mexFiles cFiles status params] = mrvCompile(deleteOldFiles)
 % 2008.
 %
 % TODO:
-%  Allow extra libs to be included in an elegant way that can change
-%  options based on OS or other needs. E.g., on some systems, we need to
-% explicitly add libz. Currently this has been kludged into
-% defaultCFileList to allow an option string setting when a string starts
-% with "-".  So the first "file" for readFileNifti is '-lz'. 
+%  Allow extra libs to be included. E.g., on some systems, we need to
+% explicitly add libz. E.g., the following is needed to compile the nifti
+% mex files on a Linux installation.
+%
+%   cd(fileparts(which('readFileNifti.c')))
+%   eval(['mex matToQuat.c nifti1_io.c znzlib.c ' matlabroot '/bin/glnxa64/libz.so.1']);
+%   eval(['mex readFileNifti.c nifti1_io.c znzlib.c ' matlabroot '/bin/glnxa64/libz.so.1']);
+%   eval(['mex writeFileNifti.c nifti1_io.c znzlib.c ' matlabroot '/bin/glnxa64/libz.so.1']);
 %
 %  We should have instructions about adding VTK libraries for the mesh
 %  compiles, as well.  

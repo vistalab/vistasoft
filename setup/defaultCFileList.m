@@ -12,11 +12,6 @@ function cFiles = defaultCFileList;
 % '/some/dir/first.c;some/dir/second.c' will compile first.c as the mex
 % file 'first.mexext' and link in the code from second.c.
 %
-% Some mex files need options for compilations (e.g. linking against system
-% provided libraries). To pass in an option use a string that starts with
-% '-' (e.g. '-lz').  This will then be skipped in the filepath expansion
-% and just based to the mex command line. 
-%
 % ras 10/2008.
 % 2009.07.01 RFD: cleaned up a few details. Can now compile things that
 % require multiple source files (e.g., niftiRead)
