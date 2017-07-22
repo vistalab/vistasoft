@@ -49,8 +49,8 @@ end
 % Mask image for masking the flat map away from where we have data
 mask = flat.ui.mask;
 
-% open waitbar
-waitHandle = waitbar(0,'Interpolating tSeries.  Please wait...');
+% open mrvWaitbar
+waitHandle = mrvWaitbar(0,'Interpolating tSeries.  Please wait...');
 
 % Intersect the coords from the gray view and the Flat view.
 % See vol2flatCorAnal for details.
@@ -85,7 +85,7 @@ for scan = selectedScans
     
     % Loop through hemispheres
     for h=1:2
-        waitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
+        mrvWaitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
         
         %Loop through the frames
        for f = 1:nFrames

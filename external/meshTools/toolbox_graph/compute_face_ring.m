@@ -61,9 +61,9 @@ end
 return;
 
 return;
-h = waitbar(0,'Computing Face 1-ring');
+h = mrvWaitbar(0,'Computing Face 1-ring');
 for i=1:nface
-    waitbar(i/nface);
+    mrvWaitbar(i/nface);
     fring{i} = [];
     for j=1:3
         j1 = j;

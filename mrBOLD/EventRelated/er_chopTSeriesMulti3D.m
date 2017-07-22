@@ -44,7 +44,7 @@ peakPeriod = 6:12;       % period to look for peaks in t-tests, in seconds
 timeWindow = -6:22;     % seconds relative to trial onset to take for each trial
 onsetDelta = 0;         % # secs to shift onsets in parfiles, relative to time course
 snrConds = [];          % For calculating SNR, which conditions to use (if empty, use all)
-waitbarFlag = 0;        % flag to show a graphical waitbar to show load progress
+waitbarFlag = 0;        % flag to show a graphical mrvWaitbar to show load progress
 
 
 %%%%% get the parfile info
@@ -66,7 +66,7 @@ for i = 1:length(varargin)
         case 'onsetdelta', onsetDelta = varargin{i+1};
         case 'snrconds', snrConds = varargin{i+1};
         case 'whichconds', whichconds = varargin{i+1};    
-        case 'waitbar', waitbarFlag = 1;
+        case 'mrvWaitbar', waitbarFlag = 1;
         otherwise, % ignore
         end
     end
@@ -87,14 +87,14 @@ end
 %%%%% get the tSeries for each voxel / concat across scans
 dt = viewGet(view,'curdt');
 textstring=sprintf('Loading tSeries from %s datatype scans %d-%d...',dataTYPES(dt).name,min(scans),max(scans));
-h = waitbar(0,textstring);
+h = mrvWaitbar(0,textstring);
 
 tSeries = [];
 for s = 1:length(scans)
      raw = ~(detrendFlag(view,s));
     subt = getTseriesOneROI(view,coords,scans(s),raw);
     tSeries = [tSeries; subt{1}];
-    waitbar(s/length(scans),h);
+    mrvWaitbar(s/length(scans),h);
 end
 
 close(h)
@@ -175,7 +175,7 @@ else
 end
 roiName=view.ROIs(selRoi).name;
 
-h = waitbar(0,'Chopping tSeries...');
+h = mrvWaitbar(0,'Chopping tSeries...');
 anal = er_chopTSeries3D(tSeries,trials,roiName,...
               'peakPeriod',peakPeriod,...
               'bslPeriod',bslPeriod,...

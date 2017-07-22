@@ -93,7 +93,7 @@ X = [X(:) ones(length(X),1)];
 
 
 %%%%% main loop: regress each voxel
-h = waitbar(0,'Regressing...');
+h = mrvWaitbar(0,'Regressing...');
 
 for v = 1:nVoxels
     x = coords(1,v);
@@ -107,7 +107,7 @@ for v = 1:nVoxels
     slope(x,y,z) = b(1);
     rsquare(x,y,z) = stats(1);
 
-    waitbar(v/nVoxels,h,sprintf('Voxel %i of %i',v,nVoxels));
+    mrvWaitbar(v/nVoxels,h,sprintf('Voxel %i of %i',v,nVoxels));
 end
 
 close(h);

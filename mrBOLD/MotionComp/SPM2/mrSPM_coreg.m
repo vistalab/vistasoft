@@ -92,7 +92,7 @@ for scanIndex=1:length(scans);
     paramA.mat = inv([diag(1./mmPerVox), origin'; [0 0 0 1]]);
     paramA.scale = 0.0232; paramB = paramA;
 
-    h = waitbar(0,['Coregestering scan #' int2str(scanNum) '... Please wait.']);
+    h = mrvWaitbar(0,['Coregestering scan #' int2str(scanNum) '... Please wait.']);
     
     progress = 0; frameCount = length(frames);
     for curFrame = frames;
@@ -114,7 +114,7 @@ for scanIndex=1:length(scans);
                 images(curFrame,:,:,:) = imgB;
             end;
             progress = progress + 1;
-            waitbar(progress/frameCount);
+            mrvWaitbar(progress/frameCount);
         end;
     end;
     close(h);

@@ -66,7 +66,7 @@ end
 % Mask image for masking the flat map away from where we have data
 mask = flat.ui.mask;
 % Put up wait bar
-waitHandle = waitbar(0,'Transforming CorAnal.  Please wait...');
+waitHandle = mrvWaitbar(0,'Transforming CorAnal.  Please wait...');
 % Intersect the coords from the gray view and the Flat view.
 grayIndices=cell(1,2);
 flatIndices=cell(1,2);
@@ -101,7 +101,7 @@ for scan = selectedScans
     ph{scan} = zeros(size(mask));
     %Loop through the hemispheres
     for h=1:2
-        waitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
+        mrvWaitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
         if ~isempty(gray.co{scan})
             % Get data from gray corresponding to the grayCoords
             coData = gray.co{scan}(grayIndices{h});

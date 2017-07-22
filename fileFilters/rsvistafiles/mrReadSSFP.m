@@ -96,7 +96,7 @@ function mr = maxIntensityProjection(mr, mr2);
 
 verbose = prefsVerboseCheck;
 if verbose >= 1
-    h = waitbar(0, 'Computing Max Intensity Projection');
+    h = mrvWaitbar(0, 'Computing Max Intensity Projection');
 end
 
 % first, compute the mean images over time for each MR data set.
@@ -125,7 +125,7 @@ for t = 1:size(mr.data, 4)
     
     mr.data(:,:,:,t) = subvol;
     
-    if verbose >= 1, waitbar( t / size(mr.data, 4), h ); end
+    if verbose >= 1, mrvWaitbar( t / size(mr.data, 4), h ); end
 end
 
 if verbose >= 1

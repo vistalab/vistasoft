@@ -79,9 +79,9 @@ for ll=1:length(connGraph.aLabels)
 %         disp(['Labelled ' num2str(ll/length(connGraph.aLabels))*100 '%']);
 %     end
     if isempty(hWaitBar)
-        hWaitBar = waitbar(ll/length(connGraph.aLabels)*100,'Labelling...');
+        hWaitBar = mrvWaitbar(ll/length(connGraph.aLabels)*100,'Labelling...');
     else
-        waitbar(ll/length(connGraph.aLabels)*100,hWaitBar);
+        mrvWaitbar(ll/length(connGraph.aLabels)*100,hWaitBar);
     end
 end
 

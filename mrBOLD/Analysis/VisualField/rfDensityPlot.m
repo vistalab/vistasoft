@@ -43,7 +43,7 @@ else
     [x0 y0] = pol2cart( deg2rad(90-pol), ecc );
 end
 
-hwait = waitbar(0, 'Generating RF Density Plot...');
+hwait = mrvWaitbar(0, 'Generating RF Density Plot...');
 
 for v = 1:length(x0)
     % compute an RF for this voxel
@@ -59,7 +59,7 @@ for v = 1:length(x0)
     % add to density map
     img = img + RF;
 	
-	waitbar(v/length(x0), hwait);
+	mrvWaitbar(v/length(x0), hwait);
 end
 
 close(hwait)

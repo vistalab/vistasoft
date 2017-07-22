@@ -42,7 +42,7 @@ fileList = fileList(sortInds);
 %
 % Put up a status bar if there is more than a single file:
 if nFList > 1
-  hBar = waitbar(0, 'Scanning MRI files');
+  hBar = mrvWaitbar(0, 'Scanning MRI files');
 end
 % Begin the second pass. Break if sequence or size isn't right.
 for iList=1:nFList
@@ -59,7 +59,7 @@ for iList=1:nFList
     anat = img;
   end
   if nFList > 1
-    waitbar(iList/nFList)
+    mrvWaitbar(iList/nFList)
   end
 end
 % Get rid of any status bar

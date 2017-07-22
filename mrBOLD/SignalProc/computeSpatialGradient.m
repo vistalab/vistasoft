@@ -28,10 +28,10 @@ nScans = numScans(view);
 map = cell(1,nScans);
 
 %% Compute the robust estimate of spatial gradient from meanMap
-% put up a waitbar if needed
+% put up a mrvWaitbar if needed
 verbose = prefsVerboseCheck;
 if verbose
-    waitHandle = waitbar(0,'Computing spatial gradient from mean images.  Please wait...');
+    waitHandle = mrvWaitbar(0,'Computing spatial gradient from mean images.  Please wait...');
 end
 
 % main loop: across scans
@@ -46,7 +46,7 @@ for iScan = 1:nScans
     % data)
     map{iScan}( isnan(map{iScan}) | isinf(map{iScan}) ) = min(map1(:));
 
-    if verbose, waitbar(iScan/nScans); end
+    if verbose, mrvWaitbar(iScan/nScans); end
 end
 
 if verbose

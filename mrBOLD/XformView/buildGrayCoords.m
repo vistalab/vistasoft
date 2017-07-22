@@ -105,7 +105,7 @@ if keepAll
     keepRight = 1:length(rightNodes);
 else
     
-    waitHandle = waitbar(0,'Computing gray coordinates.  Please wait...');
+    waitHandle = mrvWaitbar(0,'Computing gray coordinates.  Please wait...');
     if ~isempty(allLeftNodes)
         % Find gray nodes that are in the inplanes. Note: nodes are
         % (x,y,z) not (y,x,z), unlike everything else in mrLoadRet.
@@ -121,7 +121,7 @@ else
     end
     
     % Repeat for right hemisphere
-    waitbar(1/2)
+    mrvWaitbar(1/2)
     if ~isempty(allRightNodes)
         [rightCoords, ~, keepRight] = ...
             intersectCols(uint16(ipCoords), uint16(allRightNodes([2 1 3],:)));

@@ -73,7 +73,7 @@ for s=1:nScans
     end
     
     msg = sprintf('Computing scan %d correlations.  Please wait.', scan);
-    waitHandle = waitbar(0,msg);
+    waitHandle = mrvWaitbar(0,msg);
     
     % loop through slices
     for slice = slices
@@ -87,7 +87,7 @@ for s=1:nScans
         
         % reshape
         map{scan}(:,:,slice) = reshape(rho,dims);
-        waitbar(slice/length(slices))
+        mrvWaitbar(slice/length(slices))
     end % loop overslice
     
     close(waitHandle);

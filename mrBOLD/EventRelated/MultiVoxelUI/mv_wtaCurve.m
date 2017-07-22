@@ -58,7 +58,7 @@ anal.subsetSize = round(linspace(10,size(A1,1),nSteps));
 anal.subsetSize(end) = size(A1,1);
 
 %%%%% step through voxel sizes
-wb = waitbar(0,'Stepping through R values...');
+wb = mrvWaitbar(0,'Stepping through R values...');
 for step = 1:nSteps
     subset = 1:anal.subsetSize(step);
     tmpanal = er_wtaClassifier(A1(subset,:), A2(subset,:), [0 0 0]);
@@ -69,7 +69,7 @@ for step = 1:nSteps
     anal.meanR = [anal.meanR; tmpanal.meanR];
     anal.semR = [anal.semR; tmpanal.semR];
     
-    waitbar(step/nSteps,wb);
+    mrvWaitbar(step/nSteps,wb);
 end
 close(wb);
 

@@ -54,7 +54,7 @@ end
 nScans = length(list);
 wbString=sprintf('Processing %d scans',nScans);
 
-h=waitbar(0,wbString);
+h=mrvWaitbar(0,wbString);
 
 for iScan=1:nScans
     % Scan loop:
@@ -127,7 +127,7 @@ for iScan=1:nScans
         tSeriesFile = fullfile(scanDir, tsName);
         save(tSeriesFile,'tSeries');
     end % next slice
-    waitbar(iScan/nScans,h);
+    mrvWaitbar(iScan/nScans,h);
     
 end % next scan
 

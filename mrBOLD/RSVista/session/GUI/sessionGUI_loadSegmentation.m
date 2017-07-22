@@ -63,12 +63,12 @@ grayCoordsPath = fullfile(HOMEDIR, 'Gray', 'coords.mat');
 if exist(grayCoordsPath, 'file')
     anatPath = fullpath(vANATOMYPATH);
     
-    hwait = waitbar(0, 'Checking/Installing Segmentation');
+    hwait = mrvWaitbar(0, 'Checking/Installing Segmentation');
     
     load(grayCoordsPath, 'leftClassFile', 'rightClassFile', ...
                          'leftPath', 'rightPath');
              
-    waitbar(.5, hwait);
+    mrvWaitbar(.5, hwait);
 	
 	% for each file, perform a check that the same file name may 
 	% exist in a different directory path: because an anatomy directory may
@@ -115,7 +115,7 @@ if exist(grayCoordsPath, 'file')
         end
     end
         
-    waitbar(1, hwait);
+    mrvWaitbar(1, hwait);
 
     %% Left hemisphere                     
     if exist(leftPath, 'file') && exist(leftClassFile, 'file')

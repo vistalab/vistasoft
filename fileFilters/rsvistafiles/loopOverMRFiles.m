@@ -20,7 +20,7 @@ cd(parent);
 w = dir(pattern);
 fnames = {w.name};
 cd(callingDir);
-h = waitbar(0,'Looping over MR files in directory...');
+h = mrvWaitbar(0,'Looping over MR files in directory...');
 for i = 1:length(fnames)
     filepath = fullfile(parent,fnames{i});
     subvol = eval(sprintf('%s(''%s'');',func,filepath));
@@ -32,7 +32,7 @@ for i = 1:length(fnames)
         img(:,:,:,i) = subvol;
         flag4D = 1; % will permute later
     end
-    waitbar(i/length(fnames),h);
+    mrvWaitbar(i/length(fnames),h);
 end
 close(h);
 

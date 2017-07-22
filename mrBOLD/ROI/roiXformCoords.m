@@ -78,12 +78,12 @@ zoffsets = [-.5 + 1/(2*sampRate(3)): 1/sampRate(3) : .5 - 1/(2*sampRate(3))];
 alpha = repmat(1/prod(sampRate), [1 size(roi.coords,2)]);
 
 verbose = prefsVerboseCheck;
-if verbose > 1, waitHandle = waitbar(0, 'Transforming ROI coordinates...'); end
+if verbose > 1, waitHandle = mrvWaitbar(0, 'Transforming ROI coordinates...'); end
 
 for ioff = 1:length(xoffsets)
 	xoff = xoffsets(ioff);
 
-	if verbose > 1, waitbar(ioff/length(xoffsets), waitHandle); end
+	if verbose > 1, mrvWaitbar(ioff/length(xoffsets), waitHandle); end
 
 	for yoff = yoffsets
 		for zoff = zoffsets

@@ -300,14 +300,14 @@ instem = deblank(instemlist(1,:));
 %-----------------------------------------------------------------%
 %--------------- Beginning of Slice Loop -------------------------%
 %-----------------------------------------------------------------%
-hWaitbar = waitbar(0,'selxavg:');
+hWaitbar = mrvWaitbar(0,'selxavg:');
 SumESSMtxRun = zeros(ntrs,ntrs,nruns);
 NBrainVoxsRun = zeros(nruns);
 SumESSMtx = 0;
 NBrainVoxsTot = 0;
 tic;
 for slice = firstslice:lastslice
-    waitbar((slice-1)/nslices,hWaitbar,sprintf('selxavg: slice %i of %i',slice,nslices));
+    mrvWaitbar((slice-1)/nslices,hWaitbar,sprintf('selxavg: slice %i of %i',slice,nslices));
     fprintf(1,'Slice %d, %g --------------\n',slice,toc);
     SumXtX = 0;
     SumXtWX = 0;
@@ -615,7 +615,7 @@ for slice = firstslice:lastslice
                 end
                 
             end
-            waitbar(slice/nslices,hWaitbar);
+            mrvWaitbar(slice/nslices,hWaitbar);
             
         end % Loop over runs %
     end % Loop over Pass %

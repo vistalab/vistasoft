@@ -75,7 +75,7 @@ tensor(:,:,:,6,:) = eigVec(:,:,:,2,1,:).*eigVal(:,:,:,1,1,:).*eigVec(:,:,:,3,1,:
                 + eigVec(:,:,:,2,2,:).*eigVal(:,:,:,2,1,:).*eigVec(:,:,:,3,2,:) ...
                 + eigVec(:,:,:,2,3,:).*eigVal(:,:,:,3,1,:).*eigVec(:,:,:,3,3,:);
 
-% h = waitbar(0, 'Computing tensors...');
+% h = mrvWaitbar(0, 'Computing tensors...');
 % for(x=1:sz(1))
 %     for(y=1:sz(2))
 %         for(z=1:sz(3))
@@ -86,7 +86,7 @@ tensor(:,:,:,6,:) = eigVec(:,:,:,2,1,:).*eigVal(:,:,:,1,1,:).*eigVec(:,:,:,3,1,:
 %             tensor(x,y,z,:) = [t(1,1), t(2,2), t(3,3), t(1,2), t(1,3), t(2,3)]; 
 %         end
 %     end
-%     waitbar(x/sz(1),h);
+%     mrvWaitbar(x/sz(1),h);
 % end
 % close(h);
 

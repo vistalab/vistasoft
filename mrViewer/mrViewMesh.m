@@ -26,7 +26,7 @@ m = ui.segmentation(s).settings.mesh;   % mesh #
 if isempty(msh), msh = mrViewGet(ui, 'mesh'); end
 
 msg = sprintf('Projecting mrViewer data onto mesh %i', msh.id);
-hwait = waitbar(0, msg);
+hwait = mrvWaitbar(0, msg);
 
 %% (b) get the vertex to gray map, if it's not there
 [nodes edges] = segGet(ui.segmentation(s), 'gray');
@@ -64,7 +64,7 @@ if ~isequal( fullpath(ui.mr.path), fullpath(ui.segmentation(s).anatFile) )
     grayCoords = coordsXform( inv(ui.mr.spaces(ipr).xform), grayCoords' )';
 end
         
-waitbar(.2, hwait);
+mrvWaitbar(.2, hwait);
 
 
 %%%%% (2) loop across overlays, getting color overlay maps for each
@@ -149,7 +149,7 @@ else
     
 end
 
-waitbar(.5, hwait);
+mrvWaitbar(.5, hwait);
 
 
 %%%%% (3) composite multiple overlays, if needed
@@ -159,7 +159,7 @@ switch length(overlayList)
     otherwise, colors = meshComposite(msh, overlays); % many overlays
 end
 
-waitbar(.6, hwait);
+mrvWaitbar(.6, hwait);
 
 
 %%%%% (4) draw ROIs 
@@ -193,7 +193,7 @@ end
 
 [colors msh] = meshDrawROIs2(msh, rois, nodes, colors, 0, edges);
 
-waitbar(.8, hwait);
+mrvWaitbar(.8, hwait);
 
 
 %%%%% (5) update the data on the mesh
@@ -202,7 +202,7 @@ if msh.id < 0       % no mesh started
 end
 msh = mrmSet(msh, 'colors', colors);
 
-waitbar(1, hwait);
+mrvWaitbar(1, hwait);
 
 
 % % while we're at it, sync the mesh cursor display with the

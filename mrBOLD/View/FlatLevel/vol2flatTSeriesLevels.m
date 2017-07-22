@@ -78,7 +78,7 @@ grayLevels = unique(nodes(6,:));
 % (the rules for this have changed -- update)
 
 % Loop through the scans, slices
-waitHandle = waitbar(0,'Converting tSeries...');
+waitHandle = mrvWaitbar(0,'Converting tSeries...');
 
 for scan = selectedScans
     % Load the tSeries
@@ -101,7 +101,7 @@ for scan = selectedScans
         savetSeries(tSeries,flat,scan,slice);
     end
 
-    waitbar(find(selectedScans==scan)/length(selectedScans),waitHandle);
+    mrvWaitbar(find(selectedScans==scan)/length(selectedScans),waitHandle);
     fprintf('Saved flat tSeries for scan %i.\n',scan);
 end
 

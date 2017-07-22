@@ -55,7 +55,7 @@ end
 
 keep = [1:keepFrames] + junkFrames;
 
-hwait = waitbar(0, 'Clipping Frames from tSeries...');
+hwait = mrvWaitbar(0, 'Clipping Frames from tSeries...');
 
 for scan = scans
     tSeriesFull = [];
@@ -76,7 +76,7 @@ for scan = scans
     dataTYPES(dataType).scanParams(scan).nFrames = length(keep);
     save mrSESSION dataTYPES -append;
     
-    waitbar(find(scans==scan)/length(scans),hwait);
+    mrvWaitbar(find(scans==scan)/length(scans),hwait);
 end
 close(hwait);
 

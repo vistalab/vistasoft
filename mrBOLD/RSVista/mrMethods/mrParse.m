@@ -16,7 +16,7 @@ if ~iscell(mr)
         error('mr is specified in the wrong format');
     end
 else
-    hwait = waitbar(0, 'Loading mr files ...');
+    hwait = mrvWaitbar(0, 'Loading mr files ...');
 
     for i = 1:length(mr)
         if ischar(mr{i}), mr{i} = mrLoad(mr{i});
@@ -27,7 +27,7 @@ else
         end
         tmp(i) = mr{i};
         
-        waitbar(i/length(mr), hwait);
+        mrvWaitbar(i/length(mr), hwait);
     end   
     mr = tmp;
     

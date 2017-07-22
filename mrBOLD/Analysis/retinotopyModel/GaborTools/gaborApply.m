@@ -77,7 +77,7 @@ if nargout > 1
 end
 
 %% main loop: filter each channel, get contrast energy
-hwait = waitbar(0, 'Applying wavelet pyramid');
+hwait = mrvWaitbar(0, 'Applying wavelet pyramid');
 for n = 1:G.nChannels
 	if G.cyclesPerImage(n)==0
 		% Luminance-only (DC) channel: no quadrature pair
@@ -99,7 +99,7 @@ for n = 1:G.nChannels
 		filt_odd(:,:,:,n)  = filtB;
 	end
 	
-	waitbar(n/length(G.cyclesPerImage), hwait);
+	mrvWaitbar(n/length(G.cyclesPerImage), hwait);
 end
 close(hwait);
 

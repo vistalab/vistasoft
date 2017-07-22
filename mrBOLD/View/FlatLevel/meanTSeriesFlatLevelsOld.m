@@ -44,7 +44,7 @@ for h = 1:2    % loop across hemispheres
 		meanIndices = find(coords(3,:)==h);
         meanCoords = coords(1:2,meanIndices); % just want 2D positions
             
-		waitHandle = waitbar(0,'Computing mean tSeries across gray levels...');
+		waitHandle = mrvWaitbar(0,'Computing mean tSeries across gray levels...');
 		
         % initialize a 3D matrix, tMat, of nFrames x voxels in level x
         % nLevels
@@ -70,7 +70,7 @@ for h = 1:2    % loop across hemispheres
             tmp = permute(tMat(frame,:,:),[3 2 1]);
             tSeries(frame,meanIndices) = nanmean(tmp);
             
-            waitbar(frame/nFrames,waitHandle);
+            mrvWaitbar(frame/nFrames,waitHandle);
         end
     end
     

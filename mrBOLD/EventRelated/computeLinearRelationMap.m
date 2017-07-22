@@ -73,11 +73,11 @@ end
 %%%%% load the MRI time courses for each voxel
 raw = ~(detrendFlag(view));
 tSeries = [];
-h = waitbar(0,'Loading tSeries...');
+h = mrvWaitbar(0,'Loading tSeries...');
 for s = scans
     scanTSeries = getTseriesOneROI(view,coords,s,raw);
     tSeries = [tSeries; scanTSeries{1}];
-    waitbar(find(scans==s)/length(scans),h);
+    mrvWaitbar(find(scans==s)/length(scans),h);
 end
 close(h);
 
@@ -107,7 +107,7 @@ rsquare = zeros(dataSize(view,scans(1))); % R^2 value for regression
 ind = roiCoords2MapIndex(view,coords);
 
 %%%%% main loop: regress each voxel
-h = waitbar(0,'Regressing...');
+h = mrvWaitbar(0,'Regressing...');
 
 for v = 1:nVoxels
     % calculate amplitudes
@@ -122,7 +122,7 @@ for v = 1:nVoxels
     slope(ind(v)) = b(1);
     rsquare(ind(v)) = stats(1);
 
-    waitbar(v/nVoxels,h,sprintf('Voxel %i of %i',v,nVoxels));
+    mrvWaitbar(v/nVoxels,h,sprintf('Voxel %i of %i',v,nVoxels));
 end
 
 close(h);

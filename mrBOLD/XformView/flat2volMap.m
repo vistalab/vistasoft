@@ -54,7 +54,7 @@ if nScans == 0, return, end
 checkTypes(flatView, volView);
 
 % First pass to convert flat hemisphere coordinates to indices:
-waitHandle = waitbar(0, 'Preparing to transform parameter map...');
+waitHandle = mrvWaitbar(0, 'Preparing to transform parameter map...');
 volIndices = cell(1, 2);
 flatIndices = cell(1, 2);
 for h = 1:2
@@ -62,7 +62,7 @@ for h = 1:2
   volIndices{h} = coords2Indices(flatView.grayCoords{h}, vDims);
 end
 
-waitbar(0, waitHandle, 'Transforming parameter map...')
+mrvWaitbar(0, waitHandle, 'Transforming parameter map...')
 for iS=1:nScans
   if any(iS == scans)
     vMap = repmat(NaN, vDims);
@@ -74,7 +74,7 @@ for iS=1:nScans
     end
     volMap{iS} = vMap(vInds);
   end
-  waitbar(iS/nScans, waitHandle)
+  mrvWaitbar(iS/nScans, waitHandle)
 end
 close(waitHandle);
 

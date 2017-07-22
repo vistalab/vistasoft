@@ -137,7 +137,7 @@ end
 % I guess for subgropu, too
 fiberspool.subgroup = fg3.subgroup(1);
 
-% Should be a waitbar?  It steps in 5000 fiber chunks.  Not sure why.
+% Should be a mrvWaitbar?  It steps in 5000 fiber chunks.  Not sure why.
 fprintf('Distance testing: %d fibers\n', size(fg3.fibers, 1));
 stepSize = 5000;
 for i=1:stepSize:size(fg3.fibers, 1) % Step over 5000 fibers at a time.

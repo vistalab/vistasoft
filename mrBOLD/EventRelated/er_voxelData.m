@@ -142,7 +142,7 @@ verbose = prefsVerboseCheck;
 
 if (~exist('preserveCoords') || isempty(preserveCoords)),  preserveCoords=0; end
 data.tSeries = [];
-if verbose, hwait = waitbar(0, 'Loading tSeries'); end
+if verbose, hwait = mrvWaitbar(0, 'Loading tSeries'); end
 for s = scans
 	%%%%%%%%%%%%%%%%%%%%
 	% Load the tSeries %
@@ -150,7 +150,7 @@ for s = scans
 	% (we keep them raw so we can detrend differently 
 	% down the line)
 	[tSeries coords] = voxelTSeries(view, roi.coords, s, 1, preserveCoords);
-    if verbose, waitbar(find(scans==s)/length(scans), hwait); end
+    if verbose, mrvWaitbar(find(scans==s)/length(scans), hwait); end
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% find range,  rescale and convert to int16 to save space %
@@ -241,7 +241,7 @@ end
 
 % get tSeries from each scan,  detrend
 data.tSeries = [];
-if verbose, hwait = waitbar(0, 'Loading tSeries...'); end
+if verbose, hwait = mrvWaitbar(0, 'Loading tSeries...'); end
 for s = scans
     pth = fullfile(saveDir, sprintf('Scan%i.mat', s));
     load(pth, 'tSeries', 'dataRange', 'coords');
@@ -272,7 +272,7 @@ for s = scans
     % append to existing tSeries
     data.tSeries = [data.tSeries; tSeries];
     
-    if verbose, waitbar(find(scans==s)/length(scans), hwait); end
+    if verbose, mrvWaitbar(find(scans==s)/length(scans), hwait); end
 end
 if verbose, close(hwait); end
 

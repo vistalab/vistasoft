@@ -102,7 +102,7 @@ for n=1:length(freq),
 	end
 
 	disp('Computing corAnal...');
-	waitHandle = waitbar(0,'Computing corAnal matrices from the tSeries.  Please wait...');
+	waitHandle = mrvWaitbar(0,'Computing corAnal matrices from the tSeries.  Please wait...');
 	for scanIndex=1:length(scanList)
 		scanNum = scanList(scanIndex);
 		disp(['Processing scan ', int2str(scanNum),'...']);
@@ -143,7 +143,7 @@ for n=1:length(freq),
 		% set back noise band
 		dataTYPES(dataType).blockedAnalysisParams(scanNum).noiseBand = oldNoiseBand;
 
-		waitbar(scanIndex/length(scanList), waitHandle);
+		mrvWaitbar(scanIndex/length(scanList), waitHandle);
 	end
 	close(waitHandle);
 

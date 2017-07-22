@@ -6,7 +6,7 @@ if ~exist(datapath, 'dir')
             nocancel = false;
             return;
         end;
-    h = waitbar(0,'Please wait...');
+    h = mrvWaitbar(0,'Please wait...');
     dtiConvertDT6ToBinaries (dt6file, datapath);
     close(h);
 end;

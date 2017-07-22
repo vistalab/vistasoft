@@ -49,9 +49,9 @@ baseIm = reshape(tSeries(baseFrame,:),dims);
 % Compute motion estimates and warped tSeries
 wtSeries = zeros(size(tSeries));
 waitStr = ['Computing motion estimates. scan:' num2str(scan) ' slice:' num2str(slice)];
-waitHandle = waitbar(0,waitStr);
+waitHandle = mrvWaitbar(0,waitStr);
 for frame = 1:nFrames
-  waitbar(frame/nFrames)
+  mrvWaitbar(frame/nFrames)
   im = reshape(tSeries(frame,:),dims);
   M = estMotionIter2(baseIm,im,2,eye(3),1);
   warpedIm = warpAffine2(im,M);

@@ -53,7 +53,7 @@ NzLIMIT = 24;   % if the number of inplanes is less that this, then
                 % inplanes two times.
 
 % progress bar
-wbh = waitbar(0,'Interpolating Inplanes...');
+wbh = mrvWaitbar(0,'Interpolating Inplanes...');
 
 % size of the inplanes
 [NyI, NxI, NzI] = size(inp);
@@ -113,7 +113,7 @@ if (coarseFlag)
         
     % updating message of the progress bar
     set(get(get(wbh,'Children'),'Title'),'String', 'Initial coarse estimation...');
-    waitbar(1/(MAXITER+1));
+    mrvWaitbar(1/(MAXITER+1));
         
     M = estMotionMulti3(inpMCN, inpCN,...
         [0 NCoarseIter],...     % iterations per level
@@ -151,7 +151,7 @@ if (fineFlag)
             TOTiter = TOTiter+1;
             set(get(get(wbh,'Children'),'Title'),'String',...
                 ['Refinement, iter = ',num2str(TOTiter),'...']);
-            waitbar((niter+1)/(MAXITER+1));
+            mrvWaitbar((niter+1)/(MAXITER+1));
 
             % new initial transformation matrix including the estimated matrix
             Mi = Mi/S1/M*S1;

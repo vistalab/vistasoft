@@ -53,7 +53,7 @@ end
 roi = getGrayRoi(view);
 nVoxels = size(roi.coords, 2);
 
-hwait = waitbar(0, 'Computing Selectivity Map Across Gray Matter...');
+hwait = mrvWaitbar(0, 'Computing Selectivity Map Across Gray Matter...');
 for a = 1:1000:nVoxels
     b = min(nVoxels, a+999);
     subRoi = roi;
@@ -64,7 +64,7 @@ for a = 1:1000:nVoxels
 
     sel(a:b) = mv_selectivity(mv, conditions, threshold);
     
-    waitbar(b/nVoxels, hwait);
+    mrvWaitbar(b/nVoxels, hwait);
 end
 close(hwait);
 

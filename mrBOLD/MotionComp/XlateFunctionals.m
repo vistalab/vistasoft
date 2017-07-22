@@ -41,9 +41,9 @@ for scan = scanList
     dims = sliceDims(view,scan);
     % Load tSeries from all slices into one big matrix
     volSeries = zeros([dims(1) dims(2) nSlices nFrames]);
-    waitHandle = waitbar(0,'Loading tSeries from all slices.  Please wait...');
+    waitHandle = mrvWaitbar(0,'Loading tSeries from all slices.  Please wait...');
     for slice=slices
-        waitbar(slice/nSlices);
+        mrvWaitbar(slice/nSlices);
         ts = loadtSeries(view,scan,slice);
         for frame=1:nFrames
             volSeries(:, :, slice, frame) = reshape(ts(frame,:),dims);
@@ -52,9 +52,9 @@ for scan = scanList
     close(waitHandle)
     
     % compute the warped volume series according to M
-    waitHandle = waitbar(0,['Warping scan ', num2str(scan),'...']);
+    waitHandle = mrvWaitbar(0,['Warping scan ', num2str(scan),'...']);
     for frame = 1:nFrames
-        waitbar(frame/nFrames)
+        mrvWaitbar(frame/nFrames)
         % warp the volume putting an edge of 1 voxel around to avoid lost data
         volSeries(:,:,:,frame) = warpAffine3(volSeries(:,:,:,frame), M, NaN, 1);
     end
@@ -62,7 +62,7 @@ for scan = scanList
     
     % Save warped tSeries
     % Make the Scan subdirectory for the new tSeries (if it doesn't exist)
-    waitHandle = waitbar(0,'Saving tSeries...');
+    waitHandle = mrvWaitbar(0,'Saving tSeries...');
 
     savetSeries(volSeries, hiddenView, scan);
 

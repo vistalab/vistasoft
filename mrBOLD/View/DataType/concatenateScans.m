@@ -157,7 +157,7 @@ hView.curDataType = view.curDataType;
 % main loop: create output tSeries  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 tStart = discardFromStart + 1;
-h = waitbar(0,'concatenating selected scans...');
+h = mrvWaitbar(0,'concatenating selected scans...');
 tic
 for slice = 1:nSlices
 
@@ -180,7 +180,7 @@ for slice = 1:nSlices
     save(outputFileName,'tSeries');
     fprintf('Saved %s ...  (Time: %4.2f) \n',outputFileName,toc);
 
-    waitbar(slice/numSlices(view),h);
+    mrvWaitbar(slice/numSlices(view),h);
 end
 
 close(h)

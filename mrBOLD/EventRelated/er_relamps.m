@@ -48,13 +48,13 @@ avgTC = nanmeanDims(trialData,2);
 % take dot product of each trial's time course w/ avg
 relamps = NaN*ones(1,nTrials);
 % if nTrials > 100
-%     hwait = waitbar(0,'Computing dot-product relative amplitudes')
+%     hwait = mrvWaitbar(0,'Computing dot-product relative amplitudes')
 % end
 for i = 1:nTrials
     relamps(i) = dot(avgTC,trialData(:,i)) ./ dot(avgTC,avgTC);
 
 %     if nTrials > 100
-%         waitbar(i/nTrials,hwait);
+%         mrvWaitbar(i/nTrials,hwait);
 % 	end
 end
 % if nTrials > 100
