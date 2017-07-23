@@ -1,4 +1,4 @@
-function [vertex_coords, faces] = read_surf(fname)
+function [vertex_coords, faces, magic] = read_surf(fname)
 %
 % [vertex_coords, faces] = read_surf(fname)
 % reads a the vertex coordinates and face lists from a surface file
@@ -14,9 +14,9 @@ function [vertex_coords, faces] = read_surf(fname)
 %
 % Original Author: Bruce Fischl
 % CVS Revision Info:
-%    $Author: nicks $
-%    $Date: 2013/01/22 20:59:09 $
-%    $Revision: 1.4.2.1 $
+%    $Author: fischl $
+%    $Date: 2014/04/30 12:59:03 $
+%    $Revision: 1.7 $
 %
 % Copyright © 2011 The General Hospital Corporation (Boston, MA) "MGH"
 %
@@ -43,15 +43,16 @@ function [vertex_coords, faces] = read_surf(fname)
 
 TRIANGLE_FILE_MAGIC_NUMBER =  16777214 ;
 QUAD_FILE_MAGIC_NUMBER =  16777215 ;
+NEW_QUAD_FILE_MAGIC_NUMBER =  16777213 ;
 
 fid = fopen(fname, 'rb', 'b') ;
 if (fid < 0)
-  str = sprintf('could not open curvature file %s.', fname) ;
+  str = sprintf('could not open surface file %s.', fname) ;
   error(str) ;
 end
 magic = fread3(fid) ;
 
-if(magic == QUAD_FILE_MAGIC_NUMBER)
+if((magic == QUAD_FILE_MAGIC_NUMBER) | (magic == NEW_QUAD_FILE_MAGIC_NUMBER))
   vnum = fread3(fid) ;
   fnum = fread3(fid) ;
   vertex_coords = fread(fid, vnum*3, 'int16') ./ 100 ; 
@@ -72,6 +73,11 @@ elseif (magic == TRIANGLE_FILE_MAGIC_NUMBER)
     faces = fread(fid, fnum*3, 'int32') ;
     faces = reshape(faces, 3, fnum)' ;
   end
+else
+  fprintf('ERROR: magic number %d unknown\n',magic);
+  vertex_coords = [];
+  faces = [];
+  return;
 end
 
 vertex_coords = reshape(vertex_coords, 3, vnum)' ;

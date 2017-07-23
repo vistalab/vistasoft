@@ -10,7 +10,7 @@ function p = identityLine(ax,varargin)
 %
 % (c) Stanford VISTA Team
 
-% if notDefined('ax'), ax = gca; end
+%% if notDefined('ax'), ax = gca; end
 p = inputParser;
 
 % First optional argument

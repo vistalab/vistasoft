@@ -20,11 +20,12 @@ function vw = rmLoadDefault(vw, useLog)
 if notDefined('vw'),		vw = getCurView;		end
 if notDefined('useLog'),	useLog = 0;				end
 
-try
-	viewGet(vw, 'rmModelNum');
-catch ME
-	error('No pRF Model loaded. Please Load a Model.');
+% exit gracefully if a rmModel is not selected
+if isempty(viewGet(vw, 'rmModel'))
+    warning('No pRF model selected')
+    return; 
 end
+
 
 vw = rmLoad(vw, 1, 'varexplained', 'co');
 vw = rmLoad(vw, 1, 'sigma', 'amp');

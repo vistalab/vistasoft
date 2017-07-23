@@ -204,18 +204,18 @@ switch param
         %   fname = viewGet(vw, 'class file name', 'left');
         %   fname = viewGet(vw, 'class file name', 'right');
         if (length(varargin) == 1), hemisphere = varargin{1};
-        else error('You must specify right/left hemisphere.');
+        else  hemisphere = 'left';
         end
         switch lower(hemisphere)
-            case 'left'
+            case {'left' 'l'}
                 if ~checkfields(vw,'leftClassFile') || isempty(vw.leftClassFile);
-                    [noData,val] = GetClassFile(vw, 0, 1);
+                    [~,val] = GetClassFile(vw, 0, 1);
                 else
                     val = vw.leftClassFile;
                 end
-            case 'right'
+            case {'right' 'r'}
                 if ~checkfields(vw,'rightClassFile') || isempty(vw.rightClassFile)
-                    [noData,val] = GetClassFile(vw, 1, 1);
+                    [~,val] = GetClassFile(vw, 1, 1);
                 else
                     val = vw.rightClassFile;
                 end

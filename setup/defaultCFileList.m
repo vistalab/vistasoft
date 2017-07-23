@@ -12,6 +12,11 @@ function cFiles = defaultCFileList;
 % '/some/dir/first.c;some/dir/second.c' will compile first.c as the mex
 % file 'first.mexext' and link in the code from second.c.
 %
+% Some mex files need options for compilations (e.g. linking against system
+% provided libraries). To pass in an option use a string that starts with
+% '-' (e.g. '-lz').  This will then be skipped in the filepath expansion
+% and just based to the mex command line. 
+%
 % ras 10/2008.
 % 2009.07.01 RFD: cleaned up a few details. Can now compile things that
 % require multiple source files (e.g., niftiRead)
@@ -25,9 +30,9 @@ cFiles = {};
 % their respective paths, of course).
 
 cFileNames = {...
-    {'matToQuat.c', 'nifti1_io.c', 'znzlib.c'}...
-    {'readFileNifti.c', 'nifti1_io.c', 'znzlib.c'}...
-    {'writeFileNifti.c', 'nifti1_io.c', 'znzlib.c'}...
+    {'-lz','matToQuat.c', 'nifti1_io.c', 'znzlib.c'}...
+    {'-lz','readFileNifti.c', 'nifti1_io.c', 'znzlib.c'}...
+    {'-lz','writeFileNifti.c', 'nifti1_io.c', 'znzlib.c'}...
     {'mrManDist.c'}...
     {'assignToNearest.c'}...
     {'spm_hist2_weighted.c'}...
@@ -94,7 +99,17 @@ cFileNames = {...
 for ii=1:length(cFileNames)
     this_files = [];
     for jj=1:length(cFileNames{ii})
-        this_files = [this_files which(cFileNames{ii}{jj}) ' '];
+        
+        %JMA - This is a bit kludgy and not robust but quick.
+        %If the first character of the string is a "-" then treat it as a
+        %option string and don't try to expand the full path of a filename
+        if strncmp(cFileNames{ii}{jj},'-',1)
+            stringToAdd =     cFileNames{ii}{jj};
+        else
+            stringToAdd = which(cFileNames{ii}{jj});
+        end
+        
+        this_files = [this_files stringToAdd ' '];
     end
     cFiles{ii} = this_files;
 end

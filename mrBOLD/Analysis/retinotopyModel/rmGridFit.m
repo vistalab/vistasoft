@@ -382,6 +382,8 @@ for slice=loopSlices,
     %-----------------------------------
     % now we put back the temporary data from that slice
     %-----------------------------------
+    if slice == 35
+    end
     model = rmSliceSet(model,s,slice);
 end;
 

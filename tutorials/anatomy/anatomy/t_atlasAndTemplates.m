@@ -126,26 +126,15 @@ end
 
 vw = mrVista('3');
 
-%% Open and smooth meshes
-mesh1 = fullfile('3DAnatomy', 'Left', '3DMeshes', 'leftMeshUsmoothedFS.mat');
-mesh2 = fullfile('3DAnatomy', 'Right', '3DMeshes', 'rightMeshUsmoothedFS.mat');
+%% Open meshes
+mesh1 = fullfile('3DAnatomy', 'Left', '3DMeshes', 'Left_inflated.mat');
+mesh2 = fullfile('3DAnatomy', 'Right', '3DMeshes', 'Right_inflated.mat');
 
 if ~exist(mesh1, 'file') || ~exist(mesh2, 'file')
     error('Meshes not found. Please run t_meshFromFreesurfer.')
 end
 [vw, OK] = meshLoad(vw, mesh1, 1); if ~OK, error('Mesh server failure'); end
 [vw, OK] = meshLoad(vw, mesh2, 1); if ~OK, error('Mesh server failure'); end
-
-
-% Inflate the meshes
-msh = cell(1,2);
-for ii = 1:2
-    msh{ii} = viewGet(vw, 'Mesh', ii);
-    msh{ii} = meshSet(msh{ii}, 'smooth iterations',200);
-    msh{ii} = meshSet(msh{ii}, 'smooth relaxation',1);
-    msh{ii} = meshSmooth(msh{ii});
-end
-vw = viewSet(vw, 'all meshes', msh); 
 
 %% Wang ROIs
 
@@ -278,7 +267,9 @@ vw = meshUpdateAll(vw);
 hTmp(5) = figure('Color', 'w');
 imagesc(mrmGet(viewGet(vw, 'Mesh'), 'screenshot')/255); axis image; axis off; 
 
-%% Clean up
+return
+
+% Clean up
 vw = meshDelete(vw, inf);
 close(viewGet(vw, 'fignum'));
 close(hTmp)

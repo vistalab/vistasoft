@@ -6,6 +6,7 @@ function [fg,filename] = mtrImportFibers(filename,xform,bEndOnly, coordspace)
 %
 % 1. PDB (pathway data base)
 % 2. Bfloat (ConTrack/Camino)
+% 3. tck (MRtrix)
 %
 % Parameters
 % ----------
@@ -13,6 +14,7 @@ function [fg,filename] = mtrImportFibers(filename,xform,bEndOnly, coordspace)
 % supports:
 %   1. PDB (pathway data base)
 %   2. Bfloat (ConTrack/Camino)
+%   3. MRtrix (MRtrix fibers)
 % xform: A transformation matrix to apply to the coordinates of all the
 % fibers in the fiber group, optional. 
 % bEndOnly: For Bfloat files, whether to read in only the end points,
@@ -103,6 +105,9 @@ switch(e)
                 fg.params{ss} =  statstruct;
             end
         end
+        
+    case '.tck'
+        fg = dtiImportFibersMrtrix(filename);
         
     otherwise,
         error('unknown format: %s\n',e);

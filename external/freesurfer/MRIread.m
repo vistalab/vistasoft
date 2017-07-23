@@ -46,9 +46,9 @@ function mri = MRIread(fstring,headeronly)
 %
 % Original Author: Doug Greve
 % CVS Revision Info:
-%    $Author: nicks $
-%    $Date: 2013/01/22 20:59:08 $
-%    $Revision: 1.22.2.2 $
+%    $Author: greve $
+%    $Date: 2012/02/14 21:59:33 $
+%    $Revision: 1.25 $
 %
 % Copyright © 2011 The General Hospital Corporation (Boston, MA) "MGH"
 %

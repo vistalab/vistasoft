@@ -26,7 +26,7 @@ switch param
             case 'Inplane'
                 val = niftiGet(viewGet(vw,'Anatomy Nifti'),'Data');
             otherwise
-                if isfield(vw.anat.data) val = vw.anat.data;
+                if isfield(vw.anat,'data') val = vw.anat.data;
                 else val = vw.anat; end
         end
         

@@ -22,9 +22,9 @@ function [fpr,tpr,auc,fdr,nthresh,kappa] = bmmroc(pA,pI,lambda,ntrials,nthresh)
 %
 % Original Author: Doug Greve
 % CVS Revision Info:
-%    $Author: nicks $
-%    $Date: 2013/01/22 20:59:08 $
-%    $Revision: 1.5.2.1 $
+%    $Author: greve $
+%    $Date: 2011/06/22 14:15:18 $
+%    $Revision: 1.6 $
 %
 % Copyright © 2011 The General Hospital Corporation (Boston, MA) "MGH"
 %

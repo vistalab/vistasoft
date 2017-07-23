@@ -68,7 +68,7 @@ newEdges=zeros((numEdges*2),1);
 statusStringAdd(statusHandle,'Finding sub-mesh edges.');
 
 for t=1:(numEdges*2)  
-    if ((~mod(t,100)) & busyHandle)
+    if (~mod(t,100) & ~isempty(busyHandle))
         updateBusybar(busyHandle,t);
     end
     newEdges(t)=find(insideNodes==fullEdgePointList(t));

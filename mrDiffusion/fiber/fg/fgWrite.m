@@ -13,6 +13,8 @@ function fgWrite(fg,name,type)
 %             'pdb'    - quench file format [DEFAULT]
 %             'quench' - same as 'pdb'                      
 %             'mat'    - matlab file format
+%             'tck'    - MRTRIX file format (also 'mrtrix'/'.tck')
+%
 %          * If "name" ends in either .pdb or .mat the correct file type
 %            will be used.
 %
@@ -27,6 +29,9 @@ function fgWrite(fg,name,type)
 % 
 % 
 % (C) Stanford VISTA, 2011
+%     
+%     Brent McPherson and Franco Pestilli 
+%     Indiana University 2017
 
 %% Check inputs
 
@@ -55,9 +60,7 @@ if strcmp(e,'.mat')
     type = 'mat';
 end
 
-
 %% Write out the fibers
-
 switch type
     case {'pdb', 'quench'}
         % Arguments are:
@@ -65,6 +68,8 @@ switch type
         mtrExportFibers(fg, name, [], [], [], 3);
     case 'mat'
         dtiWriteFiberGroup(fg, name);
+    case {'tck', 'mrtrix', '.tck'}
+        dtiExportFibersMrtrix(fg, name);
 end
 
 return

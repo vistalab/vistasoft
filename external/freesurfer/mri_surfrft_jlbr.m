@@ -27,14 +27,14 @@ function r = mri_surfrft_jlbr(yfile,glmdir,vwthresh,sgn,subject,hemi)
 % Limitations: does not work with per-voxel regressors, weighted-least
 % squares, fixed effects, or multi-variate contrasts.
 %
-% $Id: mri_surfrft_jlbr.m,v 1.2.2.1 2013/01/22 20:59:09 nicks Exp $
+% $Id: mri_surfrft_jlbr.m,v 1.5 2012/02/15 16:29:59 greve Exp $
 
 %
 % Original Author: Jorge Louis Bernal-Rusiel and Douglas Greve
 % CVS Revision Info:
-%    $Author: nicks $
-%    $Date: 2013/01/22 20:59:09 $
-%    $Revision: 1.2.2.1 $
+%    $Author: greve $
+%    $Date: 2012/02/15 16:29:59 $
+%    $Revision: 1.5 $
 %
 % Copyright (C) 2002-2007,
 % The General Hospital Corporation (Boston, MA). 
