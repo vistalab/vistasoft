@@ -31,7 +31,7 @@ case 'Inplane',
     if ~exist(pathStr,'file')
         error(['No file at the location: ',pathStr]);
     else
-        ip = orientInplane(vw, pathStr);
+        %ip = orientInplane(vw, pathStr);
         vw = viewSet(vw,'Anat Initialize',pathStr);
     end
     
