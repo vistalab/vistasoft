@@ -47,7 +47,7 @@ end
 if isempty(scanList),  error('Analysis aborted'); end
 
 disp('Computing corAnal...');
-waitHandle = waitbar(0,'Computing corAnal matrices from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing corAnal matrices from the tSeries.  Please wait...');
 for scanIndex=1:length(scanList)
     
     scanNum = scanList(scanIndex);
@@ -77,7 +77,7 @@ for scanIndex=1:length(scanList)
             error('Unkown vw type.')
     end
     
-    waitbar(scanIndex/length(scanList), waitHandle);
+    mrvWaitbar(scanIndex/length(scanList), waitHandle);
 end
 close(waitHandle);
 

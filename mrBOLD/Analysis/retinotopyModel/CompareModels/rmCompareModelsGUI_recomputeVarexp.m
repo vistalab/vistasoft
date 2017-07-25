@@ -23,7 +23,7 @@ if notDefined('M'),		M = get(gcf, 'UserData');			end
 
 verbose = prefsVerboseCheck;
 if verbose
-	h = waitbar(0, 'Recomputing variance explained for all voxels...');
+	h = mrvWaitbar(0, 'Recomputing variance explained for all voxels...');
 end
 
 X = M.params{1}.analysis.X;
@@ -68,7 +68,7 @@ for m = 1:M.nModels
 		M.varexp{m}(v) = R(2) .^ 2;
 		
 		if verbose
-			waitbar( (m-1)/M.nModels + v/(M.nModels * M.nVoxels), h );
+			mrvWaitbar( (m-1)/M.nModels + v/(M.nModels * M.nVoxels), h );
 		end
 	end
 end

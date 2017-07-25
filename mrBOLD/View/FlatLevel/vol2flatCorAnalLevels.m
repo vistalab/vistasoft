@@ -127,9 +127,9 @@ for slice = 3:numSlices(flat)
         warning('vol2flatCorAnalLevels: Hmm, some coords were lost...');
     end
     
-    % Put up waitbar (progress for current gray level)
+    % Put up mrvWaitbar (progress for current gray level)
     waitMsg = sprintf('Transforming CorAnal Fields, Gray Level %i...',level);
-	waitHandle = waitbar(0,waitMsg);
+	waitHandle = mrvWaitbar(0,waitMsg);
     
 	% Loop through the scans
 	for scan = selectedScans
@@ -183,8 +183,8 @@ for slice = 3:numSlices(flat)
         amp{scan}(:,:,1:2) = 0;
         ph{scan}(:,:,1:2) = 0;
 
-        % update waitbar
-        waitbar(find(selectedScans==scan)/length(selectedScans),waitHandle);
+        % update mrvWaitbar
+        mrvWaitbar(find(selectedScans==scan)/length(selectedScans),waitHandle);
 	end    
     
 	close(waitHandle);

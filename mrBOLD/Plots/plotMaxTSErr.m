@@ -22,10 +22,10 @@ frameRate = getFrameRate(view,scan);
 
 % Load tSerises 
 % Load tSeries and compute max frame-to-frame difference
-waitHandle = waitbar(0,'Loading tSeries and computing max frame-to-frame difference.  Please wait...');
+waitHandle = mrvWaitbar(0,'Loading tSeries and computing max frame-to-frame difference.  Please wait...');
 vres = zeros(nSlices,nFrames);
 for slice=slices
-   waitbar(slice/nSlices);
+   mrvWaitbar(slice/nSlices);
    tSeries = loadtSeries(view,scan,slice);
    for frame=1:nFrames-1
       vres(slice,frame) = max(tSeries(frame,:)-tSeries(frame+1,:));

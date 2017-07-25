@@ -89,11 +89,11 @@ function [meanAcc model meanAccBootstrap groups] = svmBootstrap(svm, varargin)
     meanAccBootstrap = zeros(1, nBootstraps);
     
     [meanAcc model] = svmRun(svm, 'options', options);
-    hwait = waitbar(0, sprintf('Running bootstraps for %s',svm.selectedROI));
+    hwait = mrvWaitbar(0, sprintf('Running bootstraps for %s',svm.selectedROI));
     for i = 1:nBootstraps
         svm.group = groups(:, i);
         [meanAccBootstrap(i) discard] = svmRun(svm, 'options', options);
-        waitbar(i/nBootstraps,hwait);
+        mrvWaitbar(i/nBootstraps,hwait);
     end
     close(hwait)
     

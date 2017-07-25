@@ -27,9 +27,9 @@ end
 W = full(W);
 
 D = zeros(length(point_list),n);
-hh = waitbar(0,['Computing distances.']);
+hh = mrvWaitbar(0,['Computing distances.']);
 for i=1:length(point_list)
-    waitbar( i/length(point_list) ,hh);
+    mrvWaitbar( i/length(point_list) ,hh);
     warning off;
     [d,S] = perform_dijkstra(W, point_list(i));
     warning on;

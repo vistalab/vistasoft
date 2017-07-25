@@ -39,7 +39,7 @@ if isempty(meshName), newMeshNum = newMeshNum - 1; return; end   % User pressed 
 
 % mmPerVox = viewGet(vw,'mmPerVoxel');
 
-wbar = waitbar(0.1, ...
+wbar = mrvWaitbar(0.1, ...
     sprintf('meshBuild: Combining white and gray matter...'));
 
 % Load left, right, or both hemispheres.  
@@ -56,14 +56,14 @@ end
 % windowID = -1;
 
 % We build a smoothed (mesh) and an unsmoothed mesh (tenseMesh) with these calls
-waitbar(0.35,wbar,sprintf('Building mesh'));
+mrvWaitbar(0.35,wbar,sprintf('Building mesh'));
 [newMesh, tenseMesh] = mrmBuild(voxels,viewGet(vw,'mmPerVox'),1);
 
 % Must have a name
 newMesh   = meshSet(newMesh,'name',meshName);
 tenseMesh = meshSet(tenseMesh,'name',sprintf('%s-tense',meshName));
 
-% waitbar(0.65,wbar,sprintf('meshBuild: Unsmoothed mesh vertex to gray mapping'));
+% mrvWaitbar(0.65,wbar,sprintf('meshBuild: Unsmoothed mesh vertex to gray mapping'));
 initVertices = meshGet(tenseMesh,'vertices');
 newMesh = meshSet(newMesh,'initialvertices',initVertices);
 vertexGrayMap = mrmMapVerticesToGray(...
@@ -76,12 +76,12 @@ newMesh = meshSet(newMesh,'vertexGrayMap',vertexGrayMap);
 newMesh = meshSet(newMesh,'name',meshName);
 newMesh = meshSet(newMesh,'nGrayLayers',numGrayLayers);
 
-waitbar(0.9,wbar,sprintf('meshBuild: Saving mesh file %s',meshGet(newMesh,'name')));
+mrvWaitbar(0.9,wbar,sprintf('meshBuild: Saving mesh file %s',meshGet(newMesh,'name')));
 
 % Save mesh file
 [newMesh newMesh.path] = mrmWriteMeshFile(newMesh);
 
-waitbar(1,wbar,sprintf('meshBuild: Done')); 
+mrvWaitbar(1,wbar,sprintf('meshBuild: Done')); 
 pause(0.5);
 close(wbar);
 

@@ -26,7 +26,7 @@ function grayValue = mrMeshCurvature ( mesh, nodes )
 disp('Sorting mesh vertices...');
 [sMeshVertices,si] = sortrows(mesh.vertices,1);
 uniqueX = unique(round(sMeshVertices(:,1)));
-h = waitbar(0,'Building Hash Table...');
+h = mrvWaitbar(0,'Building Hash Table...');
 startFind = 1;
 hashOffset = 1-min(uniqueX);
 hash = zeros((max(uniqueX)-min(uniqueX)+1),1);
@@ -36,7 +36,7 @@ for ii = 1:length(uniqueX)
    hash(xVal+hashOffset) = foundX(1)+(startFind-1);
    startFind = hash(xVal+hashOffset);
    if ~mod(ii,10);
-      waitbar(ii/length(uniqueX));
+      mrvWaitbar(ii/length(uniqueX));
    end
 end
 close(h);
@@ -79,7 +79,7 @@ return;
 function nodes = findLocalRGB(hash,hashOffset,y,z,meshColor,nodes,threshold)
 % hash is a hash table of x-values into x,y,z mesh vertices
 
-h = waitbar(0,['Threshold ' num2str(threshold)]);
+h = mrvWaitbar(0,['Threshold ' num2str(threshold)]);
 for nodeNum=1:length(nodes),
    roundX = round(nodes(nodeNum,1));
    xMin = max(1,hash(max(1,min(length(hash),roundX+hashOffset-(threshold+0.5)))));
@@ -91,7 +91,7 @@ for nodeNum=1:length(nodes),
  %     					abs(z(xMin:xMax)-nodes(nodeNum,3)) < threshold );      
    nodes(nodeNum,4) = mean(meshColor(indices+(xMin-1)));
    if ~mod(nodeNum,100)
-      waitbar(nodeNum/length(nodes));
+      mrvWaitbar(nodeNum/length(nodes));
    end
 end
 close(h);

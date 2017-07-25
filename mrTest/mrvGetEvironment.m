@@ -15,10 +15,8 @@ env.computer = computer;
 
 % vistasoft revision number
 env.vistaDir = mrvRootPath;
-if ~strncmp(computer,'PC',2)
-    [status, env.vistaVer] = system(['svnversion ', mrvRootPath]); %#ok<ASGLU>
-else
-    env.vistaVer = 'PC. Figure it out';
-end
+tmp = gitInfo(vistaRootPath);
+env.gitOrigin = tmp.origin;
+env.gitchecksum = tmp.checksum;
 
 return

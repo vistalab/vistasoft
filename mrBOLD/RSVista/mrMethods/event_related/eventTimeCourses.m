@@ -67,7 +67,7 @@ function anal = eventTimeCourses(tSeries,stim,params,varargin);
 %   onsetDelta,[val]:   automatically shift the onsets in parfiles
 %                       relative to the time course by this amount
 %                       (e.g. to compensate for HRF rise time).
-%   'waitbar':          put up a waitbar instead of showing progress in
+%   'mrvWaitbar':          put up a mrvWaitbar instead of showing progress in
 %                       the command line.
 %   'findPeaks':        when calculating response amplitudes, figure
 %                       out the peak amplitude separately for each 
@@ -91,7 +91,7 @@ peakPeriod = params.peakPeriod; % period to look for peaks in t-tests, in second
 timeWindow = params.timeWindow; % seconds relative to trial onset to take for each trial
 onsetDelta = params.onsetDelta; % # secs to shift onsets in parfiles, relative to time course
 snrConds = params.snrConds;     % For calculating SNR, which conditions to use (if empty, use all)
-waitbarFlag = 0;        % flag to show a graphical waitbar to show load progress
+waitbarFlag = 0;        % flag to show a graphical mrvWaitbar to show load progress
 findPeaksFlag = 0;      % when computing amps, find peak period separately for each cond
 TR = stim.TR;
 
@@ -116,7 +116,7 @@ for i = 1:length(varargin)
         case 'timewindow', timeWindow = varargin{i+1};
         case 'onsetdelta', onsetDelta = varargin{i+1};
         case 'snrconds', snrConds = varargin{i+1};
-        case 'waitbar', waitbarFlag = 1;
+        case 'mrvWaitbar', waitbarFlag = 1;
         case 'findpeaks', findPeaksFlag = 1;
         otherwise, % ignore
         end

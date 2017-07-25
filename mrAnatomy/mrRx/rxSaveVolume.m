@@ -41,11 +41,11 @@ mr = mrCreateEmpty;
 
 % perform lower-quality, but consistent, resampling (linear
 % interpolation) on the image
-if prefsVerboseCheck, h_wait = waitbar(0, 'Interpolating...'); end
+if prefsVerboseCheck, h_wait = mrvWaitbar(0, 'Interpolating...'); end
 for z = 1:rx.rxDims(3)
 	mr.data(:,:,z) = rxInterpSlice(rx, z);
 	
-	if prefsVerboseCheck, waitbar(z/rx.rxDims(3), h_wait); end
+	if prefsVerboseCheck, mrvWaitbar(z/rx.rxDims(3), h_wait); end
 end
 if prefsVerboseCheck, close(h_wait); end
 mr.data( isnan(mr.data) ) = 0;

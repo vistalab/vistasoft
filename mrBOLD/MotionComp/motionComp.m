@@ -87,9 +87,9 @@ if size(baseVol,3)<=8
         baseVol(:,:,end),baseVol(:,:,end));
 end
 
-waitHandle = waitbar(0,'Computing motion estimates. Please wait...');
+waitHandle = mrvWaitbar(0,'Computing motion estimates. Please wait...');
 for frame = 1:nFrames
-    waitbar(frame/nFrames)
+    mrvWaitbar(frame/nFrames)
     if (frame~=baseFrame) || ((baseScan ~= scan) && baseScan ~= 0) % hh added it...
         frameMin = frame - fix(nSmooth/2);
         if frameMin < 1, frameMin = 1; end
@@ -116,7 +116,7 @@ close(waitHandle)
 
 % Save warped tSeries 
 
-waitHandle = waitbar(0,'Saving tSeries. Please wait...');
+waitHandle = mrvWaitbar(0,'Saving tSeries. Please wait...');
 
 vw = viewSet(vw, 'curdt', tgtDt);
 

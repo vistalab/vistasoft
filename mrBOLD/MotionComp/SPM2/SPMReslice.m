@@ -214,7 +214,7 @@ if flags.mask | flags.mean,
 %	spm_progress_bar('Init',P(1).dim(3),'Computing available voxels','planes completed');
 	msg = 'Computing available voxels...'; maxValue = P(1).dim(3);
 	myDisp(msg);
-	waitHandle = waitbar(0,[msg, ' Please wait...']);
+	waitHandle = mrvWaitbar(0,[msg, ' Please wait...']);
 % MA, 10/27/2004: replaced;
 	x1    = repmat((1:P(1).dim(1))',1,P(1).dim(2));
 	x2    = repmat( 1:P(1).dim(2)  ,P(1).dim(1),1);
@@ -232,7 +232,7 @@ if flags.mask | flags.mean,
 		if flags.mean, Count(:,:,x3) = tmp; end;
 % MA, 10/27/2004: replaced:
 %		spm_progress_bar('Set',x3);
-        waitbar(x3/maxValue,waitHandle);
+        mrvWaitbar(x3/maxValue,waitHandle);
 % MA, 10/27/2004: replaced;
 	end;
 % MA, 10/27/2004: added:
@@ -250,7 +250,7 @@ end;
 msg = 'Reslicing...'; maxValue = nread;
 if maxValue > 0
 	myDisp(msg);
-	waitHandle = waitbar(0,[msg, ' Please wait...']);
+	waitHandle = mrvWaitbar(0,[msg, ' Please wait...']);
 end
 % MA, 10/27/2004: replaced;
 
@@ -312,7 +312,7 @@ for i = 1:prod(size(P)),
 % MA, 10/27/2004: replaced;
 %	spm_progress_bar('Set',nread);
     if maxValue > 0
-        waitbar(nread/maxValue,waitHandle);
+        mrvWaitbar(nread/maxValue,waitHandle);
     end
 % MA, 10/27/2004: replaced;
 end;

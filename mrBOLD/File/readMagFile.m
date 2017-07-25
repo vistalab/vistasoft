@@ -27,7 +27,7 @@ function [tMat, hdr] = readMagFile(magFile, slice, useLittleEndian, verbose)
 % are any).
 %
 % 03/05 ras.
-% 08/07 ras: streamlined; added verbose flag to turn off the waitbar.
+% 08/07 ras: streamlined; added verbose flag to turn off the mrvWaitbar.
 if notDefined('slice'),					slice = [];					end
 if notDefined('useLittleEndian'),		useLittleEndian = 1;		end
 if notDefined('verbose'),				verbose = 0;				end
@@ -104,7 +104,7 @@ fid = fopen(magFile,'r',endianFlag);
 % loop through slices, reading tSeries from mag file
 if verbose
 	msg = sprintf('Reading Mag File %s.%s...',fname,ext);
-	h = waitbar(0,msg);
+	h = mrvWaitbar(0,msg);
 end
 
 for i = 1:nSlices
@@ -117,7 +117,7 @@ for i = 1:nSlices
     end
     frewind(fid);
     
-    if verbose, waitbar(i/nSlices,h); end
+    if verbose, mrvWaitbar(i/nSlices,h); end
 end
 
 if verbose

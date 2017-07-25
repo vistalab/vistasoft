@@ -72,7 +72,7 @@ status = tc_parfilesCheck(view, scans);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % load the data from scans,  parfiles
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% tc = er_chopTSeries(view, roi.coords, scans, 'waitbar');
+% tc = er_chopTSeries(view, roi.coords, scans, 'mrvWaitbar');
 
 % alternate way: use voxelData function,  then avg 
 % across voxels.

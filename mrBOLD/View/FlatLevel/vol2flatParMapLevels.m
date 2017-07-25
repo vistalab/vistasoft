@@ -113,9 +113,9 @@ for slice = 3:numSlices(flat)
 	% See vol2flatCorAnal for details.
     [intersectCoords grayIndices flatIndices] = intersectCols(gray.coords,sliceGrayCoords);
 
-    % Put up waitbar (progress for current gray level)
+    % Put up mrvWaitbar (progress for current gray level)
     waitMsg = sprintf('Transforming Parameter Maps, Gray Level %i...',level);
-	waitHandle = waitbar(0,waitMsg);
+	waitHandle = mrvWaitbar(0,waitMsg);
     
 	% Loop through the scans
 	for scan = selectedScans        
@@ -146,7 +146,7 @@ for slice = 3:numSlices(flat)
                 map{scan}(:,:,slice) = mapIm;
             end
             
-            waitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
+            mrvWaitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
         end
         
         % compute 'mean' value across levels

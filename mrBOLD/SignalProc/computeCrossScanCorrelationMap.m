@@ -86,7 +86,7 @@ for scanGroup = 1:nScanGroups
     end
     
     msg = sprintf('Computing group %d correlation images from tSeries.', scanGroup);
-    waitHandle = waitbar(0,msg);
+    waitHandle = mrvWaitbar(0,msg);
 
     % loop through slices
     for slice = slices
@@ -137,7 +137,7 @@ for scanGroup = 1:nScanGroups
             end
         end
         
-        waitbar(slice/length(slices))
+        mrvWaitbar(slice/length(slices))
     end
 
 

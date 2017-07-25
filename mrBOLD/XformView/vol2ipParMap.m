@@ -76,10 +76,10 @@ else
     map = cell(1,nScans);
 end
 
-% put up a waitbar, if consistent w/ VISTA 'verbose' preference
+% put up a mrvWaitbar, if consistent w/ VISTA 'verbose' preference
 verbose = prefsVerboseCheck;
 if verbose,
-	waitHandle = waitbar(0,'Interpolating Parameter Map.  Please wait...');
+	waitHandle = mrvWaitbar(0,'Interpolating Parameter Map.  Please wait...');
 end
 
 % Transform inplane coords to volume coords. 
@@ -113,7 +113,7 @@ functionalCoords = ip2functionalCoords(inplane, viewGet(inplane, 'coords'), ...
 % from the volume to the inplane. 
 %
 for curScan = selectedScans
-    if verbose, waitbar((curScan-1)/nScans);  end
+    if verbose, mrvWaitbar((curScan-1)/nScans);  end
 
  
     mapVolume = viewGet(volume, 'map scan',curScan);

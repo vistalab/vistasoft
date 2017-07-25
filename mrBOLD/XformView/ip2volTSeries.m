@@ -65,10 +65,10 @@ fprintf('[%s]: using %s interpolation.\n',mfilename,method);
 % Also need to know number of inplane slices
 nVoxels = size(gray.coords,2);
 
-% open waitbar
+% open mrvWaitbar
 verbose = prefsVerboseCheck;
 if verbose,
-    waitHandle = waitbar(0, 'Interpolating tSeries.  Please wait...');
+    waitHandle = mrvWaitbar(0, 'Interpolating tSeries.  Please wait...');
 end
 
 
@@ -118,13 +118,13 @@ for scan = selectedScans
     % for the gray view
     savetSeries(tSeries, gray, scan, 1);
     
-    % update the waitbar
+    % update the mrvWaitbar
     if verbose,
-        waitbar(find(selectedScans==scan)/nScans, waitHandle);
+        mrvWaitbar(find(selectedScans==scan)/nScans, waitHandle);
     end
 end %for
 
-% close waitbar
+% close mrvWaitbar
 if verbose, close(waitHandle); end
 
 fprintf('Done xforming tSeries.\n');

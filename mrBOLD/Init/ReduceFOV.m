@@ -23,14 +23,14 @@ nxyU = nxy * fovRatio(2);
 nxyD = nxy * fovRatio(1);
 ixy1 = (nxyU - nxyD)/2 + 1;
 ixy2 = ixy1 + nxyD - 1;
-hh = waitbar(0, 'Reducing FOV...');
+hh = mrvWaitbar(0, 'Reducing FOV...');
 
 % Adjust the images:
 for ii=1:nIm
   imU = imresize(anat(:, :, ii), fovRatio(2), 'bicubic');
   imD = imU(ixy1(1):ixy2(1), ixy1(2):ixy2(2));
   anat(:, :, ii) = imresize(imD, 1/fovRatio(1));
-  waitbar(ii/nIm, hh);
+  mrvWaitbar(ii/nIm, hh);
 end
 
 % Adjust the inplanes structure:

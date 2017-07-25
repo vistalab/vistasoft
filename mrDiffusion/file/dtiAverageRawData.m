@@ -120,14 +120,14 @@ if(coreg)
   % would probably be a good way to remove motion.
   b0 = imVol(:,:,:,1);
   b0 = uint8(mrAnatHistogramClip(b0, 0.4, 0.99)*255+0.5);
-  h = waitbar(0,'Performing eddy current correction...');
+  h = mrvWaitbar(0,'Performing eddy current correction...');
   for(d=2:nDirs)
     xf{d} = mrAnatRegister(imVol(:,:,:,d), b0);
     tmpIm = mrAnatResliceSpm(imVol(:,:,:,d),xf{d},[],[1 1 1],[7 7 7 0 0 0],0);
     tmpIm(isnan(tmpIm)) = 0;
     tmpIm(tmpIm<0) = 0;
     imVol(:,:,:,d) = tmpIm;
-    waitbar(d/nDirs,h);
+    mrvWaitbar(d/nDirs,h);
   end
   close(h);
 end

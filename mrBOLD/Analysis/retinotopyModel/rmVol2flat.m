@@ -35,7 +35,7 @@ modelGray = model; %#ok<NODEF>
 mask = flat.ui.mask;
 
 % Put up wait bar
-waitHandle = waitbar(0,'Transforming retModel.  Please wait...');
+waitHandle = mrvWaitbar(0,'Transforming retModel.  Please wait...');
 % Intersect the coords from the gray view and the Flat view.
 grayIndices=cell(1,2);
 flatIndices=cell(1,2);
@@ -69,7 +69,7 @@ for m = 1:numel(model),
     % get all model fields 
     fnames = fieldnames(model{m});
     for f = 1:numel(fnames),   % loop over model fields
-        waitbar(((m-1).*length(model)+f) ./ (length(model).*length(fnames)))
+        mrvWaitbar(((m-1).*length(model)+f) ./ (length(model).*length(fnames)))
         paramGray = rmGet(modelGray{m},fnames{f});
         % only xfm model fields that have data of a certain size
         if numel(paramGray)>1 && isnumeric(paramGray),  

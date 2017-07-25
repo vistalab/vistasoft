@@ -43,7 +43,7 @@ data = dijkstra_init(W, start_verts);
 
 str = 'Performing Dijkstra algorithm.';
 if verbose
-    h = waitbar(0,str);
+    h = mrvWaitbar(0,str);
 end
 
 i = 0; 
@@ -51,7 +51,7 @@ while i<nb_iter_max
     i = i+1;
     data = dijkstra_step(data);
     if verbose
-        waitbar(i/nb_iter_max, h, sprintf('Performing Dijkstra algorithm, iteration %d.', i) );
+        mrvWaitbar(i/nb_iter_max, h, sprintf('Performing Dijkstra algorithm, iteration %d.', i) );
      end
     % check if we have reach one of the end points
     for j=end_verts

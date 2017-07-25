@@ -76,7 +76,7 @@ end
 
 skipSlices = [];
 
-waitHandle = waitbar(0,'Computing mean tSeries across gray levels...');
+waitHandle = mrvWaitbar(0,'Computing mean tSeries across gray levels...');
 set(waitHandle,'Units','Normalized');
 pos = get(waitHandle,'Position');
 set(waitHandle,'Position',pos+[0 .1 0 0]);
@@ -101,20 +101,20 @@ for slice = 1:nSlices
 
     
         % interpolate each frame in tMat
-        sliceWait = waitbar(0,'Interpolating slice across frames...');
+        sliceWait = mrvWaitbar(0,'Interpolating slice across frames...');
         for t = 1:nFrames
             vals = tData(t,:);
 
             % The operator .' is the NON-CONJUGATE transpose.  Very important.
             tMat(:,:,slice,t) = myGriddata(subCoords,vals.',mask(:,:,h));
 
-            waitbar(t/nFrames,sliceWait);
+            mrvWaitbar(t/nFrames,sliceWait);
         end
     close(sliceWait);
 
     end
 
-    waitbar(slice/nSlices,waitHandle);
+    mrvWaitbar(slice/nSlices,waitHandle);
 end
 
 close(waitHandle);
@@ -136,7 +136,7 @@ return
 % % % the mean tSeries at the data points
 % % % measured (specified in coords/indices):
 %  if nargout > 0
-%  	waitHandle = waitbar(0,'Grabbing the mean tSeries...');
+%  	waitHandle = mrvWaitbar(0,'Grabbing the mean tSeries...');
 %      
 %  	for h = 1:2
 %          % find coordinates of mean tSeries for this hemi
@@ -171,7 +171,7 @@ return
 %         subData = minVal + maxVal .* double(subData);
 %         tSeries(:,subCoords) = subData; % check for inaccuracies 
 %         
-%         waitbar(h/2,waitHandle);
+%         mrvWaitbar(h/2,waitHandle);
 %     end
 %     
 %     close(waitHandle);

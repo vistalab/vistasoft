@@ -12,17 +12,17 @@ if notDefined('coords'),    roi = rmGetCoords(view, modelNum);       end
 roi = tc_roiStruct(view, roi);
 
 verbose = prefsVerboseCheck;
-if verbose, hwait = waitbar(0, 'Loading % Variance Explained...'); end
+if verbose, hwait = mrvWaitbar(0, 'Loading % Variance Explained...'); end
 
 params = viewGet(view, 'rmParams');
 [tSeries coords params] = rmLoadTSeries(view, params, roi);
-if verbose, waitbar(.5, hwait); end
+if verbose, mrvWaitbar(.5, hwait); end
 
 fit = rmPredictedTSeries(view, coords, modelNum);    
-if verbose,  waitbar(.7, hwait); end
+if verbose,  mrvWaitbar(.7, hwait); end
 
 residual = tSeries - fit;            
-if verbose,  waitbar(1, hwait); end
+if verbose,  mrvWaitbar(1, hwait); end
 
 nVoxels = size(tSeries, 2);
 for v = 1:nVoxels

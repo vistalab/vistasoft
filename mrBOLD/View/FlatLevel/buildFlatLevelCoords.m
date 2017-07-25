@@ -33,9 +33,9 @@ imSize = [0 0];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Step 1) Get coords separately for each hemisphere in a cell %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-waitHandle = waitbar(0,'Computing flat coordinates.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing flat coordinates.  Please wait...');
 for h = 1:2
-    waitbar((h-1)/2)
+    mrvWaitbar((h-1)/2)
     
     % get left and right flat paths for this unfold from
     % the existing Flat[name]/coords.mat file

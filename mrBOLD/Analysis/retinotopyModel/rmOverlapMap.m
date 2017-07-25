@@ -44,7 +44,7 @@ n = 50;  % compute n pRFs at once
 nVoxels = length(model.x0);
 verbose = prefsVerboseCheck;
 if verbose
-	hwait = waitbar(0, 'Computing pRF Overlap Map...');
+	hwait = mrvWaitbar(0, 'Computing pRF Overlap Map...');
 end
 
 % go
@@ -65,7 +65,7 @@ for v = 1:n:nVoxels
 		mapVals(rng(ii)) = sum(pRFs(I,ii)) ./ sum(pRFs(:,ii));
 	end
 	
-	if verbose, waitbar(v/nVoxels, hwait); end
+	if verbose, mrvWaitbar(v/nVoxels, hwait); end
 end
 
 if verbose,	close(hwait); end

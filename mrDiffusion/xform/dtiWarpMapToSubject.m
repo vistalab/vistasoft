@@ -14,7 +14,7 @@ x   = (bb(1,1):mmPerVox(1):bb(2,1));
 y   = (bb(1,2):mmPerVox(2):bb(2,2));
 z   = (bb(1,3):mmPerVox(3):bb(2,3));
 img = zeros([size(x,2) size(y,2) size(z,2)]);
-if(gui) h = waitbar(0,'Warping map to current brain...');
+if(gui) h = mrvWaitbar(0,'Warping map to current brain...');
 else h = 0; end
 defSize = size(snParams.deformX);
 for(ii=1:length(z))
@@ -30,7 +30,7 @@ for(ii=1:length(z))
     % the normalized image that we are loading in.
     tc = inv(V.mat)*[tc;ones(size(tc(1,:)))];
     img(:,:,ii) = reshape(spm_sample_vol(V, tc(1,:), tc(2,:), tc(3,:), interpMethod),size(img(:,:,1)));
-    waitbar((ii)/length(z),h);
+    mrvWaitbar((ii)/length(z),h);
 end
 if(h) close(h); end
 return;

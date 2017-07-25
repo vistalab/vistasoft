@@ -22,10 +22,10 @@ nSlices = length(slices);
 nFrames = numFrames(view,scan);
 
 % Load tSerises and compute RMSE slice by slice
-waitHandle = waitbar(0,'Loading tSeries and computing RMSE.  Please wait...');
+waitHandle = mrvWaitbar(0,'Loading tSeries and computing RMSE.  Please wait...');
 vres = zeros(nSlices,nFrames);
 for slice=slices
-   waitbar(slice/nSlices);
+   mrvWaitbar(slice/nSlices);
    tSeries = loadtSeries(view,scan,slice);
    for frame=1:nFrames
       vres(slice,frame) = sqrt(mse(tSeries(frame,:),tSeries(baseFrame,:)));

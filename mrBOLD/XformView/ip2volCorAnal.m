@@ -100,7 +100,7 @@ else                       ph = cell(1,nScans); end
 % put up a wait handle if it's consistent with the VISTA verbose pref:
 verbose = prefsVerboseCheck;
 if verbose,
-	waitHandle = waitbar(0,'Interpolating CorAnal.  Please wait...');
+	waitHandle = mrvWaitbar(0,'Interpolating CorAnal.  Please wait...');
 end
 
 % Tranform gray coords to inplane functional coords. Previously, the code
@@ -115,7 +115,7 @@ coordsXformed = ip2volXformCoords(volume, inplane, true);
 % from the inplanes to the volume.
 %
 for curScan = selectedScans
-	if verbose,     waitbar((curScan-1)/nScans);  end
+	if verbose,     mrvWaitbar((curScan-1)/nScans);  end
 
     % rsFactor is assumed to be the same in all scans, so we do not need
     % this step. (see upSampleFactor)
