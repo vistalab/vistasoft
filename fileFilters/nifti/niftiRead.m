@@ -1,5 +1,5 @@
-function ni = niftiRead(fileName, volumesToLoad)
-% Matlab wrapper to call the mex readFileNifti
+function ni = niftiRead(fileName, volumesToLoad, threshold)
+% Matlab wrapper to call the mex readFileNifti or niftiReadMatlab
 %
 %   niftiImage = niftiRead(fileName,volumesToLoad)
 %
@@ -9,6 +9,13 @@ function ni = niftiRead(fileName, volumesToLoad)
 % If volumesToLoad is not included in the arguments, all the data
 % are returned. If volumesToLoad is empty ([]) returns only the header
 %
+% This function calls 
+% readFileNifti: memory efficient
+% or 
+% niftiReadMatlab: slow, but robust for nifti file with large size
+% depending on the file size. (We can define the selection criteria by
+% using parameter "threshold")
+% 
 % Web Resources
 %  web('http://nifti.nimh.nih.gov/nifti-1/','-browser')
 %
@@ -19,6 +26,16 @@ function ni = niftiRead(fileName, volumesToLoad)
 %  ni = niftiRead(niFile);
 %
 % Copyright, Vista Team Stanford, 2011
+% History:
+% 2017.07: HT included the option to call two functions depending on file
+% size
+
+% Default threshold = 3GB. If the file size exceeds this limit, we use
+% niftiReadMatlab, not readFileNifti
+if notDefined('threshold'), threshold = 3221225472; end
+
+% Get file size
+fileinfo = dir(fileName);
 
 % This normally calls the mex file for your system
 if ~exist('fileName','var') || isempty(fileName)
@@ -36,22 +53,32 @@ elseif ischar(fileName) && exist(fileName,'file')
         % ni = niftiRead('foo.nii.gz',1:20);
         % We let readFileNifti complain about not implemented for
         % now.
-        ni = readFileNifti(fileName,volumesToLoad);
+        if fileinfo.bytes < threshold
+            ni = readFileNifti(fileName,volumesToLoad);
+        else
+            ni = niftiReadMatlab(fileName,volumesToLoad);
+        end
     else
         % ni = niftiRead('foo.nii.gz');
-        ni = readFileNifti(fileName);
+        if fileinfo.bytes < threshold
+            ni = readFileNifti(fileName);
+        else
+            ni = niftiReadMatlab(fileName);
+        end
     end
 else
     % Did the person not include the .nii.gz extensions?
     [~,n,e] = fileparts(r);
     if isempty(e), fileNameExtended = [n,'.nii.gz']; end
     if exist('fileNameExtended', 'var') ...
-         && exist(fileNameExtended,'file')
-        ni = readFileNifti(fileNameExtended);
+            && exist(fileNameExtended,'file')
+        if fileinfo.bytes < threshold
+            ni = readFileNifti(fileNameExtended);
+        else
+            ni = niftiReadMatlab(fileNameExtended);
+        end
     else
         error('Cannot find the file %s or %s\n',fileName,fileNameExtended);
     end
 end
-
-
 end
