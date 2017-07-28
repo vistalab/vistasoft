@@ -61,7 +61,14 @@ switch xformType
         vectorFrom = niftiCurrentOrientation(nii);
         vectorTo   = niftiCreateStringInplane(vectorFrom,sliceDim);
         xform      = niftiCreateXformBetweenStrings(vectorFrom,vectorTo);
-        
+
+        % check which dimensions have flips (rows with a -1), and then set
+        % the 4th column appropriately
+        isflipped = sum(xform(1:3,1:3),2) < 0;     
+        dim = niftiGet(nii, 'dim');
+        xform(isflipped,4) = dim(isflipped) + 1;   % set the 4th column of flipped rows to dim+1
+        xform(~isflipped,4) = 0;                   % Set the 4th column of nonflipped rows to 0
+                
     otherwise
         warning('vista:niftiError','The supplied transform type was unrecognized. Please try again. Returning empty transform.');
         return
