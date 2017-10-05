@@ -104,9 +104,9 @@ end
 
 % If there's only one file give it back as a string
 % NOT sure this is the right thing to do...
-if numel(file) == 1
-    file = file{1};
-end
+% if numel(file) == 1
+%     file = file{1};
+% end
 
 
 %%

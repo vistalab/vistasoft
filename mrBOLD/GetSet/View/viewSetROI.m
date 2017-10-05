@@ -93,7 +93,15 @@ switch param
         vw.ui.hideVolumeROIs = val;
         
     case 'roidrawmethod'
-        % What are the valid methods?  Indicate here!
+        % Specify how the ROIs will be visualized. 
+        % Options:
+        % 'perimeter'               % outlined ROI
+        % 'filled perimeter'        % outlined ROI, but thicker 
+        % 'boxes'                   % filled in ROI
+        % 'patches'                 % translucent patches
+        % 
+        % Examples: 
+        %   vw = viewSet(vw, 'roidrawmethod', 'filled perimeter')
         if ~checkfields(vw, 'ui'), vw.ui = []; end
         vw.ui.roiDrawMethod = val;
     case 'roiname'

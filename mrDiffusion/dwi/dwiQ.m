@@ -46,6 +46,11 @@ tensor = V\ADC;
 % mrvNewGraphWin; plot(predADC,ADC,'o'); axis equal
 
 % We convert the format from a vector to a 3x3 Quadratic
-Q = dt6VECtoMAT(tensor);  % eigs(Q)
-% svd(Q)
+% They are packed in a Q matrix that is 3 x 3 x nCoords
+nCoords = size(tensor,2);
+Q = zeros(3,3,nCoords);
+for ii=1:nCoords
+    Q(:,:,ii) = dt6VECtoMAT(tensor(:,ii));  % eigs(Q)
+end
+
 end

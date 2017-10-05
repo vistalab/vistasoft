@@ -125,7 +125,7 @@ end
 verbose = prefsVerboseCheck;
 if verbose
 	str = sprintf('Creating %.0f frame movie', nFrames);
-	wbar = waitbar(0, str);
+	wbar = mrvWaitbar(0, str);
 end
 
 % set the color map options
@@ -134,10 +134,10 @@ vw.ui.mapMode.cmap = [gray(128); p.cmap];
 vw.ui.mapMode.clipMode = p.clim;
 
 for ii = 1:nFrames
-	if verbose		% udpate waitbar
+	if verbose		% udpate mrvWaitbar
 		str = sprintf('Creating frame %.0f of %.0f', ii, nFrames);
 		fname{ii} = sprintf('Movie%0.4d.tiff', ii);
-		waitbar(ii/nFrames, wbar, str);
+		mrvWaitbar(ii/nFrames, wbar, str);
 	end
     
 	%% get the mesh image for this time point
@@ -188,7 +188,7 @@ for ii = 1:nFrames
 	end
 end
 
-if verbose, waitbar(1, wbar); close(wbar); end
+if verbose, mrvWaitbar(1, wbar); close(wbar); end
 
 %% display as requested
 if p.displayFlag==1

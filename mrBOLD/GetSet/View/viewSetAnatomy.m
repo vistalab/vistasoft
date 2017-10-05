@@ -19,7 +19,12 @@ mrGlobals;
 switch param
     
     case 'anatomy'
-        vw.anat.data = val;
+        switch viewGet(vw, 'viewType')
+            case 'Inplane'
+                vw.anat.data = val;
+            case {'Gray' 'Volume' 'Flat'}
+                    vw.anat = val;
+        end
     case 'brightness'
         vw = setSlider(vw, vw.ui.brightness, val);
     case 'contrast'
@@ -30,20 +35,31 @@ switch param
         vw.inplaneOrientation = val;
     case 'anatinitialize'
         %Expects a path as the value
-        %Read in the nifti from the path value
-        vw = viewSet(vw,'Anatomy Nifti', niftiRead(val));
-        %Calculate Voxel Size as that is not read in
-        vw = viewSet(vw,'Anatomy Nifti', niftiSet(viewGet(vw,'Anatomy Nifti'),'Voxel Size',prod(niftiGet(vw.anat,'pixdim'))));
+        % Read in the nifti from the path value
+        ip = niftiRead(val);
+        
+        % Re-orient
+        
         %If functional orientation is defined, make sure we use it
         ipOrientation = viewGet(vw, 'Inplane Orientation');
         if ~isempty(ipOrientation)            
-            vectorFrom = niftiCurrentOrientation(viewGet(vw,'Anatomy Nifti'));
+            vectorFrom = niftiCurrentOrientation(ip);
             xform      = niftiCreateXformBetweenStrings(vectorFrom,ipOrientation);
-            vw = viewSet(vw, 'Anatomy Nifti', niftiApplyXform(viewGet(vw,'Anatomy Nifti'),xform));
+            ip         = niftiApplyXform(ip,xform);
         else
             %Let us also calculate and and apply our transform
-            vw = viewSet(vw,'Anatomy Nifti',niftiApplyAndCreateXform(viewGet(vw,'Anatomy Nifti'),'Inplane'));
+            ip = niftiApplyAndCreateXform(ip,'Inplane');
         end
+        
+        %Calculate Voxel Size as that is not read in (what is this used for??)
+        voxelSize = prod(niftiGet(ip,'pixdim'));
+        ip = niftiSet(ip,'Voxel Size',voxelSize);        
+
+        % set up
+        vw = viewSet(vw,'Anatomy Nifti', ip);
+
+
+        
     case 'anatomynifti'
         vw.anat = val; %This means that we are passing in an entire Nifti!
     case 'mmpervox'

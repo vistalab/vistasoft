@@ -30,6 +30,8 @@ function ROI = itkClass2roi(ni, varargin)
 %
 % April, 2009: JW
 
+error('Obsolete. Use nifti2ROI instead.')
+
 %--------------------------------------------------------------
 % variable check
 if nargin > 1

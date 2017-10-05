@@ -124,7 +124,7 @@ switch displayMode
             data = co;
             dataRange = vw.ui.coMode.clipMode;
 			if isequal(dataRange, 'auto')
-				dataRange = minmax(data);
+				dataRange = mrvMinmax(data);
 			end
         end
         

@@ -125,7 +125,8 @@ set(FLAT{s}.ui.mainAxisHandle, 'Position', [.15 .08 .7 .7]);
 
 % Set minColormap property so there's potentially room for 128
 % colors 
-set(FLAT{s}.ui.windowHandle,'MinColormap',128);
+%set(FLAT{s}.ui.windowHandle,'MinColormap',128); % This crashes on ML2016+.
+
 
 % Set closeRequestFcn so we can clean up when the window is closed
 set(gcf,'CloseRequestFcn','closeFlatWindow');

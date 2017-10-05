@@ -2,7 +2,7 @@ function GUI = sessionGUI_statusPanel(GUI);
 %
 % GUI = sessionGUI_statusPanel(GUI);
 %
-% Attach a panel to the Session GUI containing an embedded waitbar,
+% Attach a panel to the Session GUI containing an embedded mrvWaitbar,
 % an 'on/off' light to signify the busy state (GUI is executing callbacks),
 % and an edit field to run command line commands. This is intended to
 % prevent having to have the command window showing in the background to
@@ -11,7 +11,7 @@ function GUI = sessionGUI_statusPanel(GUI);
 % ras, 07/06.
 GUI.panels.status = mrvPanel('below', 4, GUI.fig, 'char');
 
-% add axes for on/off light, waitbar
+% add axes for on/off light, mrvWaitbar
 
 % add command line callback
 uicontrol('Parent', GUI.panels.status, 'Style', 'edit', 'String', '', ...

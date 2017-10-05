@@ -1,5 +1,5 @@
-function [vw ok] = loadParameterMap(vw, mapPath)
-% function loadParameterMap(vw, [mapPath])
+function [vw, ok] = loadParameterMap(vw, mapPath)
+% function [vw, ok] = loadParameterMap(vw, [mapPath])
 %
 % load and set parameter map in a user specified file
 %
@@ -30,8 +30,14 @@ function [vw ok] = loadParameterMap(vw, mapPath)
 %
 % ras, 11/15/05: added ability to load map parameters, such as the color
 % map and clip modes, which may be saved along with the map.
+%
+% rkl, 04/17/17: Fixed a bug: the UI display mode did not get set to 'map'
+% when loading a nifti as a parameter map (though everything works smoothly
+% when loading a .mat file as parameter map). This resulted in the slider not
+% displaying the full range of values. 
 if ~exist('mapPath','var')
     mapPath = getPathStrDialog(dataDir(vw),'Choose parameter map file name',{'*.mat'; '*.nii';'*.nii.gz'});
+    if isempty(mapPath), ok = false; return; end
 end
 
 % if the map path doesn't exist, but a map file exists in the view's
@@ -43,7 +49,7 @@ if ~check4File(mapPath)
 end
 
 
-[pathstr,name,extension] = fileparts(mapPath);
+[~,name,extension] = fileparts(mapPath);
 
 if strcmp(extension, '.mat')
     % check4File only works with .mat files:
@@ -74,30 +80,55 @@ if strcmp(extension, '.nii') || strcmp(extension,'.gz')
     nii = niftiRead(mapPath);
     
     % Apply the canonical xform for nifti data
-    nii = niftiApplyAndCreateXform(nii,'Inplane');
+    switch lower(viewGet(vw, 'viewType'))
+        case 'inplane'
+            nii = niftiApplyAndCreateXform(nii,'Inplane');
+            
+            
+            % Set the data into the view structure
+            mapData = {niftiGet(nii,'Data')};
+            vw = viewSet(vw, 'map', mapData);
+            
+            % To deal with with the double-extension in .nii.gz files
+            dot_idx = find(name=='.', 1);
+            if ~isempty(dot_idx), name = name(1:find(name=='.')-1); end
+            
+            % It will be named according to the name of the nifti file:
+            vw = viewSet(vw, 'map Name', name);
+            
+            % Save it in the right place for the DATATYPE:
+            saveParameterMap(vw)
+            
+            mapPath = fullfile(dataDir(vw),[vw.mapName,'.mat']);
+            
+            
+            
+            load(mapPath);
+            
+            vw = setParameterMap(vw,map,mapName);
+            
+            
+        case {'gray' 'volume'}
+            vw = nifti2functionals(vw, mapPath);
+            
+            % refresh (if this isn't a hidden view -- no ui struct)
+            if isfield(vw, 'ui')
+                vw = setDisplayMode(vw,'map');
+            end
+            
+            return;
+        otherwise
+            
+    end
     
-    % Set the data into the view structure
-    mapData = {niftiGet(nii,'Data')};    
-    vw = viewSet(vw, 'map', mapData);
-    
-    % To deal with with the double-extension in .nii.gz files
-    dot_idx = find(name=='.', 1);
-    if ~isempty(dot_idx), name = name(1:find(name=='.')-1); end
-    
-    % It will be named according to the name of the nifti file:
-    vw = viewSet(vw, 'map Name', name);
-    
-    % Save it in the right place for the DATATYPE:
-    saveParameterMap(vw)
-    
-    mapPath = fullfile(dataDir(vw),[vw.mapName,'.mat']);
-
 end
 
+% Load it
 load(mapPath);
 
+% Set the parameters
 vw = setParameterMap(vw,map,mapName);
-
+            
 nScans = viewGet(vw, 'numScans');
 if exist('co','var')
     for scan = 1:nScans
@@ -112,17 +143,17 @@ end
 %  'units' or 'mapUnits'. 'mapUnits' is preferred, but for
 %  back-compatibility, I leave in a check for 'units' as well.)
 if exist('mapUnits', 'var')
-    vw.mapUnits = mapUnits;
+    vw = viewSet(vw, 'mapUnits', mapUnits);
 elseif exist('units', 'var')
-    vw.mapUnits = units;
+    vw = viewSet(vw, 'mapUnits', units);    
 else
-    vw.mapUnits = ''; % reset to empty
+        vw = viewSet(vw, 'mapUnits', ''); % reset to empty
 end
 
 % if parameters about the view mode are saved, load these in as well
-if exist('cmap','var'), vw.ui.mapMode.cmap = cmap; end
+if exist('cmap','var'),     vw.ui.mapMode.cmap = cmap; end
 if exist('clipMode','var'), vw.ui.mapMode.clipMode = clipMode; end
-if exist('numColors','var'), vw.ui.mapMode.numColors = numColors; end
+if exist('numColors','var'),vw.ui.mapMode.numColors = numColors; end
 if exist('numGrays','var'), vw.ui.mapMode.numGrays = numGrays; end
 
 ok = 1;
@@ -130,7 +161,6 @@ ok = 1;
 % refresh (if this isn't a hidden view -- no ui struct)
 if isfield(vw, 'ui')
     vw = setDisplayMode(vw,'map');
-    % 	refreshScreen(view);
 end
 
 return

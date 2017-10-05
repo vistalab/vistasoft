@@ -13,17 +13,11 @@ function cleanVolume()
 % djh, 2/2001
 
 global HOMEDIR
-global dataTYPES
 
-delete(fullfile(HOMEDIR,'Volume','coords.mat'));
-for typeNum = 1:length(dataTYPES)
-    dataTypeName = dataTYPES(typeNum).name;
-    % Delete corAnal and parameter map files
-    datadir = fullfile(HOMEDIR,'Volume',dataTypeName);
-    delete(fullfile(datadir,'*.mat'));
-    % Delete tSeries (if there are any)
-    [nscans,scanDirList] = countDirs(fullfile(datadir,'TSeries','Scan*'));
-    for s=1:nscans
-        delete(fullfile(datadir,'TSeries',scanDirList{s},'*.mat'));
-    end
+curVolumeDir = fullfile(HOMEDIR,'Volume');
+backupVolumeDir = fullfile(HOMEDIR,sprintf('deletedVolume_%s', ...
+    datestr(now, 'yyyy-dd-mm-hh_MM-ss')));
+
+if exist(curVolumeDir, 'dir')
+    movefile(curVolumeDir, backupVolumeDir);
 end

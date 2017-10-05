@@ -56,11 +56,11 @@ fnames = {'x', 'y', ...
           'tf', 'trm', 'tall', 'trmf', ...
           'rss' 'rawrss' ...
           'exponent'};
-waitHandle = waitbar(0,'Interpolating model.  Please wait...');
+waitHandle = mrvWaitbar(0,'Interpolating model.  Please wait...');
 for m = 1:length(model),
   % and reshape each one of them
   for f = 1:length(fnames),
-    waitbar(((m-1).*length(model)+f) ./ (length(model).*length(fnames)));
+    mrvWaitbar(((m-1).*length(model)+f) ./ (length(model).*length(fnames)));
     % get old
     paramOld = rmGet(model{m},fnames{f});
     if prod(size(paramOld)) > 1 & isnumeric(paramOld),

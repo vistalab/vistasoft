@@ -23,7 +23,7 @@ loadSession; %Automatically checks if this directory exists and has mrSession
 %and, if not, run the update function
 mrGlobals;
 
-display('Starting a complete session migration...');
+disp('Starting a complete session migration...');
 
 try
     if ~isfield(mrSESSION.inplanes,'inplanePath')

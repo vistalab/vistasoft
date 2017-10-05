@@ -4,7 +4,7 @@ function tMat = tSeries4D(vw, scan, verbose, varargin)
 % Produce a 4D matrix of size rows x cols x slices x time
 % for the current view/scan.
 %
-% verbose: flag to put up a waitbar. Defaults to 0, off.
+% verbose: flag to put up a mrvWaitbar. Defaults to 0, off.
 %
 % varargin: see percentTSeries help for explanation of options
 %       UseDefaults - set to 1 to use data processing defaults

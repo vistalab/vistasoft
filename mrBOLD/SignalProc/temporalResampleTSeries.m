@@ -43,7 +43,7 @@ ti = [0:newNumFrames-1] .* newFramePeriod;
 verbose = prefsVerboseCheck;
 
 if verbose >= 1
-	h_wait = waitbar(0, ['Resampling time series for scan ' num2str(scan)]);
+	h_wait = mrvWaitbar(0, ['Resampling time series for scan ' num2str(scan)]);
 end
 
 nSlices = numSlices(vw);
@@ -71,7 +71,7 @@ for slice = 1:nSlices
 		tSeries(end,v) = tSeries(end-1,v);
 		
 		if verbose >= 1
-			waitbar((slice-1)/nSlices + v/(nSlices*nVoxels), h_wait);
+			mrvWaitbar((slice-1)/nSlices + v/(nSlices*nVoxels), h_wait);
 		end
 	end
 	

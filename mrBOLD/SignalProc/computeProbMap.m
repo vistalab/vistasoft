@@ -38,7 +38,7 @@ if isempty(scanList)
 end
 
 % Compute it
-waitHandle = waitbar(0,'Computing log10 P values from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing log10 P values from the tSeries.  Please wait...');
 ncScans = length(scanList);
 for iScan = 1:ncScans
     scan = scanList(iScan);
@@ -46,7 +46,7 @@ for iScan = 1:ncScans
     
     logProb{scanList(iScan)}=-(log10(computeCoherenceSignificance(view.co{scanList(iScan)},nFrames)));
     
-    waitbar(scan/ncScans)
+    mrvWaitbar(scan/ncScans)
 end
 close(waitHandle);
 

@@ -72,7 +72,7 @@ end
 % Double loop through slices and scans in scanList
 nAvg = length(scanList);
 % *** check that all scans have the same slices
-waitHandle = waitbar(0,'Merging tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Merging tSeries.  Please wait...');
 nSlices = length(sliceList(vw,scanList(1)));
 
 tSeriesAvgFull = [];
@@ -123,7 +123,7 @@ for iSlice = sliceList(vw,scanList(1));
     %tSeriesAvg = tSeriesAvg ./ nValid;
     tSeriesAvg(nValid == 0) = NaN;
     tSeriesAvgFull = cat(dimNum + 1, tSeriesAvgFull, tSeriesAvg); %Combine together
-    waitbar(iSlice/nSlices);
+    mrvWaitbar(iSlice/nSlices);
 end %for
 
 if dimNum == 3

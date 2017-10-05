@@ -11,12 +11,12 @@ function k = dtiDirConcFun(s)
 % HISTORY:
 %   2004.10.20 ASH (armins@stanford.edu) wrote it.
 
-%h = waitbar(0, 'Inverting concentration function');
+%h = mrvWaitbar(0, 'Inverting concentration function');
 for j = 1:length(s),
     g = 1 - s(j);
     [k(j), fval, exitflag] = Asolve(g);
     if (exitflag==0), fprintf('No convergence at s = %f\n', num2str(s(j))); end
-    %waitbar(j/length(s),h)
+    %mrvWaitbar(j/length(s),h)
 end
 %close (h)
 

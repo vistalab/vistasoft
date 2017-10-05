@@ -33,7 +33,7 @@ else
     % shared ROI directory
     if ismember(vw.viewType, {'Gray' 'Volume'})
 
-        if (ispref('VISTA','defaultROIPath'))
+        if ispref('VISTA','defaultROIPath')
             ROIdir = getpref('VISTA','defaultROIPath');
 			
 			% this code will build an absolute path relative to the 
@@ -44,9 +44,11 @@ else
 			cd(HOMEDIR);
             pathStr = fullpath( fullfile(getAnatomyPath, ROIdir) );
 			cd(callingDir);
-		else
-			fprintf('[%s]: default ROI dir is ''ROIs'' in anatomy directory.\n', ...
-					mfilename);
+        else
+            if ispref('VISTA', 'verbose') && getpref('VISTA', 'verbose')
+                fprintf('[%s]: default ROI dir is ''ROIs'' in anatomy directory.\n', ...
+                    mfilename);
+            end
 			pathStr = fullfile( getAnatomyPath, 'ROIs' );
         end % End check on preference existing
         

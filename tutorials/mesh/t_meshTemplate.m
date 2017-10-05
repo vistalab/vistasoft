@@ -66,7 +66,7 @@ end
 % Make sure there is a directory for the subjects in particular
 subject_dir = fullfile(subjects_dir, freesurfer_subject);
 if ~exist(subject_dir, 'dir')
-    error(sprintf('No such FreeSurfer subject found: %s', freesurfer_subject));
+    error('No such FreeSurfer subject found: %s', freesurfer_subject);
 end
 % And that the template files exist
 tmpl_str = '%s.template_%s.mgz';

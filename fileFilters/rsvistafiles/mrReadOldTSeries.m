@@ -83,7 +83,7 @@ end
     
 
 % loop over and read tSeries files 
-h = waitbar(0,'Reading mrVista 1.0 tSeries files');
+h = mrvWaitbar(0,'Reading mrVista 1.0 tSeries files');
 for slice = 1:mr.dims(3)
     fname = fullfile(p, sprintf('tSeries%i.mat',slice));
     if ~exist(fname, 'file')
@@ -92,7 +92,7 @@ for slice = 1:mr.dims(3)
     end
     load(fname,'tSeries');
     mr.data(:,:,slice) = int16(tSeries);
-    waitbar(slice/mr.dims(3));
+    mrvWaitbar(slice/mr.dims(3));
 end
 close(h);
 mr.data = permute(mr.data,[2 3 1]);

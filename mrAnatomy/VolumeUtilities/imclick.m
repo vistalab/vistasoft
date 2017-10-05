@@ -1,4 +1,4 @@
-function imclick(r);
+function imclick(r)
 % IMCLICK: click around an image, getting pixel values around where you
 % clicked.
 %
@@ -36,16 +36,16 @@ img = get(h,'CData');
 format long g;
 b = 0;
 
-while b~=3 & b~=2
+while b~=3 && b~=2
 	[x,y,b] = ginput(1);
-    if b==3 | b==2  break;  end
+    if b==3 || b==2,  break;  end
 	
 	% re-index into the axes' X and Y ranges: this way, you can get values
 	% after plotting data centered at, say, 0:
 	X = get(h, 'XData');
 	Y = get(h, 'YData');
-	x = round( size(img, 2) * (x - min(X)) / diff(minmax(X)) );
-	y = round( size(img, 1) * (y - min(Y)) / diff(minmax(Y)) );
+	x = round( size(img, 2) * (x - min(X)) / diff(mrvMinmax(X)) );
+	y = round( size(img, 1) * (y - min(Y)) / diff(mrvMinmax(Y)) );
 	
 	% expand range to span the rectangle determined by size r
 	rngX = x-r:x+r;
@@ -61,11 +61,11 @@ while b~=3 & b~=2
 	img(rngY,rngX,:)
 	
 	% make patch showing the matrix range (delete old patches 1st)
-    if exist('h2','var')  delete(h2);   end
+    if exist('h2','var'),  delete(h2);   end
     h2 = patch([rngX(1) rngX(end) rngX(end) rngX(1)], ...
 			   [rngY(1) rngY(1) rngY(end) rngY(end)], 'c');
 end
 
-if exist('h2','var')  delete(h2);   end
+if exist('h2','var'),  delete(h2);   end
 
 return

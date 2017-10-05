@@ -54,7 +54,10 @@ extern "C" {
 */
 /* #define HAVE_FDOPEN */
 
-
+// We're going to hard code HAVE_ZLIB here because it is expected by most users
+// and it's better for the fail to be obvious
+#define HAVE_ZLIB
+    
 #ifdef HAVE_ZLIB
 #if defined(ITKZLIB) && !defined(ITK_USE_SYSTEM_ZLIB)
 #include "itk_zlib.h"

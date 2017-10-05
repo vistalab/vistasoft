@@ -17,7 +17,7 @@ t_id           = t.dcid+1;
 
 % we compute mean rss from the sum rss (old convention)
 % Some explanation of the divisor would be helpful here.
-model.rss = single(model.rss./(size(prediction,1)-size(trends,2)+1));  
+model.rss = single(model.rss./(size(prediction,1)-(size(trends,2)+1)));  
 
 %-----------------------------------
 %--- fit different receptive fields profiles
@@ -102,7 +102,7 @@ model.rss(model.rss==Inf) = model.rawrss(model.rss==Inf);
 % Correct lscov. It returns the mean rss. To maintain compatibility with
 % the sum rss that this function expects, we have to multiply by the
 % divisor. See the lscov docs for details.
-model.rss = single(model.rss.*(size(prediction,1)-size(trends,2)+1));  
+model.rss = single(model.rss.*(size(prediction,1)-(size(trends,2)+1)));  
 
 % end time monitor
 et  = toc;

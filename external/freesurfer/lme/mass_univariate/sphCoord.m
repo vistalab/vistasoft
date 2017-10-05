@@ -12,12 +12,12 @@ function [phi,theta] = sphCoord(Coord3D)
 % theta: Latitude  
 % phi: Longitud.
 %
-% $Revision: 1.1.2.2 $  $Date: 2013/02/23 21:08:11 $
+% $Revision: 1.2 $  $Date: 2015/01/06 17:14:55 $
 % Original Author: Jorge Luis Bernal Rusiel 
 % CVS Revision Info:
-%    $Author: nicks $
-%    $Date: 2013/02/23 21:08:11 $
-%    $Revision: 1.1.2.2 $
+%    $Author: mreuter $
+%    $Date: 2015/01/06 17:14:55 $
+%    $Revision: 1.2 $
 
 % [theta,phi,r] = cart2sph(overlayData(:,1),overlayData(:,2),overlayData(:,3));
 % //It was confusion

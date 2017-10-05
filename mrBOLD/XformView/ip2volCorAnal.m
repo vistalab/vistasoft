@@ -100,7 +100,7 @@ else                       ph = cell(1,nScans); end
 % put up a wait handle if it's consistent with the VISTA verbose pref:
 verbose = prefsVerboseCheck;
 if verbose,
-	waitHandle = waitbar(0,'Interpolating CorAnal.  Please wait...');
+	waitHandle = mrvWaitbar(0,'Interpolating CorAnal.  Please wait...');
 end
 
 % Tranform gray coords to inplane functional coords. Previously, the code
@@ -115,7 +115,7 @@ coordsXformed = ip2volXformCoords(volume, inplane, true);
 % from the inplanes to the volume.
 %
 for curScan = selectedScans
-	if verbose,     waitbar((curScan-1)/nScans);  end
+	if verbose,     mrvWaitbar((curScan-1)/nScans);  end
 
     % rsFactor is assumed to be the same in all scans, so we do not need
     % this step. (see upSampleFactor)
@@ -128,13 +128,17 @@ for curScan = selectedScans
     %         coordsXformed(2,:)=coordsXformedTmp(2,:)/rsFactor(2);
     %     end
     
-    if ~isempty(inplane.co{curScan})
+    if ~isempty(viewGet(inplane, 'scanco', curScan)) 
         
         % Pull out the correlations, phases, and amplitudes of the
         % inplane data for this scan and all anatomical slices.
         % 
-        coInplane = inplane.co{curScan}(:,:,:);
-        zInplane = inplane.amp{curScan}(:,:,:) .* exp(1i*inplane.ph{curScan}(:,:,:));
+        coInplane = viewGet(inplane, 'scanco', curScan);
+        zInplane  = viewGet(inplane, 'scanamp', curScan) .* exp(1i*viewGet(inplane, 'scanph', curScan));
+        
+        % recast as double for interp
+        coInplane = double(coInplane);
+        zInplane  = double(zInplane);
         
         % Use the inplane data set values to assign (using linear 
         % interpolation) values to the volume voxels in coInterpVol
@@ -162,9 +166,10 @@ if verbose, close(waitHandle); end
 
 % Set the fields in volume
 %
-volume.co = co;
-volume.amp = amp;
-volume.ph = ph;
+volume = viewSet(volume, 'co', co);
+volume = viewSet(volume, 'amp', amp);
+volume = viewSet(volume, 'ph', ph);
+
 
 % Save the new co, amp, and ph arrays in the Volume
 % subdirectory.  if a corAnal file already exists, query user

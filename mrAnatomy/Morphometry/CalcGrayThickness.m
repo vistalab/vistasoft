@@ -24,7 +24,7 @@ if vPath(1) == 0, return, end
 if ~exist('coneWidth', 'var'), coneRadius = 1/sqrt(2); end
 
 % Calculate gray graph for all nodes
-waitH = waitbar(0, 'Getting gray graph...');
+waitH = mrvWaitbar(0, 'Getting gray graph...');
 view = initHiddenGray;
 view = loadAnat(view);
 view.nodes = [view.allLeftNodes, view.allRightNodes];
@@ -41,7 +41,7 @@ for ii=1:3
   bBox(ii, 2) = max(view.coords(ii, :)');
 end
 
-waitbar(0, waitH, 'Build classification volume...')
+mrvWaitbar(0, waitH, 'Build classification volume...')
 % Create volume containing white-matter voxels set to 1, gray-matter voxels
 % set to -1:
 anat = double(permute(BuildWhiteVolume, [2 1 3]));
@@ -56,7 +56,7 @@ for ii=1:3, view.coords(ii, :) = view.coords(ii, :) - bBox(ii, 1) + 1; end
 
 % Form an isosurface at their boundary, that is, at an isodensity value of
 % zero, and get surface normals
-waitbar(0, waitH, 'Create gray-white interface surface...');
+mrvWaitbar(0, waitH, 'Create gray-white interface surface...');
 whiteSurface = isosurface(anat, 0);
 whiteSurface.normals = isonormals(anat, whiteSurface.vertices);
 whiteSurface.vertices = whiteSurface.vertices(:, [2 1 3])';
@@ -79,9 +79,9 @@ L1normals = L1normals ./ repmat(nLength, [3 1]);
 nL1 = length(L1inds);
 thickness = ones(1, nL1);
 maxThick = zeros(1, nL1);
-waitbar(0, waitH, 'Calculating thickness...');
+mrvWaitbar(0, waitH, 'Calculating thickness...');
 for iN=1:nL1
-  waitbar(iN/nL1, waitH);
+  mrvWaitbar(iN/nL1, waitH);
   cc = L1(:, iN);
   nn = L1normals(:, iN);
   nInds = iN;
@@ -107,7 +107,7 @@ for iN=1:nL1
   end
 end
 
-waitbar(1, waitH, 'Saving thickness results...')
+mrvWaitbar(1, waitH, 'Saving thickness results...')
 fName = fullfile(vPath, 'thickness.mat');
 save(fName, 'thickness');
 

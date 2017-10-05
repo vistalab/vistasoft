@@ -46,7 +46,7 @@ if isempty(scanList)
 end
 
 % Compute it
-waitHandle = waitbar(0,'Computing res std images from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing res std images from the tSeries.  Please wait...');
 ncScans = length(scanList);
 for iScan = 1:ncScans
     scan    = scanList(iScan);
@@ -59,7 +59,7 @@ for iScan = 1:ncScans
         resStd = computeTSResStd(vw,scan,slice,nCycles);
         map{scan}(:,:,slice) = reshape(resStd,dims);
     end
-    waitbar(scan/ncScans)
+    mrvWaitbar(scan/ncScans)
 end
 close(waitHandle);
 

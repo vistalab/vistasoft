@@ -75,8 +75,8 @@ end
 if ~isfield(flat.ui,'mask')    flat = makeFlatMask(flat);   end
 mask = flat.ui.mask;
 
-% Put up waitbar
-waitHandle = waitbar(0,'Transforming Parameter Map.  Please wait...');
+% Put up mrvWaitbar
+waitHandle = mrvWaitbar(0,'Transforming Parameter Map.  Please wait...');
 
 % Intersect the coords from the gray view and the Flat view.
 % See vol2flatCorAnal for details.
@@ -102,7 +102,7 @@ for scan = selectedScans
     
     % Loop through hemispheres
     for h=1:2
-        waitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
+        mrvWaitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
         
         if ~isempty(gray.map{scan})
             % Get the data corresponding to gray coords

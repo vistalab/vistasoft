@@ -63,7 +63,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
   int buflen;
   char *inFileName;
   nifti_image *nim;
-  int dims[7];
+  mwSize dims[7];
   mxClassID dt; mxComplexity cmp = mxREAL;
   mxArray *tmp = NULL;
   mxArray *dim;

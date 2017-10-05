@@ -35,7 +35,7 @@ switch mv.roi.viewType
         offsets = [-1 0 0; 1 0 0; 0 -1 0; 0 1 0; 0 0 -1; 0 0 1]';
         
         %%%%%main loop
-        hwait = waitbar(0, 'Computing Tuning Change Map...');
+        hwait = mrvWaitbar(0, 'Computing Tuning Change Map...');
         for v = 1:nVoxels
             % find indices I of neighboring voxels
             pt = mv.coords(:, v);
@@ -58,7 +58,7 @@ switch mv.roi.viewType
                 vals(v) = mean(dist);
             end
             
-            waitbar(v/nVoxels, hwait);
+            mrvWaitbar(v/nVoxels, hwait);
         end
         close(hwait);
         
@@ -90,7 +90,7 @@ switch mv.roi.viewType
         offsets = [-1 0 0; 1 0 0; 0 -1 0; 0 1 0; 0 0 -1; 0 0 1]';
         
         %%%%%main loop
-        hwait = waitbar(0, 'Computing Tuning Change Map...');
+        hwait = mrvWaitbar(0, 'Computing Tuning Change Map...');
         for v = 1:nVoxels
             % find indices I of neighboring voxels
             pt = mv.coords(:, v);
@@ -113,7 +113,7 @@ switch mv.roi.viewType
                 vals(v) = mean(dist(:));
             end
             
-            waitbar(v/nVoxels, hwait);
+            mrvWaitbar(v/nVoxels, hwait);
         end
         close(hwait);
         

@@ -250,10 +250,10 @@ tc.objHandles = h;
 
 % load the data from scans
 if length(scans) > 1
-    hwait = waitbar(0,'Loading tSeries from selected scans...');
+    hwait = mrvWaitbar(0,'Loading tSeries from selected scans...');
 	for s = scans
         tc.data = [tc.data; meanTSeries(view,s,voxels)];
-        waitbar(s/length(scans),hwait);
+        mrvWaitbar(s/length(scans),hwait);
 	end
     close(hwait);
 else

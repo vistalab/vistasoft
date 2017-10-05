@@ -37,7 +37,7 @@ end
 % vec = zeros([sz(1:3), 3, 3, sz(5)]);
 % val = zeros([sz(1:3), 3, sz(5)]);
 
-h = waitbar(0, 'Computing tensors...');
+h = mrvWaitbar(0, 'Computing tensors...');
 for(x=1:sz(1))
     for(y=1:sz(2))
         for(z=1:sz(3))
@@ -52,7 +52,7 @@ for(x=1:sz(1))
             end
         end
     end
-    waitbar(x/sz(1),h);
+    mrvWaitbar(x/sz(1),h);
 end
 close(h);
 

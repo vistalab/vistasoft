@@ -74,14 +74,14 @@ for ii = 1:length(scans)
     outScan = viewGet(hiddenView, 'numScans'); % # of scan in the new data type
             
     % main loop: loop across slices, doing spline interpolation
-    wH = waitbar(0, ['Adjusting scan ' int2str(scan)]);
+    wH = mrvWaitbar(0, ['Adjusting scan ' int2str(scan)]);
     iS = 0;
     
     tsFull = [];
     numDim = 0;
     
     [~, nii] = loadtSeries(vw, scan);
-    tSeries = niftiGet(nii, 'data');
+    tSeries = double(niftiGet(nii, 'data'));
     tSeries = permute(tSeries, [4, 1, 2, 3]);
     tSeries = reshape(tSeries, size(tSeries,1), [], size(tSeries,4));
     for slice=slices
@@ -94,7 +94,7 @@ for ii = 1:length(scans)
         end
         numDim = numel(size(ts));
         tsFull = cat(numel(size(ts)) + 1, tsFull, ts);
-        waitbar(iS/length(slices), wH);
+        mrvWaitbar(iS/length(slices), wH);
     end
     if numDim == 3
         tsFull = reshape(tsFull,[1,2,4,3]); %flip time and slices

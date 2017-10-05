@@ -55,7 +55,7 @@ tn = params.temporalNormalization;
 if ic==3, nmr = 1; else nmr = 0; end
 
 % load tSeries from selected slice
-if verbose, hwait = waitbar(0, 'Loading tSeries...'); end
+if verbose, hwait = mrvWaitbar(0, 'Loading tSeries...'); end
 for s = 1:nScans
     vw = percentTSeries(vw, scans(s), slice, detrend, ic, tn, nmr);
     scanTSeries = viewGet(vw, 'tSeries');
@@ -63,7 +63,7 @@ for s = 1:nScans
     % JW: is it necessary to convert to single?
     % Y = [Y; single(scanTSeries)];
     Y = cat(1, Y, scanTSeries); clear scanTSeries;
-    if verbose, waitbar(s/(nScans + params.lowPassFilter), hwait); end
+    if verbose, mrvWaitbar(s/(nScans + params.lowPassFilter), hwait); end
 end
 
 dims = size(Y);
@@ -72,7 +72,7 @@ Y = reshape(Y, dims(1), []);
 % apply low-pass filter if asked
 % (TODO: replace with a more formal filtering method)
 if params.lowPassFilter==1
-    if verbose, waitbar(1, hwait, 'Low-Pass Filtering Time Series'); end
+    if verbose, mrvWaitbar(1, hwait, 'Low-Pass Filtering Time Series'); end
     for ii = 1:size(Y, 2)
         Y(:,ii) = imblur(Y(:,ii));
     end

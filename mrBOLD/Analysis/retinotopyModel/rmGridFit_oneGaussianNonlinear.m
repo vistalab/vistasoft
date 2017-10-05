@@ -98,7 +98,7 @@ model.rss(model.rss==Inf)=model.rawrss(model.rss==Inf);
 % Correct lscov. It returns the mean rss. To maintain compatibility with the
 % sum rss this function expects, we have to multiply by the divisor. See
 % the lscov docs for details.
-model.rss=single(model.rss.*(size(prediction,1)-size(trends,2)+1));  
+model.rss=single(model.rss.*(size(prediction,1)-(size(trends,2)+1)));  
 
 % end time monitor
 et  = toc;

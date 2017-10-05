@@ -47,7 +47,7 @@ NzLIMIT = 24;   % if the number of inplanes is less that this, then
                 % inplanes two times.
 
 % progress bar
-wbh = waitbar(0,'Interpolating Inplanes...');
+wbh = mrvWaitbar(0,'Interpolating Inplanes...');
 
 % size of the inplanes
 [NyI, NxI, NzI] = size(inp);
@@ -89,7 +89,7 @@ inpMC = regCorrIntGradWiener(inpM, IntM, NoiseM);
 
 % updating message of the progress bar
 set(get(get(wbh,'Children'),'Title'),'String', 'Initial coarse estimation...');
-waitbar(1/(MAXITER+1));
+mrvWaitbar(1/(MAXITER+1));
 
 % if the number of slices is too small, repeat the first and last slice
 % to avoid running out of data (the derivative computation discards the
@@ -137,7 +137,7 @@ while (( ((norm([NxI;NyI;NzI]-M(1:3,1:3)*[NxI;NyI;NzI])...
    TOTiter = TOTiter+1;
    set(get(get(wbh,'Children'),'Title'),'String',...
                   ['Refinement, iter = ',num2str(TOTiter),'...']);
-   waitbar((niter+1)/(MAXITER+1));
+   mrvWaitbar((niter+1)/(MAXITER+1));
 
    % new initial transformation matrix including the estimated matrix
    Mi = Mi*inv(S1)*inv(M)*S1;

@@ -8,7 +8,7 @@
 
 % This tutorial is part of a sequence. Run 
 %   t_initAnatomyFromFreesurfer
-%   t_meshesFromFreesurfer *optional
+%   t_meshFromFreesurfer *optional
 %   t_initVistaSession
 %   t_alignInplaneToVolume *optional
 %   t_installSegmentation  *optional

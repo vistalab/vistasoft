@@ -41,7 +41,7 @@ end
 if isempty(scanList),  error('No scans in list, Analysis aborted'); end
 
 % Compute it
-waitHandle = waitbar(0,'Computing tSNR map from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing tSNR map from the tSeries.  Please wait...');
 ncScans = length(scanList);
 for iScan = 1:ncScans
     scan = scanList(iScan);
@@ -64,7 +64,7 @@ for iScan = 1:ncScans
         tSNR=tmp./stdtSeries;
         map{scan}(:,:,slice) = reshape(tSNR,dims);
     end
-    waitbar(scan/ncScans)
+    mrvWaitbar(scan/ncScans)
 end
 close(waitHandle);
 

@@ -287,7 +287,7 @@ for scan = 1:nScans
             beta = model.beta(:,:,1);
         end
 
-        h_wait = waitbar(0, sprintf('Making pRF predictions, scan %i', scan));
+        h_wait = mrvWaitbar(0, sprintf('Making pRF predictions, scan %i', scan));
 
         nVoxels = length(x0(:));
         for v = 1:step:nVoxels
@@ -352,7 +352,7 @@ for scan = 1:nScans
             ok = varexp(I) >= varthresh;
             tSeries(:,I(~ok), slice) = NaN;
 
-            waitbar(v/nVoxels, h_wait);
+            mrvWaitbar(v/nVoxels, h_wait);
         end
         close(h_wait);
     end
@@ -499,7 +499,7 @@ function pred = scalePredictionToData(pred, data, trends)
 % The initial implementation of this is very slow -- it basically applies a
 % GLM to each voxel in a long loop.
 
-h_wait = waitbar(0, 'Scaling predictions to observed data...');
+h_wait = mrvWaitbar(0, 'Scaling predictions to observed data...');
 
 nVoxels = size(pred, 2);
 
@@ -515,7 +515,7 @@ for v = 1:nVoxels
     vox_pred = [pred(:,v) trends] * beta;
     pred(:,v) = vox_pred(:,1);
 
-    waitbar(v/nVoxels, h_wait);
+    mrvWaitbar(v/nVoxels, h_wait);
 end
 
 close(h_wait);

@@ -1,7 +1,8 @@
-function dataDir = mrtInstallSampleData(sourceFolder, projectName, dFolder, forceOverwrite)
+function dataDir = mrtInstallSampleData(sourceFolder, projectName, ...
+    dFolder, forceOverwrite, varargin)
 %MRTINSTALLSAMPLEDATA Install sample data set on local path.
 %   dataDir = MRTINSTALLSAMPLEDATA(sourceFolder, projectName, ...
-%      [dFolder], [forceOverwrite]) 
+%      [dFolder], [forceOverwrite], varargin) 
 %
 %   The project will be installed in the vistasoft local directory:
 %   fullfile(vistaRootPath, 'local')
@@ -21,6 +22,8 @@ function dataDir = mrtInstallSampleData(sourceFolder, projectName, dFolder, forc
 %                           is found. If false, do not unzip if project
 %                           folder is found. 
 %                          [default = true]
+%     varargin:         Pairs of parameters, values
+%                           'filetype', {'zip' 'dat' 'mat' etc}    
 %    Outputs
 %      datadir:  full path to installed project folder
 %
@@ -35,9 +38,21 @@ function dataDir = mrtInstallSampleData(sourceFolder, projectName, dFolder, forc
 % Check inputs
 if notDefined('forceOverwrite'), forceOverwrite = true; end
 if notDefined('dFolder'), dFolder = fullfile(vistaRootPath, 'local'); end
+if exist('varargin', 'var')
+    for ii = 1:2:length(varargin)
+        switch varargin{ii}
+            case 'filetype', filetype = varargin{ii+1};
+            otherwise, error('%s parameter unrecognized.', varargin{ii});
+        end
+    end
+end
+
+% By default, assyme we are downloading a zip file
+if notDefined('filetype'), filetype = 'zip'; end
 
 % Make sure there is a decent error message if RdtClient is not found
-if exist('RdtClient') ~= 2
+if exist('RdtClient', 'file')  % ok
+else
     error(['The RdtClient function is not on your Matlab path; make' ...
            ' sure that you''ve installed the RemoteDataToolbox:' ...
            ' https://github.com/isetbio/RemoteDataToolbox'])
@@ -51,10 +66,13 @@ rd = RdtClient('vistasoft');
 rd.crp(sprintf('/vistadata/%s', sourceFolder));
 
 % Download the zip file
-rd.readArtifact(projectName, 'type','zip', 'destinationFolder',dFolder);
+rd.readArtifact(projectName, 'type',filetype, 'destinationFolder',dFolder);
 
 % Return the directory containing the unzipped data
 dataDir = fullfile(dFolder, projectName);
+
+% If the filetype was not a zip file, we are done. Otherwise unzip.
+if ~strcmpi(filetype, 'zip'), return; end
 
 % Unzip 
 if exist(dataDir, 'dir') && ~forceOverwrite

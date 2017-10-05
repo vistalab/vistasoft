@@ -42,7 +42,7 @@ roi = getGrayRoi(view);
 roi.coords = roiSubCoords(view, roi.coords); % remove redundant voxels
 nVoxels = size(roi.coords, 2);
 
-hwait = waitbar(0, 'Computing Voxel Reliability Across Gray Matter...');
+hwait = mrvWaitbar(0, 'Computing Voxel Reliability Across Gray Matter...');
 set(hwait, 'Position', get(hwait,'Position')+[0 100 0 0]);
 for a = 1:2000:nVoxels
     b = min(nVoxels, a+1999);
@@ -57,7 +57,7 @@ for a = 1:2000:nVoxels
     
     voxR(a:b) = mv.wta.voxR;
     
-    waitbar(b/nVoxels, hwait);
+    mrvWaitbar(b/nVoxels, hwait);
 end
 close(hwait);
 

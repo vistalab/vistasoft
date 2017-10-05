@@ -7,12 +7,12 @@ function fWriteQdec(fname,Qdec)
 % fname: The name of a Qdec table data file. 
 % Qdec: Two dimensional cell string array with the data.
 %
-% $Revision: 1.1.2.2 $  $Date: 2013/02/23 21:08:09 $
+% $Revision: 1.2 $  $Date: 2015/01/06 17:14:53 $
 % Original Author: Jorge Luis Bernal Rusiel 
 % CVS Revision Info:
-%    $Author: nicks $
-%    $Date: 2013/02/23 21:08:09 $
-%    $Revision: 1.1.2.2 $
+%    $Author: mreuter $
+%    $Date: 2015/01/06 17:14:53 $
+%    $Revision: 1.2 $
 %
 if nargin < 2
     error('Too few inputs');

@@ -10,7 +10,7 @@ function vw = viewSetSession(vw,param,val,varargin)
 % We assume that input comes to us already fixed and does not need to be
 % formatted again.
 
-if notDefined('vw'),  error('No view defined.'); end
+if ~exist('vw', 'var'), error('No view defined.'); end
 if notDefined('param'), error('No parameter defined'); end
 if notDefined('val'),   val = []; end
 

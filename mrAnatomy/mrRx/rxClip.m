@@ -51,7 +51,7 @@ if auto==1
     img = histoThresh(img);
 else
     % set contrast manually
-    rng = double(minmax(img));
+    rng = double(mrvMinmax(img));
     clip = clip .* rng;
     if contrast ~= 0.5
         clip(2) = clip(1) + (max(img(:))-clip(1))*(1-contrast);
