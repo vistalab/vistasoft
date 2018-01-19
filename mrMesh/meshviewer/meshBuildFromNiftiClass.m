@@ -18,7 +18,7 @@ function [msh] = meshBuildFromNiftiClass(NiftiClassFile,hemisphere,inflateFlag,n
 
 if notDefined('hemisphere'), hemisphere = 'left'; end
 if notDefined('numGrayLayers'), numGrayLayers = 0; end
-if notDefined('inflateFlag'), inflateFlag = 0; end
+if notDefined('inflateFlag'), inflateFlag = 1; end
 
 classNi = niftiRead(NiftiClassFile);
 class   = readClassFile(classNi,0,0,hemisphere);
