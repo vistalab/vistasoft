@@ -1,8 +1,7 @@
 function [RFcov, figHandle, all_models, weight, data] = rmPlotCoverage(vw, varargin)
+% [RFcov, figHandle, all_models, weight, data] = rmPlotCoverage(vw, varargin)
 % rmPlotCoverage - calulate the visual field coverage within an ROI
 % 
-% [RFcov figHandle all_models weight data]  = rmPlotCoverage(vw, varargin)
-%
 %
 % Before you run this script, you have to load 'variance explained', 'eccentricity',
 % 'polar-angle' and 'prf size' into 'co', 'map', 'ph' and 'amp' fields, respectively
