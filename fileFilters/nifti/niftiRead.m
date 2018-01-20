@@ -49,7 +49,7 @@ else
          && exist(fileNameExtended,'file')
         ni = readFileNifti(fileNameExtended);
     else
-        error('Cannot find the file %s or %s\n',fileName,fileNameExtended);
+        error('Cannot find the file %s or %s\n',fileName);
     end
 end
 
