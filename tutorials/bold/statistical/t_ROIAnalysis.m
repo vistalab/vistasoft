@@ -121,6 +121,7 @@ for ii = 1:n
 
 end
 
-%% Clean up (OPTIONAL)
+%% Clean up 
+close(vw.ui.figNum);
 mrvCleanWorkspace
 cd(curdir)
