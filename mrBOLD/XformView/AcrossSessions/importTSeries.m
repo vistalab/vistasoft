@@ -152,7 +152,7 @@ view = selectDataType(view, tgtDtNum);
 % (also copying over data types)
 disp('Importing tSeries...')
 if verbose >= 1
-	h = waitbar(0,'Importing TSeries');
+	h = mrvWaitbar(0,'Importing TSeries');
 	
 	% so other code can close it if this code fails...
 	set(h, 'HandleVisibility', 'on'); 
@@ -257,7 +257,7 @@ for i = 1:nScans
 
 	end
 
-	if verbose >= 1,   waitbar(i/nScans,h);		end
+	if verbose >= 1,   mrvWaitbar(i/nScans,h);		end
 end
 
 if verbose >= 1, close(h);		end

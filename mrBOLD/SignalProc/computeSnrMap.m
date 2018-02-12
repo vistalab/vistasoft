@@ -64,7 +64,7 @@ elseif scanList == 0,        scanList = 1:nScans;     end
 
 if isempty(scanList), error('Analysis aborted'); end
 
-waitHandle = waitbar(0,'Computing snr images from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing snr images from the tSeries.  Please wait...');
 
 ncScans = length(scanList);
 
@@ -104,7 +104,7 @@ for iScan = 1:ncScans
         map{scan}(:,:,slice) = reshape(tmp,dims);        
     end
     mx(iScan) = prctile(map{scan}(:), 99);
-    waitbar(scan/ncScans)
+    mrvWaitbar(scan/ncScans)
 end
 close(waitHandle);
 

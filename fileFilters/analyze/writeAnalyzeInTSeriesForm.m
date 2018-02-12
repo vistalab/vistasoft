@@ -114,7 +114,7 @@ for scanIndex=1:nScans
     if scanIndex == 1
         msg = ['Saving TSeries Files for ',scanDir,' in ',targetPath];
         disp(msg);
-        waitHandle = waitbar(0,[msg, '. Please wait...']);
+        waitHandle = mrvWaitbar(0,[msg, '. Please wait...']);
     end
 
 	%load volumes
@@ -162,7 +162,7 @@ for scanIndex=1:nScans
         fprintf('Save slice %d in %s\n', slice, fullfile(targetPath,fileName));
         save(fullfile(targetPath,fileName),'tSeries');
         msg = [scanDir, ': saved slice in ', targetPath];
-        waitbar((scanIndex-1+slice/nSlices)/nScans, waitHandle, msg);
+        mrvWaitbar((scanIndex-1+slice/nSlices)/nScans, waitHandle, msg);
 	end
 end
 

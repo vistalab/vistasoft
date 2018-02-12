@@ -11,8 +11,7 @@
 %
 % This tutorial can either be run as a stand-alone tutorial, using the
 % fully processed ernie pRF directory, or as part of a sequence in which
-% the ernie pRF directory is built up from raw files.  is part of a
-% sequence. For the former, run
+% the ernie pRF directory is built up from raw files. For the former, run
 %   t_initAnatomyFromFreesurfer
 % before running this tutorial. For the latter, run the following sequence
 % of tutorials

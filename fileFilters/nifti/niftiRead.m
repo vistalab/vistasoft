@@ -43,7 +43,7 @@ elseif ischar(fileName) && exist(fileName,'file')
     end
 else
     % Did the person not include the .nii.gz extensions?
-    [~,n,e] = fileparts(r);
+    [~,n,e] = fileparts(fileName);
     if isempty(e), fileNameExtended = [n,'.nii.gz']; end
     if exist('fileNameExtended', 'var') ...
          && exist(fileNameExtended,'file')

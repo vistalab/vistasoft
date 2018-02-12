@@ -31,10 +31,13 @@ function foundit = check4File(filename, format)
 %               'format' flag which defaults to '.mat'. If you want to use
 %               this for gray files, you'll need to pass the alternate
 %               extension in at the places that use it.
-if ~exist('format', 'var') || isempty(format), format = '.mat'; end
+
+
+if notDefined('format'), [~,~,format] = fileparts(filename); end
+if isempty(format), format = '.mat'; end    
 
 % Add the .mat extension if it isn't passed in
-if isempty(findstr(lower(filename), format))
+if ~contains(lower(filename), format)
     filename = [filename format];
 end
 

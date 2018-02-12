@@ -96,10 +96,10 @@ for iScan = 1:nScans
     if totalMot > 0.15
         % compute the warped volume series according to the previously computed M
 		if verbose > 1
-	        waitHandle = waitbar(0, ['Warping scan ' num2str(scan) '...']);
+	        waitHandle = mrvWaitbar(0, ['Warping scan ' num2str(scan) '...']);
 		end
         for frame = 1:nFrames
-            if verbose > 1, waitbar(frame/nFrames);  end
+            if verbose > 1, mrvWaitbar(frame/nFrames);  end
             % warp the volume putting an edge of 1 voxel around to avoid lost data
             volSeries(:,:,:,frame) = warpAffine3(volSeries(:,:,:,frame), M, NaN, 1);
         end
@@ -116,9 +116,9 @@ for iScan = 1:nScans
     tSeries = zeros(nFrames, numPixels);
     dimNum = numel(size(tSeries));
     tSeriesFull = zeros([size(tSeries) length(slices)]);
-	if verbose > 1,    waitHandle = waitbar(0,'Saving tSeries...');	end
+	if verbose > 1,    waitHandle = mrvWaitbar(0,'Saving tSeries...');	end
     for slice=slices
-        if verbose > 1, waitbar(slice/nSlices);  end
+        if verbose > 1, mrvWaitbar(slice/nSlices);  end
         for frame=1:nFrames
             tSeries(frame, :) = reshape(volSeries(:,:,slice,frame), [1 numPixels]);
         end

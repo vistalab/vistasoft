@@ -283,7 +283,7 @@ end;
 %spm_progress_bar('Init',length(P)-1,'Registering Images');
 msg = 'Registering Images...'; maxValue = length(P)-1;
 myDisp(msg);
-waitHandle = waitbar(0,[msg, ' Please wait...']);
+waitHandle = mrvWaitbar(0,[msg, ' Please wait...']);
 % MA, 10/27/2004: replaced;
 
 % Loop over images
@@ -344,7 +344,7 @@ for i=2:length(P),
 	end;
 % MA, 10/27/2004: replaced:
 %	spm_progress_bar('Set',i-1);
-    waitbar((i-1)/maxValue,waitHandle);
+    mrvWaitbar((i-1)/maxValue,waitHandle);
 % MA, 10/27/2004: replaced;
 end;
 % MA, 10/27/2004: replaced:
@@ -368,7 +368,7 @@ clear ave grad1 grad2 grad3
 %spm_progress_bar('Init',length(P),'Registering Images to Mean');
 msg = 'Registering Images to Mean...'; maxValue = length(P);
 myDisp(msg);
-waitHandle = waitbar(0,[msg, '. Please wait...']);
+waitHandle = mrvWaitbar(0,[msg, '. Please wait...']);
 % MA, 10/27/2004: replaced;
 
 for i=1:length(P),
@@ -406,7 +406,7 @@ for i=1:length(P),
 	end;
 % MA, 10/27/2004: replaced:
 %	spm_progress_bar('Set',i);
-    waitbar(i/maxValue,waitHandle);
+    mrvWaitbar(i/maxValue,waitHandle);
 % MA, 10/27/2004: replaced;
 end;
 % MA, 10/27/2004: replaced:

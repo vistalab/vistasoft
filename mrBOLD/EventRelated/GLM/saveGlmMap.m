@@ -18,7 +18,7 @@ map = cell(1, numScans(view));
 mapSize = dataSize(view);
 map{scan} = zeros(mapSize);
 
-h = waitbar(0, 'Saving GLM Map...');
+h = mrvWaitbar(0, 'Saving GLM Map...');
 
 for slice = 1:numSlices(view)
    % load the results of the GLM
@@ -43,7 +43,7 @@ for slice = 1:numSlices(view)
    % place in the map:
    map{scan}(ind) = vals;
 
-   waitbar(slice/numSlices(view), h);
+   mrvWaitbar(slice/numSlices(view), h);
 end
 
 close(h);

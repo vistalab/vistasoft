@@ -47,11 +47,11 @@ end
 curDataType = viewGet(view,'currentdatatype');
 MI = [];
 lastFrame = 0;
-h = waitbar(0,'Computing Mutual Information...');
+h = mrvWaitbar(0,'Computing Mutual Information...');
 
 for scan = scans
        
-    waitbar((scan - 1)/scans(end),h,['Computing Mutual Information for scan ' num2str(scan)]);
+    mrvWaitbar((scan - 1)/scans(end),h,['Computing Mutual Information for scan ' num2str(scan)]);
     
     clear tSeriesAllSlices;
 	
@@ -72,7 +72,7 @@ for scan = scans
 	MI = [MI;motionCompMI(tSeriesAllSlices,ROI)];
     
 end
-waitbar(1,h)
+mrvWaitbar(1,h)
 
 MI(1) = MI(2);
 

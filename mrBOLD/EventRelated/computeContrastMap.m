@@ -145,7 +145,7 @@ end
     
     
 % loop through slices
-h = waitbar(0,'Computing contrast map...');
+h = mrvWaitbar(0,'Computing contrast map...');
 for slice = 1:nSlices
     if isequal(view.viewType,'Flat')    dSize = [1 size(view.coords{slice},2)];     end
     inputPath = fullfile(HOMEDIR,view.subdir,seriesDir,'TSeries',scanDir,['hAvg' num2str(slice) '.mat']);
@@ -158,7 +158,7 @@ for slice = 1:nSlices
         end
         map{scan}(1:dSize(1),1:dSize(2),slice) = statslice;
     end
-    waitbar(slice/nSlices,h);
+    mrvWaitbar(slice/nSlices,h);
 end
 close(h);
 

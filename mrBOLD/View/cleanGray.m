@@ -19,4 +19,6 @@ curGrayDir = fullfile(HOMEDIR,'Gray');
 backupGrayDir = fullfile(HOMEDIR,sprintf('deletedGray_%s', ...
     datestr(now, 'yyyy-dd-mm-hh_MM-ss')));
 
-movefile(curGrayDir, backupGrayDir);
+if exist(curGrayDir, 'dir')
+    movefile(curGrayDir, backupGrayDir);
+end

@@ -129,13 +129,13 @@ z   = (bb(1,3):abs(mmPerVox(3)):bb(2,3));
 newSz = [size(x,2) size(y,2) size(z,2)];
 newImg = zeros([newSz size(img,4)]);
 if(nargout>2), deformField = zeros([newSz,3]); end
-if(showProgress), h = waitbar(0,['Resampling with ' interpMethod ' interpolation...']); end
+if(showProgress), h = mrvWaitbar(0,['Resampling with ' interpMethod ' interpolation...']); end
 totalNumSlices = length(z)*size(img,4);
 
 for fourthDim=1:size(img,4)
-    if(showProgress), waitbar(0.005,h); end
+    if(showProgress), mrvWaitbar(0.005,h); end
     bsplineCoefs = spm_bsplinc(img(:,:,:,fourthDim), bSplineParams);
-    if(showProgress), waitbar(0.1,h); end
+    if(showProgress), mrvWaitbar(0.1,h); end
     curSliceTotal = (fourthDim-1)*length(z);
     for ii=1:length(z)
         [X,Y,Z] = ndgrid(x, y, z(ii));
@@ -149,7 +149,7 @@ for fourthDim=1:size(img,4)
         
         newImg(:,:,ii,fourthDim) = tmp; %permute(tmp,[2,1]);
         
-        if(showProgress), waitbar((curSliceTotal+ii)/totalNumSlices*0.9+0.1,h); end
+        if(showProgress), mrvWaitbar((curSliceTotal+ii)/totalNumSlices*0.9+0.1,h); end
         
         % Return the deformation field
         if(exist('deformField','var'))

@@ -120,10 +120,10 @@ function ParamSelection(svm, options)
     [trials nSamples] = GetFolds(size(svm.data, 1), options.k);
     
     iters = nLog2c*nLog2g;
-    hwait = waitbar(0, 'Running parameter selection...');
+    hwait = mrvWaitbar(0, 'Running parameter selection...');
     for ci = 1:nLog2c
         for gi = 1:nLog2g
-            waitbar((nLog2g * (ci - 1) + gi)/iters, hwait);
+            mrvWaitbar((nLog2g * (ci - 1) + gi)/iters, hwait);
             options.cost = 2^options.log2cvector(ci);
             options.gamma = 2^options.log2gvector(gi);
             [model meanAccuracy] = KFoldsCrossValidation(svm, options, nSamples, trials);

@@ -31,7 +31,7 @@ if isempty(volume)
 end
 
 % wait bar
-waitHandle = waitbar(0,'Interpolating model.  Please wait...');
+waitHandle = mrvWaitbar(0,'Interpolating model.  Please wait...');
 
 
 % Compute the transformed coordinates (i.e., where does each gray node fall in the inplanes).
@@ -71,7 +71,7 @@ fnames = {'x','y',...
 dimSize = prod(viewGet(inplane,'datasize'));
 for m = 1:length(model),
   for f = 1:length(fnames),
-    waitbar(((m-1).*length(model)+f) ./ (length(model).*length(fnames)))
+    mrvWaitbar(((m-1).*length(model)+f) ./ (length(model).*length(fnames)))
     paramInplane = rmGet(model{m},fnames{f});
     if prod(size(paramInplane)) > 1 & isnumeric(paramInplane),
       switch lower(fnames{f})

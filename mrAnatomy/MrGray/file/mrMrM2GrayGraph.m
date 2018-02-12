@@ -38,7 +38,7 @@ nodeConnections = sparse(numNodes,numNodes);
 
 %% Fill the sparse matrix with stripList
 %
-h = waitbar(0,'Reading Edges from Stripped List');
+h = mrvWaitbar(0,'Reading Edges from Stripped List');
 for k=1:size(mesh.stripList,1),
    vertex = mesh.stripList(k,1)+3;
    nodeConnections(vertex,vertex-1)=1; 
@@ -55,7 +55,7 @@ for k=1:size(mesh.stripList,1),
       nodeConnections(vertex-1,vertex)=1; 
       nodeConnections(vertex-2,vertex)=1;
       
-      waitbar(vertex/(mesh.triangleOffset-1),h);   
+      mrvWaitbar(vertex/(mesh.triangleOffset-1),h);   
    end
 end
 
@@ -72,12 +72,12 @@ ptr = mesh.triangleOffset;
 
 %% Fill the sparse matrix with triangle
 %
-h = waitbar(0,'Reading Edges from Triangles');
+h = mrvWaitbar(0,'Reading Edges from Triangles');
 while ptr<size(mesh.vertices,1),
    nodeConnections(ptr,ptr+1)=1;nodeConnections(ptr,ptr+2)=1;nodeConnections(ptr+1,ptr+2)=1;
    nodeConnections(ptr+1,ptr)=1;nodeConnections(ptr+2,ptr)=1;nodeConnections(ptr+2,ptr+1)=1;
    ptr = ptr+3;   
-   waitbar(ptr/numNodes,h);   
+   mrvWaitbar(ptr/numNodes,h);   
 end
 close(h);
 
@@ -86,7 +86,7 @@ close(h);
 %  We go through the unique list, find all the strips and triangles the nodes in that list
 %  belong to and we merge them.  We then copy the new connection lines back in the structure
 
-h = waitbar(0,'Finishing connections...');
+h = mrvWaitbar(0,'Finishing connections...');
 for k=1:length(uniqueNodes),
    % For a particular unique node, find the indices in nodeConnections of all similar nodes
    sameNodes = find(uniqueIdx==k);   
@@ -95,7 +95,7 @@ for k=1:length(uniqueNodes),
       repmat(mergedNodes,size(nodeConnections(sameNodes,:),1),1)); 
    nodeConnections(:,sameNodes') = or(nodeConnections(:,sameNodes'),...
       nodeConnections(sameNodes,:)');
-   waitbar(k/length(nodeIdx),h);   
+   mrvWaitbar(k/length(nodeIdx),h);   
 end
 close(h);
 

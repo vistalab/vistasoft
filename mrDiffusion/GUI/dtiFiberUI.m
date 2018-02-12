@@ -2811,7 +2811,7 @@ xform = inv(handles.xformToAcpc);
 % subplot(1,3,2); quiver(squeeze(handles.wmWarp(:,curPos(2),:,1)), squeeze(handles.wmWarp(:,curPos(2),:,3)));
 % subplot(1,3,3); quiver(squeeze(handles.wmWarp(curPos(1),:,:,2)), squeeze(handles.wmWarp(curPos(1),:,:,3)));
 fg = handles.fiberGroups(handles.curFiberGroup);
-h = waitbar(0,'Warping fibers...');
+h = mrvWaitbar(0,'Warping fibers...');
 %fcAll = mrAnatXformCoords(xform,horzcat(fg.fibers{:})');
 
 for(ii=1:length(fg.fibers))
@@ -2827,9 +2827,9 @@ for(ii=1:length(fg.fibers))
         % vec = vec.*handles.vec.mmPerVoxel';
         fg.fibers{ii}(:,jj) = mrAnatXformCoords(inv(xform), fc(jj,:) + vec')';
     end
-    waitbar(ii/length(fg.fibers),h);
+    mrvWaitbar(ii/length(fg.fibers),h);
 end
-waitbar(1.0,h);
+mrvWaitbar(1.0,h);
 close(h);
 fg.visible = 1;
 fg.seeds = [];

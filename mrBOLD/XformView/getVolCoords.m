@@ -86,9 +86,9 @@ else
   % vol2InplanXform needs volCoords in order (y,x,z)
   volCoords = [voly(:),volx(:),zeros([totalImSize,1]),ones([totalImSize,1])];
   volCoords = volCoords';
-  waitHandle = waitbar(0,'Computing volume coordinates.  Please wait...');
+  waitHandle = mrvWaitbar(0,'Computing volume coordinates.  Please wait...');
   for z = 1:volSize(3)
-    waitbar(z/volSize(3))
+    mrvWaitbar(z/volSize(3))
     volCoords(3,:) = volCoords(3,:) + 1;
     ipCoords = vol2InplaneXform*volCoords;
     % Find ipCoords that are within the bounds of the inplanes.

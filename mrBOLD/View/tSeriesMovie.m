@@ -137,7 +137,7 @@ end
 
 %%%%% get tSeries from selected scans
 nFrames = 0;
-hwait = waitbar(0,'Loading tSeries for movie...');
+hwait = mrvWaitbar(0,'Loading tSeries for movie...');
 for scan = scans
     tSeries = loadtSeries(vw,scan,slices(1));
     if frames,  % get just the requested frames, throw out the rest
@@ -159,7 +159,7 @@ for scan = scans
     % append to M
     M = [M; tSeries];
     
-    waitbar(find(scans==scan)/length(scans),hwait);
+    mrvWaitbar(find(scans==scan)/length(scans),hwait);
 end
 close(hwait);
 
@@ -194,7 +194,7 @@ M = M(zoom(3):zoom(4),zoom(1):zoom(2),:);
 
 %%%%% if anat flag set, convert M to 4D truecolor x time array
 if anatFlag==1 
-	hwait = waitbar(0,'Superimposing over anat image...');
+	hwait = mrvWaitbar(0,'Superimposing over anat image...');
  
     % get cmap from map mode
     modeInfo    = viewGet(vw,'mapMode');
@@ -217,7 +217,7 @@ if anatFlag==1
         overlay = upSampleRep(overlay,newSize);
         
     end
-    waitbar(1/4,hwait);
+    mrvWaitbar(1/4,hwait);
     
     % re-initialize M as a 4D array w/ the anat background
     anatImg = recomputeAnatImage(vw);
@@ -225,7 +225,7 @@ if anatFlag==1
     anatImg = normalize(anatImg,0,255);
     M       = uint8(repmat(anatImg,[1 1 nFrames 3]));
     
-    waitbar(1/2,hwait);
+    mrvWaitbar(1/2,hwait);
     
     % get the values for which the overlay > 0
     locs3D = find(overlay>0);
@@ -241,7 +241,7 @@ if anatFlag==1
     for col = 1:3
         locs4D      = sub2ind(size(M),yy,xx,zz,repmat(col,size(yy)));
         M(locs4D)   = cmap(overlay(locs3D),col);        
-        waitbar(1/2+col/6,hwait);
+        mrvWaitbar(1/2+col/6,hwait);
     end
     close(hwait);
     
@@ -354,14 +354,14 @@ for i = 1:length(opts)
 end
 
 % get movie data for each slice
-hwait = waitbar(0, 'Creating Montage Across Slices...');
+hwait = mrvWaitbar(0, 'Creating Montage Across Slices...');
 set(hwait, 'Position', get(hwait, 'Position')+[0 100 0 0]);
 
 nSlices = length(slices);
 for i = 1:nSlices
     slice{i} = tSeriesMovie(vw, scans, anatFlag, 'slices', slices(i), ...
                             'nomovie', opts);
-    waitbar(.8 * (i/nSlices), hwait);
+    mrvWaitbar(.8 * (i/nSlices), hwait);
 end
 
 
@@ -375,7 +375,7 @@ if nSlices < nRows*nCols    % pad out extra images
 end
 slice = reshape(slice, [nCols nRows])';
 
-waitbar(.95, hwait);
+mrvWaitbar(.95, hwait);
 
 for r = 1:nRows
     row = [];

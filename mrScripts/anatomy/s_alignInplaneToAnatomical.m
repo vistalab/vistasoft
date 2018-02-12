@@ -68,9 +68,9 @@ alignvolumedata(volpre,rx.volVoxelSize,refpre,rx.refVoxelSize,knk.trORIG);
 %% 4b Define ellipse
 % (if you need help with the shortcut keys:) 
 % doc defineellipse3d 
-[~,mn,sd] = defineellipse3d(refpre,[],[],mn,sd);
-mn = [0.5640    0.5011    0.8446];
-sd = [0.1766    0.2868    0.6431];
+[~,mn,sd] = defineellipse3d(refpre);%,[],[],mn,sd);
+% mn = [0.5674    0.4732    0.5131];
+% sd = [0.2888    0.2278    0.3938];
 
 %% 4c Automatic alignment (coarse)
 useMI = true;  % you need MI if the two volumes have different tissue contrast.

@@ -84,7 +84,7 @@ else
     %
     % Put up a status bar if there is more than a single file:
     if nFList > 1
-        hBar = waitbar(0, 'Reading inplane anatomy files');
+        hBar = mrvWaitbar(0, 'Reading inplane anatomy files');
     end
     % Initialize cell array to hold the images
     tmpImg = cell(1,nFList);
@@ -107,7 +107,7 @@ else
         thicknesses(iList) = hdr.image.slthick;
         tmpImg{iList} = img;
         if nFList > 1
-            waitbar(iList/nFList)
+            mrvWaitbar(iList/nFList)
         end
     end
     % Get rid of any status bar

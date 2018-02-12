@@ -173,7 +173,7 @@ if params.displayFlag==2
 	headerStr = ['ROI ', ROIname,', scan ', num2str(curScan) ];
 	set(h,'Name',headerStr)
 else
-	h_wait = waitbar(0, 'Creating Stimulus-Projected Activation Movie');
+	h_wait = mrvWaitbar(0, 'Creating Stimulus-Projected Activation Movie');
 end
 
 % Make movie 
@@ -243,7 +243,7 @@ for tr = 1:nTRs
 		
 		RFmovie(:,:,:,tr) = img;	
 		
-		waitbar(tr/nTRs, h_wait);
+		mrvWaitbar(tr/nTRs, h_wait);
 		if tr==nTRs, close(h_wait); end
 		
 	elseif params.displayFlag==2

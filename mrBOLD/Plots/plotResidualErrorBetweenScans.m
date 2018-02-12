@@ -26,9 +26,9 @@ nSlices = length(slices);
 
 err = zeros(nScans,nSlices);
 
-waitHandle = waitbar(0,['Loading tSeries for reference scan. Please wait...']);
+waitHandle = mrvWaitbar(0,['Loading tSeries for reference scan. Please wait...']);
 for slice=slices
-    waitbar(slice/nSlices);
+    mrvWaitbar(slice/nSlices);
     tSeries = loadtSeries(view,scan(1),slice);
     refScan(slice,:) = tSeries(frameNum,:);
 end
@@ -36,9 +36,9 @@ close(waitHandle);
 
 for ii=2:length(scan)
     thisScan = scan(ii);
-    waitHandle = waitbar(0,['Loading tSeries for scan',int2str(ii),' Please wait...']);
+    waitHandle = mrvWaitbar(0,['Loading tSeries for scan',int2str(ii),' Please wait...']);
     for slice=slices
-        waitbar(slice/nSlices);
+        mrvWaitbar(slice/nSlices);
         tSeries = loadtSeries(view,thisScan,slice);
         err(ii,slice) = sqrt(mse(tSeries(frameNum,:),refScan(slice,:)));
     end

@@ -49,7 +49,7 @@ hiddenView = selectDataType(hiddenView,existDataType('Lowpass'));
 tseriesdir = tSeriesDir(hiddenView);
 
 % Loop through scans in scanList
-waitHandle = waitbar(0,'Lowpass filtering tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Lowpass filtering tSeries.  Please wait...');
 nScans = length(scanList);
 for newScanNum = 1:nScans
 	origScanNum = scanList(newScanNum);
@@ -90,7 +90,7 @@ for newScanNum = 1:nScans
 		['Lowpass of ',getDataTypeName(view),', scan: ',num2str(origScanNum)];
 	saveSession
 	
-	waitbar(newScanNum/nScans);
+	mrvWaitbar(newScanNum/nScans);
 end
 close(waitHandle);
 

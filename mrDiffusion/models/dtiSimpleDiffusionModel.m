@@ -48,7 +48,7 @@ tplot(iplot) = 0;
 concentration(:,iplot) = tt(:);
 iplot = iplot+1;
 %* Loop over the desired number of time steps.
-h = waitbar(0,'Computing concentrations...');
+h = mrvWaitbar(0,'Computing concentrations...');
 for istep=1:nstep  %% MAIN LOOP %%
     %* Compute new temperature using FTCS scheme.
     tt(2:(N-1)) = tt(2:(N-1)) + ...
@@ -56,7 +56,7 @@ for istep=1:nstep  %% MAIN LOOP %%
     concentration(:,iplot) = tt(:);
     tplot(iplot) = istep*tau;
     iplot = iplot+1;
-    waitbar(istep/nstep,h);
+    mrvWaitbar(istep/nstep,h);
 end
 close(h);
 

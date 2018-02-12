@@ -55,7 +55,7 @@ function anal = er_chopTSeries3D(tSeries,trials,roiName,varargin);
 %   onsetDelta,[val]:   automatically shift the onsets in parfiles
 %                       relative to the time course by this amount
 %                       (e.g. to compensate for HRF rise time).
-%   'waitbar':          put up a waitbar instead of showing progress in
+%   'mrvWaitbar':          put up a mrvWaitbar instead of showing progress in
 %                       the command line.
 %   'findPeaks':        when calculating response amplitudes, figure
 %                       out the peak amplitude separately for each 
@@ -76,7 +76,7 @@ peakPeriod = 6:12;       % period to look for peaks in t-tests, in seconds
 timeWindow = -6:22;     % seconds relative to trial onset to take for each trial
 onsetDelta = 0;         % # secs to shift onsets in parfiles, relative to time course
 snrConds = [];          % For calculating SNR, which conditions to use (if empty, use all)
-waitbarFlag = 0;        % flag to show a graphical waitbar to show load progress
+waitbarFlag = 0;        % flag to show a graphical mrvWaitbar to show load progress
 findPeaksFlag = 0;      % when computing amps, find peak period separately for each cond
 TR = trials.TR;
 
@@ -107,7 +107,7 @@ for i = 1:length(varargin)
             case 'snrconds', snrConds = varargin{i+1};
             case 'whichconds', whichconds=varargin{i+1};
             case 'plotampsmat',plotampsmat=varargin{i+1}; 
-            case 'waitbar', waitbarFlag = 1;
+            case 'mrvWaitbar', waitbarFlag = 1;
             case 'findpeaks', findPeaksFlag = 1;
             otherwise, % ignore
         end
@@ -280,7 +280,7 @@ if ~exist('Results')
 
 
 
-h = waitbar(0,'calculating voxel based statistics');
+h = mrvWaitbar(0,'calculating voxel based statistics');
 voxelhist=zeros(nConds,1);
 sigvoxels=zeros(nVoxels,nConds);
 pictspervoxel=zeros(nVoxels,1);
@@ -292,7 +292,7 @@ for j = 1:nConds
             voxelhist(j)=voxelhist(j)+1;
         end
     end
-    waitbar(j/nConds,h)
+    mrvWaitbar(j/nConds,h)
 end
 close(h)
 voxelhist=voxelhist/nVoxels;

@@ -49,7 +49,7 @@ nodeConnections = sparse(numNodes,numNodes);
 
 %% Fill the sparse matrix with stripList
 %
-h = waitbar(0,'Reading Edges from Stripped List');
+h = mrvWaitbar(0,'Reading Edges from Stripped List');
 for k=1:size(mesh.stripList,1),
   % Start at the 3rd vertex on the list, and build your triangles 
   % looking backwards.
@@ -73,7 +73,7 @@ for k=1:size(mesh.stripList,1),
       nodeConnections(vertex-2,vertex)=1;
       
       if ~mod(vertex,100)
-	waitbar(vertex/(mesh.triangleOffset-1));   
+	mrvWaitbar(vertex/(mesh.triangleOffset-1));   
       end
    end
 end
@@ -91,13 +91,13 @@ ptr = mesh.triangleOffset;
 
 %% Fill the sparse matrix with triangle
 %
-h = waitbar(0,'Reading Edges from Triangles');
+h = mrvWaitbar(0,'Reading Edges from Triangles');
 while ptr<size(vertices,1),
    nodeConnections(ptr,ptr+1)=1;nodeConnections(ptr,ptr+2)=1;nodeConnections(ptr+1,ptr+2)=1;
    nodeConnections(ptr+1,ptr)=1;nodeConnections(ptr+2,ptr)=1;nodeConnections(ptr+2,ptr+1)=1;
    ptr = ptr+3;   
    if ~mod(ptr,100)
-     waitbar(ptr/numNodes);   
+     mrvWaitbar(ptr/numNodes);   
    end
 end
 close(h);
@@ -111,7 +111,7 @@ close(h);
 %    themselves.  Let's clear up this logic and see why.
 %    
 tmp = nodeConnections;
-h = waitbar(0,'Removing redundant vertices from connections...');
+h = mrvWaitbar(0,'Removing redundant vertices from connections...');
 for k=1:length(uniqueVertices),
 
   % For each unique node, find rows of nodeConnections 
@@ -141,7 +141,7 @@ for k=1:length(uniqueVertices),
 
   % 
   if ~mod(k,100)
-    waitbar(k/length(nodeIdx));   
+    mrvWaitbar(k/length(nodeIdx));   
   end
 end
 close(h);

@@ -51,7 +51,7 @@ end
 
 %% load data from each model
 if verbose >= 1
-	h_wait = waitbar(0, 'Loading data from each model');
+	h_wait = mrvWaitbar(0, 'Loading data from each model');
 end
 
 for m = 1:length(modelList)
@@ -70,7 +70,7 @@ for m = 1:length(modelList)
 	% gum: first frame still has gradients firing up (artifact)...
 	M.tSeries{m}(1,:) = mean(M.tSeries{m}(2:end,:));
 	
-	if verbose >= 1, waitbar(m/length(modelList), h_wait);  end
+	if verbose >= 1, mrvWaitbar(m/length(modelList), h_wait);  end
 end
 
 if verbose >= 1

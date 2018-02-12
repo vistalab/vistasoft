@@ -105,9 +105,9 @@ for level = grayLevels
         flatIndices{h} = flatIndicesTmp(subNodes); 
 	end
 	
-    % Put up waitbar (progress for current gray level)
+    % Put up mrvWaitbar (progress for current gray level)
     waitMsg = sprintf('Transforming Parameter Maps, Gray Level %i...',level);
-	waitHandle = waitbar(0,waitMsg);
+	waitHandle = mrvWaitbar(0,waitMsg);
     
 	% Loop through the scans
 	for scan = selectedScans
@@ -115,7 +115,7 @@ for level = grayLevels
         
         % Loop through hemispheres
         for h=1:2
-            waitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
+            mrvWaitbar((h-1)/(2*length(selectedScans)) + (scan-1)/length(selectedScans));
             
             if ~isempty(gray.map{scan})
                 % Get the data corresponding to gray coords

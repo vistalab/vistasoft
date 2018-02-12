@@ -83,10 +83,10 @@ else
     map = cell(1,nScans);
 end
 
-% put up a waitbar, if consistent w/ VISTA 'verbose' preference
+% put up a mrvWaitbar, if consistent w/ VISTA 'verbose' preference
 verbose = prefsVerboseCheck;
 if verbose,
-	waitHandle = waitbar(0,'Interpolating Parameter Map.  Please wait...');
+	waitHandle = mrvWaitbar(0,'Interpolating Parameter Map.  Please wait...');
 end
 
 % Tranform gray coords to inplane functional coords. Previously, the code
@@ -100,7 +100,7 @@ coordsXformed = ip2volXformCoords(volume, inplane, true);
 % from the inplanes to the volume. For details, see ip2VolCorAnal
 %
 for curScan = selectedScans
-    if verbose, waitbar((curScan-1)/nScans);  end
+    if verbose, mrvWaitbar((curScan-1)/nScans);  end
 
     % rsFactor is assumed to be the same in all scans, so we do not need
     % this step. (see upSampleFactor)

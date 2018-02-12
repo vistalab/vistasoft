@@ -36,7 +36,7 @@ if ~exist('wMesh', 'var')
 end
 
 % Calculate gray graph for all nodes
-waitH = waitbar(0, 'Getting gray graph...');
+waitH = mrvWaitbar(0, 'Getting gray graph...');
 view = initHiddenGray;
 view = loadAnat(view);
 view.nodes = [view.allLeftNodes, view.allRightNodes];
@@ -74,9 +74,9 @@ L1Normals = L1Normals ./ repmat(nLength, [3 1]);
 nL1 = size(L1, 2);
 thickness = ones(1, nL1);
 maxThick = zeros(1, nL1);
-waitbar(0, waitH, 'Calculating thickness...');
+mrvWaitbar(0, waitH, 'Calculating thickness...');
 for iN=1:nL1
-  waitbar(iN/nL1, waitH);
+  mrvWaitbar(iN/nL1, waitH);
   cc = L1(:, iN);
   nn = L1Normals(:, iN);
   nInds = iN;
@@ -98,7 +98,7 @@ for iN=1:nL1
   maxThick(iN) = max(layers(nInds));
 end
 
-waitbar(1, waitH, 'Saving thickness results...')
+mrvWaitbar(1, waitH, 'Saving thickness results...')
 fName = fullfile(vPath, 'thickness.mat');
 save(fName, 'thickness');
 

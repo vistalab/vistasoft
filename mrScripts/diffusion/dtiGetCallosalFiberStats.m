@@ -50,7 +50,7 @@ end
 ccRoi = dtiReadRoi(fullfile(roiDir,'CC'));
 minDist = 0.87;
 
-h = waitbar(0,'Processing fibers...');
+h = mrvWaitbar(0,'Processing fibers...');
 msCoords = [];
 for(ii=1:nFg)
     fiberCoords{ii} = [];
@@ -73,7 +73,7 @@ for(ii=1:nFg)
             end
         end
     end
-    waitbar(ii/nFg,h);
+    mrvWaitbar(ii/nFg,h);
 end
 close(h);
 figure; subplot(2,1,1);

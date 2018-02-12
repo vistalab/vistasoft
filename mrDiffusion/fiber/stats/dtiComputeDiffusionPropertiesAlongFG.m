@@ -18,8 +18,9 @@ function [fa, md, rd, ad, cl, SuperFiber, fgClipped, cp, cs, fgResampled] = ...
 %       roi1          - first ROI for the fg
 %       roi2          - second ROI for the fg
 %       numberOfNodes - number of samples taken along each fg
-%       dFallOff      - rate of fall off in weight with distance. More
-%                       comments here.
+%       dFallOff      - rate of fall off in weight with distance. This can
+%                       also be 'mean' or 'median' which will not do a 
+%                       weighted avg.
 %
 % OUTPUTS:
 %       fa         - Weighted fractional anisotropy

@@ -107,7 +107,7 @@ end
 
 % Double loop through slices and scans in scanList
 nSlices = length(sliceList(vw,scanList(1)));
-wbar = waitbar(0,'Copying tseries...');
+wbar = mrvWaitbar(0,'Copying tseries...');
 nTseries = newScanNum*nSlices;
 for  iScan = 1:length(newScanRange)
     % For each scan... copy the tseries.
@@ -119,7 +119,7 @@ for  iScan = 1:length(newScanRange)
         tSeries = loadtSeries(vw, scanList(iScan), iSlice);
         dimNum = numel(size(tSeries));
         tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries);
-        waitbar((nSlices*(iScan-1) + iSlice)/nTseries,wbar)
+        mrvWaitbar((nSlices*(iScan-1) + iSlice)/nTseries,wbar)
     end
     
     if dimNum == 3

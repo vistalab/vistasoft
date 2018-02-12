@@ -36,7 +36,7 @@ function [vw, ok] = loadParameterMap(vw, mapPath)
 % when loading a .mat file as parameter map). This resulted in the slider not
 % displaying the full range of values. 
 if ~exist('mapPath','var')
-    mapPath = getPathStrDialog(dataDir(vw),'Choose parameter map file name',{'*.mat'; '*.nii';'*.nii.gz'});
+    mapPath = getPathStrDialog(dataDir(vw),'Choose parameter map file name',{'*.mat; *.nii; *.nii.gz'});
     if isempty(mapPath), ok = false; return; end
 end
 
@@ -85,8 +85,14 @@ if strcmp(extension, '.nii') || strcmp(extension,'.gz')
             nii = niftiApplyAndCreateXform(nii,'Inplane');
             
             
-            % Set the data into the view structure
-            mapData = {niftiGet(nii,'Data')};
+            % Set the data into the view structure, converting a 4D array
+            % into a cell array of 3D arrays
+            niData = niftiGet(nii,'Data');
+            n = size(niData,4);
+            mapData = cell(1,n);
+            for ii = 1:n
+                mapData{ii} = niData(:,:,:,ii);
+            end
             vw = viewSet(vw, 'map', mapData);
             
             % To deal with with the double-extension in .nii.gz files
