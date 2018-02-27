@@ -30,9 +30,26 @@ frameRate      = viewGet(vw, 'frame rate', scan);
 framesToUse    = viewGet(vw, 'frames to use', scan);
 nFrames        =length(framesToUse);
 framesPerCycle = nFrames/nCycles;
+tScan          = (0:nFrames-1)*frameRate;
+
+% If we don't have an integer number of data points per cycle, then
+%   resample the data
+if isinteger(framesPerCycle)
+    resample = false;    
+    tCycle = tScan(1:framesPerCycle+1);
+    
+else   
+    resample = true;
+    
+    framesPerCycle      = round(framesPerCycle);
+    nFrames             = framesPerCycle * nCycles;
+    resampledT          = linspace(0,max(tScan), nFrames); 
+    tCycle              = resampledT(1:framesPerCycle+1);
+
+end
 
 % Select ROIs
-[selectedROIs nROIs] = roiGetList(vw, ROIlist);
+[selectedROIs, nROIs] = roiGetList(vw, ROIlist);
 
 % Get coords
 ROIcoords = cell(1,nROIs);
@@ -49,12 +66,22 @@ end
 %Compute the average single cycle
 for r=1:nROIs
 	tSeries                     = meanTSeriesForPlotting(vw, selectedROIs(r));
-    multiCycle{r}               = reshape(tSeries{1}(framesToUse),nFrames/nCycles,nCycles);
-    singleCycle{r}              = mean(multiCycle{r},2);
-    singleCycleStdErr{r}        = (std(multiCycle{r}, [], 2)/sqrt(nCycles));
+    
+    if resample
+        resampledTSeries        = interp1(tScan, tSeries{1}(framesToUse), resampledT);
+        multiCycle              = reshape(resampledTSeries,nFrames/nCycles,nCycles);
+        
+    else
+        multiCycle              = reshape(tSeries{1}(framesToUse),nFrames/nCycles,nCycles);
+    end
+
+    singleCycle{r}              = mean(multiCycle,2);
+    singleCycleStdErr{r}        = (std(multiCycle, [], 2)/sqrt(nCycles));
     singleCycle{r}(end+1)       = singleCycle{r}(1);
     singleCycleStdErr{r}(end+1) = singleCycleStdErr{r}(1);
+        
 end
+
 framesPerCycle=framesPerCycle+1;
 
 % Plotting section 
@@ -62,14 +89,13 @@ newGraphWin;
 hold on
 
 fontSize = 14; 
-t = linspace(0,(framesPerCycle-1)*frameRate,framesPerCycle)';
 
 % ROIname = view.ROIs(view.selectedROI).name;
 % headerStr = ['Mean Cycle, ROI ',ROIname,', scan ',num2str(scan)];
 
 % set(gcf,'Name',headerStr);
 for r=1:nROIs
-    hh = errorbar(t,singleCycle{r},singleCycleStdErr{r});    
+    hh = errorbar(tCycle,singleCycle{r},singleCycleStdErr{r});    
     
     % set the line color to be the same as the ROI color
     set(hh,'Color',vw.ROIs(selectedROIs(r)).color);
@@ -98,7 +124,7 @@ set(gca,'XLim',[0,framesPerCycle*frameRate]);
 grid on
 
 %Save the data in gca('UserData')
-data.x = t;
+data.x = tCycle;
 data.y = singleCycle;
 data.e = singleCycleStdErr;
 set(gca,'UserData',data);
