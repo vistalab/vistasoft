@@ -10,6 +10,7 @@
 % the ernie pRF directory is built up from raw files.  is part of a
 % sequence. For the latter, run the following sequence
 % of tutorials
+%
 %   t_initAnatomyFromFreesurfer
 %   t_meshFromFreesurfer 
 %   t_initVistaSession
@@ -102,13 +103,13 @@ vw  = loadParameterMap(vw, mapNames{idx});
 % Get the whole parameter map
 parameterMap = viewGet(vw, 'scanmap', 1);
 
+n = viewGet(vw, 'num ROIs');
 
 figHdl = mrvNewGraphWin('Polar angle map','wide');
 subplot(1, n+1,1);
 histogram(parameterMap(parameterMap>0)); xlim([0 180])
 title('Entire parameter map')
 
-n = viewGet(vw, 'num ROIs');
 
 for ii = 1:n
     subplot(1,n+1,ii+1);
