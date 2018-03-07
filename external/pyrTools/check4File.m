@@ -37,7 +37,7 @@ if notDefined('format'), [~,~,format] = fileparts(filename); end
 if isempty(format), format = '.mat'; end    
 
 % Add the .mat extension if it isn't passed in
-if ~contains(lower(filename), format)
+if isempty(strfind(filename, format))
     filename = [filename format];
 end
 
@@ -45,7 +45,7 @@ end
 %  Otherwise, preappend './'.  This is to stop Matlab
 %  from finding files with the same name elsewhere on the path.
 %
-if isempty(findstr(filename,'/')) && isempty(findstr(filename,'\'))
+if isempty(strfind(filename,'/')) && isempty(strfind(filename,'\'))
     filename = ['./' filename];
 end
 
