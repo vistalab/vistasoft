@@ -37,7 +37,7 @@ if notDefined('hemi'), hemi = 'b'; end
 if notDefined('surfaces'), surfaces = {'white' 'pial' 'sphere' 'inflated'}; end
 
 % open a hidden view to determine location to store meshes
-vw = initHiddenInplane;
+%vw = initHiddenInplane;
 
 % Check for subject directory
 if exist(subjid, 'dir')
@@ -93,8 +93,11 @@ for h = 1:length(hs)
         msh.vertices = msh1.vertices;
         msh.name = msh1.name;        
         
-        savepth = viewGet(vw, 'MeshDir', hs(h).vista); 
-        if ~exist(savepth), mkdir(savepth); end
+        % Previously, we looked up the mesh directory stored in the mrVista
+        %   view structure. 
+        % savepth = viewGet(vw, 'MeshDir', hs(h).vista);
+        savepth = fullfile('3DAnatomy', hs(h).vista, '3DMeshes'); 
+        if ~exist(savepth, 'dir'), mkdir(savepth); end
         fname = fullfile(savepth, msh.name);
         save(fname, 'msh')
         
