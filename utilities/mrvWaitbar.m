@@ -17,6 +17,7 @@ function fout = mrvWaitbar(x,varargin)
 %
 % NYU vista team 2017
 
+if ~ispref('VISTA'), setpref('VISTA', 'verbose', false); end
 verbose = getpref('VISTA', 'verbose');
 
 % The way we call waitbar depends on whether there are extra input
