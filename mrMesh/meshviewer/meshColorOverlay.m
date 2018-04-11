@@ -1,4 +1,4 @@
-function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors] = meshColorOverlay(vw,showData,dataOverlayScale,dataThreshold)
+function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors, dataOverlay] = meshColorOverlay(vw,showData,dataOverlayScale,dataThreshold)
 % Compute and possibly show color overlays in the mrMesh Window.
 %
 %  [vw, dataMask,dataMaskIndices,newColors] = ...

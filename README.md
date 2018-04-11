@@ -28,6 +28,7 @@ And in addition:
 ### External dependencies
 Vistasoft depends on the following packages:
 - [Matlab](http://mathworks.com)
+  - The code has been validated for Matlab 2014b (8.4) - Matlab 2017b (9.3)
 - [SPM](http://www.fil.ion.ucl.ac.uk/spm/)
 
 ### Optional Packages
