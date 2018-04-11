@@ -72,7 +72,8 @@ switch modelName,
 
         % scalefactor
         beta = rmCoordsGet(view.viewType, model, 'b', coords);
-        beta = beta([1 dcid+1]);
+        % beta = beta([1 dcid+1]);
+        beta = beta([1 dcid+1])';
 
         prediction = [pred trends(:,dcid)] * beta;
         RFs        = RFs .* (beta(1) .* params.analysis.HrfMaxResponse);
@@ -91,6 +92,7 @@ switch modelName,
             rfParams(:,3), rfParams(:,3), 0, rfParams(:,1), rfParams(:,2));
 
         % make predictions
+        % replace nans with 0 so that the pinv code does not error out
         pred = params.analysis.allstimimages * RFs;
 
         % scalefactor
@@ -116,7 +118,7 @@ switch modelName,
         numCoords = size(coords,2);
 
         % recompute the fit
-        recompFit = 1; 
+        recompFit = 0; 
 
         % % get variance explained
         % varexp = rmCoordsGet(viewType, model, 'varexp', coords);
@@ -137,6 +139,9 @@ switch modelName,
         % rfParams 
         % get RF parameters from the model
         % rfParams = rmPlotGUI_getRFParams(model, modelName, viewType, coords, params)
+        % rfParams = ff_rfParams(model, params, coords); % RLE function
+        numCoords = size(coords,2); 
+
         rfParams = zeros(numCoords,8);
         rfParams(:,1) =  rmCoordsGet(viewType, model, 'x0', coords);        % x coordinate (in deg)        
         rfParams(:,2) =  rmCoordsGet(viewType, model, 'y0', coords);        % y coordinate (in deg)        
@@ -144,9 +149,8 @@ switch modelName,
         rfParams(:,6) =  rmCoordsGet(viewType, model, 'sigmatheta',coords); % sigma theta (0 unless we have anisotropic Gaussians)
         rfParams(:,7) =  rmCoordsGet(viewType, model, 'exponent'  ,coords); % pRF exponent
         rfParams(:,8) =  rmCoordsGet(viewType, model, 'bcomp1',    coords); % gain ?                      
-        rfParams(:,5) =  rfParams(:,3) ./ sqrt(rfParams(:,7));              % sigma adjusted by exponent (not for calculations - just for diplay)
-
-
+        rfParams(:,5) =  rfParams(:,3) ./ sqrt(rfParams(:,7));              % sigma adjusted by exponent 
+  
         % RFs
         % RFs = rmPlotGUI_makeRFs(modelName, rfParams, params.analysis.X, params.analysis.Y);
         RFs = rfGaussian2d(params.analysis.X, params.analysis.Y, rfParams(:,3), rfParams(:,3), rfParams(:,6), rfParams(:,1), rfParams(:,2));
@@ -166,6 +170,7 @@ switch modelName,
         predFirstHalf = (params.analysis.allstimimages_unconvolved * RFs); 
         exponentVector = rfParams(:,7)'; 
         pred = bsxfun(@power, predFirstHalf, exponentVector); 
+        pred(:, varexp == 0) = 0; 
 
         % reconvolve with hRF
         for scan = 1:length(params.stim)
@@ -173,24 +178,21 @@ switch modelName,
             hrf = params.analysis.Hrf{scan};
             pred(these_time_points,:) = filter(hrf, 1, pred(these_time_points,:));
         end
-
-        % tSeries
-        % get this so that we can recompute the fit
-        [tSeriesCell, ~] = getTseriesOneROI(view,coords,[], 0, 0 );
-        tSeries = tSeriesCell{1}; 
-        clear tSeriesCell;
-
+        
         % betas
-        if recompFit
-            % beta = pinv([pred trends(:,dcid)])*M.tSeries(:,voxel);    % original line
-            % beta(1) = max(beta(1),0);                                 % original line
-            beta = pinv([pred trends(:,dcid)])*tSeries;                 % this is size (numCoords+1) x (numCoords)
-            beta(1,:) = max(beta(1,:), 0);
-        else
-            beta = rmCoordsGet(viewType, model, 'b', coords);
-            beta = beta([1 dcid+1])';              
-        end
+        beta = rmCoordsGet(viewType, model, 'b', coords);
+        beta = beta(:,[1 dcid+1])';  % beta = beta([1 dcid+1])'; % original line
+        
+        % pred is a nFrames x numCoords matrix
+        % beta is a 2 x numCoords matrix
+        % the first column tells you how much to scale the tseries by
+        % for each coord. the 2nd column tells you how much to add to
+        % each point of the scaled time series
+        predictionScale =  bsxfun(@times, pred, beta(1,:));
+        predictionShift = trends(:,dcid) * beta(2,:); 
+        prediction = predictionScale + predictionShift; 
 
+        
         % update rfParams with beta
         % though actually it doesn't affect the predicted tseries anymore ...
         % rfParams is numCoords x 8 ... so fill in the 4th column with the first
@@ -198,13 +200,13 @@ switch modelName,
         % rfParams(4) = beta(1);  % original line. for 1 coord, beta is size 2 x 1
         rfParams(:,4) = beta(1,:)';
 
-        % prediction
-        prediction = [pred trends(:,dcid)] * beta;
+        % prediction -- DIFFERENT FOR RECOMPFIT PARAMETERS
+        % prediction = [pred trends(:,dcid)] * beta;
 
         % convert
         % Convert to percent signal specified in the model, and we do not recompute
         % fit (if we recompute fit, the prediction will already be in % signal)
-        if params.analysis.calcPC && ~recompFit
+        if params.analysis.calcPC 
             % Only do this if the prediction is not already in % signal. We check
             % whether the signal is in % signal. If it is the mean should be
             % near-zero. So: 
@@ -213,23 +215,7 @@ switch modelName,
                 prediction  = raw2pc(prediction);
             end
         end
-
-        % recompute variance explained (do we need to do this?)
-        if recompFit==1
-            rss = sum((tSeries-prediction).^2);
-            rawrss = sum(tSeries.^2);
-        else
-            rss = rmCoordsGet(viewType, model, 'rss', coords);
-            rawrss = rmCoordsGet(viewType, model, 'rawrss', coords);
-        end
-
-        % sometimes rawss > rss. This can happen when the pRF is empty, and the
-        % prediction is just the trend: the trend doesn't actually help always.
-        % in this case, the varexp is zero, not negative:
-        varexp = max(1 - rss./rawrss, 0);
-        % varexp = 1 - rss ./ rawrss;
-        % ---------------------------------------------------------------
-
+        
     otherwise,
         error('Unknown modelName: %s',modelName{modelId});
 end;
