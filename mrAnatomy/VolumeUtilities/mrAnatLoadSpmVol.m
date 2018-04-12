@@ -29,11 +29,7 @@ elseif(isstruct(fname)&&isfield(fname,'nifti_type'))
         elseif(strcmp(type,'double')), type = 'float64'; end
         type = spm_type(type);
     end
-    if(strcmp(spm('Ver'),'SPM2'))
-        V.dim = [V.dim type];
-    else
-        V.dt = [type 0];
-    end
+    V.dt = [type 0];
     V.dat = fname.data;
     if(makeUint8 && ~strcmp(class(V.dat),'uint8'))
         V.dat = double(V.dat);
