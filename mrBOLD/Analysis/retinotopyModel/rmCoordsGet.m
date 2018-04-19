@@ -1,4 +1,4 @@
-function val = rmCoordsGet(viewType, model, param, coords)
+function [val, subCoords] = rmCoordsGet(viewType, model, param, coords)
 % rmCoordsGet - wrapper for rmGet to limit values to certain coordinates
 %
 % val = rmCoordsGet(viewType, model, param, coords)
@@ -10,6 +10,8 @@ function val = rmCoordsGet(viewType, model, param, coords)
 % substantially reducing its memory footprint.
 % 2009/01 RAS: allows the coords variable for gray views to be a 3xN list
 % of coordinates, in addition to a vector of gray node indices.
+% 2018/02 RKL: returns the coords as the 2nd output. because they will be a
+% subset of the coords that are inputed
 if ~exist('viewType','var') || isempty(viewType),   error('Need view type'); end;
 if ~exist('model','var')    || isempty(model),      error('Need model');     end;
 if ~exist('param','var')    || isempty(param),      error('Need param');     end;
@@ -76,7 +78,8 @@ switch lower(viewType),
         % indices:
         if size(coords, 1)==3
             % 3xN coords specification: remap into indices
-            allCoords = viewGet(getSelectedGray, 'coords');
+            vw = getSelectedGray; 
+            allCoords = viewGet(vw, 'coords');
             [subCoords coords] = intersectCols(allCoords, coords); %#ok<ASGLU>
         end
         

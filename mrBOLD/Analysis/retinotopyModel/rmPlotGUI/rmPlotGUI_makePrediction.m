@@ -201,6 +201,8 @@ switch modelName,
         RFs        = RFs .* (beta(1) .* M.params.analysis.HrfMaxResponse);
         
         rfParams(4) = beta(1);
+        
+        
                   
    otherwise,
         error('Unknown modelName: %s', modelName);

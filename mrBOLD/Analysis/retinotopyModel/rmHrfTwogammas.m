@@ -35,9 +35,9 @@ function [h]=rmHrfTwogammas(t,params)
 % 2.11.2011 JW: Cropped out of rfConvolveTC and made into a separate function 
 
 % If no HRF parameters input, use defauls
-if nargin < 2 || isempty(params), 
+if nargin < 2 || isempty(params) 
     params = [5.4 5.2 10.8 7.35 0.35];
-end;
+end
 
 % params
 peak1 = params(1);
@@ -47,11 +47,11 @@ fwhm2 = params(4);
 dip   = params(5);
 
 % sanity check
-if(peak1 == 0 || fwhm1 ==0),
+if(peak1 == 0 || fwhm1 ==0)
     fprintf('[%s]: zero params',mfilename);
     params, %#ok<NOPRT>
     return;
-end;
+end
 
 % Taylor:
 alpha1=peak1^2/fwhm1^2*8*log(2);
