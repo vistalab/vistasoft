@@ -1,19 +1,32 @@
 function params = rmMakeStimulus(params, keepAllPoints)
 % rmMakeStimulus - make stimulus sequence
 %
-% params = rmMakeStimulus(params, [keepAllPoints=0]);
+%   params = rmMakeStimulus(params, [keepAllPoints=0]);
 %
-% This program makes the stimulus sequence for each stimulus.
-% This will be used to predict the response profiles of certain
-% receptive fields: response = pRF.*stim (rmMakePrediction)
+% Description
+%   Makes the stimulus sequence that was used to collect the BOLD pRF
+%   data. The stimulus times the pRF predicts the responses
 %
-% keepAllPoints is an optional flag specifying whether or not to restrict
-% the stimulus representations to the set of pixels for which a stimulus
-% was shown. This step is important for solving the pRF model: the logic is
-% that if no stimulus was ever shown at a particular pixel, there can be no
-% way the data can distinguish whether the pRF should cover that position.
-% Removing the un-stimulated pixels when vectorizing the stimulus fields
-% makes the process much more efficient.
+%     response = pRF.*stim   % (see rmMakePrediction)
+%
+% Inputs:
+%
+%  params:  A cell array of the parameters used to create the stimulus.
+%           The command to generate the stimulus from params is this:
+%
+%      eval(['make' params.stim(n).stimType '(params,',num2str(n),');']);
+%          
+% Optional:
+%
+% keepAllPoints: Specifies whether or not to restrict the stimulus
+%                representations to the set of pixels for which a
+%                stimulus was shown. This step is important 
+%                for solving the pRF model: the logic is that if no
+%                stimulus was ever shown at a particular pixel, there
+%                can be no way the data can distinguish whether the
+%                pRF should cover that position.  Removing the
+%                un-stimulated pixels when vectorizing the stimulus
+%                fields makes the process much more efficient.
 %
 % However, the RM params and stimulus representations are now used for
 % other purposes than solving the model. For these purposes, restricting
@@ -24,7 +37,16 @@ function params = rmMakeStimulus(params, keepAllPoints)
 % sampled points are lost.)
 %
 % 12/2005 SOD: wrote it.
-if notDefined('keepAllPoints'),	
+%
+% See also
+%  
+
+% Examples:
+%{
+
+%}
+
+if notDefined('keepAllPoints')
     if isfield(params.analysis,'keepAllPoints')
         keepAllPoints = params.analysis.keepAllPoints;
     else
@@ -36,31 +58,28 @@ end
 % Allow different stimuli. Stimulus parameters are defined as
 % params{stim}.m and the programs to make them are saved as
 % make{stim}.m thus to make them simply do:
-% eval(['make' params.stim(n).stimType '(params,',num2str(n),');']);
+%
+%   eval(['make' params.stim(n).stimType '(params,',num2str(n),');']);
 %
 % In order to speed things up we need to limit the representation of the
 % stimulus (square matrix) to those points that fall within the stimulus
 % window (non square - mostly circular). For a circle stimulus this will be
 % about 25%. This will be done for (a) the stimulus, (b) the grid used to
 % make the pRFs.
-% A further speed improvement can be achieved by convolving with the Hrf
-% now time since we do it once for the stimulus rather than for *every*
-% prediction. The end result it the same because it is linear: we can do
-% images*Hrf*(pRF loop) instead of the conceptual order of images*(pRF
-% loop)*Hrf.
+%
 %-------------------
 
-% calculate wich points are in the stimulus window (of any of the stimulus
-% sequences)
-for n=1:numel(params.stim),
+% calculate the points within the stimulus window (of any of the
+% stimulus sequences)
+for n=1:numel(params.stim)
     params = eval(['make' params.stim(n).stimType '(params,',num2str(n),');']);
-    if n==1,
+    if n==1
         params.stim(1).stimwindow = nansum(params.stim(n).images,2);
     else
         params.stim(1).stimwindow =  params.stim(1).stimwindow + ...
             nansum(params.stim(n).images,2);
     end
-end;
+end
 
 if keepAllPoints
 	% mark all pixels as pixels to keep
@@ -73,24 +92,27 @@ else
 end
 
 %-------------------
-% Now only keep points within stimulus window and convolve with the Hrf.
-% Convolving with the Hrf now saves time since we do it once for the
-% stimulus rather than for *every* prediction. The end result it the same
-% because it is linear: we can do images*Hrf*pRF instead of the conceptual
-% order of images*pRF*Hrf.
+% A speed improvement is achieved by convolving the stimulus with the
+% Hrf only one time rather than for *every* prediction. The end result
+% it the same because it is linear: we can do images*Hrf*(pRF loop)
+% instead of the conceptual order of images*(pRF loop)*Hrf.
+%
+% We only keep points within stimulus window and convolve with the
+% Hrf. 
+%
 % Because we convolve with the Hrf we don't need the initial
-% time-frames any more and we can time average too.
-% lastly we create one all-stimulus set of images.
+% time-frames any more and we can time average too. lastly we create
+% one all-stimulus set of images.
 %
 % Now if we want to the output amplitude (beta) to be in
-% %BOLD/degree2. Then a convenient place to do that is here. We
-% need to take into account the sampling of the stimulus. Thus, if
-% we want 1degree2 of stimulus to yield 1 %BOLD signal change
+% percent-BOLD/deg^2. Then a convenient place to do that is here. We
+% need to take into account the sampling of the stimulus. Thus, if we
+% want 1 deg^2 of stimulus to yield 1 percent-BOLD signal change
 % (volume - not amplitude) we need to scale the original binary
 % stimulus sequence by the sample rate: images*samplerate
 %-------------------
 keep = params.stim(1).instimwindow;
-for n=1:length(params.stim),
+for n=1:length(params.stim)
     % keep image points within stimulus window
     params.stim(n).images   = params.stim(n).images(keep,:);
     
@@ -134,7 +156,7 @@ for n=1:length(params.stim),
     params.stim(n).scan_number = n*ones(1, size(params.stim(n).images_unconvolved, 2));
     %*********************************************************************
     
-end;
+end
 
 % matrix with all the different stimulus images.
 params.analysis.allstimimages = [params.stim(:).images]';
@@ -143,15 +165,12 @@ params.analysis.scan_number    = [params.stim(:).scan_number]';
 
 % the stimulus generation file can specify nuisance factors (e.g. large
 % fixation changes) that should be removed from the data.
-if isfield(params.stim,'nuisance'),
+if isfield(params.stim,'nuisance')
     params.analysis.allnuisance = [params.stim(:).nuisance]';
 end
 
-% we don't really need to keep the individual stimuli, we should
-% really incorporate that in the previous loop but let's just see
-% if our assumption is true (2006/07). Well it is true, but we
-% still might want to keep this so we can later visualize what the
-% stimulus was and how it was defined.
+% Use this code if you might want to visualize what the stimulus was
+% and how it was defined.
 %for n=1:length(params.stim),
 %    params.stim(n).images = [];
 %end;
@@ -168,7 +187,6 @@ end
 params.analysis.X = params.analysis.X(keep);
 params.analysis.Y = params.analysis.Y(keep);
 
-
 % Correct for off-center (real or simulated) fixation. This is not necesary
 % for 1 Gaussian models (easier and more flexible to do afterwards), but is
 % required for more complex models that are mirrored around central axes.
@@ -182,5 +200,5 @@ if isfield(params.analysis,'fixationCorrection')
     params.analysis.Y = params.analysis.Y + params.analysis.fixationCorrection(2);
 end
 
-return;
+end
 
