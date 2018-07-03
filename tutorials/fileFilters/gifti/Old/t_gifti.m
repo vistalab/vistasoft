@@ -20,11 +20,22 @@
 %
 % (c) Stanford VISTA Team 
 
-%%  Set the vista data path and change into the gifti data directory
-% vistaDataPath
-chdir(fullfile(mrvDataRootPath,'gifti','BV_GIFTI','Base64'));
+%%  Download from the Remote Data TOolbox directory two gifti files
+fullFolderName = fullfile(vistaRootPath,'local');
+rdt = RdtClient('vistasoft');
+rdt.crp('/vistadata/gifti/BV_GIFTI/Base64'); 
+a = rdt.listArtifacts('print',true);
+rdt.readArtifact(a(4),'destinationFolder',fullFolderName);
+rdt.readArtifact(a(3),'destinationFolder',fullFolderName);
+
+chdir(fullFolderName);
 
 %% 1. Run through the gifti team example
+
+% This failed on my Mac with the SPM12 version of gitfi.
+% I went to Flandin's github repository and downloaded 
+% https://github.com/nno/matlab_GIfTI
+% That gifti read worked.
 g = gifti('sujet01_Lwhite.surf.gii');
 
 % Blue shaded
@@ -45,6 +56,8 @@ figure; h = plot(g,gg);
 % by dtiquery as part of the visualization.
 %
 % We haven't yet figured out about loading the fibers properly.
+
+% TODO - Change to downloading from RDT
 
 % Read the anatomical.  We will use the transform in qto_xyz for
 % coregistering.

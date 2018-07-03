@@ -42,6 +42,14 @@ function dataDir = mrtInstallSampleData(sourceFolder, projectName, ...
 % See also:
 %   MRVTEST
 
+% Examples:
+%{
+  srcFolder = 'anatomy';
+  project = 'anatomyNIFTI';
+  dFolder = fullfile(vistaRootPath,'local');
+  mrtInstallSampleData('anatomy','anatomyNIFTI',dFolder);
+
+%}
 % Check inputs
 if notDefined('forceOverwrite'), forceOverwrite = true; end
 if notDefined('dFolder'), dFolder = fullfile(vistaRootPath, 'local'); end
