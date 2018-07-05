@@ -9,18 +9,23 @@
 %  t_meshCreate, t_gifti
 %
 
-%% Make sure vistadata is on your path
+%% Think about data and directories
 
-rdt = RdtClient('vistasoft');
-rdt.crp('/vistadata/anatomy/anatomyNIFTI');
-a = rdt.listArtifacts('print',true);
 fullFolderName = fullfile(vistaRootPath,'local');
-fName = rdt.readArtifact('t1_class.nii','type','gz','destinationFolder',fullFolderName);
+
+%{
+  % If you don't have the data already, run this
+  rdt = RdtClient('vistasoft');
+  rdt.crp('/vistadata/anatomy/anatomyNIFTI');
+  fName = rdt.readArtifact('t1_class.nii','type','gz','destinationFolder',fullFolderName);
+%}
+
+fName = fullfile(vistaRootPath,'local','t1_class.nii.gz');
 
 %% Run the build code
 msh = meshBuildFromClass(fName,[],'left');
 msh = meshSmooth(msh);
-% msh = meshColor(msh);
+msh = meshColor(msh);
 
 % Visualize the coarse, unshaded mesh
 meshVisualize(msh);
