@@ -22,25 +22,48 @@
 %
 % (c) Stanford VISTA Team 
 
+% Help:
+%
+%{
+% If you need to download the gii files, you can use this
+ rdt = RdtClient('vistasoft');
+
+ rdt.crp('/vistadata/gifti/BV_GIFTI/Base64'); 
+ % a = rdt.listArtifacts('print',true);
+
+ % Download the two test files.
+ fullFolderName = fullfile(vistaRootPath,'local');
+ surfFile = rdt.readArtifact('sujet01_Lwhite.surf',...
+    'type','gii',...
+    'destinationFolder',fullFolderName);
+
+ shapeFile = rdt.readArtifact('sujet01_Lwhite.shape',...
+    'type','gii',...
+    'destinationFolder',fullFolderName);
+%}
+
 %%  Set the vista data path and change into the gifti data directory
-% vistaDataPath
-% chdir(fullfile(mrvDataRootPath,'gifti','BV_GIFTI','Base64'));
+
 chdir(fullfile(vistaRootPath,'local'));
 
 %% 1. Run through the gifti team example
 if exist('sujet01_Lwhite.surf.gii','file')
     g = gifti('sujet01_Lwhite.surf.gii');
 else
-    error('FIle not found.');
+    error('File not found.  See comment help');
 end
-
 
 % Blue shaded
 mrvNewGraphWin; plot(g);  
 
 % The color overlay values are determined by an color map and a single
 % scaling (I think).
-gg = gifti('sujet01_Lwhite.shape.gii');
+if exist('sujet01_Lwhite.shape.gii','file')
+    gg = gifti('sujet01_Lwhite.shape.gii');
+else
+    error('File not found.  See comment help');
+end
+
 mrvNewGraphWin; h = plot(g,gg);
 
 
@@ -56,15 +79,24 @@ mrvNewGraphWin; h = plot(g,gg);
 
 % Read the anatomical.  We will use the transform in qto_xyz for
 % coregistering.
-niT1File = fullfile(mrvDataRootPath,'anatomy','T1andMesh','t1.nii.gz');
+
+% Help
+%{
+ % If youi need to download the nifti files, use this
+ rdt.crp('/vistadata/anatomy/T1andMesh'); 
+ niT1File = rdt.readArtifact('t1.nii',...
+    'type','gz',...
+    'destinationFolder',fullFolderName);
+%}
+
 niT1 = niftiRead(niT1File);
 
 % In this example, we produce the gifti data from an itkGray segmentation.
 % The class file with gray identified is written by mrgSaveClassWithGray.
 % That routine reads the itkGray class file, grows gray matter separately
 % for left and right, and saves the output.
-niCFile = fullfile(mrvDataRootPath,'anatomy','T1andMesh','t1_class_5GrayLayers.nii.gz');
 niClass = niftiRead(niCFile);
+
 Ds = uint8(niClass.data);
 
 % These are the ITKGRAY class labels
@@ -84,7 +116,8 @@ Ds(Ds == 6) = 0;    % right gray
 % unique(Ds(:))
 
 % showMontage(double(Ds))
-g = gifti(isosurface(Ds,4));  % Matlab finds the gray/white boundary
+% Matlab finds the boundary between left white (3) and left gray (5)
+g = gifti(isosurface(Ds,4));  
 
 % Set the flag to indicate this is a left hemisphere.  This was explained
 % to me in an email from the author.
@@ -98,7 +131,10 @@ g.mat = niT1.qto_xyz([2 1 3 4],:);
 
 % Safe the GIFTI mesh
 save(g,'left_gifti.gii');
-% g = gifti('left_gifti.gii'); mrvNewGraphWin; h = plot(g); axis on; grid on
+
+% Show what we did.
+g = gifti('left_gifti.gii'); mrvNewGraphWin; 
+h = plot(g); axis on; grid on
 
 %% Build the right gifti mesh.
 

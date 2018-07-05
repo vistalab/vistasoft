@@ -11,17 +11,13 @@
 
 %% Make sure vistadata is on your path
 
-fullFolderName = fullfile(vistaRootPath,'local');
 rdt = RdtClient('vistasoft');
 rdt.crp('/vistadata/anatomy/anatomyNIFTI');
 a = rdt.listArtifacts('print',true);
+fullFolderName = fullfile(vistaRootPath,'local');
+fName = rdt.readArtifact('t1_class.nii','type','gz','destinationFolder',fullFolderName);
 
-remoteArtifact = '/vistadata/anatomy/anatomyNIFTI/t1_class.nii';
-fName = rdt.readArtifact(a(5),'destinationFolder',fullFolderName);
-% Why doesn't this work?
-% rdt.readArtifact(remoteArtifact,'destinationFolder',fullFolderName);
-
-% Run the build code
+%% Run the build code
 msh = meshBuildFromClass(fName,[],'left');
 msh = meshSmooth(msh);
 % msh = meshColor(msh);

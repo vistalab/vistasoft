@@ -31,4 +31,4 @@ rd.crp('/vistadata/validate/');
 % Retrieve the data
 validationData = rd.readArtifact(validationDataSet);
 
-return
+end

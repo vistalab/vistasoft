@@ -21,14 +21,24 @@
 % (c) Stanford VISTA Team 
 
 %%  Download from the Remote Data TOolbox directory two gifti files
-fullFolderName = fullfile(vistaRootPath,'local');
-rdt = RdtClient('vistasoft');
-rdt.crp('/vistadata/gifti/BV_GIFTI/Base64'); 
-a = rdt.listArtifacts('print',true);
-rdt.readArtifact(a(4),'destinationFolder',fullFolderName);
-rdt.readArtifact(a(3),'destinationFolder',fullFolderName);
 
-chdir(fullFolderName);
+rdt = RdtClient('vistasoft');
+
+%%
+rdt.crp('/vistadata/gifti/BV_GIFTI/Base64'); 
+% a = rdt.listArtifacts('print',true);
+
+% Download the two test files.
+fullFolderName = fullfile(vistaRootPath,'local');
+surfFile = rdt.readArtifact('sujet01_Lwhite.surf',...
+    'type','gii',...
+    'destinationFolder',fullFolderName);
+
+shapeFile = rdt.readArtifact('sujet01_Lwhite.shape',...
+    'type','gii',...
+    'destinationFolder',fullFolderName);
+
+% chdir(fullFolderName);
 
 %% 1. Run through the gifti team example
 
@@ -36,14 +46,15 @@ chdir(fullFolderName);
 % I went to Flandin's github repository and downloaded 
 % https://github.com/nno/matlab_GIfTI
 % That gifti read worked.
-g = gifti('sujet01_Lwhite.surf.gii');
+% surfFile = 'sujet01_Lwhite.surf.gii'
+g = gifti(surfFile);
 
 % Blue shaded
-figure; plot(g);  
+mrvNewGraphWin; plot(g);  
 
 % The color overlay values are determined by an color map and a single
 % scaling (I think).
-gg = gifti('sujet01_Lwhite.shape.gii');
+gg = gifti(shapeFile);
 figure; h = plot(g,gg);
 
 
@@ -61,14 +72,19 @@ figure; h = plot(g,gg);
 
 % Read the anatomical.  We will use the transform in qto_xyz for
 % coregistering.
-niT1File = fullfile(mrvDataRootPath,'anatomy','T1andMesh','t1.nii.gz');
+rdt.crp('/vistadata/anatomy/T1andMesh'); 
+niT1File = rdt.readArtifact('t1.nii',...
+    'type','gz',...
+    'destinationFolder',fullFolderName);
 niT1 = niftiRead(niT1File);
 
 % In this example, we produce the gifti data from an itkGray segmentation.
 % The class file with gray identified is written by mrgSaveClassWithGray.
 % That routine reads the itkGray class file, grows gray matter separately
 % for left and right, and saves the output.
-niCFile = fullfile(mrvDataRootPath,'anatomy','T1andMesh','t1_class_5GrayLayers.nii.gz');
+niCFile = rdt.readArtifact('t1_class_5GrayLayers.nii',...
+    'type','gz',...
+    'destinationFolder',fullFolderName);
 niClass = niftiRead(niCFile);
 Ds = uint8(niClass.data);
 
