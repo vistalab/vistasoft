@@ -3,6 +3,7 @@
 % Introduction to the gifti reader/writer.  
 % GIFTI is from
 % http://www.artefact.tk/software/matlab/gifti/
+% https://github.com/nno/matlab_GIfTI
 %
 % The examples here 
 %
