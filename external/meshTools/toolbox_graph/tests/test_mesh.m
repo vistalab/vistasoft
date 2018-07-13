@@ -27,5 +27,8 @@ plot_graph(Ad,vertexc);
 
 %% vertex ring
 vring = compute_vertex_ring(face);
+
 %% face ring
 fring = compute_face_ring(face);
+
+end

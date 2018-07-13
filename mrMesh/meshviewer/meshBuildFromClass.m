@@ -1,37 +1,50 @@
 function [msh,class] = meshBuildFromClass(voxels,mmPerVox,hemisphere)
-% Build a VTK mesh from a class file
+% Build a VTK mesh from a white matter class file
 %  
+% Syntax
 %   [msh,class] = meshBuildFromClass(voxels,[mmPerVox],[hemisphere='left'])
 %
-% voxels: Either
-%   - the file name of a white matter class file, or 
-%   - the voxel classification data returned from readClassFile (see code)
-%    If the file name (class file or nifti file) is entered, then the
-%    classification data in the file can be returned. 
+% Description
+%  Build a mesh from a white matter classification file (xxx_class.nii.gz).
+%  The mesh is built by creating a large set of triangles on the outside
+%  surface of the white matter volume, which should be connected, without
+%  holes.
 %
-% mmPerVox:    defaults to [1 1 1] (mm)
-% hemisphere:  'right' or 'left' or 'both'
+%  White matter values in the class or NIFTI file are the voxels with the
+%  value 16. 
 %
-% White matter values in the class or NIFTI file are the voxels with the
-% value 16.
+% Inputs
+%  voxels: Either
+%    - the file name of a white matter class file, or 
+%    - the voxel classification data returned from readClassFile (see code)
+%     If the file name (class file or nifti file) is entered, then the
+%     classification data in the file can be returned. 
+%
+%  mmPerVox:    defaults to [1 1 1] (mm)
+%  hemisphere:  'right' or 'left' or 'both'
+%
+%
+% Guillaume Bertello (c) Stanford VISTA Team
 %
 % See also: meshBuild, meshVisualize, 
 % 
+
 % Examples:
-%   fName=fullfile(mrvDataRootPath,'anatomy','anatomyV','left','left.Class');
-%   msh = meshBuildFromClass(fName);
-%   msh = meshSmooth(msh);
-%   msh = meshColor(msh);
-%   meshVisualize(msh);
-%
-%   fName ='X:\anatomy\nakadomari\right\20050901_fixV1\right.Class';
-%   mmPerVox = [1 1 1];
-%   msh = meshBuildFromClass(fName, mmPerVox, 'right');
-%   msh = meshSmooth(msh);
-%   msh = meshColor(msh);
-%   meshVisualize(msh);
-%
-% Guillaume Bertello (c) Stanford VISTA Team
+%{
+   fName=fullfile(mrvDataRootPath,'anatomy','anatomyV','left','left.Class');
+   msh = meshBuildFromClass(fName);
+   msh = meshSmooth(msh);
+   msh = meshColor(msh);
+   meshVisualize(msh);
+%}
+%{
+   fName ='X:\anatomy\nakadomari\right\20050901_fixV1\right.Class';
+   mmPerVox = [1 1 1];
+   msh = meshBuildFromClass(fName, mmPerVox, 'right');
+   msh = meshSmooth(msh);
+   msh = meshColor(msh);
+   meshVisualize(msh);
+%}
 
 % PROGRAMMING TODO:  
 %   Perhaps we should replace this function with the Matlab isosurface
@@ -85,4 +98,4 @@ msh = meshSet(msh,'origin',-mean(vertices,2)');
 msh = meshSet(msh,'mmPerVox',mmPerVox);
 fprintf('[%s]: done. \n', mfilename);
 
-return;
+end

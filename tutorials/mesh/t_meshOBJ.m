@@ -1,19 +1,31 @@
 %% t_meshOBJ
 %
 % Create a mesh object from a vistasoft mesh
+% Save the mesh as an OBJ file
+% Read the obj file
+% Load it into a gifti struct for viewing
 %
-% See t_meshCreate for a little more on creating meshes
+% See also
+%  t_meshCreate, t_gifti
 %
 
-%% Make sure vistadata is on your path
+%% Think about data and directories
 
-dataD = mrvDataRootPath;
-fName = fullfile(dataD,'anatomy','anatomyNIFTI','t1_class.nii.gz');
+fullFolderName = fullfile(vistaRootPath,'local');
 
-% Run the build code
+%{
+  % If you don't have the data already, run this
+  rdt = RdtClient('vistasoft');
+  rdt.crp('/vistadata/anatomy/anatomyNIFTI');
+  fName = rdt.readArtifact('t1_class.nii','type','gz','destinationFolder',fullFolderName);
+%}
+
+fName = fullfile(vistaRootPath,'local','t1_class.nii.gz');
+
+%% Run the build code
 msh = meshBuildFromClass(fName,[],'left');
 msh = meshSmooth(msh);
-% msh = meshColor(msh);
+msh = meshColor(msh);
 
 % Visualize the coarse, unshaded mesh
 meshVisualize(msh);
@@ -65,5 +77,41 @@ OBJ.objects(3).data.normal=FV.faces;
 fname = fullfile(mrvDataRootPath,'cortex.obj');
 objWrite(OBJ,fname);
 fprintf('Wrote out OBJ file:  %s\n',fname);
+
+%% Not tested yet.  Idea is to read and show an OBJ file in Matlab
+
+% Read the pial surface
+[vertex,face] = read_obj(fname);
+% We should check this OBJ reader - OBJ = objRead(fNamePial);
+
+% convert vertices to original space
+g.vertices = vertex';
+g.faces = face';
+g.mat = eye(4,4);
+g = gifti(g);
+
+%% Convert the vertices into the T1 coordinate frame
+vert_mat = double(([g.vertices ones(size(g.vertices,1),1)])');
+vert_mat = freeSurfer2T1*vert_mat;
+vert_mat(4,:) = [];
+vert_mat = vert_mat';
+g.vertices = vert_mat; 
+clear vert_mat
+
+stNewGraphWin;
+% c = 0.7+zeros(size(vert_label,1),3);
+
+% tH = trimesh(g.faces, g.vertices(:,1), g.vertices(:,2), g.vertices(:,3), c); 
+tH = trimesh(g.faces, g.vertices(:,1), g.vertices(:,2), g.vertices(:,3)); 
+axis equal; hold on
+% set(tH, 'LineStyle', 'none', 'FaceColor', 'interp', 'FaceVertexCData',c);
+set(tH, 'LineStyle', 'none', 'FaceColor', 'interp');
+l1 = light;
+lighting gouraud
+material([.3 .9 .2 50 1]); 
+axis off
+set(gcf,'Renderer', 'zbuffer')
+view(270, 0);
+set(l1,'Position',[-1 0 1])
 
 %% END

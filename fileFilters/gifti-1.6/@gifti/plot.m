@@ -60,7 +60,7 @@ camlight;
 camlight(-80,-10);
 lighting phong;
 axes(ax);
-cameramenu;
+cameratoolbar;  % BW updated per warning.
 
 if nargout
     varargout{1} = hp;

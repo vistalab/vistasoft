@@ -48,13 +48,13 @@ env  = mrvGetEvironment();
 test_dir = fullfile(mrvTestRootPath, whichTests, 'core'); 
 
 % if extended test requested, we will pass in two dirs in a cell array
-if extended,
+if extended
     test_dir1 = test_dir;
     test_dir2 = fullfile(mrvTestRootPath, whichTests, 'extended'); 
     test_dir = {test_dir1, test_dir2};
 end
 
-% Run the tests, return whether or not they passed: 
+%% Run the tests, return whether or not they passed: 
 OK = runtests(test_dir, '-logfile',logfile, '-verbose');
 
 fid = fopen(logfile,'a+');
@@ -89,3 +89,5 @@ fclose(fid);
 fprintf('Log file written: %s\n', logfile);
 
 cd(curdir)
+
+%%

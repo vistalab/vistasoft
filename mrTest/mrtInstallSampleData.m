@@ -1,17 +1,26 @@
 function dataDir = mrtInstallSampleData(sourceFolder, projectName, ...
     dFolder, forceOverwrite, varargin)
 %MRTINSTALLSAMPLEDATA Install sample data set on local path.
+%
+% Syntax:
 %   dataDir = MRTINSTALLSAMPLEDATA(sourceFolder, projectName, ...
 %      [dFolder], [forceOverwrite], varargin) 
 %
-%   The project will be installed in the vistasoft local directory:
+%   Code dependency: Remote Data Toolbox
+%      https://github.com/isetbio/RemoteDataToolbox
+%
+% Description:
+%   A data set stored on the remote data client in the vista repository
+%   is downloaded to the local computer.
+%
+%   The data set will be installed in the vistasoft local directory:
 %   fullfile(vistaRootPath, 'local')
 %
 %   Remote projects are assumed to be zip files, and located on a remote host
 %   with a directory stucture:
 %       repository/vistasoft/vistadata/<sourceFolder>/<projectName>
 %
-%    Inputs
+% Inputs
 %     sourceFolder:     Name of remote folder where project is stored
 %                         Examples: 'functional' | 'anatomy' | 'diffusion'
 %     projectName:      Name of project to download
@@ -24,17 +33,23 @@ function dataDir = mrtInstallSampleData(sourceFolder, projectName, ...
 %                          [default = true]
 %     varargin:         Pairs of parameters, values
 %                           'filetype', {'zip' 'dat' 'mat' etc}    
-%    Outputs
+% Outputs
 %      datadir:  full path to installed project folder
 %
-%   Example:
-%      dataDir = mrtInstallSampleData('functional', 'mrBOLD_01');
+% Example:
+%    dataDir = mrtInstallSampleData('functional', 'mrBOLD_01');
 %
-%    Code dependency: Remote Data Toolbox
-%                  https://github.com/isetbio/RemoteDataToolbox
-%
-%    See also: MRVTEST
+% See also:
+%   MRVTEST
 
+% Examples:
+%{
+  srcFolder = 'anatomy';
+  project = 'anatomyNIFTI';
+  dFolder = fullfile(vistaRootPath,'local');
+  mrtInstallSampleData('anatomy','anatomyNIFTI',dFolder);
+
+%}
 % Check inputs
 if notDefined('forceOverwrite'), forceOverwrite = true; end
 if notDefined('dFolder'), dFolder = fullfile(vistaRootPath, 'local'); end
