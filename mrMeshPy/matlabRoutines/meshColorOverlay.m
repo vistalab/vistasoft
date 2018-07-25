@@ -1,4 +1,4 @@
-function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors] = meshColorOverlay(vw,showData,dataOverlayScale,dataThreshold)
+function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors, dataOverlay] = meshColorOverlay(vw,showData,dataOverlayScale,dataThreshold)
 % Compute and possibly show color overlays in the mrMesh Window.
 %
 %  [vw, dataMask,dataMaskIndices,newColors] = ...
@@ -362,6 +362,9 @@ newColors = uint8(round(newColors));
 msh.currentColors = newColors;
 msh.currentColors(4,:) = 255;
 disp('Assigned new attribute to msh instance - currentColors - for mrMeshPy');
+% also - so we can keep as close to the orignal code base, lets create a dataOverlay variable if not existing (in our case)
+if notDefined('dataOverlay'), dataOverlay = []; end
+% ADG YNiC 2017
 
 % Sometimes we just want the values.  Usually, we want to show the data.
 if showData
