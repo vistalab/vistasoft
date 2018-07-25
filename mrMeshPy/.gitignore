@@ -1,0 +1,9 @@
+#python compile
+*.pyc
+
+#matlab in use
+*.m~
+
+#mac specific
+*.DS_store*
+
