@@ -72,4 +72,10 @@ uimenu(winmenu,'Label','(Re-)open Screen Save Window','Separator','on',...
 uimenu(winmenu, 'Label', 'Open 3D Window', 'Separator', 'on',...
     'CallBack', 'open3DWindow;');
 
+% 3D mrMeshPy submenu. (ADG - Jul2018).
+%
+uimenu(winmenu, 'Label', 'Open mrMeshPy 3D Window', 'Separator', 'on',...
+    'CallBack', 'gui_3dWindow_MeshPy;');
+
+
 return

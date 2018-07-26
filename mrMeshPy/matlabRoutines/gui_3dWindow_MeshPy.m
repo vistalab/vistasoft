@@ -59,9 +59,12 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% Hack - TODO fix - this puts the VOLUME in the scope of this gui
-VOLUME = evalin('base','VOLUME','VOLUME'); %% HACK TODO fix
-
+try
+    % Hack - TODO fix - this puts the VOLUME in the scope of this gui
+    VOLUME = evalin('base','VOLUME','VOLUME'); %% HACK TODO fix
+catch
+    disp('no VOLUME loaded yet')
+end
 
 % --- Executes just before gui_3dWindow_MeshPy is made visible.
 function gui_3dWindow_MeshPy_OpeningFcn(hObject, eventdata, handles, varargin)
