@@ -24,6 +24,20 @@ function varargout = gui_3dWindow_MeshPy(varargin)
 
 % Last Modified by GUIDE v2.5 26-Sep-2017 13:56:57
 % Andre' Gouws 2017
+debug = 1;
+
+if debug
+    pwd
+    fileparts(mfilename('fullpath'))
+end
+
+% If this function is called, we are going to assume that the user wants to
+% use mrMeshPy and not mrMesh - we we will add some altered routines to the
+% top of the search path
+
+mrMeshMFileDir = fileparts(mfilename('fullpath')); %get the directory that holds THIS script
+addpath(genpath(mrMeshMFileDir)); % add it to the top of the search path.
+% TODO - there must be a better way of doing this - maybe just drop mrMesh!
 
 
 % Begin initialization code - DO NOT EDIT
