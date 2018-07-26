@@ -24,7 +24,7 @@ function varargout = gui_3dWindow_MeshPy(varargin)
 
 % Last Modified by GUIDE v2.5 26-Sep-2017 13:56:57
 % Andre' Gouws 2017
-debug = 1;
+debug = 0;
 
 if debug
     pwd
