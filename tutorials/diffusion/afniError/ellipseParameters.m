@@ -1,8 +1,8 @@
 %% Ellipsoid parameters
 %
 % Silson et al. have a very different set of ellipses, far more oriented
-% than anyone else.  This pointed out by a few of us at Stanford, and in
-% discussing with Reynolds (the AFNI guy) it turned out that they solved
+% than anyone else.  This was pointed out by a few of us at Stanford, and
+% in discussing with Reynolds (the AFNI guy) it turned out that they solved
 % the ellipse using
 %
 %    ax^2 + bxy + cy^2
@@ -22,7 +22,7 @@
 %
 % The calculation shows that in many cases the ratio of the lengths of the
 % major and minor axes differs quite significantly when one makes the AFNI
-% error.  
+% error.
 %
 % The significance of this calculation is that Silson et al. deny that
 % there is a significant difference.  Hence, there is a dispute based on
@@ -32,12 +32,12 @@
 
 %% General quadratic notes
 %
-%  ax^2 + 2bxy + cy^2 + 2dx + 2fy + g=0 
+%  ax^2 + 2bxy + cy^2 + 2dx + 2fy + g=0
 %
 % For the centered ellipse we have d = f = 0.
-% We set g = -1 for this case so 
+% We set g = -1 for this case so
 %
-%   ax^2 + 2bxy + cy^2 = 1 
+%   ax^2 + 2bxy + cy^2 = 1
 %
 % J = det([ a b; b c]) > 0 and
 % D = det([ a b 0; b c 0; 0 0 1])
@@ -48,8 +48,8 @@
 %% Set parameters
 
 % These are the three parameters that can be changed
-a = 2; 
-b = 2;
+a = 4;
+b = 1; originalB = b;
 c = 3;
 
 %{
@@ -57,34 +57,31 @@ a = 2;  b = 2; c = 3;  % 3.225 and 1.618
 %}
 g = -1;  % We fix g to -1 because we can always scale a,b and c to make it so
 
-%% Validate that we have an ellipse as per Wolfram
-
-q = [a b; b c];
-D = det([ a b 0; b c 0; 0 0 g]);
-J = det(q);
-I = a+c;
-if J <= 0,   error('J fails to be non-negative'); end
-if D == 0,   error('Singular'); end
-if D/I >= 0, error('Final D/I requirement'); end
-
-%%  The formulae for the axis lengths from the same web-page
-% 
-% a' = sqrt((2(af^2+cd^2+gb^2-2bdf-acg))/((b^2-ac)[sqrt((a-c)^2+4b^2)-(a+c)]))	
+%%  The formulae for the axis lengths from the Wolfram web-page
+%
+% a' = sqrt((2(af^2+cd^2+gb^2-2bdf-acg))/((b^2-ac)[sqrt((a-c)^2+4b^2)-(a+c)]))
 % b' = sqrt((2(af^2+cd^2+gb^2-2bdf-acg))/((b^2-ac)[-sqrt((a-c)^2+4b^2)-(a+c)])).
 %
-% This simplifies because d=f=0 , a = 1, and g = -1;
+% The formulae below simplify because d=f=0 and g = -1;
 
-top    = (2*(g*b^2 - a*c*g));
-bottom = (b^2 - a*c)*(sqrt((a - c)^2 + 4*b^2) - (a + c));
-aLength = sqrt(top / bottom);
+b = originalB;
+if ellipseValidate(a,b,c,g)
+    
+    top    = (2*(g*b^2 - a*c*g));
+    bottom = (b^2 - a*c)*(sqrt((a - c)^2 + 4*b^2) - (a + c));
+    aLength = sqrt(top / bottom);
+    
+    top    = (2*(g*b^2 - a*c*g));
+    bottom = (b^2 - a*c)*(-1*sqrt((a - c)^2 + 4*b^2) - (a + c));
+    bLength = sqrt(top / bottom);
+    
+    mx = max(aLength, bLength);
+    mn = min(aLength, bLength);
+    fprintf('Ratio 1: %f (b = %.2f)\n',mx/mn,b);
+else
+    fprintf('Not an ellipse when b = %f\n',b);
+end
 
-top    = (2*(g*b^2 - a*c*g));
-bottom = (b^2 - a*c)*(-1*sqrt((a - c)^2 + 4*b^2) - (a + c));
-bLength = sqrt(top / bottom);
-
-mx = max(aLength, bLength);
-mn = min(aLength, bLength);
-fprintf('Ratio 1: %f\n',mx/mn);
 
 %% If we incorrectly solve using b2 = 2b
 %
@@ -94,20 +91,45 @@ fprintf('Ratio 1: %f\n',mx/mn);
 % lengths of the two axes.  That is bogus, as running most cases show, such
 % as the ones above
 
- 
-b = b/2;
-top    = (2*(g*b^2 - a*c*g));
-bottom = (b^2 - a*c)*(sqrt((a - c)^2 + 4*b^2) - (a + c));
-aLength = sqrt(top / bottom);
+b = originalB/2;
+if ellipseValidate(a,b,c,g)
+    
+    top    = (2*(g*b^2 - a*c*g));
+    bottom = (b^2 - a*c)*(sqrt((a - c)^2 + 4*b^2) - (a + c));
+    aLength = sqrt(top / bottom);
+    
+    top    = (2*(g*b^2 - a*c*g));
+    bottom = (b^2 - a*c)*(-1*sqrt((a - c)^2 + 4*b^2) - (a + c));
+    bLength = sqrt(top / bottom);
+    
+    mx = max(aLength, bLength);
+    mn = min(aLength, bLength);
+    fprintf('Ratio 2: %f (b = %.2f)\n',mx/mn,b);
+else
+    fprintf('Not an ellipse when b = %f\n',b);
+end
 
-top    = (2*(g*b^2 - a*c*g));
-bottom = (b^2 - a*c)*(-1*sqrt((a - c)^2 + 4*b^2) - (a + c));
-bLength = sqrt(top / bottom);
 
-mx = max(aLength, bLength);
-mn = min(aLength, bLength);
-fprintf('Ratio 2: %f\n',mx/mn);
+%%  Or if we divide by 2
+
+b = originalB*2;
+if ellipseValidate(a,b,c,g)
+    
+    top    = (2*(g*b^2 - a*c*g));
+    bottom = (b^2 - a*c)*(sqrt((a - c)^2 + 4*b^2) - (a + c));
+    aLength = sqrt(top / bottom);
+    
+    top    = (2*(g*b^2 - a*c*g));
+    bottom = (b^2 - a*c)*(-1*sqrt((a - c)^2 + 4*b^2) - (a + c));
+    bLength = sqrt(top / bottom);
+    
+    mx = max(aLength, bLength);
+    mn = min(aLength, bLength);
+    fprintf('Ratio 3: %f (b = %.2f)\n',mx/mn,b);
+else
+    fprintf('Not an ellipse when b = %f\n',b);
+end
+
 
 %%
-
 
