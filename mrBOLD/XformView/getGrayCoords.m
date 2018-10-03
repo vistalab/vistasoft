@@ -1,9 +1,9 @@
-function view = getGrayCoords(view, forceRebuild, keepAll)
+function vw = getGrayCoords(vw, forceRebuild, keepAll)
 %Get gray graph coordinates
 %
-% view = getGrayCoords(view, <forceRebuild, keepAll>);
+% vw = getGrayCoords(vw, <forceRebuild, keepAll>);
 %
-% view: must be VOLUME
+% vw: must be VOLUME
 %
 % Loads gray nodes.  Keeps only those nodes that coorespond to
 % the inplane coordinates unless keepAll is set.
@@ -13,8 +13,8 @@ function view = getGrayCoords(view, forceRebuild, keepAll)
 % Gray/coords.mat.
 %
 % When it load nodes and edges, it concatenates from left
-% and right hemispheres and fills the view.coords, view.nodes, 
-% and view.edges fields. 
+% and right hemispheres and fills the vw.coords, vw.nodes, 
+% and vw.edges fields. 
 %
 % How do these correspond to Sag/Axi/Cor? (BW)
 %
@@ -31,7 +31,7 @@ function view = getGrayCoords(view, forceRebuild, keepAll)
 %   Allows you to load only one hemisphere if both are not yet segmented.
 %   leftPath and rightPath are now the full paths (used to be restofpath)
 % djh, 2/15/2001
-% - Save allLeftNodes/Edges (likewise right) in coords file and sets view.allLeftNodes, etc.
+% - Save allLeftNodes/Edges (likewise right) in coords file and sets vw.allLeftNodes, etc.
 %   in the gray structure upon loading the coords file. You should never go back to reload
 %   the gray graph (via loadGrayNodes or readGrayGraph). All the information you need is here.
 %   Consequently, leftPath & rightPath are now just for bookkeeping purposes.  
@@ -51,19 +51,19 @@ function view = getGrayCoords(view, forceRebuild, keepAll)
 % to _not _ load inplaneLeftIndices, inplaneRightIndices, allLeft*,
 % allRight* -- this stuff can be computed on the fly readily
 
-if notDefined('view'),          view = getSelectedGray;      end
+if notDefined('vw'),          vw = getSelectedGray;      end
 if notDefined('forceRebuild'),  forceRebuild=0;              end
 if notDefined('keepAll'),       keepAll=0;                   end
 
 
-if ~strcmp(view.viewType,'Gray')
+if ~strcmp(vw.viewType,'Gray')
     myErrorDlg('function getGrayCoords only for gray view.');
 end
 
 mrGlobals;
-vANATOMYPATH = getVAnatomyPath; % find this refresh is empirically needed
+% vANATOMYPATH = getVAnatomyPath; % find this refresh is empirically needed
 
-pathStr = fullfile(viewDir(view), 'coords.mat');
+pathStr = fullfile(viewDir(vw), 'coords.mat');
 fprintf('Path to gray coordinates: %s\n',pathStr);
 
 % Can we find the coords file? Or have we been asked to rebuild?
@@ -71,12 +71,12 @@ if ~exist(pathStr,'file') || forceRebuild==1
     % Have we been asked to rebuild?
     if(forceRebuild), disp('Rebuild of gray structures requested'); end
     
-    if notDefined('numGrayLayers'),
+    if notDefined('numGrayLayers')
         a = inputdlg('Number of gray layers:','Gray Layers',1,{'5'});
         numGrayLayers = str2double(a{1});
     end
 
-    view = buildGrayCoords(view,pathStr,keepAll,[],numGrayLayers);
+    vw = buildGrayCoords(vw,pathStr,keepAll,[],numGrayLayers);
 end
 
 % load the info from coords
@@ -91,8 +91,8 @@ if extended && (isfield(c, 'keepLeft') && isfield(c,'keepRight'))
     % These are the indices of nodes that overlap with the inplane data.
 	% (ras -- do we need to keep these? They take up a huge amount of
 	% memory.
-    view.inplaneLeftIndices = c.keepLeft; 
-    view.inplaneRightIndices = c.keepRight;
+    vw.inplaneLeftIndices = c.keepLeft; 
+    vw.inplaneRightIndices = c.keepRight;
 end
 
 % set all the relevant fields
@@ -104,34 +104,34 @@ end
 % ras 05/06: for now, trying not to set right/left nodes/edges. 
 % This will prevent me from building new meshes, I think, but it's
 % a lot of duplicated memory...
-view = viewSet(view, 'coords', c.coords);
-view = viewSet(view, 'nodes', c.nodes);
-view = viewSet(view, 'edges', c.edges);
+vw = viewSet(vw, 'coords', c.coords);
+vw = viewSet(vw, 'nodes', c.nodes);
+vw = viewSet(vw, 'edges', c.edges);
 
-view = viewSet(view, 'leftGrayFile', c.leftPath);
-view = viewSet(view, 'rightGrayFile', c.rightPath);
+vw = viewSet(vw, 'leftGrayFile', c.leftPath);
+vw = viewSet(vw, 'rightGrayFile', c.rightPath);
 
 if extended
-	view = viewSet(view, 'allLeftNodes',  c.allLeftNodes);
-	view = viewSet(view, 'allLeftEdges',  c.allLeftEdges);
-	view = viewSet(view, 'allRightNodes',  c.allRightNodes);
-	view = viewSet(view, 'allRightEdges',  c.allRightEdges);
+	vw = viewSet(vw, 'allLeftNodes',  c.allLeftNodes);
+	vw = viewSet(vw, 'allLeftEdges',  c.allLeftEdges);
+	vw = viewSet(vw, 'allRightNodes',  c.allRightNodes);
+	vw = viewSet(vw, 'allRightEdges',  c.allRightEdges);
 else
-	view = viewSet(view, 'allLeftNodes',  []);
-	view = viewSet(view, 'allLeftEdges',  []);
-	view = viewSet(view, 'allRightNodes',  []);
-	view = viewSet(view, 'allRightEdges',  []);	
+	vw = viewSet(vw, 'allLeftNodes',  []);
+	vw = viewSet(vw, 'allLeftEdges',  []);
+	vw = viewSet(vw, 'allRightNodes',  []);
+	vw = viewSet(vw, 'allRightEdges',  []);	
 end
-view = viewSet(view, 'leftPath', c.leftPath);
-view = viewSet(view, 'rightPath', c.rightPath);
+vw = viewSet(vw, 'leftPath', c.leftPath);
+vw = viewSet(vw, 'rightPath', c.rightPath);
 
 % This is a new variable and may not exist in the file for many data sets.
 % So, we test to see whether it exists.
 if isfield(c, 'leftClassFile') % & exist(leftClassFile,'file')
-    view = viewSet(view,'leftClassFile', c.leftClassFile); 
+    vw = viewSet(vw,'leftClassFile', c.leftClassFile); 
 end
 if isfield(c, 'rightClassFile') %  & exist(rightClassFile,'file') 
-    view = viewSet(view,'rightClassFile', c.rightClassFile); 
+    vw = viewSet(vw,'rightClassFile', c.rightClassFile); 
 end    
 
 return
