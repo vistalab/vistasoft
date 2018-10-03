@@ -9,7 +9,7 @@ function msh = fs_meshFromSurface(fsSurface)
 %
 % Example:
 %   fsPath = getenv('SUBJECTS_DIR');
-%   fsSurface = fullfile(fsPath, 'wl_subj004', 'surf', 'lh.white');
+%   fsSurface = fullfile(fsPath, 'wlsubj004', 'surf', 'lh.white');
 %   msh = fs_meshFromSurface(fsSurface);
 %   meshVisualize(msh)
 
