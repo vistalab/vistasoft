@@ -112,7 +112,7 @@ saveSession;
 t1match = extractslices(volpre,rx.volVoxelSize,refpre,rx.refVoxelSize,tr);
 
 % inspect the results
-if ~exist('Images', 'dir'), mkdir('Images'); end
+if ~exist('./Images', 'dir'), mkdir('Images'); end
 imwrite(uint8(255*makeimagestack(refpre,1)),'Images/inplane.png');
 imwrite(uint8(255*makeimagestack(t1match,1)),'Images/reslicedT1.png');
 

@@ -96,7 +96,7 @@ for h = 1:length(hs)
         % Previously, we looked up the mesh directory stored in the mrVista
         %   view structure. 
         % savepth = viewGet(vw, 'MeshDir', hs(h).vista);
-        savepth = fullfile('3DAnatomy', hs(h).vista, '3DMeshes'); 
+        savepth = fullfile('./3DAnatomy', hs(h).vista, '3DMeshes'); 
         if ~exist(savepth, 'dir'), mkdir(savepth); end
         fname = fullfile(savepth, msh.name);
         save(fname, 'msh')
