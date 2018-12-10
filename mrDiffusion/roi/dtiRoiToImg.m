@@ -32,8 +32,9 @@ if(~exist('imgXform','var')||isempty(imgXform))
     imgXform = eye(4);
 end
 
-sz = diff(ceil(mrAnatXformCoords(inv(imgXform), bb)))+1;
-roiImg = false(abs(sz));
+sz = abs(diff(ceil(mrAnatXformCoords(inv(imgXform), bb))))+1;
+roiImg = false((sz));
+
 % Remove coords outside the bounding box
 badCoords = coords(:,1)<bb(1,1) | coords(:,1)>bb(2,1) ...
           | coords(:,2)<bb(1,2) | coords(:,2)>bb(2,2) ...
