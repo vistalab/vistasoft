@@ -80,7 +80,7 @@ roi1name           = rois;
 roi2name           = rois2;
 
 %% III Loop over subjects and compute fiber properties
-wb = waitbar(0,'Overall Script Progress');
+wb = mrvWaitbar(0,'Overall Script Progress');
 for zz = 1:numel(propertyofinterest)
     for kk = 1:numel(fgName)     
         for ii=1:numel(subs)
@@ -110,7 +110,7 @@ for zz = 1:numel(propertyofinterest)
         dtval.(propertyofinterest{zz}).(rois{kk}) = eval(propertyofinterest{zz});
         
     end
-waitbar(zz/(numel(propertyofinterest)),wb);
+mrvWaitbar(zz/(numel(propertyofinterest)),wb);
 
 end
 save((fullfile(saveDir,'dtval.mat')),'dtval');

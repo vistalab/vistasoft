@@ -48,7 +48,7 @@ end
 if isempty(scanList),  error('Analysis aborted: scan list is empty.'); end
 
 % Compute it
-waitHandle = waitbar(0,'Computing mean images from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing mean images from the tSeries.  Please wait...');
 ncScans = length(scanList);
 for iScan = 1:ncScans
     scan = scanList(iScan);
@@ -85,7 +85,7 @@ for iScan = 1:ncScans
                 end
             end
     end
-    waitbar(scan/ncScans)
+    mrvWaitbar(scan/ncScans)
 end
 close(waitHandle);
 

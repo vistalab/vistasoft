@@ -63,9 +63,9 @@ inputSD=std(input(notNaNs));
 snr=Inf;
 iter=0;
 
-waitHandle = waitbar(0,'Smoothing data.  Please wait...');
+waitHandle = mrvWaitbar(0,'Smoothing data.  Please wait...');
 while ((snr>tol) & (iter<maxiters))
-   waitbar(iter/maxiters)
+   mrvWaitbar(iter/maxiters)
    iter = iter+1;
    
    % Compute sumNeighbors

@@ -269,8 +269,8 @@ else
 end
 
 disp(['Saving to ' outPathName '...']);
-l = license('inuse'); h = hostid;
-created = ['Created at ' datestr(now,31) ' by ' l(1).user ' on ' h{1} '.'];
+l = license('inuse'); %h = hostid;
+created = ['Created at ' datestr(now,31) ' by ' l(1).user  '.'];
 if(~isempty(t1))
     save(outPathName, 'dt6', 'mmPerVox', 'notes', 'xformToAcPc', 'b0', 'dtBrainMask', 'anat', 'created');
 else

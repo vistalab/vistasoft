@@ -149,7 +149,7 @@ if ~isempty(base)
 	dataTYPES(tgtNum).eventAnalysisParams(newBaseNum) = ...
         dataTYPES(srcNum).eventAnalysisParams(base);
     
-    hwait = waitbar(0,'Copying base tSeries...');
+    hwait = mrvWaitbar(0,'Copying base tSeries...');
     
     tSeriesFull = [];
     dimNum = 0;    
@@ -160,7 +160,7 @@ if ~isempty(base)
         dimNum = numel(size(tSeries));
         savetSeries(tSeries,hI,newBaseNum,slice);
         tSeriesFull = cat(dimNum + 1, tSeriesFull, tSeries);
-        waitbar(slice/numSlices(hI),hwait);
+        mrvWaitbar(slice/numSlices(hI),hwait);
     end
     
     if dimNum == 3
@@ -202,7 +202,7 @@ for s = 1:length(scans)
 	% get new coords for the xformed frames
 	newCoords = rx.xform * coords;
     
-    hwait = waitbar(0,sprintf('Xforming Scan %i/%i',s,length(scans)));
+    hwait = mrvWaitbar(0,sprintf('Xforming Scan %i/%i',s,length(scans)));
     
 	% interpolate
     for t = 1:size(tMat,4)		
@@ -212,11 +212,11 @@ for s = 1:length(scans)
 		
 		tMat(:,:,:,t) = warpAffine3(tMat(:,:,:,t), rx.xform, NaN, 1);		
         
-        waitbar(t/size(tMat,4),hwait);
+        mrvWaitbar(t/size(tMat,4),hwait);
     end
     
     % save tSeries
-    waitbar(1,hwait,'Saving tSeries...');
+    mrvWaitbar(1,hwait,'Saving tSeries...');
 	hI = selectDataType(hI,tgtDataType);
     save4DTSeries(hI,tMat,tgtScans(s));
     

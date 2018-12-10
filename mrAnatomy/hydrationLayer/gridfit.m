@@ -918,7 +918,7 @@ zgrid = zeros(ny,nx);
 rampfun = inline('(t-t(1))/(t(end)-t(1))','t');
 
 % loop over each tile in the grid
-h = waitbar(0,'Relax and have a cup of JAVA. Its my treat.');
+h = mrvWaitbar(0,'Relax and have a cup of JAVA. Its my treat.');
 warncount = 0;
 xtind = 1:min(nx,tilesize);
 while ~isempty(xtind) && (xtind(1)<=nx)
@@ -933,8 +933,8 @@ while ~isempty(xtind) && (xtind(1)<=nx)
   
   ytind = 1:min(ny,tilesize);
   while ~isempty(ytind) && (ytind(1)<=ny)
-    % update the waitbar
-    waitbar((xtind(end)-tilesize)/nx + tilesize*ytind(end)/ny/nx)
+    % update the mrvWaitbar
+    mrvWaitbar((xtind(end)-tilesize)/nx + tilesize*ytind(end)/ny/nx)
     
     yinterp = ones(length(ytind),1);
     if (ytind(1) ~= 1)
@@ -1004,7 +1004,7 @@ while ~isempty(xtind) && (xtind(1)<=nx)
 
 end % while loop over x
 
-% close down the waitbar
+% close down the mrvWaitbar
 close(h)
 
 if warncount>0

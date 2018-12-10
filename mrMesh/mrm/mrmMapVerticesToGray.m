@@ -149,13 +149,14 @@ if(mapToAllLayers && exist('grayEdges','var') && ~isempty(grayEdges))
     
     v2gMapTemp = zeros(numLayers,size(grayNodes,2));
     
-    h = waitbar(0, 'Computing between layers connections...');
+    h = mrvWaitbar(0, 'Computing between layers connections...');
     progress = 0;
     for iLayer = numLayers:-1:curLayerNum
         midprogress = 0;
         
         curNodes = find(grayNodes(6,:) == iLayer);
         for iNode = curNodes
+            % disp(iNode) % debugging
             offset = grayNodes(5,iNode);
             numConnected = grayNodes(4,iNode);
             if numConnected == 0
@@ -178,8 +179,13 @@ if(mapToAllLayers && exist('grayEdges','var') && ~isempty(grayEdges))
                 neighbors(grayNodes(6,neighbors) < iLayer - 1) = [];
                 nextNeighbors = [];
                 neighborsDown = [];
-                
+                iter = 0; % debugging
                 while isempty(neighborsDown) && ~isequal(neighbors,nextNeighbors)
+                    iter = iter+1; %debugging
+                    if iter> 1000,
+                       disp foo
+                       break
+                    end
                     neighbors = union(nextNeighbors,neighbors);
                     nextNeighbors = [];
                     for iNeighbor = 1:length(neighbors)
@@ -209,7 +215,7 @@ if(mapToAllLayers && exist('grayEdges','var') && ~isempty(grayEdges))
             end
         end
         progress = progress + 1/(numLayers - curLayerNum + 1);
-        waitbar(progress/2,h);
+        mrvWaitbar(progress/2,h);
     end
     
     indices = 2*ones(1,size(v2gMap,2));
@@ -218,12 +224,12 @@ if(mapToAllLayers && exist('grayEdges','var') && ~isempty(grayEdges))
         indexNodes{v2gMap(1,curNode)} = [indexNodes{v2gMap(1,curNode)} curNode];
     end
     
-    h = waitbar(1/2, h, 'Creating connections table...');
+    h = mrvWaitbar(1/2, h, 'Creating connections table...');
     progress = 0;
     for iNode = 1:size(grayNodes,2)
         if iNode > (progress + 1/10)*size(grayNodes,2)
             progress = progress + 1/10;
-            waitbar(0.5 + progress/2);
+            mrvWaitbar(0.5 + progress/2);
         end
         
         curLayer = grayNodes(6,iNode);

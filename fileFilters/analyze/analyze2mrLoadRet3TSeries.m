@@ -84,7 +84,7 @@ else                   funcVol=zeros(y,x,nSlices,nVols);
 end
 fprintf('Rotating %d x 90 deg, flipupFlag=%d, fliplrFlag=%d\n',doRotate,flipudFlag,fliplrFlag);
 
-wBar = waitbar(0,'Reading ...');
+wBar = mrvWaitbar(0,'Reading ...');
 for t=0:(nVols-1)
     thisImIndex = t+firstVolIndex;
     suffix      = sprintf('%03d',thisImIndex);
@@ -95,7 +95,7 @@ for t=0:(nVols-1)
     if (mod(doRotate,2)) ,  vol2=zeros(x,y,nSlices);
     else                    vol2=zeros(y,x,nSlices);
     end
-    waitbar(t/nVols,wBar);
+    mrvWaitbar(t/nVols,wBar);
 
     for thisSlice=1:nSlices
         imSlice=squeeze(vol(:,:,thisSlice));

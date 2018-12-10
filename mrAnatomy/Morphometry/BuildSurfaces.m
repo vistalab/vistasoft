@@ -48,7 +48,7 @@ for ii=1:3
   bBox(ii, 2) = max(grayCoords(ii, :)');
 end
 
-waitH = waitbar(0, 'Build classification volume...');
+waitH = mrvWaitbar(0, 'Build classification volume...');
 % Create volume containing white-matter voxels set to 1, gray-matter voxels
 % set to -1:
 anat = double(permute(BuildWhiteVolume, [2 1 3]));
@@ -62,14 +62,14 @@ for ii=1:3, grayCoords(ii, :) = grayCoords(ii, :) - bBox(ii, 1) + 1; end
 
 % Form an isosurface at their boundary, that is, at an isodensity value of
 % zero:
-waitbar(0.1, waitH, 'Create gray-white interface surface...');
+mrvWaitbar(0.1, waitH, 'Create gray-white interface surface...');
 whiteSurface = isosurface(anat, 0.5);
 whiteSurface.vertices = whiteSurface.vertices(:, [2 1 3])';
 whiteSurface.faces = whiteSurface.faces(:, [2 1 3])';
 
 % Add the gray matter to the classification volume and create a surface at
 % its outer edge by forming an isodensity surface at zero. 
-waitbar(.55, waitH, 'Create gray outer surface...');
+mrvWaitbar(.55, waitH, 'Create gray outer surface...');
 anat(coords2Indices(grayCoords, size(anat))) = 1;
 graySurface = isosurface(anat, -0.5);
 graySurface.vertices = graySurface.vertices(:, [2 1 3])';
@@ -84,12 +84,12 @@ for ii=1:3
 end
 
 % Calculate gray-matter thickness and mappings:
-waitbar(0.9, waitH, 'Calculating gray-matter thickness...');
+mrvWaitbar(0.9, waitH, 'Calculating gray-matter thickness...');
 [GWmap, gThick2] = nearpoints(whiteSurface.vertices, graySurface.vertices);
 whiteSurface.thickness = sqrt(gThick2);
 whiteSurface.grayMap = GWmap;
 
-waitbar(0.95, waitH, 'Saving surfaces...');
+mrvWaitbar(0.95, waitH, 'Saving surfaces...');
 fName = fullfile(path, 'surfaces');
 save(fName, 'whiteSurface', 'graySurface');
 

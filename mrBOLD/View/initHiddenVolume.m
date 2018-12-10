@@ -1,15 +1,15 @@
-function view = initHiddenVolume(dataType,scan,roi)
+function vw = initHiddenVolume(dataType,scan,varargin)
 %
-% function hiddenVolume = initHiddenVolume(dataType],[scan],[roi])
+% function hiddenVolume = initHiddenVolume(dataType],[scan],[varargin])
 %
 % djh, sometime in 1999
 % ras, 04/05, set name to 'hidden'
 % ras, 05/05, added 'curScan' field
-if ~exist('dataType','var') | isempty(dataType)
+if ~exist('dataType','var') || isempty(dataType)
     dataType = 1;
 end
 
-if ~exist('scan','var') | isempty(scan)
+if ~exist('scan','var') || isempty(scan)
     scan = 1;
 end
 
@@ -20,37 +20,33 @@ evalin('base','HOMEDIR = pwd;');
 verbose = prefsVerboseCheck;
 if verbose, disp('Initializing HIDDEN Volume view'); end
 
-view.name='hidden';
-view.viewType='Volume';
-view.subdir='Volume';
+vw.name = 'hidden'; 
+vw = viewSet(vw, 'viewType', 'Volume');
+vw = viewSet(vw, 'subdir', 'Volume');
 
 % Initialize slots for anat, co, amp, and ph
-view.anat = [];
-view.co = [];
-view.amp = [];
-view.ph = [];
-view.map = [];
-view.mapName = '';
-view.mapUnits = '';
+vw = viewSet(vw, 'co', []);
+vw = viewSet(vw, 'amp', []);
+vw = viewSet(vw, 'ph', []);
+vw = viewSet(vw, 'map', []);
+vw = viewSet(vw, 'mapName', '');
+vw = viewSet(vw, 'mapUnits', '');
 
 % Initialize ROIs
-view.ROIs = [];
-view.selectedROI = 0;
+vw = viewSet(vw, 'ROIs', []);
+vw = viewSet(vw, 'selected ROI', 0);
+
 
 % Initialize curDataType
-if isnumeric(dataType),
-    view.curDataType = dataType;
-elseif ischar(dataType),
-    view.curDataType = existDataType(dataType);
-end
+vw = viewSet(vw, 'current DataType', dataType);
 
 % Initialize curScan
-view.curScan = scan;
+vw = viewSet(vw, 'current scan', scan);
 
 % need to record mmPerVox
-view.mmPerVox = readVolAnatHeader(getVAnatomyPath);
+vw = viewSet(vw, 'mm per vox', readVolAnatHeader(getVAnatomyPath));
 
 % Compute/load coords
-view=switch2Vol(view);
+vw=switch2Vol(vw);
 
 return

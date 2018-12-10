@@ -30,6 +30,8 @@ function [nodes, edges, vSize] = readGrayGraph(filename,hemi)
 % TODO: Return a timestamp that is saved in the .gray file. This will be
 %       used to maintain consistency between gray and flat maps. 
 
+warning('Obsolete. Vistasoft uses nifti class files, not mrGray');
+
 if ~exist(filename,'file')
   errordlg(sprintf('Can not find file %s\n',filename));
   % error(str);

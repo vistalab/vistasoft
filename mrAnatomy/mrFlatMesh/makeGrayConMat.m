@@ -17,7 +17,7 @@ offset=1;
 
 for t=1:nGnodes % for each gNode...
     
-    if ((~mod(t,1000)) & busyHandle)
+    if ((~mod(t,1000)) & ~isempty(busyHandle))
         updateBusybar(busyHandle,t);
     end
     % Find its edges (the nodes of the things that it's connected to...)

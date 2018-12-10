@@ -1,6 +1,6 @@
 function ni = niftiCheckQto(ni)
-% Changes the qto_* or/and sto_* fields in the NIFTI hearder if nt properly
-% set. Also changesother fields see below.
+% Changes the qto_* or/and sto_* fields in the NIFTI hearder if not properly
+% set. Also changes other fields see below.
 % 
 %   ni = niftiCheckQto(ni)
 %

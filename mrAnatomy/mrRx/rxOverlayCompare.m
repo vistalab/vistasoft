@@ -16,10 +16,10 @@ end
 
 % build the interpolated volume
 Prescription = [];
-hwait = waitbar(0,'Building Interpolated Volume...');
+hwait = mrvWaitbar(0,'Building Interpolated Volume...');
 for slice = 1:rx.rxDims(3)
     Prescription(:,:,slice) = rxInterpSlice(rx,slice);
-    waitbar(slice/rx.rxDims(3));
+    mrvWaitbar(slice/rx.rxDims(3));
 end
 close(hwait);
 

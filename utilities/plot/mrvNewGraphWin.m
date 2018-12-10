@@ -20,6 +20,8 @@ function figHdl = mrvNewGraphWin(ftitle,fType,visibility)
 %   mrvNewGraphWin('wideTitle','wide')
 %
 % Franco Pestilli & Brian Wandell Stanford University
+global GRAPHWIN
+
 
 if notDefined('visibility'), visibility = 'on'; end
 
@@ -46,4 +48,7 @@ figHdl = figure('Name',ftitle, ...
                 'Color',[1 1 1], ...
                 'Units','normalized', ...
                 'Position',position);
+            
+GRAPHWIN=figHdl;
+            
 return;

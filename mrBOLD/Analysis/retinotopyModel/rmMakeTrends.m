@@ -1,7 +1,7 @@
-function [t nt dcid] = rmMakeTrends(params,verbose)
+function [t, nt, dcid] = rmMakeTrends(params,verbose)
 % rmMakeTrends - make trends to add to GLM fit
 %
-% [t nt dcid] = rmMakeTrends(params, [verbose]);
+% [t, nt, dcid] = rmMakeTrends(params, [verbose]);
 %
 % params are retinotopy parameters (see rmDefineParameters).
 %
@@ -19,7 +19,7 @@ t      = zeros(sum(tf),max(sum(ndct),1));
 start1 = [0 cumsum(tf)];
 start2 = [0 cumsum(ndct)];
 
-% make them seperatly for every scan
+% make them separately for every scan
 dcid= zeros(1,numel(params.stim));
 for n = 1:numel(params.stim),
     % stimulus length 

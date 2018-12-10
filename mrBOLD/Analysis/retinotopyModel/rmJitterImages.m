@@ -95,7 +95,7 @@ end
 % --------------------------------------------------------------
 %% test (un-comment to view jittered images as they are created)
 % im = zeros(size(m));
-% range = minmax(stim.images(:));
+% range = mrvMinmax(stim.images(:));
 % for f = 1:stim.nFrames
 %     % reshape image from 1D to 2D
 %     im(inStimWindow) = stim.images(:, f);

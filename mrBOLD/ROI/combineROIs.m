@@ -53,9 +53,10 @@ for r = 1:length(rois)
     % check whether rois is cell array or vector
     if iscell(rois), thisroi = rois{r};
     else             thisroi = rois(r); end
-	rois{r} = tc_roiStruct(vw, thisroi);
+	rois_cell{r} = tc_roiStruct(vw, thisroi);
 end
 
+rois = rois_cell;
 
 % now perform operation:
 coords = rois{1}.coords;

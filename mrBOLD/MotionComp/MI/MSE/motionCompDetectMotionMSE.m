@@ -55,11 +55,11 @@ end
 
 MSE = [];
 lastFrame = 0;
-h = waitbar(0,'Computing Mean Squared Error...');
+h = mrvWaitbar(0,'Computing Mean Squared Error...');
 
 for scan = scans
            
-    waitbar((scan - 1)/scans(end),h,['Computing Mean Squared Error for scan ' num2str(scan)]);
+    mrvWaitbar((scan - 1)/scans(end),h,['Computing Mean Squared Error for scan ' num2str(scan)]);
        
     % Loads the tSeries
     clear tSeriesAllSlices;
@@ -88,7 +88,7 @@ for scan = scans
     
 end
     
-waitbar(1,h);
+mrvWaitbar(1,h);
 
 % Clips the histogram to calculate the mean and the standard deviation
 % of MSE without taking into account the outliers

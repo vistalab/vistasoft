@@ -35,9 +35,9 @@ nFrames = numFrames(view,scan(1));
 vres = zeros(nScans,nSlices,nFrames);
 counter=1;
 for thisScan=scan
-    waitHandle = waitbar(0,['Loading tSeries for scan',int2str(thisScan),' Please wait...']);
+    waitHandle = mrvWaitbar(0,['Loading tSeries for scan',int2str(thisScan),' Please wait...']);
    for slice=slices
-    waitbar(slice/nSlices);
+    mrvWaitbar(slice/nSlices);
     tSeries = loadtSeries(view,thisScan,slice);
      for frame=1:nFrames
           vres(counter,slice,frame) = sqrt(mse(tSeries(frame,:),tSeries(baseFrame,:)));

@@ -53,7 +53,7 @@ G = rfGaussian3d(mu, sigma, X, Y, S);
 % go ahead and scale G to match V
 [t df rss beta] = rmGLM(V(:), [G(:) ones(size(G(:)))]);
 % G = G .* beta(1) + beta(2);
-G = rescale2(G, [], minmax(V), 0);
+G = rescale2(G, [], mrvMinmax(V), 0);
 
 %% compute the fit
 R = corrcoef( [G(:) V(:)] );
@@ -94,7 +94,7 @@ if plotFlag==1
 	
 	
 	% show a 3-axis view of the search space
-	clim = minmax(V);
+	clim = mrvMinmax(V);
 	
 	subplot(4, 3, 4);
 	imagesc( squeeze(V(:,iX,:)), clim );	axis image;

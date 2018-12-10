@@ -1,5 +1,5 @@
-function view = helpMenu(view, topic);
-% [view or menu handle] = helpMenu([view], [topic]);
+function vw = helpMenu(vw, topic)
+% [vw or menu handle] = helpMenu([vw], [topic]);
 %
 % Attach a menu containing help-related callbacks to a mrVista view or
 % other figure.
@@ -17,8 +17,8 @@ function view = helpMenu(view, topic);
 % a mrVista view shouldn't be required for this stuff; but if one
 % is provided, make the main figure current, so the menus are attached
 % to that figure:
-if exist('view','var') & ~isempty(view)
-    figure(view.ui.figNum);
+if exist('vw','var') && ~isempty(vw)
+    figure(vw.ui.figNum);
 end
 
 if notDefined('topic'),		topic = '';				end
@@ -60,8 +60,8 @@ uimenu(hmenu, 'Label', 'Identify Callback for a Menu Item', ...
 
 
 %% if no view provided, return a handle to the menu
-if notDefined('view')
-    view = hmenu;
+if notDefined('vw')
+    vw = hmenu;
 end
 
 return

@@ -55,9 +55,9 @@ a11 = zeros(nVertices,1);
 a12 = a11; a13 = a11;  a22 = a11; a23 = a11;
 a = a11; b = a11; c = a11;
 
-wb = waitbar(0,'Computing curvature.');
+wb = mrvWaitbar(0,'Computing curvature.');
 for j=1:nVertices
-    if ~mod(j,1000), wb = waitbar(j/nVertices,wb); end
+    if ~mod(j,1000), wb = mrvWaitbar(j/nVertices,wb); end
     
     % Triangles adjacent to vertex j
     ind01=removeD0(itri(j,:));

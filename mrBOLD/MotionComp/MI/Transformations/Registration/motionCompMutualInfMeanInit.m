@@ -26,7 +26,7 @@ function view = motionCompMutualInfMeanInit(view,srcScans,ROI,baseScan,newDataTy
 tic
 
 printLog = '';
-h = waitbar(0,'Initializing...');
+h = mrvWaitbar(0,'Initializing...');
 
 global dataTYPES HOMEDIR INPLANE
 
@@ -163,7 +163,7 @@ view = viewSet(view,'currentDataType',curDataType);
 for scanIndex = 1:nScans
 
     srcScan = srcScans(scanIndex);
-    waitbar((scanIndex - 1)/nScans,h,['Motion compensation for scan ' num2str(srcScan)]);
+    mrvWaitbar((scanIndex - 1)/nScans,h,['Motion compensation for scan ' num2str(srcScan)]);
     
     printLog = [printLog 'Scan ' num2str(srcScan) ':\n'];
     
@@ -179,7 +179,7 @@ for scanIndex = 1:nScans
     % Runs the motion compensation algorithm
     if rigid
         
-        waitbar((scanIndex - 1)/nScans,h,['Motion compensation for scan ' num2str(srcScan) ': Rigid']);
+        mrvWaitbar((scanIndex - 1)/nScans,h,['Motion compensation for scan ' num2str(srcScan) ': Rigid']);
         
         [coregRotMatrix, registeredImage{srcScan}, param] = ...
             motionCompMutualInf(view, registeredImage{srcScan}, baseImage, srcScan, ROI);
@@ -194,13 +194,13 @@ for scanIndex = 1:nScans
     end
     
     if nonLinear
-        waitbar((scanIndex - 2/3)/nScans,h,['Motion compensation for scan ' num2str(srcScan) ': Non Linear']);
+        mrvWaitbar((scanIndex - 2/3)/nScans,h,['Motion compensation for scan ' num2str(srcScan) ': Non Linear']);
         [ux,uy,uz,err,registeredImage{srcScan}] = dtiDeformationFast2(baseImage,registeredImage{srcScan});
     end
     
     for frame = 1:nFrames
 
-        waitbar((scanIndex - 1/3)/nScans + (frame - 1)/(6*nFrames*nScans),h,['Computing the transformation for frame ' num2str(frame)])
+        mrvWaitbar((scanIndex - 1/3)/nScans + (frame - 1)/(6*nFrames*nScans),h,['Computing the transformation for frame ' num2str(frame)])
       
         currentImage = squeeze(tSeriesAllSlices(frame,:,:,:));
         
@@ -213,7 +213,7 @@ for scanIndex = 1:nScans
         tSeriesAllSlices(frame,:,:,:) = currentImage; 
     end
     
-    waitbar((srcScan - 1/6)/nScans,h,'Saving the new time series...');
+    mrvWaitbar((srcScan - 1/6)/nScans,h,'Saving the new time series...');
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Initialize a slot in the data type for the new scan, and  %
@@ -270,7 +270,7 @@ end
 
 % Try to collect information about the MI and MSE for the log
 % (but don't crash if we fail)
-waitbar(1,h,'Printing Log...')
+mrvWaitbar(1,h,'Printing Log...')
 try
     printLog = [printLog '\n\n *** Overall statistics between srcScans ***\n\n'];
     printLog = [printLog '  Entire Volume:\n'];
@@ -296,8 +296,8 @@ try
     tabMSE = motionCompMeanMSE(registeredImage,ROIocc);
     printLog = [printLog motionCompPrintTab(tabMSE) '\n\n'];
 catch
-    % let the user now, via a waitbar-a-gram
-    waitbar(1, h, 'Error printing log. Moving on...');
+    % let the user now, via a mrvWaitbar-a-gram
+    mrvWaitbar(1, h, 'Error printing log. Moving on...');
     disp('Error printing log. Moving on...')
 end
 

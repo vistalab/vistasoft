@@ -4,7 +4,7 @@ function tMat = tSeries4D(vw, scan, verbose, varargin)
 % Produce a 4D matrix of size rows x cols x slices x time
 % for the current view/scan.
 %
-% verbose: flag to put up a waitbar. Defaults to 0, off.
+% verbose: flag to put up a mrvWaitbar. Defaults to 0, off.
 %
 % varargin: see percentTSeries help for explanation of options
 %       UseDefaults - set to 1 to use data processing defaults
@@ -17,7 +17,7 @@ function tMat = tSeries4D(vw, scan, verbose, varargin)
 % 12/04 ras.
 % 03/05 ras: trying to save memory by using uint16's.
 
-if ieNotDefined('scan'), scan = viewGet(vw, 'Current Scan'); end
+if ieNotDefined('scan'),    scan = viewGet(vw, 'Current Scan'); end
 if ieNotDefined('verbose'), verbose = 0; end
 
 % Defaults to raw to preserve prior functionality of function
@@ -48,36 +48,24 @@ for i = 1:2:length(varargin)
     end
 end
 
-switch vw.viewType
+switch viewGet(vw, 'viewType')
     case {'Inplane'},
-        dims = dataSize(vw, scan);
+        dims    = dataSize(vw, scan);
         nFrames = numFrames(vw, scan);
-    
+                           
+        if verbose, fprintf('Loading tSeries...\n'); end
         
-        tMat = single(zeros([dims nFrames]));
-        
-        
-        if verbose
-            hwait = waitbar(0,'Loading tSeries...');
-        end
-        
-        for slice = 1:viewGet(vw, 'numSlices')
-            vw = percentTSeries(vw, scan, slice, ...
-                detrend, inhomoCorrection, ...
-                temporalNormalization, noMeanRemove);
-            tSeries = reshape(vw.tSeries',[dims(1) dims(2) 1 nFrames]);
-            tMat(:,:,slice,:) = single(tSeries);
-            
-            if verbose
-                waitbar(slice/numSlices(vw), hwait);
-            end
-        end
-        
-        if verbose, close(hwait); end
+        slices = 1:viewGet(vw, 'numSlices');
+        vw = percentTSeries(vw, scan, slices, detrend, ...
+            inhomoCorrection, temporalNormalization, noMeanRemove);
+        tSeries = viewGet(vw, 'tSeries');
+        tSeries = permute(tSeries, [2 3 1]); % put time in last dimension
+        tMat = reshape(tSeries, [dims nFrames]); % rows and cols separate
+                
     case {'Flat'},
         tMat = flatLevelTSeries(vw,scan);
     otherwise,
-        error('%s vw not supported yet.',vw.viewType);
+        error('%s vw not supported yet.',viewGet(vw, 'viewType'));
 end
 
 return

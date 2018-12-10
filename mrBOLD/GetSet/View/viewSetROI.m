@@ -93,7 +93,15 @@ switch param
         vw.ui.hideVolumeROIs = val;
         
     case 'roidrawmethod'
-        % What are the valid methods?  Indicate here!
+        % Specify how the ROIs will be visualized. 
+        % Options:
+        % 'perimeter'               % outlined ROI
+        % 'filled perimeter'        % outlined ROI, but thicker 
+        % 'boxes'                   % filled in ROI
+        % 'patches'                 % translucent patches
+        % 
+        % Examples: 
+        %   vw = viewSet(vw, 'roidrawmethod', 'filled perimeter')
         if ~checkfields(vw, 'ui'), vw.ui = []; end
         vw.ui.roiDrawMethod = val;
     case 'roiname'
@@ -113,6 +121,14 @@ switch param
         if isempty(varargin)||isempty(varargin{1}), roi = vw.selectedROI;
         else                                        roi = varargin{1}; end
         vw.ROIs(roi).modified = val;
+        
+    case 'roicomments'
+        if isempty(varargin) || isempty(varargin{1})
+            roi = vw.selectedROI;
+        else
+            roi = varargin{1};
+        end
+        vw.ROIs(roi).comments = val;
         
     otherwise
         error('Unknown view parameter %s.', param);

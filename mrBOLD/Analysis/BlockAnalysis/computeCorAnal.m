@@ -30,13 +30,13 @@ if exist(corAnalFile,'file'), vw = loadCorAnal(vw); end
 
 % If corAnal file doesn't exist, initialize to empty cell array
 if isempty(vw.co)
-    co = cell(1, nScans);
+    co  = cell(1, nScans);
     amp = cell(1, nScans);
-    ph = cell(1, nScans);
+    ph  = cell(1, nScans);
 else
-    co = vw.co;
-    amp = vw.amp;
-    ph = vw.ph;
+    co  = viewGet(vw, 'co');
+    amp = viewGet(vw,'amp');
+    ph  = viewGet(vw,'ph');
 end
 
 % (Re-)set scanList
@@ -47,7 +47,7 @@ end
 if isempty(scanList),  error('Analysis aborted'); end
 
 disp('Computing corAnal...');
-waitHandle = waitbar(0,'Computing corAnal matrices from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing corAnal matrices from the tSeries.  Please wait...');
 for scanIndex=1:length(scanList)
     
     scanNum = scanList(scanIndex);
@@ -60,24 +60,24 @@ for scanIndex=1:length(scanList)
     amp{scanNum} = NaN*ones(datasz);
     ph{scanNum}  = NaN*ones(datasz);
 
-    for sliceNum = sliceList(vw,scanNum)
-        framesToUse = viewGet(vw, 'frames to use', scanNum); 
-        [coSeries,ampSeries,phSeries] = ...
-            computeCorAnalSeries(vw, scanNum, sliceNum, nCycles, framesToUse);
-        switch vw.viewType
-            case {'Inplane' 'Flat'}
-                co{scanNum}(:,:,sliceNum)  = reshape(coSeries, dims);
-                amp{scanNum}(:,:,sliceNum) = reshape(ampSeries, dims);
-                ph{scanNum}(:,:,sliceNum)  = reshape(phSeries, dims);
-            case {'Gray' 'Volume'}
-                co{scanNum}  = coSeries;
-                amp{scanNum} = ampSeries;
-                ph{scanNum}  = phSeries;
-            otherwise
-                error('Unkown vw type.')
-        end
+    sliceNum = sliceList(vw,scanNum);
+    framesToUse = viewGet(vw, 'frames to use', scanNum);
+    [coSeries,ampSeries,phSeries] = ...
+        computeCorAnalSeries(vw, scanNum, sliceNum, nCycles, framesToUse);
+    switch vw.viewType
+        case {'Inplane' 'Flat'}
+            co{scanNum}  = reshape(coSeries,  dataSize(vw));
+            amp{scanNum} = reshape(ampSeries, dataSize(vw));
+            ph{scanNum}  = reshape(phSeries,  dataSize(vw));
+        case {'Gray' 'Volume'}
+            co{scanNum}  = coSeries;
+            amp{scanNum} = ampSeries;
+            ph{scanNum}  = phSeries;
+        otherwise
+            error('Unkown vw type.')
     end
-    waitbar(scanIndex/length(scanList), waitHandle);
+    
+    mrvWaitbar(scanIndex/length(scanList), waitHandle);
 end
 close(waitHandle);
 

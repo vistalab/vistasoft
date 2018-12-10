@@ -19,9 +19,9 @@ if isfield(vw, 'ui') && isfield(vw.ui,'windowHandle'); % test for non-hidden vw
 	maxVal = -inf;
     for iScan = 1:viewGet(vw, 'numScans')
         if length(parMap) >= iScan && ~isempty(parMap{iScan})
-            % the 'minmax' function ignores NaNs and Infs, this helps
+            % the 'mrvMinmax' function ignores NaNs and Infs, this helps
             % prevent slider-setting errors
-            rng = minmax( parMap{iScan}(:) );
+            rng = mrvMinmax( parMap{iScan}(:) );
 
             % deal with NaNs to avoid error when setting map window limits
             if isempty(rng), rng = [0 1]; end

@@ -44,7 +44,7 @@ peakPeriod = 4:12;       % period to look for peaks in t-tests, in seconds
 timeWindow = -8:24;     % seconds relative to trial onset to take for each trial
 onsetDelta = 0;         % # secs to shift onsets in parfiles, relative to time course
 snrConds = [];          % For calculating SNR, which conditions to use (if empty, use all)
-waitbarFlag = 0;        % flag to show a graphical waitbar to show load progress
+waitbarFlag = 0;        % flag to show a graphical mrvWaitbar to show load progress
 
 %%%%% parse the options %%%%%
 varargin = unNestCell(varargin);
@@ -59,7 +59,7 @@ for i = 1:length(varargin)
         case 'timewindow', timeWindow = varargin{i+1};
         case 'onsetdelta', onsetDelta = varargin{i+1};
         case 'snrconds', snrConds = varargin{i+1};
-        case 'waitbar', waitbarFlag = 1;
+        case 'mrvWaitbar', waitbarFlag = 1;
         otherwise, % ignore
         end
     end
@@ -81,7 +81,7 @@ end
 trials = er_concatParfiles(view,scans);
 
 %%%%% get the tSeries for each voxel / concat across scans
-h = waitbar(0,'Loading tSeries...');
+h = mrvWaitbar(0,'Loading tSeries...');
 
 tSeries = [];
 for s = 1:length(scans)
@@ -89,13 +89,13 @@ for s = 1:length(scans)
     subt = voxelTSeries(view,coords,scans(s),raw);
     tSeries = [tSeries; subt];
     
-    waitbar(s/length(scans),h);
+    mrvWaitbar(s/length(scans),h);
 end
 
 close(h)
 
 %%%%% run the standard choptSeries analysis on each voxel
-h = waitbar(0,'Chopping tSeries...');
+h = mrvWaitbar(0,'Chopping tSeries...');
 
 nVoxels = size(tSeries,2);
 
@@ -109,7 +109,7 @@ for v = 1:nVoxels
           % can probably remove the option flags down the line
           
     
-    waitbar(v/nVoxels,h);
+    mrvWaitbar(v/nVoxels,h);
 end
 
 close(h)

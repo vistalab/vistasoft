@@ -1,8 +1,8 @@
-function [status, results, fg, pathstr] = mrtrix_track(files, roi, mask, mode, nSeeds, bkgrnd, verbose, clobber)
+function [status, results, fg, pathstr] = mrtrix_track(files, roi, mask, mode, nSeeds, curvature, cutoff, bkgrnd, verbose, clobber)
 %
 % function [status, results, fg, pathstr] = mrtrix_track(files, roi, mask, mode, nSeeds, bkgrnd, verbose)
 %
-% Provided a csd estimate, generate estimates of the fibers starting in roi 
+% Provided a csd estimate, generate estimates of the streamlines/fascicles starting in roi 
 % and terminating when they reach the boundary of mask
 %
 % Parameters
@@ -16,28 +16,42 @@ function [status, results, fg, pathstr] = mrtrix_track(files, roi, mask, mode, n
 % mode: Tracking mode: {'prob' | 'stream'} for probabilistic or
 %       deterministic tracking. 
 % nSeeds: The number of fibers to generate.
+% curvature: The minimum radius of curvature required for tractography
+%            (default is 2 for DT_STREAM, 0 for SD_STREAM, 1 for
+%            SD_PROB)
+% cutoff: The stopping criteria for tractography based on FA (DT_STREAM)
+%           or FOD amplitude cutoff (CSD tracking).  
 % bkgrnd: on unix, whether to perform the operation in another process
 % verbose: whether to display standard output to the command window. 
 % clobber: Whether or not to overwrite the fiber group if it was already
 %          computed
 % 
-% Franco, Bob & Ariel (c) Vistalab Stanford University 2013 
+% Log
+% 2013 Franco, Bob & Ariel wrote the function
+% 2015 Dec Hiromasa modified function for generarization to ET project
+% (c) Vistalab Stanford University 2013 
 
 status = 0; results = [];
 if notDefined('verbose'),  verbose = false;end
 if notDefined('bkgrnd'),    bkgrnd = false;end
 if notDefined('clobber'),  clobber = false;end
+if notDefined('cutoff'),  cutoff = 0.1;end
 
-% Choose the tracking mode (probabilistic or stream)
+% Choose the tracking mode (probabilistic or stream),
+% and set default tracking parameter unless specified
 switch mode
-  case {'prob','probabilistic tractography'}
-    mode_str = 'SD_PROB';
-  case {'stream','deterministic tractogrpahy based on spherical deconvolution'}
-    mode_str = 'SD_STREAM';
-  case {'tensor','deterministic tractogrpahy based on a tensor model'}
-    mode_str = 'DT_STREAM';
-  otherwise
-    error('Input "%s" is not a valid tracking mode', mode); 
+    case {'prob','probabilistic tractography'}
+        mode_str = 'SD_PROB';
+        if notDefined('curvature'),  curvature = 1;end
+    case {'stream','deterministic tractogrpahy based on spherical deconvolution'}
+        mode_str = 'SD_STREAM';
+        if notDefined('curvature'),  curvature = 0;end
+    case {'tensor','deterministic tractogrpahy based on a tensor model'}
+        mode_str = 'DT_STREAM';
+        if notDefined('curvature'),  curvature = 2;end
+        
+    otherwise
+        error('Input "%s" is not a valid tracking mode', mode);
 end
 
 % Generate a UNIX command string.                          
@@ -48,11 +62,11 @@ switch mode_str
     % track, mask, csd file etc.
     [~, pathstr] = strip_ext(files.csd);
     tck_file = fullfile(pathstr,strcat(strip_ext(files.csd), '_' , strip_ext(roi), '_',...
-      strip_ext(mask) , '_', mode, '-',num2str(nSeeds),'.tck'));
+      strip_ext(mask) , '_', mode, '-curv',num2str(curvature),'-cutoff',num2str(cutoff),'-',num2str(nSeeds),'.tck'));
     
     % Generate the mrtrix-unix command.
-    cmd_str = sprintf('streamtrack %s %s -seed %s -mask %s %s -num %d', ...
-                                mode_str, files.csd, roi, mask, tck_file, nSeeds); 
+    cmd_str = sprintf('streamtrack %s %s -seed %s -mask %s -curvature %s -cutoff %s %s -num %d', ...
+                                mode_str, files.csd, roi, mask, num2str(curvature), num2str(cutoff), tck_file, nSeeds); 
     
   case {'DT_STREAM'}
           % Build a file name for the tracks that will be generated.
@@ -60,11 +74,11 @@ switch mode_str
     % track, mask, csd file etc.
     [~, pathstr] = strip_ext(files.dwi);
     tck_file = fullfile(pathstr,strcat(strip_ext(files.dwi), '_' , strip_ext(roi), '_',...
-      strip_ext(mask) , '_', mode, '-',num2str(nSeeds),'.tck'));
+      strip_ext(mask) , '_', mode, '-curv',num2str(curvature),'-cutoff',num2str(cutoff),'-',num2str(nSeeds),'.tck'));
               
     % Generate the mrtrix-unix command.
-    cmd_str = sprintf('streamtrack %s %s -seed %s -grad %s -mask %s %s -num %d', ...
-                                mode_str, files.dwi, roi, files.b, mask, tck_file, nSeeds); 
+    cmd_str = sprintf('streamtrack %s %s -seed %s -grad %s -mask %s -curvature %s -cutoff %s %s -num %d', ...
+                                mode_str, files.dwi, roi, files.b, mask, num2str(cutoff), num2str(cutoff), tck_file, nSeeds); 
 
   otherwise
     error('Input "%s" is not a valid tracking mode', mode_str);

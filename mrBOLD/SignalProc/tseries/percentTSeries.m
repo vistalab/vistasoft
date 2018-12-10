@@ -1,6 +1,8 @@
-function vw = percentTSeries(vw, scanNum, sliceNum, detrend, inhomoCorrection, temporalNormalization, noMeanRemove)
-%
-% vw = percentTSeries(vw, scanNum, sliceNum, [detrend], [inhomoCorrection], [temporalNormalization], [noMeanRemove])
+function vw = percentTSeries(vw, scanNum, sliceNum, detrend,...
+    inhomoCorrection, temporalNormalization, noMeanRemove)
+%Convert raw time series into percentage change from mean.
+% vw = percentTSeries(vw, [scanNum], [sliceNum], [detrend], ...
+%           [inhomoCorrection], [temporalNormalization], [noMeanRemove])
 %
 % Checks the tSeriesScan and tSeriesSlice slots to see if the
 % desired tSeries is already loaded. If so, don't do anything.
@@ -12,23 +14,48 @@ function vw = percentTSeries(vw, scanNum, sliceNum, detrend, inhomoCorrection, t
 %    vw.tSeriesScan = scanNum
 %    vw.tSeriesSlice = sliceNum
 %
-% Options for how to remove the baseline, depending on
-% the value of detrend
-%   0 no trend removal
-%   1 highpass trend removal
-%   2 quadratic removal
-%   -1 linear trend removal
-% Default: detrend = detrendFlag(vw,scanNum)
+% INPUTS
+% ------
+%   vw:             mrVista view structure 
+%   scanNum:        integer scalar for scan number 
+%                       [default = viewGet(vw, 'current scan')]
+%   sliceNum:       integer scalar or vector for slice number 
+%                       [default = viewGet(vw, 'current slice')]
+%                       0: all slices: [1:viewGet(vw, 'num slices')]
+%   detrend:        Options for how to remove the baseline:
+%                       0: no trend removal
+%                       1: highpass trend removal
+%                       2: quadratic removal
+%                      -1: linear trend removal
+%                       [default: detrend = detrendFlag(vw,scanNum)]
+%   inhomoCorrection: How to compensate for distance from the coil:
+%                       0 do nothing
+%                       1 divide by the mean, independently at each voxel
+%                       2 divide by null condition
+%                       3 divide by anything you like, e.g., robust
+%                         estimate of intensity inhomogeneity
+%                       For inhomoCorrection=3, you must compute the
+%                           spatial gradient (from the Analysis menu) or
+%                           load a previously computed spatial gradient
+%                           (from the File/Parameter Map menu).
+%   temporalNormalization: Boolean flag. If true, detrend each frame slice
+%                           by slice so to that each frame has the same
+%                           mean intensity. See doTemporalNormlalization
+%                           [default = false]
+%   noMeanRemove:       Hmm. Can someone explain this?
 %
-% Options for how to compensate for distance from the coil, depending
-% on the value of inhomoCorrection
-%   0 do nothing
-%   1 divide by the mean, independently at each voxel
-%   2 divide by null condition
-%   3 divide by anything you like, e.g., robust estimate of intensity inhomogeneity
-% For inhomoCorrection=3, you must compute the spatial gradient
-% (from the Analysis menu) or load a previously computed spatial
-% gradient (from the File/Parameter Map menu).
+% OUTPUTS
+% -------
+%  vw:  Modified vw structure. The following fields get set in the vw:
+%               tSeries, tSeriesScan, tSeriesSlice
+%
+% EXAMPLE
+% -------
+% dFolder = mrtInstallSampleData('functional', 'mrBOLD_01');
+% cd(dFolder);
+% vw = initHiddenInplane;
+% vw = percentTSeries(vw, 1, 0);
+
 
 % EDIT HISTORY:
 % djh, 1/22/98
@@ -56,20 +83,26 @@ function vw = percentTSeries(vw, scanNum, sliceNum, detrend, inhomoCorrection, t
 %			  make the change in loadtSeries and savetSeries, so that this
 %			  code doesn't modify the input data type.
 
+
+%% Argument check
+if notDefined('scanNum'),               scanNum               = viewGet(vw,'current scan'); end
+if notDefined('sliceNum'),              sliceNum              = viewGet(vw,'current slice'); end
 if notDefined('detrend'),               detrend               = detrendFlag(vw,scanNum); end
 if notDefined('inhomoCorrection'),      inhomoCorrection      = inhomoCorrectionFlag(vw,scanNum); end
 if notDefined('temporalNormalization'), temporalNormalization = 0; end
 if notDefined('noMeanRemove'),          noMeanRemove          = 0; end
 
+if sliceNum == 0, sliceNum = 1:viewGet(vw, 'num slices', scanNum); end
 
+%%
 % load tSeries
 tSeries = loadtSeries(vw, scanNum, sliceNum);
 
 % also, if the tSeries is empty, return w/o erroring
 if isempty(tSeries)
-	vw.tSeries      = [];
-	vw.tSeriesScan  = scanNum;
-	vw.tSeriesSlice = sliceNum;
+	vw = viewSet(vw, 'tSeries', []);
+	vw = viewSet(vw, 'tSeriesScan', scanNum);
+	vw = viewSet(vw, 'tSeriesSlice', sliceNum);
 	return
 end
 
@@ -78,7 +111,7 @@ nFrames = size(tSeries,1);
 % Added by ARW
 if (temporalNormalization)
 	disp('Temporal normalization to first frame');
-	tSeries=doTemporalNormalization(tSeries);
+    tSeries=doTemporalNormalization(tSeries);
 end
 
 % Make the mean of all other frames the same as this.
@@ -90,7 +123,7 @@ switch inhomoCorrection
 	case 1
 		dc = nanmean(tSeries);
 		dc(dc==0 | isnan(dc)) = Inf;  % prevents divide-by-zero warnings
-		ptSeries = tSeries ./ (ones(nFrames,1) * dc);
+		ptSeries = bsxfun(@rdivide, tSeries, dc);
 	case 2
 		myErrorDlg('Inhomogeneity correction by null condition not yet implement');
 	case 3
@@ -122,16 +155,16 @@ end
 % the mean, but now with the spatialGrad option the mean may not be exactly 1.
 %
 if noMeanRemove==0
-	ptSeries = ptSeries - ones(nFrames,1)*mean(ptSeries);
+	ptSeries = bsxfun(@minus, ptSeries, mean(ptSeries));
 	% Multiply by 100 to get percent
 	%
 	ptSeries = 100*ptSeries;
 end
 
-% Set fields in vw
-vw.tSeries      = ptSeries;
-vw.tSeriesScan  = scanNum;
-vw.tSeriesSlice = sliceNum;
+% Set fields in view structure
+vw = viewSet(vw, 'tSeries', ptSeries);
+vw = viewSet(vw, 'tSeriesScan', scanNum);
+vw = viewSet(vw, 'tSeriesSlice', sliceNum);
 
 
 return

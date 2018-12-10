@@ -92,7 +92,7 @@ mrmSet(msh, 'hidecursor');
 verbose = prefsVerboseCheck;
 if verbose
 	str = sprintf('Creating %.0f frame movie', nFrame);
-	wbar = waitbar(0, str);
+	wbar = mrvWaitbar(0, str);
 end
 
 % change the view to display the coherence field, since we're actually
@@ -107,10 +107,10 @@ end
 V.ui.displayMode = 'co';  
 
 for ii=1:nFrame
-	if verbose		% udpate waitbar
+	if verbose		% udpate mrvWaitbar
 		str = sprintf('Creating frame %.0f of %.0f', ii, nFrame);
 		fname{ii} = sprintf('Movie%0.4d.tiff', ii);
-		waitbar(ii/nFrame, wbar, str);
+		mrvWaitbar(ii/nFrame, wbar, str);
 	end
     
 	% compute the projected coherence relative to this time point
@@ -131,7 +131,7 @@ for ii=1:nFrame
     M(:,:,:,ii) = mrmGet(msh, 'screenshot') / 255;
 end
 
-if verbose, waitbar(1, wbar); close(wbar); end
+if verbose, mrvWaitbar(1, wbar); close(wbar); end
 
 %% show the movie in a separate figure
 if plotFlag==1

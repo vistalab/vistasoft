@@ -4,6 +4,11 @@
 %  2. Read the meshes and convert them to GIFTI files.
 %  3. Load the T1 anatomical and the meshes into dtiquery.
 %
+% Concern:  BW had errors with the SPM12 gifti.  He went to the Flandin
+% github repository https://github.com/nno/matlab_GIfTI and downloaded from
+% there.  Things started working.  Not sure why.  Needs to be resolved.
+% Also, there is another version of gifti inside of Vistasoft under
+% filefilters.  So, this needs to be resolved.
 %
 % (c) Stanford VISTA Team
 

@@ -267,7 +267,6 @@ function val = viewGet(vw,param,varargin)
 
 if ~exist('vw','var'), vw = getCurView; end
 
-mrGlobals;
 val = [];
 
 if ischar(vw)

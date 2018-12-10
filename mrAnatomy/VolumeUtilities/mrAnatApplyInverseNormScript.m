@@ -15,7 +15,7 @@ V = spm_vol(fullfile(p,f));
 % image (sn.VF), so we will just take that as our target voxel-space.
 disp('Computing inverse deformation (may take a while)...');
 [defX, defY, defZ] = mrAnatInvertSn(sn);
-h = waitbar(0,'Warping map to current brain...');
+h = mrvWaitbar(0,'Warping map to current brain...');
 defSize = size(defX);
 img = zeros(defSize);
 x = [1:defSize(1)];
@@ -30,7 +30,7 @@ for(z=1:nz)
     % the normalized image that we are unwarping (V).
     tc = inv(V.mat)*[tc;ones(size(tc(1,:)))];
     img(:,:,z) = reshape(spm_sample_vol(V, tc(1,:), tc(2,:), tc(3,:), interpMethod),size(img(:,:,1)));
-    waitbar(z/nz,h);
+    mrvWaitbar(z/nz,h);
 end
 close(h);
 figure; imagesc(makeMontage(img)); axis image; colorbar;

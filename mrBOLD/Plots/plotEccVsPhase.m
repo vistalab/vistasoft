@@ -1,4 +1,4 @@
-function [vw figHandle] = plotEccVsPhase(vw, newfig, colored, drawROI, varargin)
+function [vw, figHandle] = plotEccVsPhase(vw, newfig, colored, drawROI, varargin)
 %
 % [vw figHandle] = plotEccVsPhase(vw, newfig, co)
 %
@@ -111,7 +111,7 @@ subEcc = ecc(coIndices);
 if newfig
     figHandle = figure;
 else
-	figHandle = selectGraphWin;
+	%figHandle = selectGraphWin;
 end
 
 % selectGraphWin;

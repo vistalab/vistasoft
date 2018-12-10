@@ -1,8 +1,7 @@
-function [RFcov figHandle all_models weight data] = rmPlotCoverage(vw, varargin)
+function [RFcov, figHandle, all_models, weight, data] = rmPlotCoverage(vw, varargin)
+% [RFcov, figHandle, all_models, weight, data] = rmPlotCoverage(vw, varargin)
 % rmPlotCoverage - calulate the visual field coverage within an ROI
 % 
-% [RFcov figHandle all_models weight data]  = rmPlotCoverage(vw, varargin)
-%
 %
 % Before you run this script, you have to load 'variance explained', 'eccentricity',
 % 'polar-angle' and 'prf size' into 'co', 'map', 'ph' and 'amp' fields, respectively
@@ -35,23 +34,25 @@ function [RFcov figHandle all_models weight data] = rmPlotCoverage(vw, varargin)
 % 09/02 SD large rearrangments
 % 09/08 JW allow superposition of pRF centers; various minor debugs
 % 02/10 MB added method 'betasum'
-if notDefined('vw'),           error('View must be defined.'); end
+% 09/16 RL edited code to allow for the edge case of ROIs that are 1 or 2 voxels large
+if notDefined('vw'),       error('View must be defined.'); end
+if notDefined('varargin'), varargin{1} = 'dialog'; end
 
 %% default parameters
 vfc.prf_size = true; 
 vfc.fieldRange = min(30, vw.rm.retinotopyParams.analysis.maxRF);
-vfc.method = 'maximum profile';         
+vfc.method = 'max';         
 vfc.newfig = true;                      
-vfc.nboot = 0;                          
+vfc.nboot = 50;                          
 vfc.normalizeRange = true;              
-vfc.smoothSigma = false;                
+vfc.smoothSigma = true;                
 vfc.cothresh = viewGet(vw, 'co thresh');         
 vfc.eccthresh = [0 1.5*vfc.fieldRange]; 
 vfc.nSamples = 128;            
 vfc.meanThresh = 0;
 vfc.weight = 'fixed';  
 vfc.weightBeta = 0;
-vfc.cmap = 'hot';						
+vfc.cmap = 'jet';						
 vfc.clipn = 'fixed';                    
 vfc.threshByCoh = false;                
 vfc.addCenters = true;                 
@@ -229,6 +230,13 @@ suby0    = y0(coIndices);
 
 % smooth sigma
 if vfc.smoothSigma
+    
+    % Cannot do sigma smoothing if the ROI has less than 3 voxels. 
+    if size(subx0,2) < 3
+        error('Cannot perform sigma smoothing when the ROI has less than 3 voxels. ')
+    end
+    
+    
     if vfc.smoothSigma == 1
         vfc.smoothSigma = 3; %default
     end
@@ -328,6 +336,16 @@ end
 % make in small steps so we don't go into swap space for large ROIs
 n = numel(subX);
 s = [(1:ceil(n./1000):n-2) n+1]; 
+
+% For the line above (which assumes that we have at least 3 voxels,
+% probably for median smoothing),  s is an empty vector when n < 3 
+% -- and an empty rfcov is  returned when we try to plot the 
+% coverage. So modify s accordingly for these edge cases: 
+% The definition of s is not very intuitive
+if n < 3
+    s = [1:n+1]; 
+end
+
 all_models = zeros( numel(X), n, 'single' );
 fprintf(1,'[%s]:Making %d pRFs:...', mfilename, n);
 drawnow;
@@ -374,6 +392,13 @@ end
 %% Different ways of combining them: 
 % 1) bootstrap (yes, no) 2) which statistic (sum, max, etc), 
 % bootstrap
+
+% If we are only working with 1 voxel, bootstrapping does not do anything. 
+% We turn it off because the bootstp function does not handle this case well. 
+if size(subX,2) == 1
+    vfc.nboot = 0; 
+end
+
 if vfc.nboot>0
     if isempty(which('bootstrp'))
         warndlg('Bootstrap requires statistics toolbox');
@@ -383,7 +408,7 @@ if vfc.nboot>0
     all_models(isnan(all_models))=0;
 
     switch lower(vfc.method)
-        case {'sum','add','avg','average everything'}
+        case {'sum','add','avg','average everything', 'average'}
             m = bootstrp(vfc.nboot, @mean, all_models');
         
         case {'max','profile','maximum profile' 'maximum'}
@@ -392,8 +417,8 @@ if vfc.nboot>0
         otherwise
             error('Unknown method %s',vfc.method)
     end
-    RFcov=mean(m)';
-   
+    RFcov=median(m,1)';
+    
 % no bootstrap
 else
     switch lower(vfc.method)

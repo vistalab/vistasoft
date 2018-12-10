@@ -152,7 +152,7 @@ mapVol = NaN*ones(dataSize(vw, scan));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % main loop: load data from each slice and compute map  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if verbose, hwait = waitbar(0,'Computing Contrast Map'); end
+if verbose, hwait = mrvWaitbar(0,'Computing Contrast Map'); end
 
 nSlices = viewGet(vw, 'numSlices');
 for slice = 1:nSlices
@@ -161,7 +161,7 @@ for slice = 1:nSlices
 	mapVol(:,:,slice) = glm_contrast(model, active, control, ...
 									   'size', viewGet(vw, 'sliceDims'), opts);
 
-	if verbose, waitbar(slice/nSlices, hwait);  end
+	if verbose, mrvWaitbar(slice/nSlices, hwait);  end
 end
 
 if verbose, close(hwait);	end

@@ -194,7 +194,7 @@ else
     
     % Interpolate from the values in the statistics to the position of the
     % fiber nodes.  For speed, we use nearest neighbor interpolation
-    vals = dtiGetValFromFibers(data, fg, mat,'nearest');
+    vals = dtiGetValFromFibers(data, fg, mat,[],'nearest');
     
     % Apply the scaling function function to each entry of vals. This will
     % take a 0,1 range and put it with the scale specified by max and min

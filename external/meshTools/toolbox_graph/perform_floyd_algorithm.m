@@ -16,12 +16,12 @@ end
 N = length(D);
 
 if verbose
-    h = waitbar(0,'Computing shortest distances');
+    h = mrvWaitbar(0,'Computing shortest distances');
 end
 for k=1:N
      D = min(D,repmat(D(:,k),[1 N])+repmat(D(k,:),[N 1])); 
      if verbose
-         waitbar(k/N)
+         mrvWaitbar(k/N)
      end
 end
 if verbose

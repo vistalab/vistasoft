@@ -22,9 +22,9 @@ pathStr=fullfile(viewDir(view),'coords');
 
 if ~check4File(pathStr)
     imSize=[0,0];
-    waitHandle = waitbar(0,'Computing flat coordinates.  Please wait...');
+    waitHandle = mrvWaitbar(0,'Computing flat coordinates.  Please wait...');
     for h = 1:2
-        waitbar((h-1)/2)
+        mrvWaitbar((h-1)/2)
         
         % Load gLocs2d and gLocs3d
         %

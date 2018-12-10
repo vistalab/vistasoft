@@ -1,6 +1,6 @@
 function doRawResample = dtiInitResample(dwParams,dwDir,doResamp)
 % 
-% function doRawResample = dtiInitResample(dwParams,dwDir)
+%  doRawResample = dtiInitResample(dwParams,dwDir)
 % 
 % Based on user selected params and the outputs of dtiInitAlign and
 % dtiInitEddyCC decide if we are resampling the data. 

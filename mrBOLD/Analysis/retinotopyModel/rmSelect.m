@@ -37,9 +37,28 @@ if ischar(rmFile) && ismember(lower(rmFile), {'newest' 'mostrecent'})
 	if isempty(w)
 		error('Most Recent File selected; no retModel-* files found.')
 	end
-	[dates order] = sortrows( datevec({w.date}) ); % oldest -> newest
+	[dates, order] = sortrows( datevec({w.date}) ); % oldest -> newest
 	rmFile = fullfile( dataDir(vw), w(order(end)).name );
 end
+
+% Locate rm file
+if check4File(fullfile(dataDir(vw), rmFile))
+    % first check in appropriate directory
+    rmFile = fullfile(dataDir(vw), rmFile);
+elseif check4File(fullfile(dataDir(vw), [rmFile '.mat']))
+    % if not found, check whether we are missing the extension
+    rmFile = fullfile(dataDir(vw), [rmFile '.mat']);
+elseif exist(rmFile,'file')
+    % if still not found, look on entire path
+elseif exist([rmFile '.mat'], 'file')
+    % if still not found, look on entire path with '.mat' added
+    rmFile = [rmFile '.mat'];
+else
+    % We could not find rm file anywhere
+    fprintf('[%s]:No file: %s\n',mfilename,rmFile);
+    return;
+end
+
 
 % if the load model flag is 1, but the file's already selected, just load
 % it and return:
@@ -55,16 +74,6 @@ if loadModel && checkfields(vw, 'rm' , 'retinotopyModelFile')
     return;
 end;
 
-if ~exist(rmFile,'file') 
-    if exist([rmFile '.mat'], 'file')
-        rmFile = [rmFile '.mat'];
-    elseif check4File(fullfile(dataDir(vw), rmFile))
-        rmFile = fullfile(dataDir(vw), rmFile);
-    else
-        disp(sprintf('[%s]:No file: %s',mfilename,rmFile));
-        return;
-    end
-end
     
 % store rmFile filename:
 vw = viewSet(vw,'rmFile',rmFile);

@@ -22,7 +22,7 @@ end
 
 tic
 
-h = waitbar(0,'Caching tSeries for this view...');
+h = mrvWaitbar(0,'Caching tSeries for this view...');
 
 tSeries = cell(numScans(view),numSlices(view));
 
@@ -45,7 +45,7 @@ for s = scans
         tSeries{s,slice} = uint16(tSeries{s,slice});
     end
     
-    waitbar(find(scans==s)/length(scans),h);
+    mrvWaitbar(find(scans==s)/length(scans),h);
 end
 
 view.tSeriesCache = tSeries;

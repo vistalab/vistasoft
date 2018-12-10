@@ -1,86 +1,78 @@
-function [model, view] = applyGlmSlice(view, slice, scans, params);
+function [model, vw] = applyGlmSlice(vw, slice, scans, params)
 % Apply a General Linear Model to the time series for one slice of a view
 %
-% [model, view] = applyGlmSlice(view, [slice], [scans], [params]);
+% [model, vw] = applyGlmSlice(vw, [slice], [scans], [params])
 % 
 % The GLM uses a set of  event-related analysis parameters specified by 
 % the user elsewhere (see er_editParams, er_setParams, er_defaultParams).
 % This function returns a struct (model) with results of the GLM. 
 %
 % ras,  04/18/05.
-if notDefined('view')
-    view = getSelectedInplane;
-    if isempty(view)
+if notDefined('vw')
+    vw = getSelectedInplane;
+    if isempty(vw),
         help(mfilename);
         return
     end
 end
 
-if ~exist('slice', 'var') | isempty(slice)
-    slice = viewGet(view, 'curSlice');
+if ~exist('slice', 'var') || isempty(slice)
+    slice = viewGet(vw, 'curSlice');
 end
 
-if ~exist('scans', 'var') | isempty(scans)    
-    [scans dt] = er_getScanGroup(view);     
-    view = selectDataType(view, dt);
+if ~exist('scans', 'var') || isempty(scans)    
+    [scans, dt] = er_getScanGroup(vw);     
+    vw = selectDataType(vw, dt);
 end
 
-if ~exist('params', 'var') | isempty(params)
-    params = er_getParams(view, scans(1));
+if ~exist('params', 'var') || isempty(params)
+    params = er_getParams(vw, scans(1));
 end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Grab useful parameters for easy access
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-tr = params.framePeriod;
-trials = er_concatParfiles(view, scans);
+tr     = params.framePeriod;
+trials = er_concatParfiles(vw, scans);
 nConds = sum(trials.condNums>0);
 nScans = length(scans);
-for s = 1:nScans
-	framesPerRun(s) = numFrames(view, scans(s));
-end
-nFrames = max(framesPerRun);
 
 if ~isfield(params, 'lowPassFilter'), params.lowPassFilter = 0; end
-
-% get # voxels as # in current slice, 
-% which depends on the view type
-switch view.viewType
-    case 'Inplane',  nVoxels = prod(viewGet(view, 'sliceDims'));
-    case 'Gray',  nVoxels = size(view.coords, 2);
-    case 'Flat',  nVoxels = size(view.coords{slice}, 2);
-end
 
 verbose = prefsVerboseCheck;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Get Data Matrix Y
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% initialize Y matrix
-Y = []; %repmat(NaN, [nFrames nVoxels nScans]);
+Y = []; 
 
 % get paraeters for time series processing from params
 detrend = params.detrend;
 ic = params.inhomoCorrect;
 tn = params.temporalNormalization;
 % no mean remove: if using spatial grad (inhomoCorrect==3), don't remove mean
-if ic==3, nmr = 1; else, nmr = 0; end
+if ic==3, nmr = 1; else nmr = 0; end
 
 % load tSeries from selected slice
-if verbose, hwait = waitbar(0, 'Loading tSeries...'); end
+if verbose, hwait = mrvWaitbar(0, 'Loading tSeries...'); end
 for s = 1:nScans
-    view = percentTSeries(view, scans(s), slice, detrend, ic, tn, nmr);
-    scanTSeries = view.tSeries;
+    vw = percentTSeries(vw, scans(s), slice, detrend, ic, tn, nmr);
+    scanTSeries = viewGet(vw, 'tSeries');
     
-    Y = [Y; single(scanTSeries)];
-    if verbose, waitbar(s/(nScans + params.lowPassFilter), hwait); end
+    % JW: is it necessary to convert to single?
+    % Y = [Y; single(scanTSeries)];
+    Y = cat(1, Y, scanTSeries); clear scanTSeries;
+    if verbose, mrvWaitbar(s/(nScans + params.lowPassFilter), hwait); end
 end
+
+dims = size(Y);
+Y = reshape(Y, dims(1), []);
 
 % apply low-pass filter if asked
 % (TODO: replace with a more formal filtering method)
 if params.lowPassFilter==1
-    if verbose, waitbar(1, hwait, 'Low-Pass Filtering Time Series'); end
+    if verbose, mrvWaitbar(1, hwait, 'Low-Pass Filtering Time Series'); end
     for ii = 1:size(Y, 2)
         Y(:,ii) = imblur(Y(:,ii));
     end
@@ -121,7 +113,7 @@ else
 	
 	for v = 1:stepSize:size(Y,2)
 		% get voxel range
-		I = [0:stepSize-1] + v;
+		I = (0:stepSize-1) + v;
 		I = I(I <= size(Y,2) );
 		
 		if v==1
@@ -150,7 +142,16 @@ model.varExplained(isnan(model.varExplained) | isinf(model.varExplained)) = 0;
 warning on MATLAB:divideByZero
 
 % Note where the data came from in the glm result:
-model.roiName = sprintf('Slice %i', slice);
+model.roiName = sprintf('Slice %s', num2str(slice));
 
-
+% If we applied GLM to multiple slices, then reshape model solutions
+if numel(dims) > 2
+    whichfields = {'betas' 'residual' 'stdevs' 'sems' 'varExplained'};
+    for ii= 1:length(whichfields)
+        thisfield = whichfields{ii};
+        oldsz = size(model.(thisfield));
+        newsz = [oldsz(1:end-1) dims(2:3)];
+        model.(thisfield) = reshape(model.(thisfield), newsz);
+    end
+end
 return

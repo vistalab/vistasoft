@@ -7,16 +7,22 @@ function classType = mrGrayCheckClassType(fileName)
 % NIFTI class file.
 %
 
-[p,f,e] = fileparts(fileName);
+[~,~,e] = fileparts(fileName);
 
 switch(lower(e))
     case {'.gray','.grey'}
-        classType = 'g';
+        classType = 'mrGray';
     case '.class'
-        classType = 'c';
+        classType = 'mrGray';
     case {'.gz','.nii'}
         classType = 'n';       
     otherwise
         classType = 'u';
 end
-return; 
+
+
+if strcmpi(classType, 'mrGray')
+    error('Vistasoft no longer supports mrGray Gray and Class files. Please convert to nifti.')
+end
+
+return;

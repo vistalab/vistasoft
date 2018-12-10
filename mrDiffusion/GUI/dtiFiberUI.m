@@ -65,6 +65,13 @@ if(nargin <= 1)  % LAUNCH GUI
     % Generate a structure of handles to pass to callbacks, and store it.
     handles = guihandles(fig);
     
+    if ~isnumeric(fig)
+        % In Matlab 2014b and up the figure handle is defined as an object.
+        % This new definition is not compatible with older versions of
+        % Matlab that treat the handle as a number.
+        fig = fig.Number;
+    end
+    
     % initialize variables
     
     % We should use the dtiGet/dtiSet more,using the form
@@ -76,10 +83,12 @@ if(nargin <= 1)  % LAUNCH GUI
     % Two figures are created by default.  The main dtiFiberUI figure and a
     % 2nd one (rarely used) for showing Matlab 3D renderings.
     handles.fig = fig;
+  
     handles.fig3d = figure;
     handles.title = sprintf('mrdMain%d',fig);
-    handles.type  = sprintf('mrdWindow');
+     handles.type  = sprintf('mrdWindow');
     set(fig,'Name',handles.title);
+    
     
     % Fiber group initialization
     handles.fiberGroups = [];
@@ -2802,7 +2811,7 @@ xform = inv(handles.xformToAcpc);
 % subplot(1,3,2); quiver(squeeze(handles.wmWarp(:,curPos(2),:,1)), squeeze(handles.wmWarp(:,curPos(2),:,3)));
 % subplot(1,3,3); quiver(squeeze(handles.wmWarp(curPos(1),:,:,2)), squeeze(handles.wmWarp(curPos(1),:,:,3)));
 fg = handles.fiberGroups(handles.curFiberGroup);
-h = waitbar(0,'Warping fibers...');
+h = mrvWaitbar(0,'Warping fibers...');
 %fcAll = mrAnatXformCoords(xform,horzcat(fg.fibers{:})');
 
 for(ii=1:length(fg.fibers))
@@ -2818,9 +2827,9 @@ for(ii=1:length(fg.fibers))
         % vec = vec.*handles.vec.mmPerVoxel';
         fg.fibers{ii}(:,jj) = mrAnatXformCoords(inv(xform), fc(jj,:) + vec')';
     end
-    waitbar(ii/length(fg.fibers),h);
+    mrvWaitbar(ii/length(fg.fibers),h);
 end
-waitbar(1.0,h);
+mrvWaitbar(1.0,h);
 close(h);
 fg.visible = 1;
 fg.seeds = [];

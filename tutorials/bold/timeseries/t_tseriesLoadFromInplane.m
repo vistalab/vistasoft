@@ -9,7 +9,7 @@
 
 %% Initialize the key variables and data path
 % Data directory (where the mrSession file is located)
-dataDir = fullfile(mrvDataRootPath,'functional','vwfaLoc');
+dataDir = mrtInstallSampleData('functional','vwfaLoc');
 
 %% Retain original directory, change to data directory
 curDir = pwd;
@@ -22,7 +22,7 @@ dataType = 'MotionComp';
 scan = 1;
 
 % Would you like the raw time series?
-isRawTSeries = false;
+isRawTSeries = true;
 
 %% Get data structure:
 vw = initHiddenInplane(); % Foregoes interface - loads data silently
@@ -39,9 +39,11 @@ figure;
 colormap autumn;
 nSlices = size(tSeries, 3);
 nTimePoints = size(tSeries, 4);
+rg = [-1 1] * max(abs(tSeries(:)));
 for i = 1:nTimePoints
-    imagesc(tSeries(:, :, ceil(nSlices/2), i));
-    axis equal;
+    imagesc(tSeries(:, :, ceil(nSlices/2), i), rg);
+    axis image; colormap gray
+    title(sprintf('Volume %d', i))
     pause(.1);
 end
 close;
@@ -51,7 +53,9 @@ figure;
 colormap autumn;
 for i = 1:nSlices
     imagesc(tSeries(:, :, i, ceil(nTimePoints/2)));
-    axis equal;
+    colormap gray
+    axis image;
+    title(sprintf('Slice %d', i))
     pause(.1);
 end
 close;

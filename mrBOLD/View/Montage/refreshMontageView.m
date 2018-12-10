@@ -63,7 +63,8 @@ end
 set(0,'CurrentFigure',vw.ui.windowHandle);
 
 % Update annotation string
-set(vw.ui.annotationHandle,'string',annotation(vw,viewGet(vw, 'curScan')));
+dt = viewGet(vw, 'dt struct'); curscan = viewGet(vw, 'curScan');
+set(vw.ui.annotationHandle,'string',dtGet(dt, 'annotation', curscan));
 
 % Draw colorbar
 if isempty(vw.ui.cbarRange)

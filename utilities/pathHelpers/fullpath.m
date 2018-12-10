@@ -1,4 +1,4 @@
-function full = fullpath(pth);
+function full = fullpath(pth)
 %
 % full = fullpath(pth);
 %

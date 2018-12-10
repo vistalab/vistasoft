@@ -51,10 +51,10 @@ switch param
         end
         
     case 'datatype'
-        if isfield(ni, 'data_type')
-            val = ni.data_type;
-        else
-            warning('vista:niftiError', 'No data_type information found in nifti. Returning empty');
+        if isfield(ni, 'data')
+            val = niftiClass2DataType(class(ni.data));
+        else            
+            warning('vista:niftiError', 'No data information found in nifti. Returning empty');
             val = [];
         end
         
@@ -116,7 +116,30 @@ switch param
         end
         
     case 'pixdim'
-        if isfield(ni, 'pixdim'), val = ni.pixdim;
+        % niftiGet(ni, 'pixdim', varargin);
+        % varargin in pairs, including:
+        %   'xyz_units', xyz_units
+        %   'time_units', time_units
+        % Example:
+        % niftiGet(ni, 'pixdim');
+        % niftiGet(ni, 'pixdim', 'xyz_units', 'mm', 'time_units', 's');
+        if isfield(ni, 'pixdim'), 
+            val = ni.pixdim;            
+            % Check for units
+            if ~isempty(varargin)
+                for ii = 1:2:length(varargin)
+                   switch varargin{ii}
+                       case 'xyz_units' 
+                           oldUnitStr = ni.xyz_units;
+                           newUnitStr = varargin{ii+1};
+                           val(1:3) = unitConvert(val(1:3),'length',oldUnitStr,newUnitStr);
+                       case 'time_units'
+                           oldUnitStr = ni.time_units;
+                           newUnitStr = varargin{ii+1};
+                           val(4) = unitConvert(val(4),'time',oldUnitStr,newUnitStr);                           
+                   end
+                end
+            end
         else
             warning('vista:niftiError', 'No pixdim information found in nifti. Returning empty');
             val = [];

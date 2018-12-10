@@ -82,7 +82,7 @@ saveDir = params.saveDir;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Detrend; get data in 2D mr.data format: time points x voxels
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-h = waitbar(0,'Coherence Analysis: Getting tSeries');
+h = mrvWaitbar(0,'Coherence Analysis: Getting tSeries');
 
 if detrend==1
     mr = mrDetrend(mr);
@@ -96,12 +96,12 @@ mr.data = reshape(mr.data,[nFrames nVoxels]);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute Fourier transform
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-waitbar(1/5,h,'Coherence Analysis: Applying Fourier Transform');
+mrvWaitbar(1/5,h,'Coherence Analysis: Applying Fourier Transform');
 
 ft = fft(mr.data);
 ft = ft(1:1+fix(size(ft, 1)/2), :);
 
-waitbar(1/4,h,'Coherence Analysis: Computing Amplitude');
+mrvWaitbar(1/4,h,'Coherence Analysis: Computing Amplitude');
 
 % This quantity is proportional to the amplitude
 scaledAmp = abs(ft);
@@ -118,7 +118,7 @@ amp = 2*(scaledAmp(nCycles+1,:))/size(mr.data,1);
 % noiseBand determines the passband of a square-edged bandpass 
 % filter.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-waitbar(2/5,h,'Coherence Analysis: Computing Coherence');
+mrvWaitbar(2/5,h,'Coherence Analysis: Computing Coherence');
 noiseIndices = createNoiseIndices(scaledAmp, nCycles, noiseBand);
 sqrtsummagsq = sqrt(sum(scaledAmp(noiseIndices, :).^2));
 co = scaledAmp(nCycles+1,:)./sqrtsummagsq;
@@ -131,14 +131,14 @@ clear scaledAmp
 % 2) minus sign because sin(x-phi) is shifted to the right by phi.
 % 3) Add 2pi to any negative values so phases increase from 0 to 2pi.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-waitbar(3/5,h,'Coherence Analysis: Computing Phase');
+mrvWaitbar(3/5,h,'Coherence Analysis: Computing Phase');
 ph = -(pi/2) - angle(ft(nCycles+1,:));
 ph(ph<0) = ph(ph<0)+pi*2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Convert each field into an mr object
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-waitbar(4/5,h,'Coherence Analysis: Creating mr objects');
+mrvWaitbar(4/5,h,'Coherence Analysis: Creating mr objects');
 fields = setdiff(fieldnames(mr),'data'); % all fields except data field
 
 tmp = co;
@@ -173,7 +173,7 @@ amp.params = params;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Save separate co, amp, ph files, if a directory is selected
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-waitbar(5/5,h,'Coherence Analysis: Saving if necessary');
+mrvWaitbar(5/5,h,'Coherence Analysis: Saving if necessary');
 if ~isempty(saveDir)
     mrSave(co,fullfile(saveDir,'co'));
     mrSave(ph,fullfile(saveDir,'ph'));

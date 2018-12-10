@@ -42,10 +42,6 @@ hiddenView = initHiddenInplane;
 if ~existDataType(typeName), addDataType(typeName); end
 hiddenView = selectDataType(hiddenView, existDataType(typeName));
 
-% Get the tSeries directory for this dataType
-% (make the directory if it doesn't already exist).
-% tsDir = tSeriesDir(hiddenView);
-tsDir = viewGet(hiddenView,'tSeriesDir',1);
 
 deltaFrame = sessionGet(mrSESSION,'interFrameTiming',scans(1));
 refSlice   = sessionGet(mrSESSION,'refSlice',scans(1));
@@ -76,28 +72,29 @@ for ii = 1:length(scans)
     % initialize a slot for the new scan
     hiddenView = initScan(hiddenView, typeName, [], {srcDt scan});
     outScan = viewGet(hiddenView, 'numScans'); % # of scan in the new data type
-    
-    % This is no longer necessary
-    % Make the Scan subdirectory for the new tSeries (if it doesn't exist)
-    % scanDir = fullfile(tsDir, ['Scan',int2str(outScan)]);
-    %if ~exist(scanDir, 'dir'), mkdir(tsDir, ['Scan' int2str(outScan)]); end
-        
+            
     % main loop: loop across slices, doing spline interpolation
-    wH = waitbar(0, ['Adjusting scan ' int2str(scan)]);
+    wH = mrvWaitbar(0, ['Adjusting scan ' int2str(scan)]);
     iS = 0;
     
     tsFull = [];
     numDim = 0;
+    
+    [~, nii] = loadtSeries(vw, scan);
+    tSeries = double(niftiGet(nii, 'data'));
+    tSeries = permute(tSeries, [4, 1, 2, 3]);
+    tSeries = reshape(tSeries, size(tSeries,1), [], size(tSeries,4));
     for slice=slices
         iS = iS + 1;
-        ts = loadtSeries(vw, scan, slice);
+        %ts = loadtSeries(vw, scan, slice);
+        ts = tSeries(:,:,slice);
         if slice ~= refSlice
             % frameAdjustment = deltaFrame*(refSlice - slice);
             ts = mrSliceTiming(ts,frameAdjustment(slice),'spline');           
         end
         numDim = numel(size(ts));
         tsFull = cat(numel(size(ts)) + 1, tsFull, ts);
-        waitbar(iS/length(slices), wH);
+        mrvWaitbar(iS/length(slices), wH);
     end
     if numDim == 3
         tsFull = reshape(tsFull,[1,2,4,3]); %flip time and slices

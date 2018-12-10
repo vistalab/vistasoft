@@ -54,7 +54,8 @@ try
     % be two possible keywords for this field.
     numIndx = strmatch('num_tracks:',header);
     if(isempty(numIndx))
-        numIndx = strmatch('count:',header); 
+        numIndx = strmatch('count:',header);
+        numIndx = max(numIndx);
         n = str2double(header{numIndx}(7:end));
     else
         n = str2double(header{numIndx}(12:end));
@@ -63,7 +64,12 @@ try
     offset = str2double(header{strmatch('file:',header)}(8:end));
     
     % Get the stepsize (in mm) from the header cell array.
-    stepSize = str2double(header{strmatch('step_size:',header)}(11:end));
+    if (~isempty(strmatch('step_size:',header)))
+       stepSize = str2double(header{strmatch('step_size:',header)}(11:end));
+    else
+       stepSize = 1;
+       warning('Cloud not read stepSize from .tck file header, assuming stepSize=1');
+    end
     
     % Tuck the whole header into an fg.params field.
     fg.params = {'mrtrix_header',header};

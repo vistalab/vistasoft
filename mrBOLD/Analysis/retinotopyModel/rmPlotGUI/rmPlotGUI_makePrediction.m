@@ -1,4 +1,4 @@
-function [prediction, RFs, rfParams, varexp blanks] = rmPlotGUI_makePrediction(M, coords, voxel)
+function [prediction, RFs, rfParams, varexp, blanks] = rmPlotGUI_makePrediction(M, coords, voxel)
 % Create predicted time series and pRFs for a voxel in the rmPlotGUI. 
 %   [prediction, RFs, rfParams, varexp] = rmPlotGUI_makePrediction(M, voxel);
 %
@@ -60,7 +60,7 @@ stim = [];
 for ii = 1:length(M.params.stim)
    endframe = size(M.params.stim(ii).images_org, 2);
    frames =  endframe - M.params.stim(ii).nFrames+1:endframe;
-    stim = [stim M.params.stim(ii).images_org(:, frames)];
+   stim = [stim M.params.stim(ii).images_org(:, frames)];
 end
 blanks = sum(stim, 1) < .001;
 
@@ -176,63 +176,34 @@ switch modelName,
 
         rfParams(:,4) = beta(1:2);
         rfParams = rfParams(1,:);
-    case {'fitprf'}
-        % this is how we calculate the time-series
-        %   y = gain * (prf (dot) stimulus) ^ (exponent)
-        % get some parameters from the model for this voxel:
-        gain     = rfParams(8); % this was defined in rmPlotGUI_getRFParams
-        exponent = rfParams(7); % this was defined in rmPlotGUI_getRFParams        
-        hrf      = M.model{1}.hrf(:, coords);
-
-        if length(hrf) ==1, hrf = 1; end
+    case {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'}
+        % we-do the prediction with stimulus that has not been convolved
+        % with the hrf, and then add in the exponent, and then convolve
         
-        % start a counter so we can loop across the scans
-        firstframe = 1;
-        
-        % this is the stimulus across all scans, without hrf convolution
-        stim = M.params.analysis.allstimimages;
-        
-        % loop across scans
-        for scan = 1:length(M.params.analysis.scans)
-            % get the frames for this scan
-            nframes = M.params.stim(scan).nFrames;
-            theseframes = firstframe:firstframe + nframes -1; 
-            firstframe  = max(theseframes) + 1;
-            
-            % calculate the time series
-            p{scan} = gain * (stim(theseframes,:) * RFs) .^ exponent;
-            
-            % convolve with hRF
-            p{scan} = conv(p{scan}, hrf, 'full');
-            p{scan} = p{scan}(1:nframes);
-            
-            % number of polynomial trends
-            npoly = M.params.stim(scan).nDCT - 1;
-            
-            % project out polynomial trends
-            if npoly > 0  % if we have npoly == 0, we probaly do not want to detrend at all
-
-                p{scan} = projectionmatrix( ...
-                    constructpolynomialmatrix(nframes,0:npoly))*p{scan};            
-            end
-
+        % make neural predictions for each RF
+        pred = (M.params.analysis.allstimimages_unconvolved * RFs).^rfParams(7);
+        % reconvolve with hRF
+        for scan = 1:length(M.params.stim)
+            these_time_points = M.params.analysis.scan_number == scan;
+            hrf = M.params.analysis.Hrf{scan};
+            pred(these_time_points,:) = filter(hrf, 1, pred(these_time_points,:));
         end
         
-        pred = catcell(1, p);
+        if recompFit
+            beta = pinv([pred trends(:,dcid)])*M.tSeries(:,voxel);
+            beta(1) = max(beta(1),0);
+            
+        else
+            beta = rmCoordsGet(M.viewType, model, 'b', coords);
+            beta = beta([1 dcid+1])';            
+        end
         
-        % beta will be requested outside the switch/case, in a
-        % model-general part of the code. in standard prf models the first
-        % beta value is the gain, but in fitprf models the gain is stored
-        % separately, and is already in the equation above. so we make the
-        % first beta value one. the beta struct will need another scalar
-        % for each scan, and we make these all zeros. these beta values are
-        % for the DC term, but we do not need it; we will plot the
-        % detrended prediction and the detrended time series. 
-        % baseline of zero.
-        beta = [1 zeros(size(dcid))]';
+        RFs        = RFs .* (beta(1) .* M.params.analysis.HrfMaxResponse);
+        
+        rfParams(4) = beta(1);
         
         
-        
+                  
    otherwise,
         error('Unknown modelName: %s', modelName);
 end;
@@ -246,7 +217,7 @@ if M.params.analysis.calcPC && ~recompFit
     % Only do this if the prediction is not already in % signal. We check
     % whether the signal is in % signal. If it is the mean should be
     % near-zero. So: 
-    if abs(mean(prediction))>0.1 % random picked number (0.001 is too low)
+    if abs(mean(prediction))>1 % random picked number (0.001 is too low)
         fprintf('[%s]:WARNING:converting prediction to %% signal even though recompFit=false.\n',mfilename);
         prediction  = raw2pc(prediction);
     end

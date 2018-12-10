@@ -40,7 +40,7 @@ dwDir.mrDiffusionDir = fileparts(which('mrDiffusion.m'));
 
 % We need the full path to the dwRawFile so check to see if the user did
 % not provide the full path to the raw file and add it if needed.
-[p, ~, e] = fileparts(dwRawFileName);  %#ok<NASGU>                                      
+[p, ~, ~] = fileparts(dwRawFileName);                                   
 if isempty(p), dwRawFileName = fullfile(pwd,dwRawFileName); end
 
 
@@ -98,7 +98,7 @@ fprintf('Data will be saved to: %s \n',dwDir.subjectDir);
 dwDir.bvalsFile        = [dwDir.inBaseDir  '.bval'];
 dwDir.bvecsFile        = [dwDir.inBaseDir  '.bvec'];
 if dwParams.eddyCorrect == -1 
-    dwDir.ecFile       = ''
+    dwDir.ecFile       = '';
 else
     dwDir.ecFile       = [dwDir.outBaseDir  '_ecXform.mat'];
 end

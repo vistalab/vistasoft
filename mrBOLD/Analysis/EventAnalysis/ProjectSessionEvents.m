@@ -47,7 +47,7 @@ for iSlice=1:nSlices
   iSl = find(iSlice == mrSESSION.functionals(iS).slices);
   if ~isempty(iSl)
     iEvent = 1;
-    wH = waitbar(0, ['Stacking events for slice ', int2str(iSl)]);
+    wH = mrvWaitbar(0, ['Stacking events for slice ', int2str(iSl)]);
     for iScan=1:nScans
       iS = scanList(iScan);
       ts = loadtSeries(view, iS, iSl);
@@ -60,10 +60,10 @@ for iSlice=1:nSlices
       ts = reshape(ts, nEventFrames, nEvents, nn(1), nn(2));
       sliceBlockTS(:, iEvent:(iEvent+nEvents-1), :, :) = ts;
       iEvent = iEvent + nEvents;
-      waitbar(iScan/nScans, wH);
+      mrvWaitbar(iScan/nScans, wH);
     end
   end
-  waitbar(1, wH, ['Averaging events for slice ', int2str(iSl)]);
+  mrvWaitbar(1, wH, ['Averaging events for slice ', int2str(iSl)]);
   sliceBlockTS = sliceBlockTS - repmat(mean(sliceBlockTS), [nEventFrames 1 1 1]);
   eventTS(:, :, :, iSl) = squeeze(mean(sliceBlockTS, 2));
   eventErrs(:, :, :, iSl) = squeeze(std(sliceBlockTS, 0, 2)) / sqrt(tEvents);

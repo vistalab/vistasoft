@@ -9,8 +9,8 @@ function pth = setVAnatomyPath(vANATOMYPATH)
 % ras, 06/2008.
 global HOMEDIR
 
-% if the path doesn't exist, ask the user to select it
-if notDefined('vANATOMYPATH') || ~exist(vANATOMYPATH, 'file')
+% if no path, ask the user to select it
+if notDefined('vANATOMYPATH')
 	ext = {'*.nii.gz', 'Compressed NIFTI files'; ...
             '*.dat' 'mrGray .dat files'; ...		
             '*.*' 'All files'};
@@ -23,7 +23,7 @@ if notDefined('vANATOMYPATH') || ~exist(vANATOMYPATH, 'file')
 	% linux box or a Windows box (despite the different path name
 	% conventions). We want to keep this path relative, so we trim the
 	% first part, and only include the link part.
-	if ~isempty(HOMEDIR) & strfind(pth, [HOMEDIR filesep])
+	if ~isempty(HOMEDIR) && strfind(pth, [HOMEDIR filesep])
 		ii = strfind(pth, HOMEDIR);
 		vANATOMYPATH = pth(ii + length(HOMEDIR) + 1:end);
     else 

@@ -15,8 +15,9 @@ end
 trends         = t.trends;
 t_id           = t.dcid+1;
 
-% we compute mean rss but we need sum rss (old convention)
-model.rss=single(model.rss./(size(prediction,1)-size(trends,2)+1));  
+% we compute mean rss from the sum rss (old convention)
+% Some explanation of the divisor would be helpful here.
+model.rss = single(model.rss./(size(prediction,1)-(size(trends,2)+1)));  
 
 %-----------------------------------
 %--- fit different receptive fields profiles
@@ -53,9 +54,12 @@ for n=1:numel(params.analysis.x0),
     %-----------------------------------
     % minimum RSS fit
     
-    X    = [prediction(:,n) trends];
+    X    = [prediction(:,n) trends];  % Build the model matrix
+    
     % This line takes up 30% of the time
-    % lscov takes as long as the pinv method but provides the rss as well...
+    % lscov takes as long as the pinv method but provides the rss as
+    % well... Let's put in the ~.  All modern Matlab now uses it, and it
+    % will save us memory space.
     [b,ci,rss]    = lscov(X,data); 
     
     % Compute RSS only for positive fits. The basic problem is
@@ -63,18 +67,18 @@ for n=1:numel(params.analysis.x0),
     % could fit with a postive beta on the one that drives the signal or a
     % negative beta on the portion of the visual field that never sees the
     % stimulus. This would produce the same prediction. We don't like that
-    nkeep   = b(1,:)<0; % Now we only set the negative fits to inf.
+    nkeep   = (b(1,:)<0); % Now we only set the negative fits to inf.
     
     % To save time limit the rss computation to those we care about.
-    % This line is takes up 60% of the time.... (replaced by lscov)
     rss(nkeep) = inf('single');
     
     %-----------------------------------
     %--- store data with lower rss
     %-----------------------------------
-    minRssIndex = rss < model.rss;
+    minRssIndex = (rss < model.rss);  % This is where we use model.rss
 
-    % now update
+    % now update model parameters for those cases in which the computed rss
+    % is smaller than the input model.rss
     model.x0(minRssIndex)       = params.analysis.x0(n);
     model.y0(minRssIndex)       = params.analysis.y0(n);
     model.s(minRssIndex)        = params.analysis.sigmaMajor(n);
@@ -83,7 +87,7 @@ for n=1:numel(params.analysis.x0),
     model.s_theta(minRssIndex)        = params.analysis.theta(n);
     model.rss(minRssIndex)      = rss(minRssIndex);
     model.b([1 t_id],minRssIndex) = b(:,minRssIndex);
-end;
+end
 
 %warning('on', 'MATLAB:lscov:RankDefDesignMat')
 
@@ -93,12 +97,12 @@ end;
 % which fails to interpolate and compute correct variance explained values.
 % So we check it here and reset any Inf (bad fits) to rawrss, so the
 % variance explained will be 0.
-model.rss(model.rss==Inf)=model.rawrss(model.rss==Inf);
+model.rss(model.rss==Inf) = model.rawrss(model.rss==Inf);
 
-% Correct lscov. It returns the mean rss. To maintain compatibility with the
-% sum rss this function expects, we have to multiply by the divisor. See
-% the lscov docs for details.
-model.rss=single(model.rss.*(size(prediction,1)-size(trends,2)+1));  
+% Correct lscov. It returns the mean rss. To maintain compatibility with
+% the sum rss that this function expects, we have to multiply by the
+% divisor. See the lscov docs for details.
+model.rss = single(model.rss.*(size(prediction,1)-(size(trends,2)+1)));  
 
 % end time monitor
 et  = toc;
@@ -108,6 +112,7 @@ else
     fprintf(1,'Done[%d minutes].\t(%s)\n', ceil(et/60), datestr(now));
 end;
 drawnow;
+
 return;
 
 

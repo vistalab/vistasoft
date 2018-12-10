@@ -1,15 +1,18 @@
-function ok=checkScans(view,scanList)
+function ok=checkScans(vw,scanList)
 %
 % Check that all scans in scanList have the same slices, numFrames, cropSizes
 for iscan = 2:length(scanList)
-    if find(sliceList(view,scanList(1)) ~= sliceList(view,scanList(iscan)))
+    if find(sliceList(vw,scanList(1)) ~= sliceList(vw,scanList(iscan)))
         mrErrorDlg('Can not average these scans; they have different slices.');
     end
-    if (numFrames(view,scanList(1)) ~= numFrames(view,scanList(iscan)))
+    if (numFrames(vw,scanList(1)) ~= numFrames(vw,scanList(iscan)))
         mrErrorDlg('Can not average these scans; they have different numFrames.');
     end
-    if find(sliceDims(view,scanList(1)) ~= sliceDims(view,scanList(iscan)))
+    if find(viewGet(vw,'slice dims', scanList(1)) ~= viewGet(vw,'slice dims', scanList(iscan)))
         mrErrorDlg('Can not average these scans; they have different cropSizes.');
     end
 end
+
+ok = true;
+
 return;

@@ -39,7 +39,7 @@ try
         tSeriesOutPath = fullfile(inplaneBasePath, dtGet(dataTYPES(dtNum),'Name'));
         tSeriesInBasePath = fullfile(tSeriesOutPath,'TSeries');
         
-        if exist(fullfile(tSeriesInBasePath,'Scan1','tSeries1.mat'),'file');
+        if exist(fullfile(tSeriesInBasePath,'Scan1','tSeries1.mat'),'file')
             %Checks to see if there is any inplane tSeries data in this
             %dataTYPE if there is, then does all of the processing
             
@@ -56,7 +56,7 @@ try
                 dimSize = [dtGet(dataTYPES(dtNum),'N Frames', scan) dtGet(dataTYPES(dtNum),'Func Size', scan) dtGet(dataTYPES(dtNum),'N Slices', scan)];
                 tSeries = zeros(dimSize);
                 for slice = 1:numSlices
-                    tSeriesInFile = fullfile(tSeriesInFolder,['tSeries' num2str(slice) '.mat']);
+                    tSeriesInFile = fullfile(HOMEDIR, tSeriesInFolder,['tSeries' num2str(slice) '.mat']);
                     tSeriesIn = load(tSeriesInFile);
                     tSeriesIn = reshape(tSeriesIn.tSeries, dimSize(1:3));
                     tSeries(:,:,:,slice) = tSeriesIn;
@@ -76,7 +76,7 @@ try
                 % the migrated data to appear the same way as the pre-migrated data.
                 % See also mrInit_updateInplaneSession.m.
                 tSeries = permute(tSeries,[3 2 4 1]); %Standard format: freq phase slice time
-                tSeries = flipdim(tSeries, 2);
+                tSeries = flip(tSeries, 2);
                 %Note: this needed to be changed to reflect the fact that
                 %MATLAB stores values row, column, etc. and not column,
                 %row,

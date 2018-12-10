@@ -36,8 +36,8 @@ return;
 
 % get co for volume and inplane
 coInplane = getCurData(INPLANE{1},'co',1);
-coVolume = getCurData(VOLUME{1},'co',1);
-coFlat = getCurData(FLAT{1},'co',1);
+coVolume  = getCurData(VOLUME{1},'co',1);
+coFlat    = getCurData(FLAT{1},'co',1);
 
 % toss NaNs and compare means (similar but not identical)
 volIndices = find(~isnan(coVolume));

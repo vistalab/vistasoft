@@ -38,6 +38,10 @@ t = vertcat(ec.xform(:).ecParams);
 % We make a plot of the motion correction during eddy current correction
 % but we do not show the figure. We only save it to disk.
 fh = mrvNewGraphWin([],[],visibility);
+if ishandle(fh)
+    fh = fh.Number; 
+end
+
 subplot(2,1,1); 
 plot(t(:,1:3)); 
 title('Translation'); 
@@ -61,6 +65,11 @@ printCommand = ...
 fprintf('[%s] Saving Eddy Current correction figure: \n %s \n', ...
          mfilename,figurename);
 eval(printCommand);
+
+% Write out RMS displacement as a .txt. This is overall 
+% displacement between each scan
+d = vertcat(0, diff(sqrt(t(:,1).^2+t(:,2).^2+t(:,3).^2)));
+dlmwrite(fullfile(p,'Voxel_motion.txt'), d);
 
 % Delete output if it was nto requested
 if (nargout < 1), close(fh); clear fh figurename; end

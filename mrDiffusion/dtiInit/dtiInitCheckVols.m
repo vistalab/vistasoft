@@ -2,18 +2,21 @@ function [doResamp, bvecs, bvals, dwRaw] = dtiInitCheckVols(bvecs,bvals,dwRaw,dw
 %
 %   [doResamp bvecs bvals dwRaw] = dtiInitCheckVols(bvecs,bvals,dwRaw)
 %
-%  Check for missing data volumes and remove exclude volumes if requested.
-%   *** TODO: allow arbitrary volumes to be skipped downstream to avoid
-%             needing to touch the raw data here.
+% Check for missing data volumes and remove exclude volumes if requested.
+%
+% Volumes are excluded if the bvals are < 0 or if specified in
+% dwParams.excludeVols.
+%
+% It is possible that we have a mis-match between the good volumes and the
+% number of bvecs. We only include the bvecs from the good volumes.
+%
+% *** TODO: allow arbitrary volumes to be skipped downstream to avoid
+% needing to touch the raw data here.
 %
 % INPUTS
 %       (bvecs,bvals,dwRaw,dwParams) - passed in from dtiInit
 % RETURNS
 %       [doResamp bvecs bvals dwRaw] - without bad / removed volumes
-%
-% Web Resources
-%       mrvBrowseSVN('dtiInitCheckVols');
-%
 %
 % (C) Stanford VISTA, 2011
 
@@ -44,6 +47,10 @@ if ~all(goodVols)
     bvals      = bvals(goodVols);
     doResamp   = true;
 else
+    % All of the volums are good.  So, we just check for a match between
+    % the goodVols and the bvec/bval dimensions.  These should match.  If
+    % not, we pull out the same number of bvec/bval as in the goodVols.
+    
     % Check that the number of volumes is equal to the number of BVs - if
     % not then ignore some of the BVs.
     if length(goodVols) < size(bvecs,2)

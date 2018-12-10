@@ -83,7 +83,7 @@ for iSlice=1:nSlices
     iSl = find(iSlice == mrSESSION.functionals(iS).slices);
     if ~isempty(iSl)
         iEvent = 1;
-        wH = waitbar(0, ['Stacking events for slice ', int2str(iSl)]);
+        wH = mrvWaitbar(0, ['Stacking events for slice ', int2str(iSl)]);
         for iScan=1:nScans
             iS = scanList(iScan);
             ts = loadtSeries(view, iS, iSl);
@@ -96,9 +96,9 @@ for iSlice=1:nSlices
             ts = reshape(ts, nEventFrames, nEvents, nn(1), nn(2));
             sliceBlockTS(:, iEvent:(iEvent+nEvents-1), :, :) = ts;
             iEvent = iEvent + nEvents;
-            waitbar(iScan/nScans, wH);
+            mrvWaitbar(iScan/nScans, wH);
         end %for
-        waitbar(1, wH, ['Processing events for slice ', int2str(iSl)]);
+        mrvWaitbar(1, wH, ['Processing events for slice ', int2str(iSl)]);
         numPoints = sum(isfinite(sliceBlockTS), 2);
         sliceBlockTS(~isfinite(sliceBlockTS)) = 0;
         sliceBlockTS = sliceBlockTS - repmat(sum(sliceBlockTS)/nEventFrames, [nEventFrames 1 1 1]);

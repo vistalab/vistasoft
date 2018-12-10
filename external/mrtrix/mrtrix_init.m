@@ -1,12 +1,13 @@
 function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
-% Initialize an filenames and directories to use the MRtrix toolbox via
+% Initialize filenames and directories to use the MRtrix toolbox via
 % MatLab. MRtrix allows using Contrained Spherical Deconvolution and
 % implements different types of tractography (i.e., probabilistic,
 % deterministic).
 %
-% function files = mrtrix_init(dt6, lmax, mrtrix_folder, [wmMaskFile])
+% files = mrtrix_init(dt6, lmax, mrtrix_folder, [wmMaskFile])
 %
 % This function computes all the files needed to use mrtrix_track.
+% 
 % - INPUTS -
 %    dt6   - string, full-path to an mrInit-generated dt6 file. 
 %    lmax  - The maximal harmonic order to fit in the spherical deconvolution (d
@@ -29,13 +30,13 @@ function files = mrtrix_init(dt6, lmax, mrtrix_folder, wmMaskFile)
 %    files - The full-path to the files created
 %
 % - Notes -
-%   This functionn performs the following operations:
+%   This function performs the following operations:
 %   1. Convert the raw dwi file into .mif format
 %   2. Convert the bvecs, bvals into .b format
 %   3. Convert the brain-mask to .mif format 
 %   4. Fit DTI and calculate FA and EV images
-%   5. Estimate the response function for single fibers, based on voxels with
-%      FA > 0.7
+%   5. Estimate the response function for single fibers, based on voxels
+%      with FA > 0.7
 %   6. Fit the CSD model. 
 %   7. Convert the white-matter mask to .mif format. 
 % 
@@ -76,7 +77,7 @@ bv       = dlmread(dt_info.files.alignedDwBvecs);
 nbvecs   = unique(sum((bv ~= 0),2));
 max_lmax = mrtrix_findlmax(nbvecs);
 if (max_lmax < lmax) 
-    warning('[%s] The hosen Lmax (%i) requires a number of diffusion directions larger than the measured ones (%i). \nThe suggested Lmax is: %i', mfilename, lmax,nbvecs, max_lmax);
+    warning('[%s] The chosen Lmax value (%i) requires a number of diffusion directions larger than the measured ones (%i). \nThe suggested Lmax is: %i', mfilename, lmax, nbvecs, max_lmax);
 end
 
 % If the output fibers folder was not passed in, then generate one in the current
@@ -91,9 +92,9 @@ if ~exist(mrtrix_folder, 'dir'), mkdir(mrtrix_folder); end
 fname_trunk  = fullfile(mrtrix_folder, dwiname); 
 
 % Build the mrtrix file names.
-files = mrtrix_build_files(fname_trunk,lmax);
+files = mrtrix_build_files(fname_trunk, lmax);
 
-% Check wich processes were already computed and which ons need to be doen.
+% Check wich processes were already computed and which ones need to be done.
 computed = mrtrix_check_processes(files);
 
 % Convert the raw dwi data to the mrtrix format: 
@@ -127,7 +128,7 @@ if  (~computed.('ev'))
   mrtrix_tensor2vector(files.dt, files.ev, files.fa);
 end
 
-% Create a white-matter mask, tractography will act only within this mask.
+% Create a white-matter mask. Tractography will act only within this mask.
 if (~computed.('wm'))
     if notDefined('wmMaskFile') || isempty('wmMaskFile')
         % Use mrDiffusion default white-matter mask

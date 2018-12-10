@@ -43,7 +43,7 @@ if isempty(scanList)
   error('Analysis aborted');
 end
 
-waitHandle = waitbar(0,'Computing std images from the tSeries.  Please wait...');
+waitHandle = mrvWaitbar(0,'Computing std images from the tSeries.  Please wait...');
 ncScans = length(scanList);
 for iScan = 1:ncScans
     scan = scanList(iScan);
@@ -58,7 +58,7 @@ for iScan = 1:ncScans
         tmp = std(tSeries);
         map{scan}(:,:,slice) = reshape(tmp,dims);
     end
-    waitbar(scan/ncScans)
+    mrvWaitbar(scan/ncScans)
 end
 close(waitHandle);
 

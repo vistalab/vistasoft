@@ -48,7 +48,7 @@ for h = 1:2    % loop across hemispheres
     if numLevels(h) > 0
         % put up a wait bar        
         msg = sprintf('Computing mean tSeries across gray levels, %s...',hemis{h});
-		waitHandle = waitbar(0,msg);
+		waitHandle = mrvWaitbar(0,msg);
 
         % which slices correspond to the data from this hemisphere?
         firstSlice = 2 + (h-1)*numLevels(1) + 1;
@@ -90,7 +90,7 @@ for h = 1:2    % loop across hemispheres
             tmp = permute(tMat(frame,:,:),[3 2 1]);
             tSeries(frame,:) = nanmean(tmp);
             
-            waitbar(frame/nFrames,waitHandle);
+            mrvWaitbar(frame/nFrames,waitHandle);
         end
     
         close(waitHandle);

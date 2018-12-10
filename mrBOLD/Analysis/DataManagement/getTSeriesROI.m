@@ -80,8 +80,19 @@ switch vw.viewType
 			subTSeries = NaN([nFrames nVoxels]);
 			subIndices = NaN([1 nVoxels]);
              
+            numCoords = size(roiCoords,2);
+            
             % GET RID OF THIS LOOP AND REPLACE WITH FASTER CODE
-			for v = 1:size(roiCoords, 2)
+			for v = 1:numCoords
+                
+                % print out progress. with a very large ROI this takes a
+                % while ... print out progress so user knows how much
+                % longer to wait. 
+                % Let the user know everytime we hit 5000 voxels
+                if ~mod(v,5000)
+                    display([num2str(v) '/' num2str(numCoords) 'voxels down'])
+                end
+                
  				I = find( vw.coords(1,:) == roiCoords(1,v) & ...
  						  vw.coords(2,:) == roiCoords(2,v) & ...
  						  vw.coords(3,:) == roiCoords(3,v) );

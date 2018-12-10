@@ -1,41 +1,42 @@
-function view = switch2Vol(view)
+function vw = switch2Vol(vw)
 %
 % Switches Volume view to volume mode:
-% - changes view.subdir to 'Volume'
-% - sets view.ui.grayVolButtons=2
-% - computes/loads view.coords
+% - changes vw.subdir to 'Volume'
+% - sets vw.ui.grayVolButtons=2
+% - computes/loads vw.coords
 % - empties co, amp, ph, map
 %
 % djh, 7/98
 % ress, 6/03: added UI controls for 3D buttons
 
-if isempty(view)
+if isempty(vw)
   myErrorDlg('Volume window must be open to switch it to volume mode.');
 end
-if ~strcmp(view.viewType,'Volume') & ~strcmp(view.viewType,'Gray')
+if ~strcmp(vw.viewType,'Volume') && ~strcmp(vw.viewType,'Gray')
   myErrorDlg('Only volume window can be switched to volume mode.');
 end
 
 % Set viewType
-view.viewType = 'Volume';
-view.subdir = 'Volume';
+vw = viewSet(vw, 'viewType', 'Volume');
+vw = viewSet(vw, 'subdir', 'Volume');
 
 % Compute/load VOLUME.coords
-view = getVolCoords(view);
+vw = getVolCoords(vw);
 
 % Empty data matrices
-view.co = [];
-view.amp = [];
-view.ph = [];
-view.map = [];
+vw = viewSet(vw, 'co',  []);
+vw = viewSet(vw, 'amp',  []);
+vw = viewSet(vw, 'ph',  []);
+vw = viewSet(vw, 'map',  []);
+
 
 % Only do this for VOLUME, not for hiddenVolume
-if findstr(view.name,'VOLUME')
-  % Set view.ui.grayVolButtons
-  selectButton(view.ui.grayVolButtons,2);
+if strfind(viewGet(vw, 'name') ,'VOLUME')
+  % Set vw.ui.grayVolButtons
+  selectButton(vw.ui.grayVolButtons,2);
   % Hide the 3D buttons:
-%   HideButtons(view.ui.gray3dButtons);
-%   view = Disable3D(view);
+%   HideButtons(vw.ui.gray3dButtons);
+%   vw = Disable3D(vw);
   % Load user preferences
-  view = loadPrefs(view);
+  vw = loadPrefs(vw);
 end
