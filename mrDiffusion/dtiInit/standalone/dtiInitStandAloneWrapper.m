@@ -213,9 +213,9 @@ disp(dwParams);
 
 %% Validate the JSON structure against the JSON schema
 
-fprintf('Validating JSON input against schema... ');
-dtiInitStandAloneValidateJson(J);
-fprintf('Success.\n');
+% fprintf('Validating JSON input against schema... ');
+% dtiInitStandAloneValidateJson(J);
+% fprintf('Success.\n');
 
 
 %% Run dtiInit
@@ -246,3 +246,9 @@ rmdir(J.output_dir, 's');
 
 return 
 
+
+% Use compile.sh for compiling
+% Use this command to launch in matlab
+%   dtiInitStandAloneWrapper('/data/localhome/glerma/soft/vistasoft/mrDiffusion/dtiInit/standalone/dtiInit.json')
+% Use this command to run the docker in the directory
+% 

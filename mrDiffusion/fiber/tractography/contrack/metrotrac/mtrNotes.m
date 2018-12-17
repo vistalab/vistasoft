@@ -1968,7 +1968,7 @@ t1_wm = niftiRead('t1_mtl.nii.gz');
 %origin = (size(t1_wm.data)+1)/2;
 %xform = inv([diag(1./mmPerVox), origin'; [0 0 0 1]]);
 
-mrAnatResliceSpm(t1_wm.data, xform, [boundingBox]
+mrAnatResliceSpm(t1_wm.data, xform, [boundingBox]);
 
 % Get xform to T1 header space
 % M = t1_wm.qto_xyz;

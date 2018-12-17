@@ -245,61 +245,61 @@ else
         fprintf('Resampling reference to template image space...\n');
         [refImg,refXform] = mrAnatResliceSpm(refImg, xform, bb, newMmPerVox, bSplineParams, showFigs);
         alignLandmarks = [];
-    elseif(numel(alignLandmarks)==1)
+    end
+    if(numel(alignLandmarks)==1)
         % -1, 0, false, etc. means that we use the qform matrix from the first image.
         fprintf('Resampling reference image to acpc space...\n');
         [refImg,refXform] = mrAnatResliceSpm(refImg, ni.qto_ijk, bb, newMmPerVox, bSplineParams, showFigs);
         alignLandmarks = [];
     end
-end
+    if isnumeric(alignLandmarks)
+        if(size(alignLandmarks,1)==2)
+            origin = ni.qto_ijk*[0 0 0 1]'-0.5;
+            origin = origin(1:3)';
+            imY = alignLandmarks(1,:); imY = imY./norm(imY);
+            imZ = alignLandmarks(2,:); imZ = imZ./norm(imZ);
+        else
+            %% flip 3rd axis
+            %alignLandmarks(:,3) = size(refImg,3)-alignLandmarks(:,3);
+            % The first landmark should be the anterior commissure (AC)- our origin
+            origin = alignLandmarks(1,:);
+            % Define the current image axes by re-centering on the origin (the AC)
+            imY = alignLandmarks(2,:)-origin; imY = imY./norm(imY);
+            imZ = alignLandmarks(3,:)-origin; imZ = imZ./norm(imZ);
+        end
 
-if(~isempty(alignLandmarks))
-    if(size(alignLandmarks,1)==2)
-        origin = ni.qto_ijk*[0 0 0 1]'-0.5;
-        origin = origin(1:3)';
-        imY = alignLandmarks(1,:); imY = imY./norm(imY);
-        imZ = alignLandmarks(2,:); imZ = imZ./norm(imZ);
-    else
-        %% flip 3rd axis
-        %alignLandmarks(:,3) = size(refImg,3)-alignLandmarks(:,3);
-        % The first landmark should be the anterior commissure (AC)- our origin
-        origin = alignLandmarks(1,:);
-        % Define the current image axes by re-centering on the origin (the AC)
-        imY = alignLandmarks(2,:)-origin; imY = imY./norm(imY);
-        imZ = alignLandmarks(3,:)-origin; imZ = imZ./norm(imZ);
+        % x-axis (left-right) is the normal to [ac, pc, mid-sag] plane
+        imX = cross(imZ,imY);
+        % Make sure the vectors point right, superior, anterior
+        if(imX(1)<0), imX = -imX; end
+        if(imY(2)<0), imY = -imY; end
+        if(imZ(3)<0), imZ = -imZ; end
+        % Project the current image axes to the cannonical AC-PC axes. These
+        % are defined as X=[1,0,0], Y=[0,1,0], Z=[0,0,1], with the origin
+        % (0,0,0) at the AC. Note that the following are the projections
+        x = [0 1 imY(3)]; x = x./norm(x);
+        y = [1  0 imX(3)]; y = y./norm(y);
+        %z = [0  imX(2) 1]; z = z./norm(z);
+        z = [0  -imY(1) 1]; z = z./norm(z);
+        % Define the 3 rotations using the projections. We have to set the sign
+        % of the rotation, depending on which side of the plane we came from.
+        rot(1) = sign(x(3))*acos(dot(x,[0 1 0])); % rot about x-axis (pitch)
+        rot(2) = sign(y(3))*acos(dot(y,[1 0 0])); % rot about y-axis (roll)
+        rot(3) = sign(z(2))*acos(dot(z,[0 0 1])); % rot about z-axis (yaw)
+
+        scale = ni.pixdim;
+        % Affine build assumes that we need to translate before rotating. But,
+        % our rotations have been computed about the origin, so we'll pass a
+        % zero translation and set it ourselves (below).
+        ref2tal = affineBuild([0 0 0], rot, scale, [0 0 0]);
+        tal2ref = inv(ref2tal);
+        % Insert the translation.
+        tal2ref(1:3,4) = (origin + newMmPerVox/2)';
+
+        % Resample it to 1x1x1
+        disp('Resampling reference image to ac-pc space, isotropic voxels...');
+        [refImg,refXform] = mrAnatResliceSpm(refImg, tal2ref, bb, newMmPerVox, bSplineParams, showFigs);
     end
-    
-    % x-axis (left-right) is the normal to [ac, pc, mid-sag] plane
-    imX = cross(imZ,imY);
-    % Make sure the vectors point right, superior, anterior
-    if(imX(1)<0), imX = -imX; end
-    if(imY(2)<0), imY = -imY; end
-    if(imZ(3)<0), imZ = -imZ; end
-    % Project the current image axes to the cannonical AC-PC axes. These
-    % are defined as X=[1,0,0], Y=[0,1,0], Z=[0,0,1], with the origin
-    % (0,0,0) at the AC. Note that the following are the projections
-    x = [0 1 imY(3)]; x = x./norm(x);
-    y = [1  0 imX(3)]; y = y./norm(y);
-    %z = [0  imX(2) 1]; z = z./norm(z);
-    z = [0  -imY(1) 1]; z = z./norm(z);
-    % Define the 3 rotations using the projections. We have to set the sign
-    % of the rotation, depending on which side of the plane we came from.
-    rot(1) = sign(x(3))*acos(dot(x,[0 1 0])); % rot about x-axis (pitch)
-    rot(2) = sign(y(3))*acos(dot(y,[1 0 0])); % rot about y-axis (roll)
-    rot(3) = sign(z(2))*acos(dot(z,[0 0 1])); % rot about z-axis (yaw)
-    
-    scale = ni.pixdim;
-    % Affine build assumes that we need to translate before rotating. But,
-    % our rotations have been computed about the origin, so we'll pass a
-    % zero translation and set it ourselves (below).
-    ref2tal = affineBuild([0 0 0], rot, scale, [0 0 0]);
-    tal2ref = inv(ref2tal);
-    % Insert the translation.
-    tal2ref(1:3,4) = (origin + newMmPerVox/2)';
-    
-    % Resample it to 1x1x1
-    disp('Resampling reference image to ac-pc space, isotropic voxels...');
-    [refImg,refXform] = mrAnatResliceSpm(refImg, tal2ref, bb, newMmPerVox, bSplineParams, showFigs);
 end
 
 newOrigin = inv(refXform)*[0 0 0 1]'; newOrigin = newOrigin(1:3)'-newMmPerVox/2;
