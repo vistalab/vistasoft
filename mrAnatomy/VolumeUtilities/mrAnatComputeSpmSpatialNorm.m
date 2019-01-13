@@ -43,6 +43,8 @@ if(~exist(templateFileName,'file'))
     templateFileName = fullfile(p,f);
 end
 
+fprintf('\n ...mrAnatComputeSpmSpatialNorm will use %s as template file for normalization...\n\n', templateFileName);
+
 if(~exist('params','var')||isempty(params))
     spm_defaults; global defaults;
     params = defaults.normalise.estimate;

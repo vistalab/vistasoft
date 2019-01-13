@@ -4,7 +4,7 @@ N = length(allSubjects);
 for g = 1:N
     %FIND t1NormParams HERE - UNFINISHED
     
-    dField = inv(
+    % dField = inv(
     dField = mrAnatSnToDeformation(t1NormParms.sn,[2 2 2]);
     t1ToTensorXform  = inv(anat.xformToAcPc*xformToAnat);
     
