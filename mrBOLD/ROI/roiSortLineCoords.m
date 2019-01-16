@@ -1,16 +1,16 @@
-function [roi] = roiSortLineCoords(view, roi, show_res)
+function [roi] = roiSortLineCoords(vw, roi, show_res)
 % Arrange the coordinates in a gray matter line ROI so that they progress
 % along the line.
 %
-%  [roi sampleNodes distNodes]  = roiSortLineCoords(view, roi);
+%  [roi sampleNodes distNodes]  = roiSortLineCoords(vw, roi);
 %
 %
 % ras, 12/2008.  Adapted from code in plotLineROI.
 % SD, 02/2011. This nor original plotLineROI was not working properly,
 %              rewritten sorting algorithm version.
 
-if notDefined('view'),	view = getSelectedGray;		end
-if notDefined('roi'),	roi = view.ROIs(view.selectedROI);		end
+if notDefined('vw'),	vw = getSelectedGray;		end
+if notDefined('roi'),	roi = vw.ROIs(vw.selectedROI);		end
 if notDefined('show_res'), show_res = true; end
 
 % TODO: add a mex-file test of mrManDist here. This MEX file is needed for
@@ -18,17 +18,17 @@ if notDefined('show_res'), show_res = true; end
 % ...
 
 % get dimensions
-mmPerPix = view.mmPerVox;
+mmPerPix = vw.mmPerVox;
 
 % get all gray coords, nodes and edges
-nodes   = viewGet(view, 'nodes');
-edges   = viewGet(view, 'edges');
-coords  = viewGet(view, 'coords');
-%numNeighbors = double(view.nodes(4,:));
-%edgeOffsets  = double(view.nodes(5,:));
+nodes   = viewGet(vw, 'nodes');
+edges   = viewGet(vw, 'edges');
+coords  = viewGet(vw, 'coords');
+%numNeighbors = double(vw.nodes(4,:));
+%edgeOffsets  = double(vw.nodes(5,:));
 
 % Get nearest gray node
-ROIcoords = viewGet(view, 'ROI coords');
+ROIcoords = viewGet(vw, 'ROI coords');
 allNodeIndices = zeros(1,size(ROIcoords,2));
 for ii=1:size(ROIcoords,2)
     grayNode = find(nodes(2,:) == ROIcoords(1,ii) & ...
@@ -65,7 +65,7 @@ while any(isinf(allpaths))
         tmppaths=shortpath(conMat,n,[]);
         unconnected = isinf(tmppaths);
         tmp = mrManDist(nodes,edges,allNodeIndices(n),mmPerPix,999);
-        [tmp_d tmp_ii] = min(tmp(allNodeIndices(unconnected)));
+        [tmp_d, tmp_ii] = min(tmp(allNodeIndices(unconnected)));
         % keep shortest path through fully connected matrix
         if ~isempty(tmp_d) && tmp_d<d
             d=tmp_d;
@@ -81,10 +81,10 @@ while any(isinf(allpaths))
     
     
     % get path indices
-    [junk,p]=shortpath(fullConMat,allNodeIndices(s),allNodeIndices(t));
+    [~,p]=shortpath(fullConMat,allNodeIndices(s),allNodeIndices(t));
     
     % get unique indices
-    [junk ib] = intersect(p,allNodeIndices);
+    [~, ib] = intersect(p,allNodeIndices);
     d=true(size(p));d(ib)=0;
     
     % grow nodes
@@ -113,14 +113,14 @@ for n=1:numel(allNodeIndices)
 end
 
 % get path indices 
-[d,p]=shortpath(conMat,s,t);
+[~,p]=shortpath(conMat,s,t);
 newcoords = coords(:,allNodeIndices(p));
 
 
 % plot results
 if show_res
     figure;
-    xyz = viewGet(view, 'ROI coords')';
+    xyz = viewGet(vw, 'ROI coords')';
     plot3(xyz(:,1),xyz(:,2),xyz(:,3),'k.');hold on
     xyz = coords(:,allNodeIndices(p))';
     plot3(xyz(:,1),xyz(:,2),xyz(:,3),'ro-');

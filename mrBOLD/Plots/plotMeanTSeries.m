@@ -26,7 +26,7 @@ function data = plotMeanTSeries(vw,scans, useScanDialog, getRawData)
 if ~exist('scans','var'),       scans           = viewGet(vw, 'curScan');   end
 if notDefined('useScanDialog'), useScanDialog   = false;                    end
 if useScanDialog,               scans           = er_selectScans(vw);       end
-if isempty('scans'),            display('User aborted'); return;            end
+if isempty('scans'),            disp('User aborted');    return;            end
 if ~exist('getRawData', 'var'), getRawData      = false;                    end
 %------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ end
 
 graphwin = selectGraphWin;
 
-for scan = scans;
+for scan = scans
     ind = find(scans == scan);
 
     nCycles   = viewGet(vw, 'numCycles', scan);
@@ -50,14 +50,14 @@ for scan = scans;
     
     % Get ROI coords
     if viewGet(vw, 'selected ROI'), ROIcoords = viewGet(vw, 'ROI coords');
-    else  myErrorDlg('No current ROI');
+    else,  myErrorDlg('No current ROI');
     end
 
     % compute the mean tSeries
     try
         tSeries = meanTSeries(vw,scan,ROIcoords, getRawData);
     catch ME
-        warning(ME.identifier, ME.message);
+        warning(ME.identifier, '%s', ME.message);
         if scan == scans(1), roiXformView(vw); end
         tSeries = roiMeanTSeries(scan, getRawData);
         if iscell(tSeries), tSeries = tSeries{1}; end
@@ -74,14 +74,14 @@ for scan = scans;
     headerStr = ['Mean tSeries, ROI ',ROIname,', scan ',num2str(scans)];
     set(gcf,'Name',headerStr);    
     h(ind) = plot(t,tSeries,'LineWidth',2);
-    xtick = 0:length(framesToUse)*frameRate/nCycles:length(framesToUse)*frameRate;
+    xtick = frameRate*linspace(framesToUse(1)-1, framesToUse(end), nCycles+1) ;
+    %  0:length(framesToUse)*frameRate/nCycles:length(framesToUse)*frameRate;
+    
     set(gca,'xtick',xtick)
     set(gca,'FontSize',fontSize)
     xlabel('Time (sec)','FontSize',fontSize)
     ylabel('Percent modulation','FontSize',fontSize)
-    if getRawData,
-        ylabel('Raw Signal','FontSize',fontSize)
-    end
+    if getRawData, ylabel('Raw Signal','FontSize',fontSize); end
     
     set(gca,'XLim',[0,nFrames*frameRate]);
     grid on
@@ -95,7 +95,8 @@ end
 % if multiple scans, make each t-series a diff color and make a legend
 if length(scans) > 1
     color_tmp=hsv(length(scans));
-   
+    
+    scanList = cell(1, length(scans));
     for ii = 1:length(scans)
         set(h(ii), 'color', color_tmp(ii, :));
         scanList{ii}=viewGet(vw, 'annotation', scans(ii));

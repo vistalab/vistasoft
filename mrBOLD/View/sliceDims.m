@@ -1,6 +1,6 @@
-function dims = sliceDims(view,scan)
+function dims = sliceDims(vw,scan)
 %
-% dims = sliceDims(view,[scan])
+% dims = sliceDims(vw,[scan])
 %
 % Returns the size for a single slice of the data array
 % i.e., corresponding to a single tSeries file.
@@ -12,23 +12,23 @@ function dims = sliceDims(view,scan)
 %
 % djh, 2/22/2001
 if ieNotDefined('scan')
-    scan = getCurScan(view);
+    scan =  viewGet(vw, 'curScan');
 end
 
 warning('vistasoft:obsoleteFunction', 'sliceDims.m is obsolete.\nUsing\n\tdims = viewGet(vw, ''sliceDims'', scan)\ninstead.');
 
-dims = viewGet(view, 'sliceDims', scan);
+dims = viewGet(vw, 'sliceDims', scan);
 
 return
 
 
 % global dataTYPES;
-% switch view.viewType
+% switch vw.viewType
 % case 'Inplane'
-%     dims = [dataTYPES(view.curDataType).scanParams(scan).cropSize];
+%     dims = [dataTYPES(vw.curDataType).scanParams(scan).cropSize];
 % case {'Volume','Gray'}
-%     dims = [1,size(view.coords,2)];
+%     dims = [1,size(vw.coords,2)];
 % case 'Flat'
-%     dims = [view.ui.imSize];
+%     dims = [vw.ui.imSize];
 % end
 % return

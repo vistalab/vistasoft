@@ -20,7 +20,7 @@ function [d,p] = shortpath(A,s,t)
 % Matlog Version 1.2 19-Oct-99
 
 % Input Error Checking ******************************************************
-error(nargchk(2,3,nargin));
+narginchk(2,3);
 
 if nargin < 3, t = []; end
 
@@ -39,7 +39,7 @@ elseif isempty(s) & isempty(t)
 end
 % End (Input Error Checking) ************************************************
 
-if isempty(s) | isempty(t), doallpaths = 1; else doallpaths = 0; end
+if isempty(s) | isempty(t), doallpaths = 1; else, doallpaths = 0; end
 if ~isempty(s)
    A = A';		% Use transpose to speed-up FIND for sparse A
 else
@@ -69,5 +69,5 @@ d = d';
 
 if ~doallpaths
    d = d(t);
-   if nargout > 1, p = pred2path(p,s,t); end
+   if nargout > 1, p = pred2path_vista(p,s,t); end
 end

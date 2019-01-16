@@ -16,12 +16,12 @@ function rte = pred2path(P,s,t)
 % Matlog Version 9 13-Jan-2006 (http://www.ie.ncsu.edu/kay/matlog)
 
 % Input Error Checking ****************************************************
-error(nargchk(1,3,nargin));
+narginchk(1,3);
 
-[rP,n] = size(P);
+[~,n] = size(P);
 
-if nargin < 2 || isempty(s), s = (1:n)'; else s = s(:); end
-if nargin < 3 || isempty(t), t = (1:n)'; else t = t(:); end
+if nargin < 2 || isempty(s), s = (1:n)'; else, s = s(:); end
+if nargin < 3 || isempty(t), t = (1:n)'; else, t = t(:); end
 
 if any(P < 0 | P > n)
    error(['Elements of P must be integers between 1 and ',num2str(n)]);
@@ -34,7 +34,7 @@ end
 
 rte = cell(length(s),length(t));
 
-[ans,idxs] = find(P==0);
+[~,idxs] = find(P==0);
 
 for i = 1:length(s)
 %    if rP == 1

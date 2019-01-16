@@ -138,7 +138,7 @@ switch param
             switch lower(viewGet(vw, 'viewType'))
                 case 'flat'
                     %% separate coords for each flat hemisphere
-                    if length(varargin) ~= 1,
+                    if length(varargin) ~= 1
                         error('You must specify which hemisphere.');
                     end
                     hname = varargin{1};
@@ -177,11 +177,31 @@ switch param
         % included in the functional field of view. See 'allnodes' for
         % explanation. If session was initialized with the option
         % 'keepAllNodes' == true, then this call will be identical to
-        % viewGet(vw.coords).
+        % viewGet(vw.coords). 
         %
-        % Example: coords = viewGet(vw, 'all coords');
-        nodes = viewGet(vw, 'all nodes');
-        val = nodes([2 1 3], :);
+        % Optional input: hemi ('right' 'left' 'both') for right, left or both
+        %
+        % Example: coords = viewGet(vw, 'allcoords', 'right');
+        nodes = viewGet(vw, 'nodes');
+        
+        if length(varargin) ~= 1
+            hname = 'both';
+        else
+            hname = varargin{1};
+        end
+        
+        switch hname
+            case 'left'
+                subnodes  = viewGet(vw, 'all left nodes');
+                [~, ia] = intersectCols(nodes(1:3,:), subnodes(1:3,:));
+            case 'right'
+                subnodes  = viewGet(vw, 'all right nodes');
+                [~, ia] = intersectCols(nodes(1:3,:), subnodes(1:3,:));
+            otherwise
+                ia = 1:size(nodes,2);
+        end
+         
+        val = nodes([2 1 3], ia);
         
     case 'coordsfilename'
         % Return the path to the file in which coordinates are stored.

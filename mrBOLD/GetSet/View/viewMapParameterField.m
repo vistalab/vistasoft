@@ -348,6 +348,7 @@ if isempty(DictViewTranslate)
     DictViewTranslate('edges') = 'edges';
     DictViewTranslate('nedges') = 'nedges';
     DictViewTranslate('numberofedges') = 'nedges';
+    DictViewTranslate('allcoords') = 'allcoords';
     DictViewTranslate('allleftnodes') = 'allleftnodes';
     DictViewTranslate('allleftedges') = 'allleftedges';
     DictViewTranslate('allrightnodes') = 'allrightnodes';

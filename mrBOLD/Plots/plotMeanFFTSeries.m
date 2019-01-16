@@ -54,9 +54,10 @@ maxCycles = round(viewGet(vw, 'num frames',scanNum)/2); % number of frequencies 
 
 % Load up the time series for this view.  Should we check whether it is
 % already loaded?
-ROIcoords  = viewGet(vw, 'ROI coordinates');
-tSeriesROI = voxelTSeries(vw, ROIcoords, scanNum);
-
+ROIcoords   = viewGet(vw, 'ROI coordinates');
+tSeriesROI  = voxelTSeries(vw, ROIcoords, scanNum);
+framesToUse = viewGet(vw, 'frames to use', scanNum);
+tSeriesROI  = tSeriesROI(framesToUse,:);
 % Calulate the FFT for each pixel.  The tSeriesROI is nTimes x nVoxels
 absFFT  = 2*abs(fft(tSeriesROI)) / size(tSeriesROI,1);
 meanFFT = mean(absFFT,2);

@@ -257,8 +257,8 @@ for scan = 1:nScans
 
     % initialize empty time series (this way we know if it's a memory
     % bottleneck)
-    nVoxels = prod(sliceDims(vw));
-    nSlices = numSlices(vw);
+    nVoxels = prod(viewGet(vw, 'sliceDims', scan));
+    nSlices = viewGet(vw, 'numSlices');
     tSeries = zeros(nImages(scan), nVoxels, nSlices);
 
     % get the mean image if needed
