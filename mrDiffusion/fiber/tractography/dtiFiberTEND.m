@@ -49,18 +49,18 @@ seedPointTensor = findTensor(seedPoint,dt6,voxSize);
 [eigVec,eigVal] = eig(seedPointTensor);
 
 % Initializing variables - Tracking Forward from seedpoint
-<<<<<<< dtiFiberTEND.m
+% <<<<<<< dtiFiberTEND.m
 originalDir = flipud(eigVec(:,1)); %Direction of seedPoint
 vDirNew = originalDir; 
 absPosNew = seedPoint; %Absolute position in voxels
 fiberPath = seedPoint; 
 stepSize = stepSizeMm./voxSize; %Step size in voxels
-=======
-originalDir = flipud(eigVec(:,1));
-vDirNew = originalDir * trackDir;
-absPosNew = seedPoint;
-fiberPath = seedPoint;
->>>>>>> 1.4
+% =======
+% originalDir = flipud(eigVec(:,1));
+% vDirNew = originalDir * trackDir;
+% absPosNew = seedPoint;
+% fiberPath = seedPoint;
+% >>>>>>> 1.4
 while (~done & iter<maxIter)
     vDir = vDirNew;
     absPosOld = absPosNew;
@@ -86,7 +86,7 @@ while (~done & iter<maxIter)
         end
     end
 end
-<<<<<<< dtiFiberTEND.m
+% <<<<<<< dtiFiberTEND.m
 
 done = 0;
 vDirNew = -originalDir;

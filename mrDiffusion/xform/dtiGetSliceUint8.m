@@ -28,7 +28,7 @@ function [imgSlice,x,y,z]=dtiGetSliceUint8(std2img, imgVol, sliceThisDim, sliceN
 %   2007.05.18 RFD (bob@white.stanford.edu) wrote it.
 % 
 
-if(~
+% if(~
 if(~exist('sliceNum','var')||isempty(sliceNum)), sliceNum = dtiGet(handles,'currentSliceNum',sliceThisDim); end
 if(~exist('imDims','var') || isempty(imDims))
     % This should work well if the standard space is really Talairach. 
