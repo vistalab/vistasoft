@@ -193,11 +193,24 @@ switch param
                 val = viewGet(vw,'anatsize');
             case {'Volume','Gray','generalGray'}
                 if isfield(vw, 'anat')
+                    % In the GUI this field is populated so we get it
                     if ~isempty(vw.anat), val = viewGet(vw,'Anat Size'); end
                 end
+                % If it is a hidden volume view then this field is not
+                % populated so we need to load the anatomy image in order
+                % to calculate it's size
                 if ~exist('val','var') || isempty(val)
                     pth = getVAnatomyPath; % assigns it if it's not set
-                    [~, val] = readVolAnatHeader(pth);
+                    % Here we load the volume anatomy - Note that we need
+                    % to apply this transform between the dimensions of the
+                    % raw image and the mrvista coordinates
+                    val = size(readVolAnat(pth));
+                    
+                    % This was the original call but we note that the
+                    % function nifti2mrVistaAnat applies a transform to the
+                    % data that makes the data dimensions different from
+                    % those in the header. 
+                    % [~, val] = readVolAnatHeader(pth);
                 end
             case 'Flat'
                 val = [vw.ui.imSize,2];

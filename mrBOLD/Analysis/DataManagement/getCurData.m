@@ -24,8 +24,9 @@ if strcmp(viewGet(vw,'View Type'),'Volume') || strcmp(viewGet(vw,'View Type'),'G
     volSize = viewGet(vw,'Size');
     tmp = tmp{scanNum}(:);
     data = NaN*ones(volSize);
-    volIndices = coords2Indices(viewGet(vw,'Coords'),volSize);
-    data(volIndices) = tmp;
+    volCoords = viewGet(vw,'Coords');
+    volIndices = coords2Indices(volCoords,volSize);
+    data(volIndices) = tmp; 
 else
     data = tmp{scanNum};
 end
