@@ -40,7 +40,14 @@ fileName = ni.fname;
 % to our 4d tensor format, (x,y,z,directions)
 %    direction ordering: (Dxx Dyy Dzz Dxy Dxz Dyz).
 %
-dt6 = double(squeeze(ni.data(:,:,:,1,[1 3 6 2 4 5])));
+
+if length(size(ni.data))==5
+    % When it is Vistasoft or FSL, it looks like this
+    dt6 = double(squeeze(ni.data(:,:,:,1,[1 3 6 2 4 5])));
+else
+    % When it is mrTrix, it looks like this
+    dt6 = double(squeeze(ni.data(:,:,:,[1 3 6 2 4 5])));
+end
 xformToAcpc = ni.qto_xyz;
 mmPerVoxel = ni.pixdim(1:3);
 desc = ni.descrip;

@@ -117,8 +117,11 @@ if doAlign
     mnB0 = mnB0./length(b0inds);
     mnB0(isnan(mnB0)) = 0;
     mnB0 = int16(round(mnB0));
+    
 else
-    mnB0 = int16(round(mean(dwRaw.data(:,:,:,b0inds),4)));
+    % Average the b=0 volumes
+    % mnB0 = int16(round(mean(dwRaw.data(:,:,:,b0inds),4)));
+    mnB0 = mean(dwRaw.data(:,:,:,b0inds),4);
 end
 dtiWriteNiftiWrapper(mnB0, xformToScanner, outFile, 1, 'Mean of b0 volumes');
 if(nargout<1), clear outFile; end

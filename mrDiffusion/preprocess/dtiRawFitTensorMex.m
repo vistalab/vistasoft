@@ -190,6 +190,9 @@ minD = min(d(d(:)>0));
 %
 disp('Computing brain mask from average b0...');
 b0 = mean(d(:,:,:,bvals<=0.01),4);
+disp('DEBUG: This is the b0 that is going to mrAnatExtractBrain (b0 = mean(d(:,:,:,bvals<=0.01),4);):');
+fprintf('DEBUG: Size: %d\n', size(b0));
+fprintf('DEBUG: Unique bvals: %d\n\n', unique(bvals));
 try
     % try using BET
     brainMask = uint8(mrAnatExtractBrain(int16(round(b0)), mmPerVox, 0.3));

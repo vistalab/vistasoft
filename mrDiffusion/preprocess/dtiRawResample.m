@@ -185,7 +185,8 @@ for ii=1:nvols
     % according to the values in interpParams.
     [im,newAcpcXform] = mrAnatResliceSpm(im, curXform, bb, dwOutMm, interpParams, 0);
     im( isnan(im) | im <0 ) = 0;
-    newImgs(:,:,:,ii) = int16(round(im));
+    % newImgs(:,:,:,ii) = int16(round(im));
+    newImgs(:,:,:,ii) = im;
 end
 %clear dwRaw;
 

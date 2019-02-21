@@ -164,7 +164,7 @@ return
 
 
 %% Example script
-
+%{
 bd = pwd;
 d = dir('*0*');
 subDirs = {d.name};
@@ -191,4 +191,5 @@ for(ii=1:length(subDirs))
     fprintf(fid,'%s\t%0.1f\n',subDirs{ii},brainVolumeCc(ii));
 end
 fclose(fid);
+%}
 
