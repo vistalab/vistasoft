@@ -63,14 +63,21 @@ dataImporter.SetDataSpacing(mmPerVox[0],mmPerVox[1],mmPerVox[2]) # TODO have to 
 dataImporter.Update()
 if debug: print dataImporter.GetOutput()
 
+pClassData = dataImporter.GetOutput()
+pClassData.Modified()
+
 ###  ------------------------------------------------------------------------------
 '''
 
 
 ###  ------- the way mrMesh did it in mesh_build  --------------------------------
 pArray = map(ord,voxels.tostring()) #unpack
-
 pDims = shape(voxels)
+if debug: print pDims
+
+# need a reshuffle of indices ?? -- doesn't matter if cube (same xyz dims)
+pDims = [pDims[2],pDims[1],pDims[0]]
+
 scale = mmPerVox
 iSizes = [pDims[0]+2, pDims[1]+2, pDims[2]+2]
 
@@ -96,7 +103,7 @@ for iSrcZ in range(pDims[2]):
         for iSrcX in range(pDims[0]):
 
             fTemp = int(pArray[iSrcIndex])
-            #if debug: print fTemp, 'iSrcIndex', iSrcIndex, 'iDstIndex', iDstIndex
+            #print fTemp, 'iSrcIndex', iSrcIndex, 'iDstIndex', iDstIndex
             if fTemp>0: 
                 pClassValues.SetValue(iDstIndex, 0)
             else:         
