@@ -23,6 +23,7 @@ function [fh, figurename] = dtiCheckMotion(ecXformFile,visibility)
 %                motion estimates. 
 %
 % Franco Pestilli & Bob Dougherty Stanford University
+% 03/01/2019 Hiromasa Takemura (CiNet) modified a figure handle
 
 if notDefined('visibility'), visibility = 'on'; end
 if(~exist('ecXformFile','var') || isempty(ecXformFile))
@@ -59,9 +60,16 @@ legend({'pitch','roll','yaw'});
 % Save out a PNG figure with the same filename as the Eddy Currents correction xform. 
 [p,f,~] = fileparts(ecXformFile);
 figurename = fullfile(p,[f,'.png']);
+
+if isnumeric(fh)==1
 printCommand = ...
     sprintf('print(%s, ''-painters'',''-dpng'', ''-noui'', ''%s'')', ...
     num2str(fh),figurename);
+else
+printCommand = ...
+    sprintf('print(%s, ''-painters'',''-dpng'', ''-noui'', ''%s'')', ...
+    num2str(fh.Number),figurename);    
+end
 fprintf('[%s] Saving Eddy Current correction figure: \n %s \n', ...
          mfilename,figurename);
 eval(printCommand);
