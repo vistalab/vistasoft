@@ -1,8 +1,8 @@
-function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,BasisFlag)
+function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,BasisFlag)
 % Build 2D polynomial matrix
 %
 % Syntax:
-%  [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,BasisFlag)
+%  [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,BasisFlag)
 %
 % Brief description:
 %    Creates a polynomial basis set, potentially orthogonormal.
@@ -10,9 +10,8 @@ function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,
 %    spatial dimensions
 %
 % Inputs:
-%   boxS: the     X Y Z size of the box
+%   boxS:         Size of the box (2 or 3 dimensions)
 %   pOrder:       polynomial order (linear, quadratic, cubic)
-%   sDim:         1, 2, or 3
 %   BasisFlag:    Normalize pBasis if true to be unit length.
 %                 if 'svd' use svd to Orthogonalize pBasis.
 %                 if 'qr' use qr to  Orthogonalize thepBasis.
@@ -20,7 +19,7 @@ function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,
 % Outputs:
 %   pBasis:         Polynomial basis functions for nth order and some
 %                   number of dimensions.
-%   spatialSamples: Spatial samples for each dimension  
+%   spatialSamples: Cell array of the spatial samples for each dimension  
 %   pTerms:         String defining the polynomial terms
 %
 % Description
@@ -38,35 +37,35 @@ function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,
 
 % Examples:
 %{
- boxS = [12 10]; pOrder = 3; sDim = 2;
- pBasis = mrvCreatePolybasis(boxS,pOrder,sDim);
+ boxS = [12 10]; pOrder = 3;
+ pBasis = mrvCreatePolybasis(boxS,pOrder);
  mrvNewGraphWin; imagesc(pBasis);
 %}
 %{
  % Even number of spatial samples
- boxS = [12 10]; pOrder = 3; sDim = 2;
- pBasis = mrvCreatePolybasis(boxS,pOrder,sDim,'qr');
+ boxS = [12 10]; pOrder = 3; 
+ pBasis = mrvCreatePolybasis(boxS,pOrder,'qr');
  imagesc(pBasis);
  % Orthonormal
  imagesc(pBasis'*pBasis)
 %}
 %{
- boxS = [12 10]; pOrder = 2; sDim = 2;
- pBasis = mrvCreatePolybasis(boxS,pOrder,sDim,'qr');
+ boxS = [12 10]; pOrder = 2; 
+ pBasis = mrvCreatePolybasis(boxS,pOrder,'qr');
  thisBasis = pBasis*[0 0 1 0 1 0]';
  mrvNewGraphWin; mesh(reshape(thisBasis,boxS(2),boxS(1)));
 %}
 %{
  % Check 3D case, odd number of samples
- boxS = [7 7 7]; pOrder = 2; sDim = length(boxS); BasisFlag = 'qr';
- [pBasis, pTerms, nSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,BasisFlag);
+ boxS = [7 7 7]; pOrder = 2; BasisFlag = 'qr';
+ [pBasis, pTerms, nSamples] = mrvCreatePolybasis(boxS,pOrder,BasisFlag);
  mrvNewGraphWin; imagesc(pBasis);
  mrvNewGraphWin; imagesc(pBasis'*pBasis);
 %}
 %{
  % Approximate data with a lower order polynomial
- boxS = [12 10]; pOrder = 3; sDim = 2;BasisFlag = 'qr';
- [pBasis, pTerms] = mrvCreatePolybasis(boxS,pOrder,sDim,BasisFlag);
+ boxS = [12 10]; pOrder = 3; BasisFlag = 'qr';
+ [pBasis, pTerms, sSamples] = mrvCreatePolybasis(boxS,pOrder,BasisFlag);
 
  % Generate data
  in = rand(size(pBasis,2),1);
@@ -86,14 +85,16 @@ function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,
 
 %% Manage the parameters
 
+if notDefined('boxS'),      error('Box size required'); end
 if notDefined('pOrder'),    pOrder = 3; end
-if notDefined('sDim'),      sDim = 3; end
 if notDefined('BasisFlag'), BasisFlag = false; end
+
+sDim = length(boxS);
 
 % I am worried - it appears the number of samples have to be odd for
 % all this to work!
 nSamples = floor(boxS/2);
-spatialSamples = cell(3,1);
+spatialSamples = cell(sDim,1);
 for ii=1:length(boxS)
     if isodd(boxS(ii))
         spatialSamples{ii} = -nSamples(ii):nSamples(ii);
