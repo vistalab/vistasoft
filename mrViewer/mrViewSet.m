@@ -97,7 +97,7 @@ for i = 1:2:length(varargin)
 
 			end
 
-		case 'displayformat',
+		case 'displayformat'
 			% set view format: if handles, find selected button
 			if ishandle(val) & mod(val, 1) ~= 0 % non-integer: not a figure
 				val = find(ui.controls.displayFormat==val);
@@ -121,13 +121,13 @@ for i = 1:2:length(varargin)
 
 		case 'overlay', ui = mrViewSetOverlay(ui,varargin);
 
-		case 'montagerows',
+		case 'montagerows'
 			ui.settings.montageRows = round(val);
 			if checkfields(ui, 'controls', 'montageRows')
 				mrvSliderSet(ui.controls.montageRows, 'value', round(val));
 			end
 
-		case 'montagecols',
+		case 'montagecols'
 			ui.settings.montageCols = round(val);
 			if checkfields(ui, 'controls', 'montageCols')
 				mrvSliderSet(ui.controls.montageCols, 'value', round(val));
@@ -139,7 +139,7 @@ for i = 1:2:length(varargin)
 
 		case 'labelslices',ui.settings.labelSlices = val;
 
-		case 'showcursor',
+		case 'showcursor'
 			ui.settings.showCursor = val;
 			if checkfields(ui,'controls','cursor')
 				if val>0, vis = 'on'; else, vis = 'off'; end
@@ -148,7 +148,7 @@ for i = 1:2:length(varargin)
 
 		case 'cursortype', ui.settings.cursorType = val;
 
-		case 'cursorloc',
+		case 'cursorloc'
 			% if no argument passed, get from cursor edit fields
 			if isempty(val)
 				for i=1:3
@@ -165,7 +165,7 @@ for i = 1:2:length(varargin)
 		case 'cbarcolorscheme'  % set colorbars white-on-black of vice-versa
 			ui.settings.cbarColorScheme = val;
 
-		case 'infopanel',
+		case 'infopanel'
 			% update the info panel to show info for the
 			% mr object (base object / map / ROI) selected by the
 			% info panel popup:

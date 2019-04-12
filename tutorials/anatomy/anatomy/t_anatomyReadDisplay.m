@@ -10,10 +10,20 @@
 %
 
 %% Read in the anatomy
-% We store mddern anatomies as NIFTI files.  We load the NIFTI this way:
-niFileName = fullfile(mrvDataRootPath,'anatomy','anatomyNIFTI','t1.nii.gz');
+%{
+ % If you do not have the file already, you can get it this way
+ rdt = RdtClient('vistasoft');
+ rdt.crp('/vistadata/anatomy/anatomyNIFTI');
+ dest = fullfile(vistaRootPath,'local');
+ niFileName = rdt.readArtifact('t1.nii',...
+                 'type','gz',...
+                 'destinationFolder',dest);
+%}
+
+% We store modern anatomies as NIFTI files.  We load the NIFTI this way:
+niFileName = fullfile(vistaRootPath,'local','t1.nii.gz');
 if ~exist(niFileName,'file')
-    error('File not found.  Check vistadata repository');
+    error('T1 File not found.  See comments for download.');
 end
 
 % The anatomy data are int16.  Load them this way.
@@ -58,6 +68,6 @@ imshow(montage)
 % The command is simply 'fslview filename'
 
 % You can call an elaborated Matlab viewer that RAS wrote: mrViewer
-mrViewer(niFileName)
+% mrViewer(niFileName)
 
 %% END
