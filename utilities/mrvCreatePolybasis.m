@@ -19,8 +19,7 @@ function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,
 %
 % Outputs:
 %   pBasis:         Polynomial basis functions for nth order and some
-%                   number of dimensions.   This matrix does NOT
-%                   include the constant  
+%                   number of dimensions.
 %   spatialSamples: Spatial samples for each dimension  
 %   pTerms:         String defining the polynomial terms
 %
@@ -50,6 +49,12 @@ function [pBasis, pTerms, spatialSamples] = mrvCreatePolybasis(boxS,pOrder,sDim,
  imagesc(pBasis);
  % Orthonormal
  imagesc(pBasis'*pBasis)
+%}
+%{
+ boxS = [12 10]; pOrder = 2; sDim = 2;
+ pBasis = mrvCreatePolybasis(boxS,pOrder,sDim,'qr');
+ thisBasis = pBasis*[0 0 1 0 1 0]';
+ mrvNewGraphWin; mesh(reshape(thisBasis,boxS(2),boxS(1)));
 %}
 %{
  % Check 3D case, odd number of samples
