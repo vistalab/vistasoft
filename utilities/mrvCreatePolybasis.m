@@ -213,7 +213,7 @@ if BasisFlag
             case {'svd'}
                 % SVD Orthogonalize the pBasis
                 nCols = size(pBasis,2);
-                [U, ~, ~] = svd(pBasis);
+                [U, ~, ~] = svd(pBasis, 'econ');
                 pBasis = U(:,1:nCols);
             case {'qr'}
                 % QR Orthogonalize the pBasis
