@@ -124,7 +124,7 @@ for ii = 1:2:length(varargin)
         case {'add100','savepercent'},           savePercent = varargin{ii+1};
         case {'saveresidual' 'saveresiduals'},   saveResiduals = 1;
         case {'detrend' 'detrendflag'},       detrendFlag = varargin{ii+1};
-        otherwise,
+        otherwise
             % Unspeakable hack, but leaving until later
             eval( sprintf('%s = %s', varargin{ii}, num2str(varargin{ii+1})) );
     end
@@ -165,6 +165,9 @@ if notDefined('model')
         error('No pRF model loaded. Load a pRF model.')
     end
 end
+
+% Get the descriptive string for the model
+modelName = rmGet(model, 'desc');
 
 % are the stimulus params kosher?
 if ~checkfields(P, 'analysis', 'allstimimages')
@@ -299,7 +302,7 @@ for scan = 1:nScans
                 sigmaMajor(I), sigmaMinor(I), 0, x0(I), y0(I));
 
 
-            if useBetas,
+            if useBetas
                 % scale the pRFs by the fitted betas
                 pRFs = repmat(beta(I), [size(pRFs, 1) 1]) .* pRFs;
             else
@@ -329,19 +332,46 @@ for scan = 1:nScans
                 %       output = (stim*samplerate^2) * pRF/samplerate^2
 
             end
-
+            
             % convolve the pRFs with the stimulus specification
+            tSeries(:,I,slice) = stimuli{scan} * pRFs;
+            
+            % If it's a nonlinear model, we need a different calculation
+            if contains(modelName, {'css' '2D nonlinear pRF fit (x,y,sigma,exponent, positive only)'})
+                
+                pRFs = rfGaussian2d(P.analysis.X, P.analysis.Y, ...
+                sigmaMajor(I), sigmaMinor(I), 0, x0(I), y0(I));
+
+                % we-do the prediction with stimulus that has not been convolved
+                % with the hrf, and then add in the exponent, and then convolve                               
+                exponent = model.exponent(:,:,slice);
+                               
+                % make neural predictions for each RF
+                pred = (P.analysis.allstimimages_unconvolved * pRFs).^exponent(I);
+                                               
+                % reconvolve with hRF
+                these_time_points = P.analysis.scan_number == scan;
+                hrf = P.analysis.Hrf{scan};
+                pred(these_time_points,:) = filter(hrf, 1, pred(these_time_points,:));
+                
+                % scale prediction by gain (beta weight)
+                pred(these_time_points,:) =  bsxfun(@times, pred(these_time_points,:), beta(I));
+                
+                tSeries(these_time_points,I,slice) = pred;
+                            
+            end
+            
             if savePercent==1
                 % jw: convert from percent signal to modulation about 100
                 % (allows for correct outcomes when other functions try to
                 % extract % sinal)
-                tSeries(:,I,slice) = stimuli{scan} * pRFs + 100;
+                tSeries(:,I,slice) = tSeries(:,I,slice) + 100;
             else
                 % that heuristic is not always useful, and can make certain
                 % uses of the predictions way off
-                tSeries(:,I,slice) = stimuli{scan} * pRFs;
+                
             end
-
+                        
             if normToMeanSignal==1
                 % scale modulation around mean map instead of 100
                 meanImg = vw.map{scan}(:,:,slice);
@@ -432,7 +462,7 @@ for scan = 1:nScans
             end
 
             % scale the predictions to match the data
-            [trends, nt, dcid] = rmMakeTrends(P, 0);
+            trends = rmMakeTrends(P, 0);
             tSeries(:,:,slice) = scalePredictionToData(tSeries(:,:,slice), ...
                 dataTSeries, trends(:,1));
 
@@ -483,7 +513,7 @@ function ts = convertToPercent(ts)
 % percentTSeries. (Divide by the mean, and convert to % signal
 % change about the mean.)
 ts = ts ./ repmat(mean(ts), [size(ts, 1) 1]);
-ts = 100 .* [ts - 1];
+ts = 100 .* (ts - 1);
 ts = detrendTSeries(ts, -1);
 return
 
