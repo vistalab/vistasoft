@@ -3,6 +3,21 @@ function val = hrfGet(prfParams,hrfParam)
 %
 %   val = hrfGet(params,val)
 %
+% Brief description:
+%   The vistasoft scans have an implicit HRF attached to them.  This
+%   function gets the HRF for the parameters attached to a particular
+%   scan.
+%
+% Inputs
+%
+% Key/value pairs
+%   N/A
+% 
+% Return
+%  
+% Example:
+%   
+%
 % 2009/03 SOD: modified from readHRFParams
 if notDefined('prfParams'), error('prfParams needed'); end
 if notDefined('hrfParam'),  error('hrfParam needed');  end
@@ -37,4 +52,4 @@ switch lower(hrfParam)
         fprintf(1,'[%s]:Unknown parameter (%s)',mfilename,hrfParam);
 end
 
-return;
+end
