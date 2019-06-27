@@ -52,7 +52,12 @@ uimenu(hload,'Label','Screen Save Image','Separator','on',...
 % load full Rx file:
 uimenu(hload,'Label','Full Data Set','Separator','on',...
              'Callback','rxLoad;');
-         
+
+% load FSL transform: Mark Hymers, 2019 YNiC
+uimenu(hload,'Label','FSL Transform','Separator','on',...
+             'Callback','rxLoadFSLTransform;');
+
+
          
 %%%%%%%%%%%%%%%%%
 % save submenu: %

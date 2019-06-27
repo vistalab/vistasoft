@@ -6,7 +6,7 @@ function tc_dumpDataToWorkspace;
 %
 % 06/22/04 ras.
 tc = get(gcf,'UserData');
-varname = sprintf('fig%iData',tc.ui.fig);
+varname = sprintf('fig%iData',tc.ui.fig.Number); % used to be tc.ui.fig but you have multiple scans (6)
 assignin('base',varname,tc);
 fprintf('Assigned plot data to struct %s in workspace.\n',varname);
 return
