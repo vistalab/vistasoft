@@ -195,7 +195,7 @@ switch modelName,
             
         else
             beta = rmCoordsGet(M.viewType, model, 'b', coords);
-            beta = beta([1 dcid+1])';            
+            beta = beta([1 dcid+1])';   % scale factor (gain) and DC (mean)         
         end
         
         RFs        = RFs .* (beta(1) .* M.params.analysis.HrfMaxResponse);
