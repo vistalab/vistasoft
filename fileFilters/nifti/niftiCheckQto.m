@@ -30,24 +30,27 @@ function ni = niftiCheckQto(ni)
 %
 % (c) Stanford Vista Team 2012
 
-if(isfield(ni,'data')&&~isempty(ni.data))
-    % sanity-check ni.dim
-    sz = size(ni.data);
-    if(any(ni.dim(1:3)~=sz(1:3)))
-        fprintf('[%s] NIFTI volume dim wrong- setting it to the actual data size.\n',mfilename);
-        ni.dim(1:3) = sz(1:3);
-    end
-end
+% if(isfield(ni,'data')&&~isempty(niftiGet(ni, 'data')))
+%     % sanity-check ni.dim
+%     sz = size(niftiGet(ni, 'data'));
+%     if(any(ni.dim(1:3)~=sz(1:3)))
+%         fprintf('[%s] NIFTI volume dim wrong- setting it to the actual data size.\n',mfilename);
+%         ni.dim(1:3) = sz(1:3);
+%     end
+% end
 
-if(ni.qform_code==0 && ni.sform_code~=0)
+if(niftiGet(ni, 'qform_code')==0 && niftiGet(ni, 'sform_code')~=0)
     fprintf('[%s] ni.qform_code is zero and sform_code ~=0. Setting ni.qto_* from ni.sto_*...\n',mfilename);
-    ni = niftiSetQto(ni, ni.sto_xyz);
+    ni = niftiSetQto(ni, niftiGet(ni, 'sto_xyz'));
 end
 
-origin = [ni.qto_ijk(1:3,:)*[0 0 0 1]']';
-if(any(origin<2)||any(origin>ni.dim(1:3)-2))
-  [t,r,s,k] = affineDecompose(ni.qto_ijk);
-  t = ni.dim/2;
+qto_ijk = niftiGet(ni, 'qto_ijk');
+origin = [qto_ijk(1:3,:)*[0 0 0 1]']';
+
+nidim = niftiGet(ni, 'dim');
+if(any(origin<2)||any(origin>nidim(1:3)-2))
+  [t,r,s,k] = affineDecompose(qto_ijk);
+  t = nidim/2;
   fprintf('[%s] NIFTI header origin is at or outside the image volume.\n',mfilename)
   fprintf('[%s] Origin to the image center [%2.3f,%2.3f,%2.3f] pix.\n',mfilename,t(1),t(2),t(3));
   ni = niftiSetQto(ni, inv(affineBuild(t,r,s,k)));

@@ -66,6 +66,13 @@ switch param
             val = [];
         end
         
+        % The nifti should be (at least) 4-D. If less than 4D, augment with
+        % ones
+        n = length(val);
+        if n < 4
+            val = [val(1:end-1) ones(1,4-n) val(end)];
+        end
+        
     case 'fname'
         if isfield(ni, 'fname')
             val = ni.fname;
@@ -89,7 +96,7 @@ switch param
             warning('vista:niftiError', 'No number of dimensions information found in nifti. Returning empty');
             val = [];
         end
-        
+
     case 'numslices'
         if isfield(ni, 'slice_end') && isfield(ni,'slice_start')
             val = ni.slice_end - ni.slice_start + 1;
@@ -123,8 +130,16 @@ switch param
         % Example:
         % niftiGet(ni, 'pixdim');
         % niftiGet(ni, 'pixdim', 'xyz_units', 'mm', 'time_units', 's');
-        if isfield(ni, 'pixdim'), 
-            val = ni.pixdim;            
+        if isfield(ni, 'pixdim')
+            val = ni.pixdim; 
+            
+            % if there are less than 4 dimensions, insert ones before last
+            % (presumably time) dimension
+            n = length(val);
+            if n < 4
+               val = [val(1:end-1) ones(1, 4-n) val(end)];
+            end
+            
             % Check for units
             if ~isempty(varargin)
                 for ii = 1:2:length(varargin)
@@ -142,6 +157,13 @@ switch param
             end
         else
             warning('vista:niftiError', 'No pixdim information found in nifti. Returning empty');
+            val = [];
+        end
+        
+    case 'qform_code'
+        if isfield(ni, 'qform_code'), val = ni.qform_code;
+        else
+            warning('vista:niftiError', 'No qform_code information found in nifti. Returning empty');
             val = [];
         end
         
