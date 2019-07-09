@@ -67,6 +67,7 @@ switch lower(param),
 		model.sigma.theta = zeros(size(val));
 	case {'sigmamajor','sigma major','s_major'}
 		model.sigma.major = val;
+        model.sigma.theta = zeros(size(val));
 	case {'sigmaminor','sigma minor','s_minor'}
 		model.sigma.minor = val;
 	case {'sigmatheta','sigma theta','s_theta'}
