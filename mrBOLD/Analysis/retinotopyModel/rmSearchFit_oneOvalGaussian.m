@@ -5,22 +5,18 @@ function model = rmSearchFit_oneOvalGaussian(model, data, params, wProcess, t)
 %
 % 2008/08 KA incorporated asymmetric gaussian model to rmSearchFit_oneGaussian.
 
-% now get original sigmas:
-gridSigmas_unique = unique(params.analysis.sigmaMajor);
-% add upper and lower limit:
-expandRange    = params.analysis.fmins.expandRange;
-gridSigmas = [0.001.*ones(expandRange,1); ...
-    gridSigmas_unique; ...
-    params.analysis.sigmaRatioMaxVal.*ones(expandRange,1)];
-gridSigmas = double(gridSigmas);
-
-% fminsearch options
 searchOptions = params.analysis.fmins.options;
-
+expandRange   = params.analysis.fmins.expandRange;
+ 
 % convert to double just in case
 params.analysis.X = double(params.analysis.X);
 params.analysis.Y = double(params.analysis.Y);
 params.analysis.allstimimages = double(params.analysis.allstimimages);
+data = double(data);
+
+% get starting upper and lower range and reset TolFun 
+% (raw rss computation (similar to norm) and TolFun adjustments)
+[range TolFun] = rmSearchFit_range(params,model,data);
 
 % amount of negative fits
 nNegFit  = 0;
@@ -56,50 +52,66 @@ for ii = 1:numel(wProcess),
     vi = wProcess(ii);
     vData = double(data(:,ii));
 
-    % raw rss value (non-squared) - faster than sum(data(:,vi).^2)
-    rawrss     = norm(vData);
-
-    % reset tolFun: Precision of evaluation function. 
+        % reset tolFun: Precision of evaluation function. 
     % We define RMS improvement relative to the initial raw 'no-fit' data
     % RMS. So, 1 means stop if there is less than 1% improvement on the fit:
-    searchOptions.TolFun = params.analysis.fmins.options.TolFun.*rawrss;
+    % searchOptions = optimset(searchOptions,'tolFun',optimget(params.analysis.fmins.options,'tolFun')./100.*rawrss);
+    % optimset and optimget are a little slow so:
+    searchOptions.TolFun = TolFun(ii);
     
-    % start point from grid fit
-    startParams = [model.x0(vi); model.y0(vi); model.s_major(vi); model.s_minor(vi); model.s_theta(vi)];
-
-    % tight search region [lowerbound upperbound]
-    if params.analysis.scaleWithSigmas,
-        step = params.analysis.relativeGridStep.*startParams(3);
-        minstep = params.analysis.maxXY./2./params.analysis.minimumGridSampling;
-        step = min(step,minstep);
-        maxstep = params.analysis.maxXY./2./params.analysis.maximumGridSampling;
-        step = max(step,maxstep);
-    else
-        step = params.analysis.maxXY./2./params.analysis.maximumGridSampling;
-    end;
-    boundary.xy    = startParams(1:2)*[1 1] + [-1 1;-1 1].*step.*expandRange;
-
-    % interpolated sigmas, so we'll look for the closest one.
-    [tmp,closestvalue] = sort(abs(gridSigmas_unique-startParams(3)));
-    closestvalue       = closestvalue+expandRange;
-    boundary.sigma     = gridSigmas(closestvalue(1)+[-1 1].*expandRange)';
-    bndParams          = [boundary.xy;boundary.sigma;boundary.sigma;[0 pi];];
-
     % actual fitting routine
     if searchOptions.MaxIter>0
-        outParams = ...
-            fmincon(@(x) rmModelSearchFit_oneOvalGaussian(x,vData,...
-            params.analysis.X,...
-            params.analysis.Y,...
-            params.analysis.allstimimages,...
-            trends),...
-            startParams,...
-            [0 0 -1 1 0],[0],...    % s_major should be larger than s_minor
-            [],[],...
-            bndParams(:,1),bndParams(:,2),...
-            @(x) distanceCon(x,startParams,step.*expandRange),searchOptions);
+        if isfield(params, 'seperateRunBetas') && params.seperateRunBetas && isfield(params.analysis, 'exp')
+             outParams = ...
+                fmincon(@(x) rmModelSearchFit_oneOvalGaussian_exp_seperateBetas(x,vData,...
+                params.analysis.X,...
+                params.analysis.Y,...
+                params.analysis.allstimimages,trends,...
+                length(params.stim)),...
+                range.start(:,vi),...
+                [0 0 -1 1 0 0],[0],...    % s_major should be larger than s_minor
+                [],[],...
+                range.lower(:,vi),range.upper(:,vi),...
+                @(x) distanceCon(x,range.start(:,vi),range.step(:,vi).*expandRange),searchOptions);
+        elseif isfield(params, 'seperateRunBetas') && params.seperateRunBetas
+            outParams = ...
+                fmincon(@(x) rmModelSearchFit_oneOvalGaussian_seperateBetas(x,vData,...
+                params.analysis.X,...
+                params.analysis.Y,...
+                params.analysis.allstimimages,trends,...
+                length(params.stim)),...
+                range.start(:,vi),...
+                [0 0 -1 1 0],[0],...    % s_major should be larger than s_minor
+                [],[],...
+                range.lower(:,vi),range.upper(:,vi),...
+                @(x) distanceCon(x,range.start(:,vi),range.step(:,vi).*expandRange),searchOptions);
+        elseif isfield(params.analysis, 'exp')
+           outParams = ...
+                fmincon(@(x) rmModelSearchFit_oneOvalGaussian_exp(x,vData,...
+                params.analysis.X,...
+                params.analysis.Y,...
+                params.analysis.allstimimages,...
+                trends),...
+                range.start(:,vi),...
+                [0 0 -1 1 0 0],[0],...    % s_major should be larger than s_minor
+                [],[],...
+                range.lower(:,vi),range.upper(:,vi),...
+                @(x) distanceCon(x,range.start(:,vi),range.step(:,vi).*expandRange),searchOptions);
+        else
+            outParams = ...
+                fmincon(@(x) rmModelSearchFit_oneOvalGaussian(x,vData,...
+                params.analysis.X,...
+                params.analysis.Y,...
+                params.analysis.allstimimages,...
+                trends),...
+                range.start(:,vi),...
+                [0 0 -1 1 0],[0],...    % s_major should be larger than s_minor
+                [],[],...
+                range.lower(:,vi),range.upper(:,vi),...
+                @(x) distanceCon(x,range.start(:,vi),range.step(:,vi).*expandRange),searchOptions);
+        end
     else
-        outParams = startParams;
+        outParams = range.start(:,vi);
     end
     %[ outParams bndParams(:,1) startParams bndParams(:,2)]
 
@@ -114,7 +126,13 @@ for ii = 1:numel(wProcess),
 
     % make gaussian on current grid
     rf = exp( -.5 * ((Yv ./ outParams(3)).^2 + (Xv ./ outParams(4)).^2));
-    
+    if isfield(params.analysis, 'exp')
+        periods=[0.05:0.05:1 2.1 0.1 0.6 0.9 1 0.15 0.65 0.85 1 0.2 0.7 0.8 1 0.25 0.75 1 0.3 0.7 0.8 1 0.35 0.65 0.85 1 0.4 0.6 0.9 1 0.45 0.55 0.95 1 0.5 1 0.55 1 0.6 1 0.65 1 0.7 1 0.75 1 0.8 1 0.85 1 0.9  1 0.95 1 1 2.1];
+        freq=5./periods;
+        scale=1./(freq'.^outParams(end));
+        scale=scale.*freq';
+        rf=rf./scale;
+    end
     X = [params.analysis.allstimimages * rf trends];
     b    = pinv(X)*vData;
     rss  = norm(vData-X*b).^2;
@@ -132,6 +150,9 @@ for ii = 1:numel(wProcess),
         model.s_theta(vi)    = outParams(5);
         model.rss(vi)  = rss;
         model.b([1 t_id],vi)  = b;
+        if isfield(params.analysis, 'exp')
+            model.exp(vi) = outParams(end);
+        end
     else
         % change the percent variance explained to be just under the
         % current vethresh. So it counts as a 'coarse'-fit but can still be

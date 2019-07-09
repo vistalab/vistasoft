@@ -44,8 +44,14 @@ end;
 
 
 % now we have to loop over models and parameters
-rp = {'x','y','s','rss','rawrss','x02','y02','s2','rss2','rawrss2', 'exponent'};
+%rp = {'x','y','s','rss','rawrss','x02','y02','s2','rss2','rawrss2', 'exponent','sigmamajor','sigmaminor'};
 for n=1:numel(model),
+    if strcmp(model{n}.description,'radial oval 2D pRF fit (x,y,sigma_major,sigma_minor)')
+        rp = {'x','y','rss','rawrss','x02','y02','rss2','rawrss2', 'exponent','sigmamajor','sigmaminor','theta'};
+    else
+        rp = {'x','y','s','rss','rawrss','x02','y02','s2','rss2','rawrss2', 'exponent'};
+    end
+
     % reset for different models (should be the same i think)
     fulval = myzeros;
     for p=1:numel(rp),
@@ -71,7 +77,7 @@ for n=1:numel(model),
             model{n} = rmSet(model{n},rp{p},val);
         end;        
     end;
-    if isfield(model{n}, 'exponent') && ~isempty(model{n}.exponent)
+    if isfield(model{n}, 'exponent') && ~isempty(model{n}.exponent) && ~strcmp(model{n}.description,'radial oval 2D pRF fit (x,y,sigma_major,sigma_minor)')
         model{n} = rmSet(model{n}, 's', model{n}.sigma.major .* sqrt(model{n}.exponent));
     end
 end;
