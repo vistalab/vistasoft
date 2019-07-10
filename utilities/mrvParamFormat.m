@@ -48,9 +48,8 @@ elseif (iscell(s))
     % Convert
     sformatted = s;
     for ii = 1:2:length(s)
-        sformatted{ii} = stParamFormat(s{ii});
+        sformatted{ii} = mrvParamFormat(s{ii});
     end
 end
 
 end
-
