@@ -1,8 +1,2 @@
-External resources:
-
-1. Matlab scripts from the mrtrix svn repository
-
- - read_mrtrix
- - read_mrtrix_tracks
- - write_mrtrix
+Matlab scripts from https://github.com/MRtrix3/mrtrix3/tree/master/matlab
 
