@@ -137,8 +137,11 @@ if(endptFlag)
         fc((ii-1)*2+2,:) = [fg.fibers{ii}(:,end)'];
     end
 else
+    % This temporarily double the memory usage.. which often pushes it off
+    % the limit..
     fc = horzcat(fg.fibers{:})';
 end
+
 if(~isempty(fc))
     bestSqDist = cell(length(roiCoords),1);
     keepAll    = cell(length(roiCoords),1);
@@ -146,7 +149,6 @@ if(~isempty(fc))
       [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
       keepAll{ii}         = bestSqDist{ii}<=minDist^2;
     end
-
 else
     keep = [];
     return;

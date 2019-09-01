@@ -104,12 +104,16 @@ while true
     nFibers = numel(fb)-1;
     
     % read until there are no more fibers to read
-    if nFibers == 0; break; end
-    
+    if nFibers == 0; break; end    
     for(ii=1:nFibers)
-        fg.fibers{ii+total_fibers,1} = tmp(:, fb(ii)+1:fiberPointStride:fb(ii+1)-1);
+        fiber = tmp(:, fb(ii)+1:fiberPointStride:fb(ii+1)-1);
+        
+        % some vistasoft mex file need data to be stored in double.. (like nearpoints)
+        % we believe single precision for fiber coordinates is enough.. 
+        fiber = double(fiber); 
+        
+        fg.fibers{ii+total_fibers,1} = fiber;
     end
-    %fg.fibers=cellfun(@double, fg.fibers, 'UniformOutput', false);
     
     prevblock = block(fb(end)*3+1:end);
     total_fibers = total_fibers + nFibers;
