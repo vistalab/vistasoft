@@ -72,9 +72,9 @@ end
 
 %% Handle the reference image
 if ischar(refImg)
-    ref   = niftiRead(refImg)
+    ref   = niftiRead(refImg);
 else
-    ref = refImg
+    ref = refImg;
 end
 xform = ref.qto_xyz;
 bb = [-(size(ref.data).*ref.pixdim)/2; (size(ref.data).*ref.pixdim)/2-1];

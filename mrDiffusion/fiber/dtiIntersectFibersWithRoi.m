@@ -146,6 +146,7 @@ if(~isempty(fc))
     bestSqDist = cell(length(roiCoords),1);
     keepAll    = cell(length(roiCoords),1);
     for (ii=1:length(roiCoords))
+      disp('dtiIntersectFibersWithRoi nearpoings %i', ii);
       [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
       keepAll{ii}         = bestSqDist{ii}<=minDist^2;
     end
