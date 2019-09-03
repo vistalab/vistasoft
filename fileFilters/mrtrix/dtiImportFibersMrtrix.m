@@ -110,7 +110,7 @@ while true
         
         % some vistasoft mex file need data to be stored in double.. (like nearpoints)
         % we believe single precision for fiber coordinates is enough.. 
-        fiber = double(fiber); 
+        % fiber = double(fiber); 
         
         fg.fibers{ii+total_fibers,1} = fiber;
     end
