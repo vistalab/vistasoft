@@ -83,8 +83,6 @@ bb = [-(size(ref.data).*ref.pixdim)/2; (size(ref.data).*ref.pixdim)/2-1];
 [roiImg, imgXform] = dtiRoiToImg(roi,xform,bb);
 
 %% Set ROI as a nifti struct and save
-
-%ni = niftiGetStruct(uint8(roiImg),imgXform);
 ni = niftiCreate('data', uint8(roiImg),'qto_xyz', imgXform);
 ni.fname = roiName;
 
