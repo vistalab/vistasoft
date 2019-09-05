@@ -15,25 +15,21 @@
 #include <mex.h>
 #include <matrix.h>
 
-
-
-/*********************************************************************
- * C++ CLASS DECLARATIONS
- ********************************************************************/
-
-
-
-// KdPoint:  Contains the coordinates of a point in 3D space
-//
-typedef double KdPoint[3];
-
 // KdPointList: Linked list of destination points, along with the
 // original index of each point.
 //
+/*
+template<typename T>
+struct KdPoint {
+    T xyz[3];	
+};
+*/
+
+template<class T>
 struct KdPointList {
-    KdPoint point;
+    T point[3];
     int     index;
-    KdPointList *next;
+    KdPointList<T> *next;
 };
 
 // KdTree/KdNode: This is a binary tree that holds a set of KdPoints.
@@ -53,45 +49,38 @@ struct KdPointList {
 // destination points than source points, since most subtrees will not
 // need to be expanded.
 //
+template<class T>
 class KdNode {
 public:
     ~KdNode();
-    void getNearestPoint(const KdPoint &target,
-                         int *bestIndex, double *bestSqDistance);
-    double getSqDistance(const KdPoint &target);
+    void getNearestPoint(const T target[3], int *bestIndex, T *bestSqDistance);
+    T getSqDistance(const T target[3]);
 protected:
     KdNode() {};
-    void init(KdPointList *pointList);
+    void init(KdPointList<T> *aPointList);
     void expand();
-    KdPoint      corners[2];    // Diametric corners of this node's box
+    T      corners[2][3];    // Diametric corners of this node's box
     bool         isExpanded;    // Node has not been expanded yet
-    KdPointList *pointList;     // List of points in the node.  Used
+    KdPointList<T> *pointList;     // List of points in the node.  Used
                                 // by leaf nodes & unexpanded nodes)
-    KdNode      *children;      // Child nodes, if expanded non-leaf node
+    KdNode<T>      *children;      // Child nodes, if expanded non-leaf node
 };
 
-class KdTree: public KdNode {
+template<class T>
+class KdTree : public KdNode<T> {
 public:
-    KdTree(double destPoints[][3], int numDestPoints);
+    KdTree(T destPoints[][3], int numDestPoints);
     ~KdTree();
-    void getNearestPoint(const KdPoint &target,
-                         int *bestIndex, double *bestSqDistance);
+    void getNearestPoint(const T target[3], int *bestIndex, T *bestSqDistance);
 private:
-    KdPointList *pointArray;
+    KdPointList<T> *pointArray;
 };
-
-
-
-/*********************************************************************
- * C++ FUNCTIONS
- ********************************************************************/
-
-
 
 /*********************************************************************
  * KdNode destructor
  */
-KdNode::~KdNode()
+template <class T>
+KdNode<T>::~KdNode()
 {
     if (children != NULL) {
         delete[] children;
@@ -103,8 +92,8 @@ KdNode::~KdNode()
  * closer to target than bestSqDistance, then store the index of the
  * closest point in *bestIndex and the distance in *bestSqDistance.
  */
-void KdNode::getNearestPoint(const KdPoint &target,
-                             int *bestIndex, double *bestSqDistance)
+template <class T>
+void KdNode<T>::getNearestPoint(const T target[3], int *bestIndex, T *bestSqDistance)
 {
     expand();
     if (children == NULL) {
@@ -113,20 +102,18 @@ void KdNode::getNearestPoint(const KdPoint &target,
         *bestSqDistance = getSqDistance(target);
     } else {
         // non-leaf node
-        double childSqDistance[2];
+        T childSqDistance[2];
         childSqDistance[0] = children[0].getSqDistance(target);
         childSqDistance[1] = children[1].getSqDistance(target);
 
         int closerChild  = (childSqDistance[0] < childSqDistance[1]) ? 0 : 1;
         if (childSqDistance[closerChild] < *bestSqDistance) {
-            children[closerChild].getNearestPoint(target,
-                                                  bestIndex, bestSqDistance);
+            children[closerChild].getNearestPoint(target, bestIndex, bestSqDistance);
         }
 
         int furtherChild  = 1 - closerChild;
         if (childSqDistance[furtherChild] < *bestSqDistance) {
-            children[furtherChild].getNearestPoint(target,
-                                                   bestIndex, bestSqDistance);
+            children[furtherChild].getNearestPoint(target, bestIndex, bestSqDistance);
         }
     }
 }
@@ -141,11 +128,12 @@ void KdNode::getNearestPoint(const KdPoint &target,
  * measured from the target point to the nearest point on the box, so
  * the distance will be 0 if the target lies inside the box.
  */
-double KdNode::getSqDistance(const KdPoint &target)
+template <class T>
+T KdNode<T>::getSqDistance(const T target[3])
 {
-    double sqDistance = 0;
+    T sqDistance = 0;
     for (int ii = 0; ii < 3; ii++) {
-        double delta;
+        T delta;
         if (corners[0][ii] >= target[ii]) {
             delta = corners[0][ii] - target[ii];
         } else if (corners[1][ii] <= target[ii]) {
@@ -162,7 +150,8 @@ double KdNode::getSqDistance(const KdPoint &target)
 /*********************************************************************
  * KdNode::init(): Initialize a KdNode.
  */
-void KdNode::init(KdPointList *aPointList)
+template <class T>
+void KdNode<T>::init(KdPointList<T> *aPointList)
 {
     int ii;
 
@@ -172,7 +161,7 @@ void KdNode::init(KdPointList *aPointList)
         corners[0][ii] = aPointList->point[ii];
         corners[1][ii] = aPointList->point[ii];
     }
-    for (KdPointList *pt = aPointList->next; pt != NULL; pt = pt->next) {
+    for (KdPointList<T> *pt = aPointList->next; pt != NULL; pt = pt->next) {
         for (ii = 0; ii < 3; ii++) {
             if (corners[0][ii] > pt->point[ii]) {
                 corners[0][ii] = pt->point[ii];
@@ -193,7 +182,8 @@ void KdNode::init(KdPointList *aPointList)
  * KdNode::expand(): Expand the node, i.e. determine whether or not it
  * is a leaf node, and create its children if it is a non-leaf node.
  */
-void KdNode::expand()
+template <class T>
+void KdNode<T>::expand()
 {
     // If the node was already expanded, then return immediately
     //
@@ -206,7 +196,7 @@ void KdNode::expand()
     int    widestAxis = 0;
     double axisWidth  = 0;
     for (int axis = 0; axis < 3; axis++) {
-        double tmpWidth = corners[1][axis] - corners[0][axis];
+        T tmpWidth = corners[1][axis] - corners[0][axis];
         if (axisWidth < tmpWidth) {
             axisWidth  = tmpWidth;
             widestAxis = axis;
@@ -223,10 +213,10 @@ void KdNode::expand()
     // Cut the widest axis at the midpoint, by dividing pointList into
     // two sub-lists.
     //
-    double axisMidpoint = corners[0][widestAxis] + axisWidth/2;
-    KdPointList *subList[2] = {NULL, NULL};
+    T axisMidpoint = corners[0][widestAxis] + axisWidth/2;
+    KdPointList<T> *subList[2] = {NULL, NULL};
     while (pointList != NULL) {
-        KdPointList *nextPoint = pointList->next;
+        KdPointList<T> *nextPoint = pointList->next;
         int subListNum = (pointList->point[widestAxis] < axisMidpoint) ? 0 : 1;
         pointList->next = subList[subListNum];
         subList[subListNum] = pointList;
@@ -245,12 +235,13 @@ void KdNode::expand()
  * KdTree constructor: Allocate the KdPoints that will be used in this
  * tree, and initialize the root node.
  */
-KdTree::KdTree(double destPoints[][3], int numDestPoints)
+template <class T>
+KdTree<T>::KdTree(T destPoints[][3], int numDestPoints)
 {
     // Allocate the points as an array, and convert the array into a
     // linked list.
     //
-    pointArray = new KdPointList[numDestPoints];
+    pointArray = new KdPointList<T>[numDestPoints];
     for (int ii = 0; ii < numDestPoints; ii++) {
         pointArray[ii].point[0] = destPoints[ii][0];
         pointArray[ii].point[1] = destPoints[ii][1];
@@ -262,13 +253,11 @@ KdTree::KdTree(double destPoints[][3], int numDestPoints)
 
     // Initialize the root node
     //
-    init(pointArray);
+    this->init(pointArray);
 }
 
-/*********************************************************************
- * KdTree destructor
- */
-KdTree::~KdTree()
+template <class T>
+KdTree<T>::~KdTree()
 {
     delete[] pointArray;
 }
@@ -278,60 +267,62 @@ KdTree::~KdTree()
  * KdNode::getNearestPoint() that initializes *bestIndex and
  * *bestSqDistance to legal values before.
  */
-void KdTree::getNearestPoint(const KdPoint &target,
-                             int *bestIndex, double *bestSqDistance)
+template <class T>
+void KdTree<T>::getNearestPoint(const T target[3], int *bestIndex, T *bestSqDistance)
 {
-    double deltaX = target[0] - pointArray[0].point[0];
-    double deltaY = target[1] - pointArray[0].point[1];
-    double deltaZ = target[2] - pointArray[0].point[2];
+    T deltaX = target[0] - pointArray[0].point[0];
+    T deltaY = target[1] - pointArray[0].point[1];
+    T deltaZ = target[2] - pointArray[0].point[2];
     *bestIndex = 0;
     *bestSqDistance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
-    KdNode::getNearestPoint(target, bestIndex, bestSqDistance);
+    KdNode<T>::getNearestPoint(target, bestIndex, bestSqDistance);
 }
-
-
-
-/*********************************************************************
- * MEX FUNCTION
- ********************************************************************/
-
-
 
 /*********************************************************************
  * Entry point for MEX function
 */
-extern "C" void mexFunction(int nlhs, mxArray *plhs[],
-                            int nrhs, const mxArray *prhs[])
+extern "C" void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     /* Check number of arguments */
     if (nrhs != 2) {
         mexErrMsgTxt("Two inputs required.");
     } else if (nlhs != 1 && nlhs != 2) {
         mexErrMsgTxt("One or two outputs required.");
-    } else if (!mxIsDouble(prhs[0]) || mxIsComplex(prhs[0]) ||
-               mxGetNumberOfDimensions(prhs[0]) != 2)
-    {
-        /* First arg must be a real 3xM array */
+    } else if (mxIsComplex(prhs[0]) || mxGetNumberOfDimensions(prhs[0]) != 2) {
         mexErrMsgTxt("First arg must be a real 3xM array.");
-    } else if (!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) ||
-               mxGetNumberOfDimensions(prhs[1]) != 2)
-    {
-        /* Second arg must be a real 3xN array */
-        mexErrMsgTxt("First arg must be a real 3xN array.");
+    } else if (mxIsComplex(prhs[1]) || mxGetNumberOfDimensions(prhs[1]) != 2) {
+        mexErrMsgTxt("Second arg must be a real 3xN array.");
     } else {
         /* Input matrices */
-        const mwSize *srcDims      = mxGetDimensions(prhs[0]);
-        double    (*srcPtr)[3]  = (double (*)[3])mxGetPr(prhs[0]);
-        const mwSize *destDims     = mxGetDimensions(prhs[1]);
-        double    (*destPtr)[3] = (double (*)[3])mxGetPr(prhs[1]);
+        const mwSize *srcDims = mxGetDimensions(prhs[0]);
+        const mwSize *destDims = mxGetDimensions(prhs[1]);
+
+        bool isdouble = false;
+        double (*srcPtr)[3];
+        double (*destPtr)[3];
+        float (*srcPtr32)[3];
+        float (*destPtr32)[3];
+
+        if(mxIsDouble(prhs[0])) {
+            mexPrintf("nearpoints: using 64bits version\n");
+            isdouble = true;
+            srcPtr = (double (*)[3])mxGetPr(prhs[0]);
+            destPtr = (double (*)[3])mxGetPr(prhs[1]);
+        } else {
+            mexPrintf("nearpoints: using 32bits version\n");
+            srcPtr32 = (float (*)[3])mxGetPr(prhs[0]);
+            destPtr32 = (float (*)[3])mxGetPr(prhs[1]);
+        }
 
         /* Output vector */
         int *indices;
         double *tmpPtr;
+        float *tmpPtr32;
         double *sqDist;
+        float *sqDist32;
 
         /* Loop variables */
-        int ii, jj;
+        int ii;
 
         /* Double-check the input size */
         if (srcDims[0] != 3) {
@@ -342,30 +333,50 @@ extern "C" void mexFunction(int nlhs, mxArray *plhs[],
 
         /* Create the first output */
         indices = (int *)mxMalloc(srcDims[1] * sizeof(int));
-        sqDist = (double *)mxMalloc(srcDims[1] * sizeof(double));
-        KdTree kdTree(destPtr, destDims[1]);
-        for (ii = 0; ii < srcDims[1]; ii++) {
-            kdTree.getNearestPoint(srcPtr[ii], &indices[ii], &sqDist[ii]);
-        }
 
-        plhs[0] = mxCreateNumericMatrix(1, srcDims[1], mxDOUBLE_CLASS, mxREAL);
-        tmpPtr = mxGetPr(plhs[0]);
-        for (ii = 0; ii < srcDims[1]; ii++) {
-            tmpPtr[ii] = indices[ii] + 1;
+        if(isdouble) {
+            sqDist = (double *)mxMalloc(srcDims[1] * sizeof(double));
+            KdTree<double> kdTree(destPtr, destDims[1]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                kdTree.getNearestPoint(srcPtr[ii], &indices[ii], &sqDist[ii]);	
+            }
+            plhs[0] = mxCreateNumericMatrix(1, srcDims[1], mxDOUBLE_CLASS, mxREAL);
+            tmpPtr = (double*)mxGetData(plhs[0]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                tmpPtr[ii] = indices[ii] + 1;
+            }
+        } else {
+            sqDist32 = (float *)mxMalloc(srcDims[1] * sizeof(float));
+            KdTree<float> kdTree(destPtr32, destDims[1]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                kdTree.getNearestPoint(srcPtr32[ii], &indices[ii], &sqDist32[ii]);	
+            }
+            //tmpPtr = mxGetPr(plhs[0]);
+            plhs[0] = mxCreateNumericMatrix(1, srcDims[1], mxSINGLE_CLASS, mxREAL);
+            tmpPtr32 = (float*)mxGetData(plhs[0]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                tmpPtr32[ii] = indices[ii] + 1;
+            }
         }
 
         /* Create the second output */
         if (nlhs > 1) {
-            double (*nearestDestPtr)[3];
-            plhs[1] = mxCreateNumericMatrix(1, srcDims[1],
-                                            mxDOUBLE_CLASS, mxREAL);
-            tmpPtr = (double *)mxGetPr(plhs[1]);
-            for (ii = 0; ii < srcDims[1]; ii++) {
+            plhs[1] = mxCreateNumericMatrix(1, srcDims[1], isdouble?mxDOUBLE_CLASS:mxSINGLE_CLASS, mxREAL);
+            if(isdouble) {
+                tmpPtr = (double *)mxGetPr(plhs[1]);
+                for (ii = 0; ii < srcDims[1]; ii++) {
                 tmpPtr[ii] = sqDist[ii];
+                }	
+            } else {
+                tmpPtr32 = (float *)mxGetPr(plhs[1]);
+                for (ii = 0; ii < srcDims[1]; ii++) {
+                tmpPtr32[ii] = sqDist32[ii];
+                }	
             }
         }
 
         mxFree(indices);
-        mxFree(sqDist);
+        if(isdouble) mxFree(sqDist);
+        else mxFree(sqDist32);
     }
 }
