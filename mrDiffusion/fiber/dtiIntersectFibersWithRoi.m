@@ -171,8 +171,8 @@ clear fc;
 % keepAll is a logical array indicating which fiber coords intersect the
 % ROI. 
 keep = true(length(fg.fibers),length(roiCoords));
-keepID = zeros(length(fg.fibers),length(roiCoords));
-dist = zeros(length(fg.fibers),length(roiCoords));
+keepID = zeros(length(fg.fibers),length(roiCoords), class(fg.fibers{1}));
+dist = zeros(length(fg.fibers),length(roiCoords), class(fg.fibers{1}));
 for(ii=1:length(roiCoords))
     fiberCoord = 1;
     if(endptFlag)
