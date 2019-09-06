@@ -131,13 +131,17 @@ end
 % The following concatenates all fiber coords into one big array so that we
 % can avoid expensive loops when computing the intersection.
 if(endptFlag)
+    %use the same datatype used to store fg.fibers (if empty.. it doesn't really matter)
+    type='single';
     if(~isempty(fg.fibers)) 
-	    fc = zeros(length(fg.fibers)*2, 3, class(fg.fibers{1}));
-	    for(ii=1:length(fg.fibers))
-		fc((ii-1)*2+1,:) = [fg.fibers{ii}(:,1)'];
-		fc((ii-1)*2+2,:) = [fg.fibers{ii}(:,end)'];
-	    end
-	end
+        type = class(fg.fibers{1});
+    end
+    fc = zeros(length(fg.fibers)*2, 3, type);
+
+    for(ii=1:length(fg.fibers))
+        fc((ii-1)*2+1,:) = [fg.fibers{ii}(:,1)'];
+        fc((ii-1)*2+2,:) = [fg.fibers{ii}(:,end)'];
+    end
 else
     % This temporarily double the memory usage.. which often pushes it off
     % the limit..
@@ -148,15 +152,8 @@ if(~isempty(fc))
     bestSqDist = cell(length(roiCoords),1);
     keepAll    = cell(length(roiCoords),1);
     for (ii=1:length(roiCoords))
-      %if isa(fc(1), 'double')
-%	      fprintf('dtiIntersectFibersWithRoi nearpoints(double) ii:%d\n', ii);
-%	      [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
-%      else
-%	      fprintf('dtiIntersectFibersWithRoi nearpoints32 ii:%d\n', ii);
-%	      [~, bestSqDist{ii}] = nearpoints32(fc', single(roiCoords{ii})');
-%      end
-      [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
-      keepAll{ii}         = bestSqDist{ii}<=minDist^2;
+        [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
+        keepAll{ii}         = bestSqDist{ii}<=minDist^2;
     end
 else
     keep = [];
