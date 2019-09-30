@@ -62,40 +62,29 @@ if exist('varargin', 'var')
     end
 end
 
-% By default, assyme we are downloading a zip file
+% By default, assume we are downloading a zip file
 if notDefined('filetype'), filetype = 'zip'; end
 
-% Make sure there is a decent error message if RdtClient is not found
-if exist('RdtClient', 'file')  % ok
-else
-    error(['The RdtClient function is not on your Matlab path; make' ...
-           ' sure that you''ve installed the RemoteDataToolbox:' ...
-           ' https://github.com/isetbio/RemoteDataToolbox'])
-end
-
-% This creates the object, using the configuration data in the file
-% rdt/rdt-config-vistasoft.json
-rd = RdtClient('vistasoft');
-
-% Change remote path to requested folder
-rd.crp(sprintf('/vistadata/%s', sourceFolder));
-
-% Download the zip file
-rd.readArtifact(projectName, 'type',filetype, 'destinationFolder',dFolder);
+% Find the zip file
+pth = fullfile(vistaRootPath, 'local', 'testData', sourceFolder); 
+d = dir (fullfile(pth, sprintf('%s*.%s', projectName, filetype)));
 
 % Return the directory containing the unzipped data
 dataDir = fullfile(dFolder, projectName);
 
 % If the filetype was not a zip file, we are done. Otherwise unzip.
-if ~strcmpi(filetype, 'zip'), return; end
+if ~strcmpi(filetype, 'zip')
+    dataDir = fullfile(d.folder, d.name);
+    return; 
+end
 
-% Unzip 
+% Unzip
 if exist(dataDir, 'dir') && ~forceOverwrite
     % If the project directory already exists and user has requested NOT to
     % force overwrite, then we do not unzip
     fprintf('Data directory %s already exists. Skipping unzip.\n', dataDir);
 else
-    zipfile = fullfile(dFolder, sprintf('%s.zip', projectName));
+    zipfile = fullfile(d.folder, d.name);
     unzip(zipfile, dFolder);
 end
 

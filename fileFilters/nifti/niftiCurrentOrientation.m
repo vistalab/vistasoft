@@ -37,17 +37,17 @@ imgCorners = [
     imDim(1) imDim(2) imDim(3) 1;
     ];
 
-imDimC = imDim + .5;
-imgCorners = [
-    .5 .5 .5 1; 
-    imDimC(1) .5 .5 1; 
-    .5 imDimC(2) .5 1; 
-    imDimC(1) imDimC(2) .5 .1; 
-    .5 .5 imDimC(3) 1; 
-    imDimC(1) .5 imDimC(3) 1; 
-    .5 imDimC(2) imDimC(3) 1; 
-    imDimC(1) imDimC(2) imDimC(3) 1;
-    ];
+% imDimC = imDim + .5;
+% imgCorners = [
+%     .5 .5 .5 1; 
+%     imDimC(1) .5 .5 1; 
+%     .5 imDimC(2) .5 1; 
+%     imDimC(1) imDimC(2) .5 .1; 
+%     .5 .5 imDimC(3) 1; 
+%     imDimC(1) .5 imDimC(3) 1; 
+%     .5 imDimC(2) imDimC(3) 1; 
+%     imDimC(1) imDimC(2) imDimC(3) 1;
+%     ];
 
 volRas = xform*imgCorners';
 volRas = volRas(1:3,:)';

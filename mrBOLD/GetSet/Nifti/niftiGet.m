@@ -66,12 +66,12 @@ switch param
             val = [];
         end
         
-        % The nifti should be (at least) 4-D. If less than 4D, augment with
-        % ones
-        n = length(val);
-        if n < 4
-            val = [val(1:end-1) ones(1,4-n) val(end)];
-        end
+        %         % The nifti should be (at least) 4-D. If less than 4D, augment with
+        %         % ones
+        %         n = length(val);
+        %         if n < 4
+        %             val = [val(1:end-1) ones(1,4-n) val(end)];
+        %         end
         
     case 'fname'
         if isfield(ni, 'fname')
