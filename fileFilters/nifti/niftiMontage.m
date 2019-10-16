@@ -26,6 +26,7 @@ function [m, hdl] = niftiMontage(imVol, varargin)
 
 %% Handle the Inputs
 p = inputParser;
+p.KeepUnmatched=true;
 vFunc = @(x)(isnumeric(imVol) || exist(imVol,'file'));
 p.addRequired('imVol',vFunc);
 
