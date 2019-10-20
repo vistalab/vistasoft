@@ -21,7 +21,13 @@ function [vectorString, orientationMatrix] = niftiCurrentOrientation(nii)
 %Extract information on the current transform and dimension size
 xform = niftiGet(nii, 'Qto_xyz');
 imDim = niftiGet(nii, 'Dim');
+
 imDim = imDim(1:3);
+
+% Check whether any dimensions are 1 voxel. If so, we need to pad in order
+%   to avoid errors arising from computing anatomical direction in that
+%   dimension
+imDim(imDim == 1) = 2;
 
 %The following code was taken from mrAnatComputeCannonicalXformFromDicomXform
 

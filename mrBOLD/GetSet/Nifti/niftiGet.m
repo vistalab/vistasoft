@@ -61,17 +61,13 @@ switch param
     case 'dim'
         if isfield(ni, 'dim')
             val = ni.dim;
+            
+            if length(val) < 3, val = [val 1]; end
+            
         else
             warning('vista:niftiError', 'No dimension information found in nifti. Returning empty');
             val = [];
-        end
-        
-        %         % The nifti should be (at least) 4-D. If less than 4D, augment with
-        %         % ones
-        %         n = length(val);
-        %         if n < 4
-        %             val = [val(1:end-1) ones(1,4-n) val(end)];
-        %         end
+        end        
         
     case 'fname'
         if isfield(ni, 'fname')
@@ -132,13 +128,7 @@ switch param
         % niftiGet(ni, 'pixdim', 'xyz_units', 'mm', 'time_units', 's');
         if isfield(ni, 'pixdim')
             val = ni.pixdim; 
-            
-            % if there are less than 4 dimensions, insert ones before last
-            % (presumably time) dimension
-            n = length(val);
-            if n < 4
-               val = [val(1:end-1) ones(1, 4-n) val(end)];
-            end
+            if length(val) < 3, val = [val val(end)]; end 
             
             % Check for units
             if ~isempty(varargin)
