@@ -572,7 +572,7 @@ end
 params.analysis.fmins.options = optimset('fmincon');
 
 % Display iterations?
-params.analysis.fmins.options = optimset(params.analysis.fmins.options,'Display','iter'); %'none','iter','final'
+params.analysis.fmins.options = optimset(params.analysis.fmins.options,'Display','none'); %'none','iter','final'
 
 % Maximum iterations. If set to zero it does not refine the parameters but
 % simply refits. This is useful to remove 'coarse-blurred' estimates below
