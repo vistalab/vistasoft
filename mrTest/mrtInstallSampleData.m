@@ -1,24 +1,18 @@
-function dataDir = mrtInstallSampleData(sourceFolder, projectName, ...
+function pth = mrtInstallSampleData(sourceFolder, projectName, ...
     dFolder, forceOverwrite, varargin)
 %MRTINSTALLSAMPLEDATA Install sample data set on local path.
 %
 % Syntax:
-%   dataDir = MRTINSTALLSAMPLEDATA(sourceFolder, projectName, ...
+%   pth = MRTINSTALLSAMPLEDATA(sourceFolder, projectName, ...
 %      [dFolder], [forceOverwrite], varargin) 
 %
-%   Code dependency: Remote Data Toolbox
-%      https://github.com/isetbio/RemoteDataToolbox
-%
 % Description:
-%   A data set stored on the remote data client in the vista repository
+%   A data set stored on the OSF website (https://osf.io/xes6n/) and
 %   is downloaded to the local computer.
 %
 %   The data set will be installed in the vistasoft local directory:
 %   fullfile(vistaRootPath, 'local')
 %
-%   Remote projects are assumed to be zip files, and located on a remote host
-%   with a directory stucture:
-%       repository/vistasoft/vistadata/<sourceFolder>/<projectName>
 %
 % Inputs
 %     sourceFolder:     Name of remote folder where project is stored
@@ -34,10 +28,10 @@ function dataDir = mrtInstallSampleData(sourceFolder, projectName, ...
 %     varargin:         Pairs of parameters, values
 %                           'filetype', {'zip' 'dat' 'mat' etc}    
 % Outputs
-%      datadir:  full path to installed project folder
+%      pth:             Full path to installed project folder or file
 %
 % Example:
-%    dataDir = mrtInstallSampleData('functional', 'mrBOLD_01');
+%    pth = mrtInstallSampleData('functional', 'mrBOLD_01');
 %
 % See also:
 %   MRVTEST
@@ -50,6 +44,7 @@ function dataDir = mrtInstallSampleData(sourceFolder, projectName, ...
   mrtInstallSampleData('anatomy','anatomyNIFTI',dFolder);
 
 %}
+
 % Check inputs
 if notDefined('forceOverwrite'), forceOverwrite = true; end
 if notDefined('dFolder'), dFolder = fullfile(vistaRootPath, 'local'); end
@@ -70,26 +65,26 @@ pth = fullfile(vistaRootPath, 'local', 'testData', sourceFolder);
 d = dir (fullfile(pth, sprintf('%s*.%s', projectName, filetype)));
 
 % Return the directory containing the unzipped data
-dataDir = fullfile(dFolder, projectName);
+pth = fullfile(dFolder, projectName);
 
 % If the filetype was not a zip file, we are done. Otherwise unzip.
 if ~strcmpi(filetype, 'zip')
-    dataDir = fullfile(d.folder, d.name);
+    pth = fullfile(d.folder, d.name);
     return; 
 end
 
 % Unzip
-if exist(dataDir, 'dir') && ~forceOverwrite
+if exist(pth, 'dir') && ~forceOverwrite
     % If the project directory already exists and user has requested NOT to
     % force overwrite, then we do not unzip
-    fprintf('Data directory %s already exists. Skipping unzip.\n', dataDir);
+    fprintf('Data directory %s already exists. Skipping unzip.\n', pth);
 else
     zipfile = fullfile(d.folder, d.name);
     unzip(zipfile, dFolder);
 end
 
-if ~exist(dataDir, 'dir')
-    warning('Cannot locate unzipped data directory %s', dataDir)
+if ~exist(pth, 'dir')
+    warning('Cannot locate unzipped data directory %s', pth)
 end
 
 return
