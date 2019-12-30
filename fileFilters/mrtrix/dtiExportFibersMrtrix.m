@@ -76,7 +76,7 @@ end
 clear ii
 
 % save the file w/ mrtrix fxn
-write_mrtrix_fibers(tck, tck_filename);
+write_mrtrix_tracks(tck, tck_filename);
 
 return
 end
@@ -84,6 +84,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%
 % AUXILIARY FUNCTION %
 %%%%%%%%%%%%%%%%%%%%%%
+%{
 function write_mrtrix_fibers (fibers, filename)
 %
 % function: write_mrtrix_fibers (fibers, filename)
@@ -133,3 +134,4 @@ fwrite (f, [ inf inf inf ], 'float32');
 fclose (f);
 
 end
+%}

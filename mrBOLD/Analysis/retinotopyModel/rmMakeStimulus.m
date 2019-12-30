@@ -72,7 +72,17 @@ end
 % calculate the points within the stimulus window (of any of the
 % stimulus sequences)
 for n=1:numel(params.stim)
-    params = eval(['make' params.stim(n).stimType '(params,',num2str(n),');']);
+    if isdeployed
+        thiscmd =['make' params.stim(n).stimType '(params,',num2str(n),');'];
+        switch thiscmd
+            case {'makeStimFromScan(params,1);'}
+                params = makeStimFromScan(params,1);
+            otherwise
+                error('Command %s was issued, it is not in the hardcoded list for deployed runs, add it to the list in rmMakeStimulus', thiscmd)
+        end
+    else
+        params = eval(['make' params.stim(n).stimType '(params,',num2str(n),');']);
+    end    
     if n==1
         params.stim(1).stimwindow = nansum(params.stim(n).images,2);
     else
