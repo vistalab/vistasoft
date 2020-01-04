@@ -179,17 +179,21 @@ end
 % new filters can be made with the name rmfilter_*
 % they should be saved with the other filters in
 %    '.../retinotopyModel/FilterDefinitions' 
-if isdeployed
-    evalcmd =['rmfilter_' params.stim(id).imFilter '(I.images, display);'];
-    switch evalcmd
-        case 'rmfilter_none(I.images, display);'
-            I.images = rmfilter_none(I.images, display);
-        otherwise
-            error('%s was issued when deployed, please add it to the hardcoded list',evalcmd)
-    end
-else
-    I.images = eval(['rmfilter_' params.stim(id).imFilter '(I.images, display);']);
+
+switch params.stim(id).imFilter
+    case 'none'
+        I.images = rmfilter_none(I.images, display);
+    case 'binary'
+        I.images = rmfilter_binary(I.images, display);
+    case 'energy'
+        I.images = rmfilter_energy(I.images, display);
+    case 'thresholdedBinary'
+        I.images = rmfilter_thresholdedBinary(I.images, display);
+    otherwise
+        error('rmfilter_%s does not exist', params.stim(id).imFilter)
 end
+
+
 
 end
 
