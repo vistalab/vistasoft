@@ -29,12 +29,16 @@ function img = ellipseInterior(varargin)
 %
 % Some experimenting
 %
-% a = 2; b = 3; theta = pi/3;
-% rotMat = [cos(theta) -sin(theta); -sin(theta) -cos(theta)];
-% Q = rotMat* diag([a^2,b^2]) * rotMat';
+% It must be a > b for major/minor axes
+a = 3; b = 2; theta = pi/6;
+rotMat = [cos(theta) -sin(theta); -sin(theta) -cos(theta)];
 
-%[U,S,V] = svd(Q);
-%
+Q = rotMat' * diag([a^2, b^2]) * rotMat;
+
+[U,S,V] = svd(Q);
+abs(U) - abs(rotMat)  % Not sure why there can be a sign difference
+
+%}
 % 
 %  https://math.stackexchange.com/questions/264446/the-fastest-way-to-obtain-orientation-%CE%B8-from-this-ellipse-formula
 %
