@@ -27,6 +27,15 @@ function img = ellipseInterior(varargin)
 %      rotMat = [cos(theta) -sin(theta); -sin(theta) -cos(theta)];
 %      theta = acos(U(1,1))
 %
+% Some experimenting
+%
+% a = 2; b = 3; theta = pi/3;
+% rotMat = [cos(theta) -sin(theta); -sin(theta) -cos(theta)];
+% Q = rotMat* diag([a^2,b^2]) * rotMat';
+
+%[U,S,V] = svd(Q);
+%
+% 
 %  https://math.stackexchange.com/questions/264446/the-fastest-way-to-obtain-orientation-%CE%B8-from-this-ellipse-formula
 %
 % Wandell, January 13 2020
