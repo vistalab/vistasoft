@@ -37,7 +37,8 @@ Q = rotMat' * diag([a^2, b^2]) * rotMat;
 
 [U,S,V] = svd(Q);
 abs(U) - abs(rotMat)  % Not sure why there can be a sign difference
-
+thetaEst = min(acos(U(1,1)),acos(-1*U(1,1)));
+theta - thetaEst
 %}
 % 
 %  https://math.stackexchange.com/questions/264446/the-fastest-way-to-obtain-orientation-%CE%B8-from-this-ellipse-formula
