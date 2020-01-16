@@ -149,10 +149,10 @@ polarPlot(0,params);
 % finish plotting it
 for i=1:size(subX,2)
     if colored
-        h=plot(subX(i),-subY(i),'o','MarkerSize',symbolSize,'Color',[1-subCo(i) 1-subCo(i) 1-subCo(i)]);
+        h=plot(subX(i),subY(i),'o','MarkerSize',symbolSize,'Color',[1-subCo(i) 1-subCo(i) 1-subCo(i)]);
         set(h,'MarkerFaceColor',[1-subCo(i) 1-subCo(i) 1-subCo(i)])
     else
-        h=plot(subX(i),-subY(i),'o','MarkerSize',symbolSize,'Color',[0 0 0]);
+        h=plot(subX(i),subY(i),'o','MarkerSize',symbolSize,'Color',[0 0 0]);
         set(h,'MarkerFaceColor',[0.5 0.5 0.5])
     end
 end
@@ -161,7 +161,7 @@ title(vw.ROIs(vw.selectedROI).name, 'FontSize', 24, 'Interpreter', 'none');
 hold off
 
 if drawROI, 
-    vw = roiCapturePointsFromPlot(vw, subX, -subY, coIndices, ROIcoords);
+    vw = roiCapturePointsFromPlot(vw, subX, subY, coIndices, ROIcoords);
 end
 
 % Save the data in gca('UserData')
