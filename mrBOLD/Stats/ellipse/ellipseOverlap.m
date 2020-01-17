@@ -11,22 +11,24 @@ function overlap = ellipseOverlap(E1,E2,varargin)
 %       .theta
 % 
 % Optional key/value pairs
-%   spatial samples - vector, default is -10:0.1:10;
-%   show - Show the overlap image
+%   spatial samples - vector of the sample points in deg (default -10:0.1:10);
+%   show -  Create an image showing the overlap
 %
 % Outputs
-%   overlap
+%   overlap - Fractional overlap between the two ellipses in E1, E2
 %
-% Author, Wandell 2020 January 17
+% Author, Wandell January 17, 2020 
 %
 % See also
-%   ellipseInterior
+%   ellipseInterior, ellipsePoints, ...
+
 
 % Examples:
 %{
    E1.center = [0,0]; E1.sigma = [3,1]; E1.theta = pi;
    E2.center = [-1,0]; E2.sigma = [3,1]; E2.theta = pi/2;
    overlap = ellipseOverlap(E1,E2);
+   disp(overlap)
 %}
 %{
    samples = (-16:0.1:16);
