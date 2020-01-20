@@ -248,7 +248,7 @@ for slice=loopSlices,
     end;
 
     %-----------------------------------
-    % At this point, we have a slice of data and we will fit fit different
+    % At this point, we have a slice of data and we will fit different
     % pRF models.  This is the part of the code that is the slowest.
     %-----------------------------------
     if params.analysis.dc.datadriven

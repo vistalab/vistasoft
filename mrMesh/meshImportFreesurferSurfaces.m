@@ -32,7 +32,7 @@ function [meshes, fnames] = meshImportFreesurferSurfaces(subjid, hemi, surfaces)
 %   [meshes, fnames] = meshImportFreesurferSurfaces('ernie');
 
 
-if notDefined('subjid'), error('subjid is required'); help(mfilename); end
+if notDefined('subjid'), help(mfilename); error('subjid is required'); end
 if notDefined('hemi'), hemi = 'b'; end
 if notDefined('surfaces'), surfaces = {'white' 'pial' 'sphere' 'inflated'}; end
 

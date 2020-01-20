@@ -79,9 +79,22 @@ for ii = 1:numel(wProcess),
     Xv = params.analysis.X-outParams(1);
     Yv = params.analysis.Y-outParams(2);
     rf = exp( (Yv.*Yv + Xv.*Xv) ./ (-2.*(outParams(3).^2)) );
+    
+    % GLU: checked, they are basically the same
+    % {
+    % rf=rfGaussian2d(XY{1}, XY{2}, rf.sigmaMajor,rf.sigmaMinor,rf.Theta, ...
+    %                            rf.Centerx0,rf.Centery0);
+    rf2=rfGaussian2d(params.analysis.X, params.analysis.Y, ...
+                    outParams(3),outParams(3),0, ...
+                               outParams(1),outParams(2));
+    %}   
+    
+    
     X  = [params.analysis.allstimimages * rf trends];
     b    = pinv(X)*vData;
     rss  = norm(vData-X*b).^2;
+
+                              
 
     % store results only if the first beta is positive, somehow fmincon
     % outputs negative fits. If the fit is negative keep old (grid) fit. We

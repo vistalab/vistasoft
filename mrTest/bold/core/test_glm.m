@@ -77,10 +77,10 @@ cd(curDir)
 %% Validate the results
 
 assertEqual(storedGLM.dim, size(contrastMap));
-assertElementsAlmostEqual(storedGLM.contrastMean, nanmean(contrastMap(:)));
-assertElementsAlmostEqual(storedGLM.contrastMed,  median(contrastMap(:)));
-assertElementsAlmostEqual(storedGLM.contrastMax,  max(contrastMap(:)));
-assertElementsAlmostEqual(storedGLM.contrastVoc,  contrastMap(40,40,10));
+assertElementsAlmostEqual(storedGLM.contrastMean, nanmean(contrastMap(:)), 'relative', .00001);
+assertElementsAlmostEqual(storedGLM.contrastMed,  median(contrastMap(:)), 'relative', .00001);
+assertElementsAlmostEqual(storedGLM.contrastMax,  max(contrastMap(:)), 'relative', .00001);
+assertElementsAlmostEqual(storedGLM.contrastVoc,  contrastMap(40,40,10), 'relative', .00001);
 
 mrvCleanWorkspace;
 

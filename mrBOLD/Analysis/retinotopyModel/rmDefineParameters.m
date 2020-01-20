@@ -577,16 +577,21 @@ params.analysis.fmins.options = optimset(params.analysis.fmins.options,'Display'
 % Maximum iterations. If set to zero it does not refine the parameters but
 % simply refits. This is useful to remove 'coarse-blurred' estimates below
 % a certain threshold.
-params.analysis.fmins.options = optimset(params.analysis.fmins.options,'MaxIter',25); % #
+% GLU params.analysis.fmins.options = optimset(params.analysis.fmins.options,'MaxIter',25); % #
+params.analysis.fmins.options = optimset(params.analysis.fmins.options,'MaxIter',500); % #
 
 % Precision of output (degrees). That is, stop if the estimate is
 % within TolX degrees:
-params.analysis.fmins.options = optimset(params.analysis.fmins.options,'TolX',1e-2); % degrees
+% GLU params.analysis.fmins.options = optimset(params.analysis.fmins.options,'TolX',1e-2); % degrees
+params.analysis.fmins.options = optimset(params.analysis.fmins.options,'TolX',1e-8); % degrees
+
+
 
 % Precision of evaluation function. We define RMS improvement
 % relative to the initial raw 'no-fit' data RMS. So, 1 means
 % stop if there is less than 1% improvement on the fit:
-params.analysis.fmins.options = optimset(params.analysis.fmins.options,'TolFun',1e-2); % degrees
+% GLU params.analysis.fmins.options = optimset(params.analysis.fmins.options,'TolFun',1e-2); % degrees
+params.analysis.fmins.options = optimset(params.analysis.fmins.options,'TolFun',1e-8); % degrees
 
 % Variance-explained threshold above which to do search.
 % This limits the search algorithms to voxels that will have 'good' data.

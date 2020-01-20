@@ -20,7 +20,6 @@ function test_mrvBuildMesh
 
 % Get the class file
 classFile = mrtInstallSampleData('anatomy/T1andMesh','t1_class.nii', [], [], 'filetype', 'gz');
-classFile = sprintf('%s.gz', classFile);
 
 % Check the resolution
 nii = niftiRead(classFile);

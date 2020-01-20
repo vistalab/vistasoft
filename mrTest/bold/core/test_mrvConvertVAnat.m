@@ -22,17 +22,14 @@ function test_mrvConvertVAnat
 %% Convert vAnatomy.dat to nifti
 
 % Get the vAnatomy.dat sample data file
-vAnat = mrtInstallSampleData('anatomy/anatomyV','vAnatomy',  [], [], 'filetype', 'dat');
-vAnatFileName = sprintf('%s.dat', vAnat);
+vAnatFileName = mrtInstallSampleData('anatomy/anatomyV','vAnatomy',  [], [], 'filetype', 'dat');
 
 % Convert it to nifti
-p = fileparts(vAnat);
-newNiftiFileName = fullfile(p,'vAnatomy.nii.gz');    
+newNiftiFileName = fullfile(tempdir,'vAnatomy.nii.gz');    
 mrAnatConvertVAnatToT1Nifti(vAnatFileName,newNiftiFileName);
 
 % Get a stored nifti file that corresponds to the vAnatomy
-t1 = mrtInstallSampleData('anatomy/anatomyV','t1.nii', [], [], 'filetype', 'gz');
-oldNifitFileName = sprintf('%s.gz', t1);
+oldNifitFileName = mrtInstallSampleData('anatomy/anatomyV','t1.nii', [], [], 'filetype', 'gz');
 
 %% Compare the nifti to some stored values
 n0  = niftiRead(oldNifitFileName);

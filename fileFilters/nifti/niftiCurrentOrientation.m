@@ -21,13 +21,39 @@ function [vectorString, orientationMatrix] = niftiCurrentOrientation(nii)
 %Extract information on the current transform and dimension size
 xform = niftiGet(nii, 'Qto_xyz');
 imDim = niftiGet(nii, 'Dim');
+
 imDim = imDim(1:3);
+
+% Check whether any dimensions are 1 voxel. If so, we need to pad in order
+%   to avoid errors arising from computing anatomical direction in that
+%   dimension
+imDim(imDim == 1) = 2;
 
 %The following code was taken from mrAnatComputeCannonicalXformFromDicomXform
 
 % Compute the scanner-space locations of the image volume corners
-imgCorners = [1 1 1 1; imDim(1) 1 1 1; 1 imDim(2) 1 1; imDim(1) imDim(2) 1 1; ...
-    1 1 imDim(3) 1; imDim(1) 1 imDim(3) 1; 1 imDim(2) imDim(3) 1; imDim(1) imDim(2) imDim(3) 1];
+imgCorners = [
+    1 1 1 1; 
+    imDim(1) 1 1 1; 
+    1 imDim(2) 1 1; 
+    imDim(1) imDim(2) 1 1; 
+    1 1 imDim(3) 1; 
+    imDim(1) 1 imDim(3) 1; 
+    1 imDim(2) imDim(3) 1; 
+    imDim(1) imDim(2) imDim(3) 1;
+    ];
+
+% imDimC = imDim + .5;
+% imgCorners = [
+%     .5 .5 .5 1; 
+%     imDimC(1) .5 .5 1; 
+%     .5 imDimC(2) .5 1; 
+%     imDimC(1) imDimC(2) .5 .1; 
+%     .5 .5 imDimC(3) 1; 
+%     imDimC(1) .5 imDimC(3) 1; 
+%     .5 imDimC(2) imDimC(3) 1; 
+%     imDimC(1) imDimC(2) imDimC(3) 1;
+%     ];
 
 volRas = xform*imgCorners';
 volRas = volRas(1:3,:)';
@@ -121,9 +147,9 @@ SIdir = sign(tmp(SIcol)); %Get the direction of it as well
 
 
 %Now to figure out what string should appear at each location
-if RLdir > 0, vectorString(RLcol) = 'R'; else vectorString(RLcol) = 'L'; end
-if APdir > 0, vectorString(APcol) = 'A'; else vectorString(APcol) = 'P'; end
-if SIdir > 0, vectorString(SIcol) = 'S'; else vectorString(SIcol) = 'I'; end
+if RLdir > 0, vectorString(RLcol) = 'R'; else, vectorString(RLcol) = 'L'; end
+if APdir > 0, vectorString(APcol) = 'A'; else, vectorString(APcol) = 'P'; end
+if SIdir > 0, vectorString(SIcol) = 'S'; else, vectorString(SIcol) = 'I'; end
 
 orientationMatrix = niftiCreateXformFromString(vectorString);
 
