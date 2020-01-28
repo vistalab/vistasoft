@@ -34,8 +34,7 @@ tmphdr   = tmp.hdr;
     ni.slice_end          = tmphdr.slice_end;
     ni.slice_duration     = tmphdr.slice_duration;
     ni.toffset            = tmphdr.toffset;
-    ni.xyz_units          = tmphdr.xyzt_units;
-    ni.time_units         = tmphdr.xyzt_units;
+    [ni.xyz_units, ni.time_units] = getSpaceTimeUnits(tmphdr.xyzt_units);
     ni.intent_code        = tmphdr.intent_code;
     ni.intent_p1          = tmphdr.intent_p1;
     ni.intent_p2          = tmphdr.intent_p2;
@@ -99,3 +98,60 @@ tmphdr   = tmp.hdr;
     ni.magic      = tmphdr.magic;
     
 end
+
+
+
+function [spaceUnits, timeUnits] = getSpaceTimeUnits(xyzt_units)
+    %getSpaceTimeUnits: converts raw units information to readable
+    %text.
+    %    This helper function converts the byte long information about
+    %    space and time units in the standard NIfTI header into user
+    %    readable textual format.
+    % 
+    % Adapted by GLU 2020-01-28 from Matlab's 2018b niftiinfo.m implementation
+    % 
+    % More useful information
+    % 
+    %     Measurement units
+    % 
+        % Both spatial and temporal measurement units, used for the dimensions dim[1] to
+        % dim[4] (and, respectively, for pixdim[]), are encoded in the field char
+        % xyzt_units. The bits 1-3 are used to store the spatial dimensions, the bits
+        % 4-6 are for temporal dimensions, and the bits 6 and 7 are not used. A temporal
+        % offset can be specified in the field float toffset. The codes for xyzt_units,
+        % in decimal, are: Unit 	Code Unknown 	0 Meter (m) 	1 Milimeter (mm)
+        % 2 Micron (µm) 	3 Seconds (s) 	8 Miliseconds (ms) 	16 Microseconds (µs)
+        % 24 Hertz (Hz) 	32 Parts-per-million (ppm) 	40 Radians per second (rad/s)
+        % 48
+
+        spaceUnitCode = bitand(xyzt_units, uint8(7));
+        timeUnitCode  = bitand(xyzt_units, uint8(56)); % 0x38
+
+        spaceKey   = {0, 1, 2, 3};
+        % Matlab names
+        % spaceValue = {'Unknown', 'Meter', 'Millimeter', 'Micron'};
+        
+        % Vistasoft names
+        spaceValue = {'unknown', 'meter', 'mm', 'micron'};
+
+        if isempty(find([spaceKey{:}] == spaceUnitCode, 1))
+           error(message('images:nifti:spaceUnitNotSupported')); 
+        end
+
+        spaceMap = containers.Map(spaceKey, spaceValue);
+        spaceUnits = spaceMap(spaceUnitCode);
+
+        timeKey = {0, 8, 16, 24, 32, 40, 48};
+        % Matlab names
+        % timeValue = {'None', 'Second', 'Millisecond', 'Microsecond', 'Hertz', 'PartsPerMillion', 'Radian'};
+        % Vistasoft names
+        timeValue = {'unknown', 'sec', 'msec', 'usec', 'hz', 'ppm', 'rads'};
+        
+        if isempty(find([timeKey{:}] == timeUnitCode, 1))
+           error(message('images:nifti:timeUnitNotSupported')); 
+        end
+
+        timeMap = containers.Map(timeKey, timeValue);
+        timeUnits = timeMap(timeUnitCode);
+
+    end
