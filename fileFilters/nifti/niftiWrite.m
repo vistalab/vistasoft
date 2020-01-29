@@ -52,6 +52,55 @@ if isfield(ni, 'version')
         ni2.hdr            = rmfield(ni2.hdr, 'xyz_units');
         ni2.hdr            = rmfield(ni2.hdr, 'time_units');
         
+        % Adapt back the rest of the fields using writeFileNifti code:
+        ni2.hdr.pixdim              = zeros(1,8);
+        ni2.hdr.pixdim(2:ni.ndim+1) = ni.pixdim;
+        ni2.hdr.datatype            = ni.nifti_type;
+        ni2.hdr                     = rmfield(ni2.hdr, 'nifti_type');
+        ni2.hdr.pixdim(1)           = ni.qfac;
+        ni2.hdr                     = rmfield(ni2.hdr, 'qfac');
+        
+        % When reading files we need to add 1 voxel to the header information to
+        % complaint with matlab 1-based indexing.
+        %
+        % Here we undo such operation, we subtract one before writing the file to disk.
+        if (~all(ni.qto_xyz(1:9)==0))
+            ni.qto_ijk(1:3,4) = ni.qto_ijk(1:3,4) - 1;
+            q_xyz = inv(ni.qto_ijk);
+            q = matToQuat(q_xyz);
+            ni2.hdr.qoffset_x = q.quatern_x;
+            ni2.hdr.qoffset_y = q.quatern_y;
+            ni2.hdr.qoffset_z = q.quatern_z;
+        else
+            ni2.hdr.qoffset_x = 0;
+            ni2.hdr.qoffset_y = 0;
+            ni2.hdr.qoffset_z = 0;
+        end
+        
+        if (~all(ni.sto_xyz(1:9)==0))
+            sto_ijk = ni.sto_ijk;
+            sto_ijk(1:3,4) = ni.sto_ijk(1:3,4) - 1;
+            sto_xyz = inv(sto_ijk);
+            ni2.hdr.srow_x = sto_xyz(1,:);
+            ni2.hdr.srow_y = sto_xyz(2,:);
+            ni2.hdr.srow_z = sto_xyz(3,:);
+        else
+            ni2.hdr.srow_x = 0;
+            ni2.hdr.srow_y = 0;
+            ni2.hdr.srow_z = 0;
+        end
+        
+        % --- nk fields
+        % The fields freq_dim, phase_dim, slice_dim are all squished into the single
+        % byte field dim_info (2 bits each, since the values for each field are
+        % limited to the range 0..3):
+        % ni.freq_dim =  bitand(uint8(3),          uint8(nii.hdr.hk.dim_info)    );
+        % ni.phase_dim = bitand(uint8(3), bitshift(uint8(nii.hdr.hk.dim_info),-2));
+        % ni.slice_dim = bitand(uint8(3), bitshift(uint8(nii.hdr.hk.dim_info),-4));
+        % Here we undo the previous operations perfrmed during the file load.
+        
+        ni2.hdr.dim_info = ni2.hdr.freq_dim + 4*ni2.hdr.phase_dim + 16*ni2.hdr.slice_dim;
+        
         % Save it.
         nii_tool('save', ni2);
     else
