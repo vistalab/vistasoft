@@ -112,17 +112,16 @@ function [spaceUnits, timeUnits] = getSpaceTimeUnits(xyzt_units)
     % 
     % More useful information
     % 
-    %     Measurement units
-    % 
-        % Both spatial and temporal measurement units, used for the dimensions dim[1] to
-        % dim[4] (and, respectively, for pixdim[]), are encoded in the field char
-        % xyzt_units. The bits 1-3 are used to store the spatial dimensions, the bits
-        % 4-6 are for temporal dimensions, and the bits 6 and 7 are not used. A temporal
-        % offset can be specified in the field float toffset. The codes for xyzt_units,
-        % in decimal, are: Unit 	Code Unknown 	0 Meter (m) 	1 Milimeter (mm)
-        % 2 Micron (µm) 	3 Seconds (s) 	8 Miliseconds (ms) 	16 Microseconds (µs)
-        % 24 Hertz (Hz) 	32 Parts-per-million (ppm) 	40 Radians per second (rad/s)
-        % 48
+    % Measurement units:
+    % Both spatial and temporal measurement units, used for the dimensions dim[1] to
+    % dim[4] (and, respectively, for pixdim[]), are encoded in the field char
+    % xyzt_units. The bits 1-3 are used to store the spatial dimensions, the bits
+    % 4-6 are for temporal dimensions, and the bits 6 and 7 are not used. A temporal
+    % offset can be specified in the field float toffset. The codes for xyzt_units,
+    % in decimal, are: Unit 	Code Unknown 	0 Meter (m) 	1 Milimeter (mm)
+    % 2 Micron (µm) 	3 Seconds (s) 	8 Miliseconds (ms) 	16 Microseconds (µs)
+    % 24 Hertz (Hz) 	32 Parts-per-million (ppm) 	40 Radians per second (rad/s)
+    % 48
 
         spaceUnitCode = bitand(xyzt_units, uint8(7));
         timeUnitCode  = bitand(xyzt_units, uint8(56)); % 0x38
