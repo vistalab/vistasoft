@@ -7,6 +7,8 @@ function ni = niftiRead(fileName, volumesToLoad)
 % 
 % NOTE: JAN 2020 GLU & JW: this version uses an external tool called nii_util.m 
 %       taken from the toolset https://github.com/xiangruili/dicm2nii 
+%       It will be used only if it detects that the file to read is a Nifti-2,
+%       otherwise it will use the old code
 % *******************************************************
 %
 %   niftiImage = niftiRead(fileName,volumesToLoad)
@@ -52,10 +54,24 @@ elseif ischar(fileName) && exist(fileName,'file')
     else
         % Example:
         %     ni = niftiRead('foo.nii.gz');
-        % Old call to the mex file
-        %     ni = readFileNifti(fileName);
-        % New called to the nii_tool wrapper
-        ni = nii_tool_read_wrapper(fileName);
+        % Select the reader depending on nifti version
+        % We need to read only the header first, to save time. 
+        % Matlab's niftiinfo will be a nice option in the future, it was
+        % introduced in 2017a. 
+        hdr = nii_tool('hdr',fileName);
+        if isfield(hdr,'version')
+            if hdr.version==2
+                % New call to the nii_tool wrapper
+                ni = nii_tool_read_wrapper(fileName);
+            else
+                % Old call to the mex file, for backward compatibility
+                ni = readFileNifti(fileName);
+            end
+        else
+            % Old call to the mex file, for backward compatibility
+            ni = readFileNifti(fileName);
+        end
+        
     end
 else
     % Make sure the the file includes the .nii.gz extensions
@@ -72,10 +88,19 @@ else
     end
     if exist(fileNameExtended,'file')
         % HERE WE MODIFY THE OLD VERSION
-        % This is the old mex call
-        % ni = readFileNifti(fileNameExtended);
-        % This is the new call
-        ni = nii_tool_read_wrapper(fileName);
+        hdr = nii_tool('hdr',fileName);
+        if isfield(hdr,'version')
+            if hdr.version==2
+                % New call to the nii_tool wrapper
+                ni = nii_tool_read_wrapper(fileName);
+            else
+                % Old call to the mex file, for backward compatibility
+                ni = readFileNifti(fileName);
+            end
+        else
+            % Old call to the mex file, for backward compatibility
+            ni = readFileNifti(fileName);
+        end
     else
         error('Cannot find the file %s\n',fileNameExtended);
     end
