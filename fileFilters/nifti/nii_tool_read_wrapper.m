@@ -23,8 +23,10 @@ tmphdr   = tmp.hdr;
     % Check dims
     if ~isequal(ni.dim,tmphdr.dim(2:ni.ndim+1)); error('Dimensions do not match');end
 
-    % Dime field         
-    ni.pixdim             = tmphdr.pixdim(2:ni.ndim+1);
+    % Dime field 
+    % The following line is failing for 1D niftis. Try getting all pixdim values        
+    %  ni.pixdim             = tmphdr.pixdim(2:ni.ndim+1);
+    ni.pixdim             = tmphdr.pixdim(2:end);
     ni.scl_slope          = tmphdr.scl_slope;
     ni.scl_inter          = tmphdr.scl_inter;
     ni.cal_min            = tmphdr.cal_min;
