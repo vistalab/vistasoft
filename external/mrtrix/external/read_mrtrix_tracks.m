@@ -3,20 +3,16 @@ function tracks = read_mrtrix_tracks (filename)
 % function: tracks = read_mrtrix_tracks (filename)
 %
 % returns a structure containing the header information and data for the MRtrix 
-% format image 'filename' (i.e. files with the extension '.mif' or '.mih').
-
-image.comments = {};
+% format track file 'filename' (i.e. files with the extension '.tck'). 
+% The track data will be stored as a cell array in the 'data' field of the
+% return variable.
 
 f = fopen (filename, 'r');
-if (f<1) 
-  disp (['error opening ' filename ]);
-  return
-end
+assert(f ~= -1, 'error opening %s', filename);
 L = fgetl(f);
 if ~strncmp(L, 'mrtrix tracks', 13)
   fclose(f);
-  disp ([filename ' is not in MRtrix format']);
-  return
+  error('%s is not in MRtrix format', filename);
 end
 
 tracks = struct();
@@ -37,27 +33,20 @@ while 1
     elseif strcmp(key, 'datatype')
       tracks.datatype = value;
     else 
-      tracks = setfield (tracks, key, value);
+      tracks = add_field (tracks, key, value);
     end
   end
 end
 fclose(f);
 
-if ~exist ('file') || ~isfield (tracks, 'datatype')
-  disp ('critical entries missing in header - aborting')
-  return
-end
+assert(exist('file') && isfield(tracks, 'datatype'), ...
+  'critical entries missing in header - aborting');
 
 [ file, offset ] = strtok(file);
-if ~strcmp(file,'.')
-  disp ('unexpected file entry (should be set to current ''.'') - aborting')
-  return;
-end
+assert(strcmp(file, '.'), ...
+  'unexpected file entry (should be set to current ''.'') - aborting');
 
-if isempty(offset)
-  disp ('no offset specified - aborting')
-  return;
-end
+assert(~isempty(offset), 'no offset specified - aborting');
 offset = str2num(char(offset));
 
 datatype = lower(tracks.datatype);
@@ -70,14 +59,10 @@ elseif strcmp(byteorder, 'be')
   f = fopen (filename, 'r', 'b');
   datatype = datatype(1:end-2);
 else
-  disp ('unexpected data type - aborting')
-  return;
+  error('unexpected data type - aborting');
 end
 
-if (f<1) 
-  disp (['error opening ' filename ]);
-  return
-end
+assert(f ~= -1, 'error opening %s', filename);
 
 fseek (f, offset, -1);
 data = fread(f, inf, datatype);
@@ -93,5 +78,18 @@ for n = 1:(prod(size(k))-1)
   tracks.data{end+1} = data(pk:(k(n)-1),:);
   pk = k(n)+1;
 end
-  
 
+
+
+
+function image = add_field (image, key, value)
+  if isfield (image, key)
+    previous = getfield (image, key);
+    if iscell (previous)
+      image = setfield (image, key, [ previous {value} ]);
+    else
+      image = setfield (image, key, { previous, value });
+    end
+  else
+    image = setfield (image, key, value);
+  end

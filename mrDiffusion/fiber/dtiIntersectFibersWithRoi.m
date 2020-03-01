@@ -131,22 +131,30 @@ end
 % The following concatenates all fiber coords into one big array so that we
 % can avoid expensive loops when computing the intersection.
 if(endptFlag)
-    fc = zeros(length(fg.fibers)*2, 3);
+    %use the same datatype used to store fg.fibers (if empty.. it doesn't really matter)
+    type='single';
+    if(~isempty(fg.fibers)) 
+        type = class(fg.fibers{1});
+    end
+    fc = zeros(length(fg.fibers)*2, 3, type);
+
     for(ii=1:length(fg.fibers))
         fc((ii-1)*2+1,:) = [fg.fibers{ii}(:,1)'];
         fc((ii-1)*2+2,:) = [fg.fibers{ii}(:,end)'];
     end
 else
+    % This temporarily double the memory usage.. which often pushes it off
+    % the limit..
     fc = horzcat(fg.fibers{:})';
 end
+
 if(~isempty(fc))
     bestSqDist = cell(length(roiCoords),1);
     keepAll    = cell(length(roiCoords),1);
     for (ii=1:length(roiCoords))
-      [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
-      keepAll{ii}         = bestSqDist{ii}<=minDist^2;
+        [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
+        keepAll{ii}         = bestSqDist{ii}<=minDist^2;
     end
-
 else
     keep = [];
     return;
@@ -160,8 +168,8 @@ clear fc;
 % keepAll is a logical array indicating which fiber coords intersect the
 % ROI. 
 keep = true(length(fg.fibers),length(roiCoords));
-keepID = zeros(length(fg.fibers),length(roiCoords));
-dist = zeros(length(fg.fibers),length(roiCoords));
+keepID = zeros(length(fg.fibers),length(roiCoords), class(fg.fibers{1}));
+dist = zeros(length(fg.fibers),length(roiCoords), class(fg.fibers{1}));
 for(ii=1:length(roiCoords))
     fiberCoord = 1;
     if(endptFlag)

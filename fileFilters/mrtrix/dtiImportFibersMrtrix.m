@@ -74,21 +74,9 @@ try
     % Tuck the whole header into an fg.params field.
     fg.params = {'mrtrix_header',header};
     
-    % Now load all the fibers (float32 format):
-    fseek(fid,offset,-1);
-    tmp = fread(fid,inf,'*float32')';
-    fclose(fid);
 catch
     error('Unable to parse header for file %s\n', filename);
 end
-
-% Reshape the fibers to the mrDiffusion format
-tmp = tmp(1:end-6);
-tmp = reshape(tmp,3,numel(tmp)/3);
-
-% Fibers are separated by a column of NaNs
-fb = [0 find(isnan(tmp(1,:))) size(tmp,2)+1];
-nFibers = numel(fb)-1;
 
 if(~exist('fiberPointStride','var') || isempty(fiberPointStride))
     fiberPointStride = max(1,floor(1/stepSize));
@@ -97,10 +85,47 @@ if(fiberPointStride<1)
     fiberPointStride = 1;
 end
 
-for(ii=1:nFibers)
-    fg.fibers{ii,1} = tmp(:, fb(ii)+1:fiberPointStride:fb(ii+1)-1);
+% Now load all the fibers
+fseek(fid,offset,-1);
+
+%tmp = fread(fid,inf,'*float32')';
+prevblock = [];
+total_fibers=0;
+while true
+    block = fread(fid, 10*1024*1024*3, '*float32');
+    block = [ prevblock; block ];
+    
+    % Reshape the fibers to the mrDiffusion format
+    %tmp = block(1:end-6);
+    tmp = reshape(block,3,numel(block)/3);
+    
+    % Fibers are separated by a column of NaNs
+    fb = [0 find(isnan(tmp(1,:))) ];
+    nFibers = numel(fb)-1;
+    
+    % read until there are no more fibers to read
+    if nFibers == 0; break; end    
+    for(ii=1:nFibers)
+        fiber = tmp(:, fb(ii)+1:fiberPointStride:fb(ii+1)-1);
+        
+        % some vistasoft mex file need data to be stored in double.. (like nearpoints)
+        % we believe single precision for fiber coordinates is enough.. 
+        % fiber = double(fiber); 
+        
+        fg.fibers{ii+total_fibers,1} = fiber;
+    end
+    
+    prevblock = block(fb(end)*3+1:end);
+    total_fibers = total_fibers + nFibers;
 end
-fg.fibers=cellfun(@double, fg.fibers, 'UniformOutput', false);
+
+fprintf(1, 'loaded %d fibers...\n',total_fibers);
+if total_fibers ~= n
+    warning("failed to load expected number of fibers.. File truncated?");
+end
+
+fclose(fid);
 
 return
+
 
