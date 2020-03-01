@@ -119,7 +119,7 @@ switch(mrvParamFormat(param))
     case {'b0imagenums'}
         val = find(dwiGet(dwi,'findb0index'));
     case {'diffusionimagenums','dimagenums'}
-        val = find(dwiGet(dwi,'findb0index'));
+        val = find(~dwiGet(dwi,'findb0index'));
     case {'diffusionbvecs'}
         % bvecs = dwiGet(dwi,'diffusion bvecs');
         % bvecs in the diffusion gradient on case (the others don't matter)
