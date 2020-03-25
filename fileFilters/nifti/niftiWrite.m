@@ -46,15 +46,16 @@ if isfield(ni, 'version')
         ni2.img            = ni.data;
         ni                 = rmfield(ni, 'data');
         ni2.hdr            = ni;
-        ni2.hdr            = renameStructField(ni2.hdr, 'fname', 'file_name');
+        ni2.hdr.file_name  = ni2.hdr.fname;
+        ni2.hdr            = rmfield(ni2.hdr, 'fname');
         % Use a function to setup the xyzt_units field
         ni2.hdr.xyzt_units = setSpaceTimeUnits(ni2.hdr.xyz_units, ni2.hdr.time_units);
         ni2.hdr            = rmfield(ni2.hdr, 'xyz_units');
         ni2.hdr            = rmfield(ni2.hdr, 'time_units');
         
         % Adapt back the rest of the fields using writeFileNifti code:
-        ni2.hdr.pixdim              = zeros(1,8);
-        ni2.hdr.pixdim(2:ni.ndim+1) = ni.pixdim;
+        ni2.hdr.pixdim              = zeros(1,1+numel(ni.pixdim));
+        ni2.hdr.pixdim(2:1+numel(ni.pixdim)) = ni.pixdim; 
         ni2.hdr.datatype            = ni.nifti_type;
         ni2.hdr                     = rmfield(ni2.hdr, 'nifti_type');
         ni2.hdr.pixdim(1)           = ni.qfac;

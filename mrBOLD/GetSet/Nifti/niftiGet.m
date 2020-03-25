@@ -157,6 +157,13 @@ switch param
             val = [];
         end
         
+    case 'sform_code'
+        if isfield(ni, 'sform_code'), val = ni.sform_code;
+        else
+            warning('vista:niftiError', 'No sform_code information found in nifti. Returning empty');
+            val = [];
+        end
+        
     case 'qto_ijk'
         if isfield(ni, 'qto_ijk'), val = ni.qto_ijk;
         else

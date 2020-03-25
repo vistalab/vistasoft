@@ -24,9 +24,7 @@ tmphdr   = tmp.hdr;
     if ~isequal(ni.dim,tmphdr.dim(2:ni.ndim+1)); error('Dimensions do not match');end
 
     % Dime field 
-    % The following line is failing for 1D niftis. Try getting all pixdim values        
-    %  ni.pixdim             = tmphdr.pixdim(2:ni.ndim+1);
-    ni.pixdim             = tmphdr.pixdim(2:end);
+    ni.pixdim             = tmphdr.pixdim(2:ni.ndim+1);
     ni.scl_slope          = tmphdr.scl_slope;
     ni.scl_inter          = tmphdr.scl_inter;
     ni.cal_min            = tmphdr.cal_min;
@@ -71,9 +69,16 @@ tmphdr   = tmp.hdr;
     % We need to apply the 0-to-1 correction to qto and sto matrices.
 
     % q* fields
-    ni.qto_xyz = quatToMat(ni.quatern_b, ni.quatern_c, ni.quatern_d, ...
+    % Working with 2D files (surface time series, for example, this fails, because
+    %  it is expecting a pixdim(3) value. Solve it making all qto and sto-s zeros.
+    %  We don't care about those transforms
+    %if numel(ni.pixdim) < 3
+    %    ni.qto_xyz = zeros(4);
+    %else
+        ni.qto_xyz = quatToMat(ni.quatern_b, ni.quatern_c, ni.quatern_d, ...
                            ni.qoffset_x, ni.qoffset_y, ni.qoffset_z, ...
                            ni.qfac, ni.pixdim);
+    %end
     if(~all(ni.qto_xyz(1:9)==0))
         ni.qto_ijk = inv(ni.qto_xyz);
         ni.qto_ijk(1:3,4) = ni.qto_ijk(1:3,4) + 1;

@@ -34,7 +34,11 @@ else
 end
 
 % build rotation matrix, including scaling factors for voxel sizes
-xd = pixdim(1); yd = pixdim(2); zd = pixdim(3);
+if length(pixdim) == 3 
+    xd = pixdim(1); yd = pixdim(2); zd = pixdim(3);
+else
+    xd = pixdim(1); yd = pixdim(2); zd = 1;
+end
 if(xd<=0.0), xd = 1.0; end
 if(yd<=0.0), yd = 1.0; end
 if(zd<=0.0), zd = 1.0; end
