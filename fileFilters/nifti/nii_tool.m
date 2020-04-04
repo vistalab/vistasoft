@@ -643,10 +643,7 @@ elseif strcmpi(cmd, 'update') % old img2datatype subfunction
 elseif strcmp(cmd, 'func_handle') % make a local function avail to outside 
     varargout{1} = str2func(varargin{1});
 elseif strcmp(cmd, 'LocalFunc') % call  local function from outside 
-    if isdeployed
-        % [varargout{1:nargout}] = feval(varargin{:});
-        error('Find alternative to this call when deployed'))
-    end
+    [varargout{1:nargout}] = feval(varargin{:});
 else
     error('Invalid command for nii_tool: %s', cmd);
 end
@@ -1010,10 +1007,7 @@ for i = 1:numel(ext)
                 a = strtrim(a);
                 if isempty(a), continue; end
                 try
-                    if isdeployed
-                        % eval(['ss.' a]); % put all into struct
-                        error('Find alternative to the eval call when deployed')
-                    end
+                    eval(['ss.' a]); % put all into struct
                 catch
                     try
                         a = regexp(a, '(.*?)\s*=\s*(.*?);', 'tokens', 'once');
