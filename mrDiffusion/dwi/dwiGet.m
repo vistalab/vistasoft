@@ -79,7 +79,7 @@ if ischar(dwi)
     % This requires that the bvecs and bvals files be in standard form and
     % located relative to the dwi file.  We don't check.
     if exist(dwi,'file'),    dwi = dwiLoad(dwi);
-    else                     error('File not found %s\n',dwi);
+    else,                    error('File not found %s\n',dwi);
     end
 end
 
@@ -111,25 +111,25 @@ switch(mrvParamFormat(param))
         val = n - m;
     case {'nb0','nnondiffusionimages','numnondiffusionimages'}
         % Number of non-diffusion images (b=0)
-        val = sum(dwi.bvals == 0);
+        val = sum(dwiGet(dwi,'findb0index'));
     case {'bvecs'}
         if isfield(dwi,'bvecs'), val = dwi.bvecs; end
     case {'bvals'}
         if isfield(dwi,'bvals'), val = dwi.bvals(:); end
     case {'b0imagenums'}
-        val = find(dwi.bvals == 0);
+        val = find(dwiGet(dwi,'findb0index'));
     case {'diffusionimagenums','dimagenums'}
-        val = find(dwi.bvals ~= 0);
+        val = find(~dwiGet(dwi,'findb0index'));
     case {'diffusionbvecs'}
         % bvecs = dwiGet(dwi,'diffusion bvecs');
         % bvecs in the diffusion gradient on case (the others don't matter)
-        bvals = dwiGet(dwi,'bvals');
-        b0 = (bvals == 0);
-        val = dwi.bvecs(~b0,:);
+        indexBvals = ~dwiGet(dwi,'findb0index');
+        val        = dwi.bvecs(indexBvals,:);
+        
     case {'diffusionbvals'}
         % bvals = dwiGet(dwi,'diffusion bvals');
         % bvals when the diffusion gradient is on
-        indexBvals = (dwi.bvals ~= 0);
+        indexBvals = ~dwiGet(dwi,'findb0index');
         
         % There are apparently some unit issues.  We should force this to
         % be explicit rather than guess like this. - BW
@@ -138,6 +138,24 @@ switch(mrvParamFormat(param))
         else
             val = dwi.bvals(indexBvals,:);
         end
+        
+    case {'findb0index'}
+        % Guess the number of shells in the data. Some data (Siemens and
+        % Human Connectome for example) come in with BVALS that are around
+        % a value sau 1000={995,999,1002} or 0={0,5,10}, here instead of
+        % enforcing the round-off of the values we try to guess the number 
+        % of shels and indices of the b0
+          bvals         = dwiGet(dwi,'bvals');
+          rounded_bvals = round((bvals./100))*100;
+          
+          % report which shells were found.
+          %unique_shells = unique(rounded_bvals);
+          %unique_shells_string = sprintf('%d ', unique_shells);
+          %fprintf('[%s] Found DWI shells %s.',mfilename,unique_shells_string)
+          
+          % find the indices of the B0 images
+          val  = (rounded_bvals == 0);
+
     case {'ndiffusionbvals'}
         val = size(dwiGet(dwi,'diffusion bvals'),1);
     case {'ndiffusionbvecs'}
@@ -155,7 +173,7 @@ switch(mrvParamFormat(param))
         % The coordinates need to be rounded to integers
         % dSig = dwiGet(dwi,'diffusion data image',coords)
         if ~isempty(varargin), coords = varargin{1};
-        else error('coords required');
+        else, error('coords required');
         end
         
         % Checks the dimensionality
@@ -171,7 +189,7 @@ switch(mrvParamFormat(param))
         % number of volumes in the nifti image
         indx = sub2ind(dwi.nifti.dim(1:3),coords(:,1),coords(:,2),coords(:,3));
         dimg = dwiGet(dwi,'dimagenums');
-        val = zeros(length(indx),length(dimg));
+        val  = zeros(length(indx),length(dimg));
         for ii = 1:length(dimg)
             tmp = squeeze(dwi.nifti.data(:,:,:,dimg(ii)));
             val(:,ii) = tmp(indx);
@@ -191,7 +209,7 @@ switch(mrvParamFormat(param))
         % these as oppose to rounding them to integers but for the time
         % being it seems to make more sense to grab data from a full voxel
         if ~isempty(varargin), coords = varargin{1};
-        else error('coords required');
+        else, error('coords required');
         end
         coords = coordCheck(coords);
         
@@ -223,8 +241,8 @@ switch(mrvParamFormat(param))
         
         % Get the data
         coords = coordCheck(coords);
-        bvals = dwiGet(dwi,'diffusion bvals');
-        S0   = dwiGet(dwi,'b0 image',coords);
+        bvals  = dwiGet(dwi,'diffusion bvals');
+        S0     = dwiGet(dwi,'b0 image',coords);
         % When there are multiple b=0 images, S0 is ncoords x nImages
         % For this code to make sense, we use the mean of the b=0 images.
         % It would be possible to select one by an input argument (BW).
@@ -243,7 +261,7 @@ switch(mrvParamFormat(param))
         % If there are multiple b=0 images, we need to reduce S0.  Here we
         % choose the mean S0 value.  It would be possible to select one of
         % them by adding an argument.
-        S0 = mean(S0,2);
+        S0  = mean(S0,2);
         val = -log(diag(1./S0)*dSig)*diag((bvals).^-1);
         val = val';    % ADC for each voxel is in the columns
         
@@ -254,7 +272,7 @@ switch(mrvParamFormat(param))
         % dwiGet(dwi,'adc data acpc',coord)
         % Get the ADC values from a particular acpc coordinate location
         if ~isempty(varargin), coords = varargin{1};
-        else error('acpc coords required');
+        else, error('acpc coords required');
         end
         coords = coordCheck(coords);
         
@@ -263,7 +281,7 @@ switch(mrvParamFormat(param))
         % decimal up to the next integer should be kept as part of the
         % current voxel.
         coords = floor(mrAnatXformCoords(dwi.nifti.qto_ijk,coords));
-        val = dwiGet(dwi,'adc data image',coords);
+        val    = dwiGet(dwi,'adc data image',coords);
         
     case {'diffusiondistanceimage'}
         % dwiGet(dwi,'diffusion distance image',coord)
@@ -284,7 +302,7 @@ switch(mrvParamFormat(param))
         % scaled vectors. e = u*sqrt(2*val)*vec';
         
         if ~isempty(varargin), coords = varargin{1};
-        else error('image coords required');
+        else, error('image coords required');
         end
         
         % Get the adc data.  By the DTI model, these satisfy adc = u' Q u;
@@ -307,7 +325,7 @@ switch(mrvParamFormat(param))
         % Returns the quadratic form that predicts the ADCs at this
         % coordinate in image space.
         if ~isempty(varargin), coords = varargin{1};
-        else error('image coords required');
+        else, error('image coords required');
         end
         coords = coordCheck(coords);
         val = dwiQ(dwi,coords);
@@ -316,7 +334,7 @@ switch(mrvParamFormat(param))
         % dwiGet(dwi,'tensor acpc', coords)
         % coords are nCoords x 3
         if ~isempty(varargin), coords = varargin{1};
-        else error('image coords required');
+        else, error('image coords required');
         end
         coords = coordCheck(coords);
         
@@ -328,7 +346,7 @@ switch(mrvParamFormat(param))
         % get B0 data from a set of coordinates in ac-pc space
         % Please fix to be consistent with the next b0 code that BW added.
         if ~isempty(varargin), coords = varargin{1};
-        else error('coords required');
+        else, error('coords required');
         end
         coords = coordCheck(coords);
         
@@ -348,7 +366,7 @@ switch(mrvParamFormat(param))
         % val will be a 1xN vector where N is the number of coordinates
         % passed in.  The measurements across b0 volumes are averaged
         indx=sub2ind(dwi.nifti.dim(1:3),coords(:,1),coords(:,2),coords(:,3));
-        b0 = find(dwi.bvals==0);
+        b0 = find(dwiGet(dwi,'findb0index'));
         
         for ii = 1:length(b0)
             tmp = squeeze(dwi.nifti.data(:,:,:,b0(ii)));
@@ -375,7 +393,7 @@ switch(mrvParamFormat(param))
         % nCoords x 3).
         %
         % When there are multiple b=0 images in the dwi data, the S0 value
-        % for each b=0 image is placed in teh columns of the return.  So,
+        % for each b=0 image is placed in the columns of the return.  So,
         % if you ask for 100 coords and there are 4 b=0 images, the return
         % is 100 x 4.
         if ~isempty(varargin), coords = varargin{1};
@@ -399,7 +417,7 @@ switch(mrvParamFormat(param))
         % measures for each voxel in coords.
         % Coords are in the rows (i.e., nCoords x 3)
         if ~isempty(varargin), coords = varargin{1};
-        else error('coords required');
+        else, error('coords required');
         end
         val = dwiGet(dwi,'b0 vals image',coords);
         
@@ -413,7 +431,7 @@ switch(mrvParamFormat(param))
         % Return an SNR (mean/std) value for each voxel in coords
         % Coords are in the rows (i.e., nCoords x 3)
         if ~isempty(varargin), coords = varargin{1};
-        else error('coords required');
+        else, error('coords required');
         end
         
         m  = dwiGet(dwi,'b0 image',coords);
@@ -448,7 +466,7 @@ switch(mrvParamFormat(param))
         % fro small samples.
         % Coords are in the rows (i.e., nCoords x 3)
         if ~isempty(varargin), coords = varargin{1};
-        else error('coords required'); end
+        else, error('coords required'); end
         
         m     = mean(dwiGet(dwi,'b0 image',coords));
         sigma = dwiGet(dwi,'b0 sigma image roi',coords);

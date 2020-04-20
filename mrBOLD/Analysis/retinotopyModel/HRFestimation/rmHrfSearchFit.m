@@ -216,14 +216,15 @@ end
 
 
 desc = lower(rmGet(model{1},'desc'));
-switch desc,
+switch desc
     case {'2d prf fit (x,y,sigma, positive only)'}
         tmp.prediction = rmHrfSearchFit_oneGaussian(model, params, loopSlices, wProcess,varexp,allstimimages);
         
     case {'double 2d prf fit (x,y,sigma,sigma2, center=positive)',...
             'difference 2d prf fit (x,y,sigma,sigma2, center=positive)'}
         tmp.prediction = rmHrfSearchFit_twoGaussian(model, params, loopSlices, wProcess,varexp,allstimimages);
-        
+    case {'2d nonlinear prf fit (x,y,sigma,exponent, positive only)'}
+        tmp.prediction = rmHrfSearchFit_oneGaussianCSS(model, params, loopSlices, wProcess,varexp,allstimimages);
     otherwise
         fprintf('[%s]:Unknown (or unincorporated) pRF model: %s: IGNORED!\n',mfilename,desc);
 end

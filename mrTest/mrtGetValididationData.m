@@ -21,14 +21,10 @@ function validationData = mrtGetValididationData(validationDataSet)
 %    mrtInstallSampleData
 %
 
-% This creates the object, using the configuration data in the file
-% rdt/rdt-config-vistasoft.json
-rd = RdtClient('vistasoft');
+% Find the validataion file
+pth = fullfile(vistaRootPath, 'local', 'testData', 'validate'); 
+d = dir (fullfile(pth, sprintf('%s*', validationDataSet)));
 
-% Change remote path to validate folder
-rd.crp('/vistadata/validate/');
-
-% Retrieve the data
-validationData = rd.readArtifact(validationDataSet);
+validationData = load(fullfile(d.folder, d.name));
 
 end

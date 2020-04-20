@@ -41,7 +41,7 @@ switch lower(viewType),
         %   val = tmp(x, y, z);
         % In the case of a 2D anat, we would like 
         %   val = tmp(x,y);
-        if length(size(tmp)) == dims
+        if length(size(tmp)) <= dims
             val = zeros(size(coords, 2), 1);
             for n = 1:length(val),
                 if dims == 3,

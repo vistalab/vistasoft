@@ -72,7 +72,20 @@ end
 % calculate the points within the stimulus window (of any of the
 % stimulus sequences)
 for n=1:numel(params.stim)
-    params = eval(['make' params.stim(n).stimType '(params,',num2str(n),');']);
+    switch params.stim(n).stimType
+        case '8Bars'
+            params = make8Bars(params,1);
+        case 'Ring'
+            params = makeRing(params,1);
+        case 'RoughBars'
+            params = makeRoughBars(params,1);
+        case 'StimFromScan'
+            params = makeStimFromScan(params,1);
+        case 'Wedge'
+            params = makeWedge(params,1);
+        otherwise
+            error('make%s does not exist', params.stim(n).stimType)
+    end    
     if n==1
         params.stim(1).stimwindow = nansum(params.stim(n).images,2);
     else

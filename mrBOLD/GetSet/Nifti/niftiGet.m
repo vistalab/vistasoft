@@ -61,10 +61,13 @@ switch param
     case 'dim'
         if isfield(ni, 'dim')
             val = ni.dim;
+            
+            if length(val) < 3, val = [val 1]; end
+            
         else
             warning('vista:niftiError', 'No dimension information found in nifti. Returning empty');
             val = [];
-        end
+        end        
         
     case 'fname'
         if isfield(ni, 'fname')
@@ -89,7 +92,7 @@ switch param
             warning('vista:niftiError', 'No number of dimensions information found in nifti. Returning empty');
             val = [];
         end
-        
+
     case 'numslices'
         if isfield(ni, 'slice_end') && isfield(ni,'slice_start')
             val = ni.slice_end - ni.slice_start + 1;
@@ -123,8 +126,10 @@ switch param
         % Example:
         % niftiGet(ni, 'pixdim');
         % niftiGet(ni, 'pixdim', 'xyz_units', 'mm', 'time_units', 's');
-        if isfield(ni, 'pixdim'), 
-            val = ni.pixdim;            
+        if isfield(ni, 'pixdim')
+            val = ni.pixdim; 
+            if length(val) < 3, val = [val val(end)]; end 
+            
             % Check for units
             if ~isempty(varargin)
                 for ii = 1:2:length(varargin)
@@ -142,6 +147,13 @@ switch param
             end
         else
             warning('vista:niftiError', 'No pixdim information found in nifti. Returning empty');
+            val = [];
+        end
+        
+    case 'qform_code'
+        if isfield(ni, 'qform_code'), val = ni.qform_code;
+        else
+            warning('vista:niftiError', 'No qform_code information found in nifti. Returning empty');
             val = [];
         end
         

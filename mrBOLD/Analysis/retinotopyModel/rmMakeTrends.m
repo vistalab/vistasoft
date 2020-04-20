@@ -21,7 +21,7 @@ start2 = [0 cumsum(ndct)];
 
 % make them separately for every scan
 dcid= zeros(1,numel(params.stim));
-for n = 1:numel(params.stim),
+for n = 1:numel(params.stim)
     % stimulus length 
     tc = linspace(0,2*pi,tf(n))';
 

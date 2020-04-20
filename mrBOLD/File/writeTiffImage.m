@@ -1,7 +1,7 @@
-function writeTiffImage(view,pathStr)
+function writeTiffImage(vw,pathStr)
 % Writes a tiff image of the view with the proper color map.
 %
-% writeTiffImage(view,[pathStr])
+% writeTiffImage(vw,[pathStr])
 %
 % If pathStr unspecified, prompts user for a filename.
 %
@@ -17,8 +17,8 @@ if ~exist('pathStr','var')
 end
 
 try
-  im = view.ui.image;
-  modeStr=['view.ui.',view.ui.displayMode,'Mode'];
+  im = vw.ui.image;
+  modeStr=['vw.ui.',vw.ui.displayMode,'Mode'];
   mode = eval(modeStr);
   cmap = mode.cmap;
   % tiffwrite does not exist?!

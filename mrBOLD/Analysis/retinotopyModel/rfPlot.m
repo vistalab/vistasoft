@@ -29,11 +29,6 @@ z    = NaN(size(x));
 z(params.stim(1).instimwindow) = RF;
 z    = reshape(z,size(x));
 
-% we need to flip the RF vertically because positive y-values correspond
-% to upper visual field (and hence should be plotted high), but high vales
-% in an image matrix are plotted low
-z = flipud(z);
-
 % plot
 axes(parent);
 cla;
