@@ -6,5 +6,5 @@ module load gcc/6.1.0
 
 set -e
 set -x
-#mex -O Csource/nearpoints.cxx
-mex -O Csource/myCinterp3.cxx
+mex -O Csource/nearpoints.cxx
+#mex -O Csource/myCinterp3.cxx
