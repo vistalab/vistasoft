@@ -41,7 +41,7 @@ coords = round(mrAnatXformCoords(inv(imgXform), coords));
 badCoords = coords(:,1)<1 | coords(:,1)>sz(1) ...
           | coords(:,2)<1 | coords(:,2)>sz(2) ...
           | coords(:,3)<1 | coords(:,3)>sz(3);
-if(length(badCoords) > 0)
+if(sum(badCoords ~= 0) > 0)
     disp('coordinates out of bound (removing)')
     disp(sum(badCoords ~= 0))
     coords = coords(~badCoords,:);
