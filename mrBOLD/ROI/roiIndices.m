@@ -59,6 +59,11 @@ switch viewGet(view, 'viewType')
                     coords(2,:), coords(3,:));
                 
     case {'Gray' 'Volume'}
+        if size(coords,1) == 1
+            % coords are indices and need to be converted to coordinates
+            idx = coords;
+            coords = view.coords(:, idx);
+        end
 		if preserveCoords==0
 	        [coords, roiInd] = intersectCols(view.coords, coords);
 		else
