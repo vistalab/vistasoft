@@ -123,6 +123,7 @@ params.motionComp = 0;
 params.sliceTimingCorrection = 0;
 params.motionCompRefScan = 1;
 params.motionCompRefFrame = 1;
+params.alignment = [];
 
 %% check for input files in the expected locations
 % inplanes
