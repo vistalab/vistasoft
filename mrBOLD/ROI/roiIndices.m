@@ -69,15 +69,21 @@ switch viewGet(view, 'viewType')
 		else
 			% intersectCols sorts the voxel order; avoid this, although 
 			% this will be substantially slower:
-			roiInd = NaN([1 size(coords, 2)]);
-			for v = 1:size(coords, 2)
-				I = find( view.coords(1,:)==coords(1,v) & ...
-				   	      view.coords(2,:)==coords(2,v) & ...
-						  view.coords(3,:)==coords(3,v) );
-				if ~isempty(I)
-					roiInd(v) = I(1);
-				end
-			end
+            if isequal(view.coords, coords)
+                % then there is no need to search
+                roiInd = 1:size(coords, 2);
+                return
+            else
+                roiInd = NaN([1 size(coords, 2)]);
+                for v = 1:size(coords, 2)
+                    I = find( view.coords(1,:)==coords(1,v) & ...
+                        view.coords(2,:)==coords(2,v) & ...
+                        view.coords(3,:)==coords(3,v) );
+                    if ~isempty(I)
+                        roiInd(v) = I(1);
+                    end
+                end
+            end
 		end
         
     case 'Flat'
