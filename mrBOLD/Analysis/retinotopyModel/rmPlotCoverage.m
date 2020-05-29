@@ -104,6 +104,9 @@ roi.indices  = viewGet(vw, 'roiIndices');
 roi.name     = viewGet(vw, 'roiName');
 curScan      = viewGet(vw, 'curScan');
 
+% Store model type 
+modelType = vw.rm.retinotopyParams.analysis.pRFmodel{1,1};
+
 % Get co and ph (vectors) for the current scan, within the
 % current ROI.
 vt      = vw.viewType;
@@ -114,6 +117,10 @@ theta   = rmCoordsGet(vt, rmModel,'sigmatheta', roi.indices);
 beta    = rmCoordsGet(vt, rmModel,'beta',       roi.indices);
 x0      = rmCoordsGet(vt, rmModel,'x0',         roi.indices);
 y0      = rmCoordsGet(vt, rmModel,'y0',         roi.indices);
+% if using the CSS model, get the exponent too
+if strcmp(modelType, 'css')
+    exp = rmCoordsGet(vt, rmModel,'exponent',   roi.indices)
+end
 clear rmModel
 
 %%%%%%%%%%%%%%
@@ -227,6 +234,14 @@ subSize2 = single(sigma2(coIndices));
 subTheta = single(theta(coIndices));
 subx0    = x0(coIndices);
 suby0    = y0(coIndices);
+if strcmp(modelType, 'css')
+    subExp = exp(coIndices)
+end
+
+% If using the CSS model, update size calculation to take the exponent into account
+if strcmp(modelType, 'css')
+    subSize1 = single(subSize1./sqrt(subExp)));
+end
 
 % smooth sigma
 if vfc.smoothSigma
@@ -285,6 +300,9 @@ if vfc.newfig  > -1   % -1 is a flag that we shouldn't plot the results
     data.subSize2  = subSize2;
     data.X         = X;
 	data.Y         = Y;
+    if strcmp(modelType, 'css')
+        data.exponent = subExp;
+    end
 
 end
 
