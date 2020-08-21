@@ -121,7 +121,7 @@ end
 
 fprintf(1, 'loaded %d fibers...\n',total_fibers);
 if total_fibers ~= n
-    warning("failed to load expected number of fibers.. File truncated?");
+    warning('failed to load expected number of fibers.. File truncated?');
 end
 
 fclose(fid);
