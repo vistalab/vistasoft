@@ -157,6 +157,7 @@ mrSESSION = sessionSet(mrSESSION,'sessionCode',params.sessionCode);
 mrSESSION = sessionSet(mrSESSION,'subject',params.subject);
 mrSESSION = sessionSet(mrSESSION,'comments',params.comments);
 mrSESSION = sessionSet(mrSESSION,'Inplane Path',params.inplane); %Populates the mrSESSION inplane path var
+mrSESSION = sessionSet(mrSESSION,'alignment',params.alignment);
 mrSESSION = sessionSet(mrSESSION,'Version','2.1');
 
 save mrSESSION mrSESSION -append;

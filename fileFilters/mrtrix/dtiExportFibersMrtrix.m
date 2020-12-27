@@ -85,6 +85,7 @@ for i=1:size(names)
   if strcmpi (names{i}, 'datatype'), continue; end
   fprintf (f, '%s: %s\n', names{i}, getfield(fibers, names{i}));
 end
+fprintf (f, '%s: %s\n', 'timestamp: ', num2str(now)); % This allows visualizing the streamlines in mrview
 data_offset = ftell (f) + 20;
 fprintf (f, 'file: . %d\nEND\n', data_offset);
 
