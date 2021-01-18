@@ -1,0 +1,23 @@
+# TODO.txt
+mrMeshPy TODO / wishlist
+
+Priority(0 crucial, 1 high, 2 low, 3 wishlist) -- Action -- Assigned to
+
+(1) -- enable different TCP adresses - currently hard-coded to 9999 -- ADG
+(1) -- improve error handling -- ADG / MH
+(1) -- improve TP comms (error state, etc) -- ADG / MH
+(1) -- review meshBuild in matlab (i.e. not vtk dependent) -- ADG / AW
+(1) -- review meshBuild in mrMeshPy (i.e. IS vtk dependent, but will be built into viewer) -- ADG / AW
+
+(2) -- ROI transforms to vista support currently only support "ALL LAYERS" -- AG
+(2) -- add exisiting function: SAVE CAMERA -- AG
+(2) -- add exisiting function: SET CAMERA -- AG
+(2) -- improve tracking of mesh instances between matlab and mrMeshPy in case of crash -- AG
+(2) -- add support for additional VOLUME instances in matlab -- AG
+(2) -- fix parent UI callback global in menu code -- AG
+(2) -- review timeouts in TCP server -- AG / MH
+ 
+(3) -- add “current session save” -- AG
+(3) -- incorporate code for handle removal - AG
+(3) -- incorporate code for removing “spikes” (have this in DV3D) - AG
+(3) -- incorporate code for surface clipping (have this in DV3D) - AG
