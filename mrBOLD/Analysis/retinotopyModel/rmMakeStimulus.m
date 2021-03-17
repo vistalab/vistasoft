@@ -74,15 +74,15 @@ end
 for n=1:numel(params.stim)
     switch params.stim(n).stimType
         case '8Bars'
-            params = make8Bars(params,1);
+            params = make8Bars(params,n);
         case 'Ring'
-            params = makeRing(params,1);
+            params = makeRing(params,n);
         case 'RoughBars'
-            params = makeRoughBars(params,1);
+            params = makeRoughBars(params,n);
         case 'StimFromScan'
-            params = makeStimFromScan(params,1);
+            params = makeStimFromScan(params,n);
         case 'Wedge'
-            params = makeWedge(params,1);
+            params = makeWedge(params,n);
         otherwise
             error('make%s does not exist', params.stim(n).stimType)
     end    
