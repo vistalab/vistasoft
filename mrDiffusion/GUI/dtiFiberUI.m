@@ -2054,10 +2054,8 @@ if(length(thresh)==1), thresh = [thresh inf]; end
 colors = 'gcbmry';
 flags = {'fillHoles'};
 if(removeSatellites), flags{end+1} = 'removeSatellites'; end
-if(any(thresh<0))
-    thresh = (abs(thresh)-valRange(1))./diff(valRange);
-    fprintf('actual thresh: %0.3f (valRange = [%0.2f,%0.2f])', thresh(1), valRange(1), valRange(2));
-end
+thresh = (thresh-valRange(1))./diff(valRange);
+fprintf('actual thresh: %0.3f (valRange = [%0.2f,%0.2f])', thresh(1), valRange(1), valRange(2));
 for(ii=2:length(thresh))
     if(length(thresh)>2)
         newRoi = dtiNewRoi([baseName '_' num2str(round(thresh(ii-1)*100),'%03d')], colors(mod(ii-2,length(colors))+1));
