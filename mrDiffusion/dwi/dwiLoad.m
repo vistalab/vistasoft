@@ -77,8 +77,8 @@ if notDefined('dwiNifti') || ~exist(dwiNifti,'file')
 end
 
 % Get basename of bvecs/bvals files
-[dwiPath f junk] = fileparts(dwiNifti);   %#ok<NASGU>
-[junk, dwBaseName junk] = fileparts(f);   %#ok<ASGLU,NASGU>
+[dwiPath, f, ~] = fileparts(dwiNifti);   %#ok<NASGU>
+[~, dwBaseName, ~] = fileparts(f);   %#ok<ASGLU,NASGU>
 
 % Check for bvecs file
 if notDefined('bvecsFile') || ~exist(bvecsFile,'file')
@@ -86,7 +86,7 @@ if notDefined('bvecsFile') || ~exist(bvecsFile,'file')
     vecFile  = fullfile(dwiPath, [dwBaseName '.bvec']);
     if     exist(vecsFile,'file'), bvecsFile = vecsFile;
     elseif exist(vecFile,'file'),  bvecsFile = vecFile;
-    else   bvecsFile = mrvSelectFile('r','*bvec*', 'Select BVECS File');
+    else,  bvecsFile = mrvSelectFile('r','*bvec*', 'Select BVECS File');
     end
     if isempty(bvecsFile); disp('Canceled by user.'); return; end
     show = true;
@@ -98,7 +98,7 @@ if notDefined('bvalsFile') || ~exist(bvalsFile,'file')
     valFile  = fullfile(dwiPath, [dwBaseName '.bval']);
     if     exist(valsFile,'file'), bvalsFile = valsFile;
     elseif exist(valFile,'file'),  bvalsFile = valFile;
-    else   bvalsFile = mrvSelectFile('r','*bval*', 'Select BVALS File');
+    else,  bvalsFile = mrvSelectFile('r','*bval*', 'Select BVALS File');
     end
     if isempty(bvalsFile); disp('Canceled by user.'); return; end
     show = true;

@@ -6,7 +6,7 @@
 
 %% Download a small set of fibers in a pdb file
 
-remote = 'http://scarlet.stanford.edu/validation/MRI/VISTADATA';
+remote = 'https://scarlet.stanford.edu/validation/MRI/VISTADATA';
 remoteF = 'diffusion/sampleData/fibers/leftArcuateSmall.pdb';
 remoteF = fullfile(remote,remoteF);
 tmp = [tempname,'.pdb'];
@@ -19,6 +19,10 @@ fg = fgRead(fgFile);
 % A small number of triangles (25 is the default).
 nTriangles = 4;
 [lgt , fSurf, fvc] = AFQ_RenderFibers(fg,'subdivs',nTriangles);
+
+% Use: surf2patch() to convert the fvc returns (which are surfaces)
+%  into vertices and such, below.
+%
 % mrvNewGraphWin; surf(fSurf.X{1},fSurf.Y{1},fSurf.Z{1},fSurf.C{1})
 % mrvNewGraphWin; plot3(FV.vertices(:,1),FV.vertices(:,2),FV.vertices(:,3),'.');
 
@@ -49,11 +53,14 @@ for ff = 1:2:size(fvc,2)
     % When we add color, we do it this way by appending RGB to the
     % vertex, and dealing with the first case separately
     if isempty(FV.vertices)
+        % Looks like we need to use surf2patch now.  Some change in AFQ.
         % FV.vertices = [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)];
-        FV.vertices = [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)];
+        thisPatch = surf2patch(fvc(ff));
+        FV.vertices = [thisPatch.vertices repmat(c(ff,:),size(thisPatch.vertices,1),1)];
     else
+        
         % Vertices of the triangles defining the fascicle mesh
-        FV.vertices = [FV.vertices; [fvc(ff).vertices repmat(c(ff,:),size(fvc(ff).vertices,1),1)]];
+        FV.vertices = [FV.vertices; [thisPatch.vertices repmat(c(ff,:),size(thisPatch.vertices,1),1)]];
     end
     
     % Cumulate the vertices
@@ -66,7 +73,7 @@ for ff = 1:2:size(fvc,2)
     
     % Add an offset to the faces, to make them consistent with cumulating
     % vertices.
-    FV.faces    = [FV.faces; fvc(ff).faces + cnt];
+    FV.faces    = [thisPatch.faces; thisPatch.faces + cnt];
     
     % Update where we are
     cnt = size(FV.vertices,1);
@@ -76,18 +83,21 @@ end
 %% Format the OBJ data and write them out
 
 OBJ = objFVN(FV,N);
+disp(FV)
+disp(OBJ)
 
-fname = '/Users/wandell/Desktop/testArcuate.obj';
+fname = fullfile(vistaRootPath,'local','testArcuate.obj'); % /Users/wandell/Desktop/testArcuate.obj';
 % fname = '/home/wandell/Desktop/testArcuate.obj';
 objWrite(OBJ,fname);
 
 %% Copy the data onto SDM
+%{
 pLink = 'https://sni-sdm.stanford.edu/api/acquisitions/558da2ba3113bb9e05daaf0f/file/1.3.12.2.1107.5.2.32.35381.2015012510504883990801657.0.0.0_nifti.nii.gz?user=';
 uName = 'wandell@stanford.edu';
 
 %
 sdmPut(pLink,uName,fname);
-
+%}
 %%  These commands create the data and put the method as a PDF into the SDM
 %
 %   pdfFile = publish('t_meshFibersOBJ.m','pdf');

@@ -1,30 +1,38 @@
-function [x,y] = ellipsePlot(theta, center, axesSize, radSpacing)
-% Make samples on an ellipse
+function [x,y] = ellipsePlot(center, axesSize, theta, radSpacing)
+% Plot an ellipse in a figure
 %
 % Syntax:
-%  [x,y] = ellipsePlot(theta, center, axesSize, radSpacing)
+%  [x,y] = ellipsePlot(center, axesSize, theta, radSpacing)
 %
 % Brief description:
-%   Plots an ellipse in the plane.  Not sure why theta is in radians
-%   and everything else in degrees.  Maybe I should change that
+%   Plots an ellipse in the plane.  Note: the theta is in radians and
+%   everything else in degrees.  Maybe I should change that
 %
 % Inputs:
 %
-%  theta:      Angle in radians, clockwise
-%  center:     Center in degrees
-%  axesSize:   Major and minor axes in degrees
-%  radSpacing: Spacing of point samples in radians
+%  center:     Center in degrees (default (0,0))
+%  axesSize:   Major and minor axes in degrees (default (1,1))
+%  theta:      Angle in radians, clockwise (default, 0)
+%  radSpacing: Spacing of point samples in radians (default 0.1)
 %
-% Example:
-%{
-    axesSize = [1,1.5]; center = [1,1]; theta = pi/3; radSpacing = 0.1;
-    [x,y] = ellipsePlot(theta,center, axesSize, radSpacing);
-%}
 % (c) Stanford VISTA  Team
+%
+% See also
+%   ellipsePoints
 
-if notDefined('theta'), theta = 0; end
-if notDefined('center'), center = [0,0]; end
-if notDefined('axesSize'), axesSize = [1,1]; end
+% Examples:
+%{
+  ellipsePlot();
+%}
+%{
+  center = [1,1]; axesSize = [1,1.5]; theta = pi/3; radSpacing = 0.1;
+  [x,y] = ellipsePlot(center, axesSize, theta, radSpacing);
+%}
+
+%% By default, a unit circle
+if notDefined('center'),     center = [0,0]; end
+if notDefined('theta'),      theta = 0; end
+if notDefined('axesSize'),   axesSize = [1,1]; end
 if notDefined('radSpacing'), radSpacing = 0.1; end
 
 % Points for a closed ellipse
