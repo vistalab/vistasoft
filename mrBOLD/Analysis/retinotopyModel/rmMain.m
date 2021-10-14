@@ -169,6 +169,9 @@ end
 %-----------------------------------
 % Final fit (only for certain models)
 %-----------------------------------
+% Note GLU 2021-10-14: if you ask for wSearch=1 or 'grid fit', this saves
+% an additionnal result, and some values are changed. For grid fit just
+% read the gFit.mat result. 
 view = rmFinalFit(view,params);
 
 % done
