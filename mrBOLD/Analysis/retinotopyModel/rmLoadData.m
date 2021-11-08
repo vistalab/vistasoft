@@ -114,6 +114,7 @@ for ds = 1:length(scans),
 	end;
 	% now put in data variables
 	data(dii.start(ds):dii.end(ds),:) = tSeries;
+    % data(dii.start(ds):144,:) = tSeries;
 end;
 
 return;

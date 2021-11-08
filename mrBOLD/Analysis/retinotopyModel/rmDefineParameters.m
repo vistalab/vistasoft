@@ -103,6 +103,8 @@ params.analysis.dc.hrfTime = 22; % sec
 params.analysis.betaRatioAlpha = 1;
 params.analysis.sigmaRatioFixedValue = [1 1 1];
 
+
+
 %--------------------------------------------------------------------------
 %--- user defined params
 %--------------------------------------------------------------------------
@@ -112,6 +114,10 @@ params = rmGetStimType(vw, params);
 
 % parse command line inputs:
 params = rmProcessVarargin(params,addArg);
+
+% GLU 2021-10-14: for css cases, add the option to use a fixed exponent
+% By default, if the fixcssexp is 0, and the css model is selected,
+% everything will be as it was
 
 %--------------------------------------------------------------------------
 %--- derived params
@@ -472,16 +478,26 @@ switch params.analysis.pRFmodel{1}
         
     case {'css' 'onegaussiannonlinear', 'onegaussianexponent'}
         % The number of exponents for nonlinear model (pred = (stim*prf)^exponent)
-        params.analysis.numberExponents = 4 ;
+        % GLU 2021-10-14: if we are here and the new variable fixcssexp~=0,
+        %                 then we want just one exponent set up to that value
         
         numberOfGridPoints          = length(keep);
+        
+        if params.analysis.fixcssexp==0
+            params.analysis.numberExponents = 4 ;
+            exponentValues              = (params.analysis.numberExponents:-1:1)/params.analysis.numberExponents;
+            params.analysis.exponent    = repmat(exponentValues, numberOfGridPoints, 1);
+            params.analysis.exponent    = params.analysis.exponent(:);
+        else
+            params.analysis.numberExponents = 1 ;  
+            params.analysis.exponent    = repmat(params.analysis.fixcssexp, numberOfGridPoints, 1);
+            params.analysis.exponent    = params.analysis.exponent(:);
+        end
+        
+        
 
         params.analysis.x0          = repmat(flipud(x(keep)),(params.analysis.numberExponents),1);
         params.analysis.y0          = repmat(flipud(y(keep)),(params.analysis.numberExponents),1);
-
-        exponentValues              = (params.analysis.numberExponents:-1:1)/params.analysis.numberExponents;
-        params.analysis.exponent    = repmat(exponentValues, numberOfGridPoints, 1);
-        params.analysis.exponent    = params.analysis.exponent(:);
 
         params.analysis.sigmaMajor  = repmat(flipud(z(keep)),(params.analysis.numberExponents),1);
         params.analysis.sigmaMajor  = params.analysis.sigmaMajor .* sqrt(params.analysis.exponent);
@@ -944,6 +960,9 @@ for n=1:2:numel(vararg),
 
         case {'refine','search fit refine parameter'}
             params.analysis.fmins.refine = data;
+            
+        case {'fixcssexp'}
+            params.analysis.fixcssexp = data;    
             
         otherwise,
             fprintf(1,'[%s]:IGNORING unknown parameter: %s\n',...
