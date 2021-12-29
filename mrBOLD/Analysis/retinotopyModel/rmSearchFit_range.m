@@ -85,19 +85,21 @@ elseif isfield(model,'s2')
     range.upper(4,:) = ones(size(range.upper(3,:))).*params.analysis.sigmaRatioInfVal;
 end
 
-if isfield(model, 'exp')
-    fieldnum=size(range.start, 1)+1;
-    range.start(fieldnum,:) = model.exp;
-    gridExps_unique=unique(params.analysis.exp);
-    gridExps=[min(gridExps_unique).*ones(expandRange,1); gridExps_unique; max(gridExps_unique).*ones(expandRange,1)];
-    gridExps=double(gridExps);
-    gridExps_matrix  = gridExps_unique(:)*ones(1,size(range.start,2));
-    startExps_matrix = ones(size(gridExps_matrix,1),1)*range.start(fieldnum,:);
-    [tmp, closestvalue] = sort(abs(gridExps_matrix-startExps_matrix));
-    closestvalue    = closestvalue(1,:)+expandRange;
-
-    range.upper(fieldnum,:) = gridExps(closestvalue+2);%expandRange);
-    range.lower(fieldnum,:) = gridExps(closestvalue-2);%expandRange);
+if isfield(model, 'exponent') && ~isempty(regexp(model.desc,'nonlinear','ONCE'))
+    % [ERK: Nov 16, 2021]: We start with exponents from grid fit or fixed 
+    % value. We restrict exponent range to be between 0-1, as we want it to 
+    % be a compressive nonlinear summation. (Values larger than one would
+    % cause an exponential increase of the pRF response). This change is 
+    % related to a bug fix on July 9 2019, (commit 976d397dcd4..) and
+    % reverses this section of code. 
+    range.start(4,:) = model.exponent;
+    range.lower(4,:) = range.lower(3,:)*0 + 0.01;
+    range.upper(4,:) = range.upper(3,:)*0 + 1;
+    
+    % [ERK]: Because sigma is affected by the exponent, we will give it
+    % room to change.
+    range.lower(3,:) = range.lower(3,:)*0;
+    range.upper(3,:) = range.upper(3,:)*0 + params.analysis.maxRF;
 end
 
 % reset stopping criteria relative to rawrss

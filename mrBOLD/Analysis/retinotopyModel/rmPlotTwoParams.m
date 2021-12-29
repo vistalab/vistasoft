@@ -157,15 +157,21 @@ for b=binvector(:)'
         ii2 = find(data.x==b);
         data.y(ii2) = s.mean;
         data.ysterr(ii2) = s.sterr;
-        data.y_bconf(ii2,:) = local_BootstrapBin(roi.(p2)(bii),roi.varexp(bii));
-        
+        if numel(roi.(p2)(bii))>1
+            data.y_bconf(ii2,:) = local_BootstrapBin(roi.(p2)(bii),roi.varexp(bii));
+        else
+            data.y_bconf(ii2,:) = repmat(roi.(p2)(bii),[1 3]);
+        end
     else
        fprintf(1,'[%s]:Warning:No data in %s %.1f to %.1f.\n',...
             mfilename,p1,b-binsize./2,b+binsize./2);
     end
 end
 if any(isnan(data.y_bconf))
-    data.y_bconf = [];
+    nanidx = any(isnan(data.y_bconf),2);
+    data.y_bconf(nanidx,:) = [];
+    data.x_bconf = data.x;
+    data.x_bconf(nanidx,:) = [];
 end
 
 
@@ -193,7 +199,7 @@ if plotFlag==1,
     if exist('bootstrp','file') 
         
         e = diff(data.y_bconf,[],2);
-        errorbar(data.x,data.y_bconf(:,2),e(:,1),e(:,2),'ko',...
+        errorbar(data.x_bconf,data.y_bconf(:,2),e(:,1),e(:,2),'ko',...
             'MarkerFaceColor','k',...
             'MarkerSize',MarkerSize);
         plot(data.xfit_bconf,data.yfit_bconf(:,2),'k','LineWidth',2);

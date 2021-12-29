@@ -186,6 +186,7 @@ end
 switch lower(params.analysis.pRFmodel{1})
     case {'onegaussiannonlinear' 'css' 'onegaussiannonlinearboxcar' 'cssboxcar'}
         params.analysis.nonlinear = true;
+        params.analysis.fixcssexp = 0;
 end
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
