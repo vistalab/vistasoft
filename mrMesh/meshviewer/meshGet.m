@@ -195,8 +195,10 @@ switch(lower(param))
 
     case {'lights'}
         % Lights structures are returned.
-        val = msh.lights;
-
+        if(isfield(msh,'lights')),  val = msh.lights;
+        else                        val = [];
+        end
+        
     case {'fibers'}
         % All fiber groups
         if(isfield(msh,'fibers')),   val = msh.fibers;
