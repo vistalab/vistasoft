@@ -32,7 +32,11 @@ mrmSet(msh,'origin lines',0);
 origin = meshGet(msh,'origin');
 if ~isempty(origin), mrmSet(msh,'actor origin',origin); end
 
-lights = meshGet(msh,'lights');
+if ~isfield(msh,'lights')
+    lights = [];
+else
+    lights = meshGet(msh,'lights');
+end
 if isempty(lights)
     disp('Adding two default lights.')
     msh = mrmSet(msh,'addlight',[.4 .4 .3],[0.5 0.5 0.6],[500,0,300]);
