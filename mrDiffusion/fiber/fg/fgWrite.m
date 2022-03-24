@@ -13,7 +13,8 @@ function fgWrite(fg,name,type)
 %             'pdb'    - quench file format [DEFAULT]
 %             'quench' - same as 'pdb'                      
 %             'mat'    - matlab file format
-%             'tck'    - MRTRIX file format (also 'mrtrix'/'.tck')
+%             'tck'    - MRTRIX3 file format (also 'mrtrix'/'.tck')
+%	      'tck2'   - MRTRIX version 0.2 file format
 %
 %          * If "name" ends in either .pdb or .mat the correct file type
 %            will be used.
@@ -69,6 +70,8 @@ switch type
     case 'mat'
         dtiWriteFiberGroup(fg, name);
     case {'tck', 'mrtrix', '.tck'}
+        dtiExportFibersMrtrix3(fg, name);
+    case {'tck2'}
         dtiExportFibersMrtrix(fg, name);
 end
 
