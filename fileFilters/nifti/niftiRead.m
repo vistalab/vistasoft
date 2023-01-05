@@ -35,7 +35,11 @@ function ni = niftiRead(fileName, volumesToLoad)
 if ~exist('fileName','var') || isempty(fileName)
     % Return the default structure.  Equivalent to niftiCreate
     % ni = niftiRead;
-    ni = readFileNifti;
+                if ispc
+                    ni = readFileNifti_pc(fileName);
+                else
+                    ni = readFileNifti(fileName);
+                end
 elseif ischar(fileName) && exist(fileName,'file')
     % fileName is a string and the file exists.
     % For some reason, the volumeToLoad is not yet implemented.
@@ -65,11 +69,21 @@ elseif ischar(fileName) && exist(fileName,'file')
                 ni = nii_tool_read_wrapper(fileName);
             else
                 % Old call to the mex file, for backward compatibility
-                ni = readFileNifti(fileName);
+                % Except the function uses native Matlab code,
+                % but seems to be shadowed by the .mex (at least on pc)
+                if ispc
+                    ni = readFileNifti_pc(fileName);
+                else
+                    ni = readFileNifti(fileName);
+                end
             end
         else
             % Old call to the mex file, for backward compatibility
-            ni = readFileNifti(fileName);
+                if ispc
+                    ni = readFileNifti_pc(fileName);
+                else
+                    ni = readFileNifti(fileName);
+                end
         end
         
     end
@@ -95,11 +109,19 @@ else
                 ni = nii_tool_read_wrapper(fileName);
             else
                 % Old call to the mex file, for backward compatibility
-                ni = readFileNifti(fileName);
+                if ispc
+                    ni = readFileNifti_pc(fileName);
+                else
+                    ni = readFileNifti(fileName);
+                end
             end
         else
             % Old call to the mex file, for backward compatibility
-            ni = readFileNifti(fileName);
+                if ispc
+                    ni = readFileNifti_pc(fileName);
+                else
+                    ni = readFileNifti(fileName);
+                end
         end
     else
         error('Cannot find the file %s\n',fileNameExtended);
