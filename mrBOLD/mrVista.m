@@ -59,7 +59,7 @@ if verLessThan('matlab', earliestSupportedMatlabversion)
     warning('Matlab version %s is less than the earliest supported Matlab version in vistasoft, %s.', version, earliestSupportedMatlabversion);
 end
 if ~verLessThan('matlab', notYetSupportedMatlabversion)
-    warning('Matlab version %s is not yet supported in vistasoft.', version);
+    warning('Matlab version %s is still being tested with vistasoft.', version);
 end
 
 %% set global variables/properties
