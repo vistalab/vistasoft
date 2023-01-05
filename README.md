@@ -39,7 +39,7 @@ Vistasoft depends on the following packages:
  - [RemoteDataToolbox](https://github.com/isetbio/RemoteDataToolbox)
 
 ### Documentation
-For detailed documentation, please visit the [VISTA lab wiki](http://vistalab.stanford.edu/wiki).
+For detailed documentation, please visit the [VISTA lab wiki](http://web.stanford.edu/group/vista/cgi-bin/wiki/index.php/Software).
 
 ### Installation
 
@@ -61,5 +61,5 @@ To install Vistasoft:
 
    Note that if you have installed additional Matlab packages (such as the RemoteDataToolbox), you will have to ensure that these packages are on your path as well.
 
-For help with the new mrInit intialization method, please see the [Initialization Page](http://white.stanford.edu/newlm/index.php/Initialization#mrInit).
+For help with the new mrInit intialization method, please see the [Initialization Page](http://web.stanford.edu/group/vista/cgi-bin/wiki/index.php/Software).
 
