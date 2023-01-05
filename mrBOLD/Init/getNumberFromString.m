@@ -10,7 +10,7 @@ function number = getNumberFromString(string, loc, delimiter)
 % ARW 111802: Changed name to avoid conflict with PsychToolbox function.
 %
 % Ress 9/01% $Author: wade $
-% $Date: 2002/11/19 01:20:17 $
+% $Date: 2002/11/19 01:20:17 $
 
 if ~exist('delimiter', 'var'), delimiter = ' '; end
 if ~exist('loc', 'var'), loc = 1; end

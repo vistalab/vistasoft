@@ -82,6 +82,6 @@ dataVolume=flipdim(dataVolume,1);
     V.descrip=['Converted from tSeries file in session',mrSESSION.sessionCode,' : ',mrSESSION.subject,':  on ',datestr(now)];
     
     s=spm_write_vol(V,double(dataVolume));
-return;
+return;
 
 
