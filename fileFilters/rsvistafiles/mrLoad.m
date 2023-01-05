@@ -68,7 +68,7 @@ end
 % allow directories containing I-files (change?):
 if exist(pth,'dir')
 	dicomCheck = dir(fullfile(pth, '*.dcm'));
-	if ~isempty(dicomCheck);
+	if ~isempty(dicomCheck)
         disp('Directory Entered. Assuming DICOM or I files')
 		format = 'dicomdir';
 	else
@@ -95,7 +95,7 @@ if isempty(format), format = mrParseFormat(pth);    end
 
 % special: if the path is a file pattern (e.g. 'V*.img'), recursively
 % load each file along the [dim] dimension.
-if strfind(f, '*')
+if contains(f, '*')
 	fileList = dir(pth);
 	if isempty(fileList)
 		error('No files found matching pattern %s.', pth )
@@ -119,7 +119,7 @@ if strfind(f, '*')
 end
 
 % check if file exists
-if ~exist(pth, 'file'), 
+if ~exist(pth, 'file') 
     % check if it's a matlab file
     if exist([pth '.nii.gz'], 'file')
         pth = [pth '.nii.gz'];
@@ -138,12 +138,12 @@ mr.format = format;
 
 % read in data based on format
 switch format
-    case 'mat',
+    case 'mat'
         % should already be loaded, but if not, load it
         if isempty(mr.data), mr = load(pth); end
         mr.path = pth;
         
- case 'nifti', 
+ case 'nifti' 
         mr = mrReadNifti(pth);
         
         % check if there's a matlab file w/ the 
@@ -160,10 +160,10 @@ switch format
             end
         end
         
-    case 'analyze',     
+    case 'analyze'     
 		mr = mrLoadAnalyze(pth);
         
-    case {'vfiles' 'spm' 'pattern'},
+    case {'vfiles' 'spm' 'pattern'}
 		% get the file pattern, and the dimension along which
 		% to concatenate:
 		switch length(varargin)
@@ -190,31 +190,31 @@ switch format
 		% read a single DICOM format file
 		mr = mrReadDicom(pth);  % see this file for more options
 		
-    case {'dicomdir' 'alldicomfiles'},
+    case {'dicomdir' 'alldicomfiles'}
 		% read all DICOM files in a directory (same convention as 'ifiles')
         mr = mrReadDicomDir( pth );
         
-    case {'ifile' 'ifiles'},
+    case {'ifile' 'ifiles'}
 		% read all GE I-files in a directory (older format)
         mr = mrReadIfileDir(pth);   
         
-    case 'pmag',
+    case 'pmag'
         mr = mrReadMag(pth); 
         
-    case 'vanat',                       
+    case 'vanat'                       
         mr = mrReadVAnat(pth);
         
-    case '1.0tSeries',
+    case '1.0tSeries'
         mr = mrReadOldTSeries(mr.path);
 		
-    case '1.0anat',
+    case '1.0anat'
         mr = mrReadOldInplaneAnat(mr.path);
 		
-    case '1.0map',
+    case '1.0map'
         mr = mrReadOldParamMap(mr.path);        
 		
-    case '1.0corAnal',
-        [co amp ph] = mrReadOldCorAnal(mr.path);
+    case '1.0corAnal'
+        [co, amp, ph] = mrReadOldCorAnal(mr.path);
         mr = [co amp ph];        
         return
 		
@@ -226,14 +226,14 @@ switch format
 			mr = mrReadClass(pth);
 		end
 		
-    case 'vmr',
+    case 'vmr'
         mr = mrReadVmr(mr.path);
         
-    case 'bfloat',
+    case 'bfloat'
         mr.data = loopOverMRFiles(p,'*.bshort','readBfloat');
         mr.spaces = mrStandardSpaces(mr);
         
-    case 'bshort',
+    case 'bshort'
         mr.data = loopOverMRFiles(p,'*.bshort','readBshort');
         mr.spaces = mrStandardSpaces(mr);
         
