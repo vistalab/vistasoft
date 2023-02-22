@@ -45,6 +45,10 @@ function [vw, s] = mrVista(windowType, varargin)
 % own, older edit); since this might be useful to people, I re-enabled it,
 % but only for volume/gray views (where you need to load the volume anat).
 % (5) updated comments.
+
+% Docs are kind of strewn all over, but at least this link will resolve
+mrVistaHelpURL = 'https://github.com/vistalab/vistasoft/wiki';
+
 if notDefined('windowType'), windowType = 'inplane'; end
 
 % Define global variables and structures.
@@ -59,7 +63,7 @@ if verLessThan('matlab', earliestSupportedMatlabversion)
     warning('Matlab version %s is less than the earliest supported Matlab version in vistasoft, %s.', version, earliestSupportedMatlabversion);
 end
 if ~verLessThan('matlab', notYetSupportedMatlabversion)
-    warning('Matlab version %s is not yet supported in vistasoft.', version);
+    warning('Matlab version %s is still being tested with vistasoft.', version);
 end
 
 %% set global variables/properties
@@ -97,9 +101,9 @@ switch lower(windowType)
 		[vw, s] = open3ViewWindow('volume');
     case {'help'}
         try
-            web http://white.stanford.edu/newlm/index.php/MrVista -browser
+            web(mrVistaHelpURL,'-browser');
         catch  %#ok<CTCH>
-            web http://white.stanford.edu/newlm/index.php/MrVista
+            web(mrVistaHelpURL);
         end
    otherwise
        error('Unknown window type.');

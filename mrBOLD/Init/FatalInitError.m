@@ -7,8 +7,8 @@ function FatalInitError(str)
 % queries user, then blasts the entire thing, deleting mrSESSION and any% tSeries files
 % have been extracted.
 %
-% djh, 9/26/2001
-global HOMEDIR
+% djh, 9/26/2001
+global HOMEDIR
 deleteFlag = questdlg([str,' Start from scratch?'],...
     'Fatal mrInitRet error','Yes','No','Yes');
 

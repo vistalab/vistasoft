@@ -75,7 +75,7 @@ function fs_ribbon2itk(subjID, outfile, fillWithCSF, alignTo, resample_type, in_
 %% Check Inputs
 if ~exist('subjID', 'var')
     warning('Subject ID is required input'); %#ok<WNTAG>
-    eval('help fs_ribbon2itk');
+    help 'fs_ribbon2itk';
     return
 end
 
@@ -90,14 +90,14 @@ if exist(subjID, 'file') && ~exist(subjID, 'dir')
     ribbon = subjID;
 else
     subdir   = getenv('SUBJECTS_DIR');
-    if isempty(subdir),
+    if isempty(subdir)
         fshome = getenv('FREESURFER_HOME');
         subdir = fullfile(fshome, 'subjects');
     end
     ribbon = fullfile(subdir, subjID, 'mri', 'ribbon.mgz');
 end
 
-if ~exist(ribbon, 'file'),
+if ~exist(ribbon, 'file')
     [fname, pth] = uigetfile(...
         {'ribbon*.mgz', 'Ribbon files'; '*.mgz', '.mgz files'},...
         'Cannot locate ribbon file. Please find it yourself.', pwd);
@@ -106,7 +106,7 @@ end
 
 if ~exist(ribbon, 'file'), error('Cannot locate ribbon.mgz file'); end
 
-if notDefined('outfile'), 
+if notDefined('outfile')
     pth     = fileparts(ribbon);
     outfile = fullfile(pth, 't1_class.nii.gz'); 
 end
@@ -114,7 +114,7 @@ end
 %% Convert MGZ to NIFTI
 if exist('alignTo', 'var')
     [~, ~, ext] = fileparts(alignTo);
-    if strcmpi(ext, '.mgz'),        
+    if strcmpi(ext, '.mgz')       
         if ~exist(alignTo, 'file') && exist(fullfile(subdir, subjID, 'mri', alignTo), 'file')
             alignTo = fullfile(subdir, subjID, 'mri', alignTo);            
         end
@@ -125,9 +125,9 @@ if exist('alignTo', 'var')
     end
 end
 
-if exist('alignTo', 'var') && exist('in_orientation','var'),
+if exist('alignTo', 'var') && exist('in_orientation','var')
     str = sprintf('mri_convert  --in_orientation %s --reslice_like %s -rt %s %s %s', in_orientation, alignTo, resample_type, ribbon, outfile);
-elseif exist('alignTo', 'var'),
+elseif exist('alignTo', 'var')
     str = sprintf('mri_convert  --reslice_like %s -rt %s %s %s', alignTo, resample_type, ribbon, outfile);
 else
     str = sprintf('mri_convert  -rt %s %s %s', resample_type, ribbon, outfile);
@@ -169,13 +169,13 @@ outvals = [5 3  4  6];
 labels  = {'L Gray', 'L White', 'R White', 'R Gray'};
 
 fprintf('\n\n****************\nConverting voxels....\n\n');
-for ii = 1:4;
+for ii = 1:4
     inds = ni.data == invals(ii);
     ni.data(inds) = outvals(ii);
     fprintf('Number of %s voxels \t= %d\n', labels{ii}, sum(inds(:)));
 end
 
-if fillWithCSF, 
+if fillWithCSF
     ni.data(ni.data == 0) = 1;
 end
 

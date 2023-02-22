@@ -8,7 +8,7 @@ function cleanAllFlats()
 %   flatSubdir/dataType/*.mat (all other parameter maps)
 % for all flatSubdirs
 %
-% djh, 2/2001
+% djh, 2/2001
 global HOMEDIR
 
 [nDirs,dirList] = countDirs(fullfile(HOMEDIR,'Flat*'));
