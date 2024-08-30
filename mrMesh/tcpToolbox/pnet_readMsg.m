@@ -21,19 +21,20 @@ function msg = pnet_readMsg(con)
 msg = [];
 
 % Don't wait forever before aborting:
-if ispc, pnet(con,'setreadtimeout',4);
-else     pnet(con,'setreadtimeout',2);
+if ispc, pnet(con,'setreadtimeout',80); % was 4
+else     pnet(con,'setreadtimeout',40); % was 2
 end
 
 % The header and trailer are each 8 bytes long
 hdr = pnet(con,'read',8,'char');
 if(length(hdr)~=8)
   warning('could not read msg header.  Header length %d\n',length(hdr));
-  return;
+  %return;
+else
+    sig = uint8(hdr(1:4));
+    numMsgBytes = typecast(uint8(hdr(5:8)),'uint32');
+    msg = pnet(con,'read',numMsgBytes,'uint8');
 end
-sig = uint8(hdr(1:4));
-numMsgBytes = typecast(uint8(hdr(5:8)),'uint32');
-msg = pnet(con,'read',numMsgBytes,'uint8');
 %if(length(msg)~=numMsgBytes)
 %  warning('PNET:incompleteData', 'could not read entire msg- data is likely corrupt!');
 %  return;

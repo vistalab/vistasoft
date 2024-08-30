@@ -227,8 +227,8 @@
 %
 %   GOOD LUCK and HAVE FUN!  :-)
 %
-%       Peter Rydesäter, 
-%       Mitthögskolan(Mid Sweden University) campus Östersund, SWEDEN
+%       Peter Rydesaeter, 
+%       Mitthoegskolan(Mid Sweden University) campus Oestersund, SWEDEN
 %
 
 error('You need to compile pnet.c to a mex-file for your platform. Read the header of pnet.c');

@@ -2,7 +2,7 @@ function varargout=pnet_remote(varargin)
 % PNET_REMOTE   - Evaluation of matlab expression in remote host PNET
 %
 %     Version: First includes in the tcp/udp/ip toolbox 2002-02-13
-%              (C) 2002 Peter Rydesäter, GNU Public License 
+%              (C) 2002 Peter Rydesaeter, GNU Public License 
 %
 %     This function uses PNET for nonblocking remote controll of other matlab 
 %     session on this or other hosts. This function implements different client
@@ -113,7 +113,7 @@ function varargout=pnet_remote(varargin)
 %
  
 
-%   This file(s) is part of the tcp_udp_ip toolbox (C) Peter Rydesäter et al.  
+%   This file(s) is part of the tcp_udp_ip toolbox (C) Peter Rydesaeter et al.  
 %   et al.  1998-2003 for running in MATLAB(R) as scripts and/or plug-ins.
 %
 %   This program is free software; you can redistribute it and/or modify
@@ -130,7 +130,7 @@ function varargout=pnet_remote(varargin)
 %   along with this program; if not, write to the Free Software
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 %
-%   In addition, as a SPECIAL EXCEPTION, Peter Rydesäter, SWEDEN,
+%   In addition, as a SPECIAL EXCEPTION, Peter Rydesaeter, SWEDEN,
 %   gives permission to link the code of this program with any library,
 %   and distribute linked combinations of it. You must obey the GNU
 %   General Public License in all respects for all of the code in the

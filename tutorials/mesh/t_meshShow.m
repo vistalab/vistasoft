@@ -9,6 +9,8 @@
 %
 % (c) VISTASOFT, Stanford
 
+% Hack to set Data path
+mrvDataRootPath = fullfile(vistaRootPath, 'local');
 %% Load an existing mesh and show it
 tmp = load(fullfile(mrvDataRootPath,'anatomy','anatomyNIFTI','leftMesh.mat'));
 msh = tmp.msh; clear tmp
