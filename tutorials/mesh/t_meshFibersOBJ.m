@@ -3,6 +3,8 @@
 %  Shows how to create OBJ fiber files from AFQ fibers.
 %
 % BW/LMP
+%
+% First couple of sections work.  Then not so much (Aug 2024).s
 
 %% Download a small set of fibers in a pdb file
 
@@ -12,7 +14,14 @@ remoteF = fullfile(remote,remoteF);
 tmp = [tempname,'.pdb'];
 [fgFile, status] = urlwrite(remoteF,tmp);
 
-% Read the fiber groups
+%% Read the fiber groups
+% {
+fgFile = fullfile(mrvDataRootPath,'diffusion','sampleData','fibers','leftArcuateSmall.pdb');
+if ~exist(fgFile,'file')
+    error('Some problem with vistadata');
+end
+%}
+
 fg = fgRead(fgFile);
 
 % Render the Tract FA Profile for the left uncinate
