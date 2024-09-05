@@ -21,9 +21,7 @@ function msg = pnet_readMsg(con)
 msg = [];
 
 % Don't wait forever before aborting:
-if ispc, pnet(con,'setreadtimeout',4);
-else     pnet(con,'setreadtimeout',2);
-end
+pnet(con,'setreadtimeout',4);
 
 % The header and trailer are each 8 bytes long
 hdr = pnet(con,'read',8,'char');
