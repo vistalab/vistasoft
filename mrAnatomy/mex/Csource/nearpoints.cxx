@@ -55,10 +55,10 @@ protected:
     KdNode<T>      *children;      // Child nodes, if expanded non-leaf node
 };
 
-template<class T>
+template<class T, class D>
 class KdTree : public KdNode<T> {
 public:
-    KdTree(double destPoints[][3], int numDestPoints);
+    KdTree(D destPoints[][3], int numDestPoints);
     ~KdTree();
     void getNearestPoint(const T target[3], int *bestIndex, T *bestSqDistance);
 private:
@@ -224,8 +224,8 @@ void KdNode<T>::expand()
  * KdTree constructor: Allocate the KdPoints that will be used in this
  * tree, and initialize the root node.
  */
-template <class T>
-KdTree<T>::KdTree(double destPoints[][3], int numDestPoints)
+template <class T, class D>
+KdTree<T, D>::KdTree(D destPoints[][3], int numDestPoints)
 {
     // Allocate the points as an array, and convert the array into a
     // linked list.
@@ -245,8 +245,8 @@ KdTree<T>::KdTree(double destPoints[][3], int numDestPoints)
     this->init(pointArray);
 }
 
-template <class T>
-KdTree<T>::~KdTree()
+template <class T, class D>
+KdTree<T, D>::~KdTree()
 {
     delete[] pointArray;
 }
@@ -256,8 +256,8 @@ KdTree<T>::~KdTree()
  * KdNode::getNearestPoint() that initializes *bestIndex and
  * *bestSqDistance to legal values before.
  */
-template <class T>
-void KdTree<T>::getNearestPoint(const T target[3], int *bestIndex, T *bestSqDistance)
+template <class T, class D>
+void KdTree<T, D>::getNearestPoint(const T target[3], int *bestIndex, T *bestSqDistance)
 {
     T deltaX = target[0] - pointArray[0].point[0];
     T deltaY = target[1] - pointArray[0].point[1];
@@ -279,28 +279,33 @@ extern "C" void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *
         mexErrMsgTxt("One or two outputs required.");  
     if (mxIsComplex(prhs[0]) || mxGetNumberOfDimensions(prhs[0]) != 2) 
         mexErrMsgTxt("First arg must be a real 3xM array.");
-    if (!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) || mxGetNumberOfDimensions(prhs[1]) != 2) 
+    if (mxIsComplex(prhs[1]) || mxGetNumberOfDimensions(prhs[1]) != 2) 
         mexErrMsgTxt("Second arg must be a real 3xN array (in double).");
 
     /* Input matrices */
     const mwSize *srcDims = mxGetDimensions(prhs[0]);
     const mwSize *destDims = mxGetDimensions(prhs[1]);
 
-    double (*srcPtr)[3];
-    float (*srcPtr32)[3];
-    double (*destPtr)[3];
+    double (*srcPtr)[3] = NULL;
+    float (*srcPtr32)[3] = NULL;
+    double (*destPtr)[3] = NULL;
+    float (*destPtr32)[3] = NULL;
 
-    bool isdouble = false; 
     if(mxIsDouble(prhs[0])) {
-        isdouble = true;
         srcPtr = (double (*)[3])mxGetPr(prhs[0]);
-        //mexPrintf("nearpoints: using 64bits version\n");
+        //mexPrintf("nearpoints: using 64bits src coordinate");
     } else {
         srcPtr32 = (float (*)[3])mxGetPr(prhs[0]);
-        //mexPrintf("nearpoints: using 32bits version\n");
+        //mexPrintf("nearpoints: using 32bits src coordinate");
     }
 
-    destPtr = (double (*)[3])mxGetPr(prhs[1]);
+    if(mxIsDouble(prhs[1])) {
+        destPtr = (double (*)[3])mxGetPr(prhs[1]);
+        //mexPrintf("nearpoints: using 64bits dest coordinate");
+    } else {
+        destPtr32 = (float (*)[3])mxGetPr(prhs[1]);
+        //mexPrintf("nearpoints: using 32bits dest coordinate");
+    }
 
     /* Output vector */
     int *indices;
@@ -323,12 +328,19 @@ extern "C" void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *
     /* Create the first output */
     indices = (int *)mxMalloc(srcDims[1] * sizeof(int));
 
-    if(isdouble) {
+    if(srcPtr) {
         sqDist = (double *)mxMalloc(srcDims[1] * sizeof(double));
-        mexPrintf("64: destPtr: %x, destDims[0]:%d destDims[1]:%d", destPtr, destDims[0], destDims[1]);
-        KdTree<double> kdTree(destPtr, destDims[1]);
-        for (ii = 0; ii < srcDims[1]; ii++) {
-            kdTree.getNearestPoint(srcPtr[ii], &indices[ii], &sqDist[ii]);	
+        //mexPrintf("64: destPtr: %x, destDims[0]:%d destDims[1]:%d", destPtr, destDims[0], destDims[1]);
+        if(destPtr) {
+            KdTree<double, double> kdTree(destPtr, destDims[1]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                kdTree.getNearestPoint(srcPtr[ii], &indices[ii], &sqDist[ii]);	
+            }
+        } else {
+            KdTree<double, float> kdTree(destPtr32, destDims[1]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                kdTree.getNearestPoint(srcPtr[ii], &indices[ii], &sqDist[ii]);	
+            }
         }
         plhs[0] = mxCreateNumericMatrix(1, srcDims[1], mxDOUBLE_CLASS, mxREAL);
         tmpPtr = (double*)mxGetData(plhs[0]);
@@ -337,9 +349,16 @@ extern "C" void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *
         }
     } else {
         sqDist32 = (float *)mxMalloc(srcDims[1] * sizeof(float));
-        KdTree<float> kdTree(destPtr, destDims[1]);
-        for (ii = 0; ii < srcDims[1]; ii++) {
-            kdTree.getNearestPoint(srcPtr32[ii], &indices[ii], &sqDist32[ii]);	
+        if(destPtr) {
+            KdTree<float, double> kdTree(destPtr, destDims[1]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                kdTree.getNearestPoint(srcPtr32[ii], &indices[ii], &sqDist32[ii]);	
+            }
+        } else {
+            KdTree<float, float> kdTree(destPtr32, destDims[1]);
+            for (ii = 0; ii < srcDims[1]; ii++) {
+                kdTree.getNearestPoint(srcPtr32[ii], &indices[ii], &sqDist32[ii]);	
+            }
         }
         plhs[0] = mxCreateNumericMatrix(1, srcDims[1], mxSINGLE_CLASS, mxREAL);
         tmpPtr32 = (float*)mxGetData(plhs[0]);
@@ -350,13 +369,14 @@ extern "C" void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *
 
     /* Create the second output */
     if (nlhs > 1) {
-        plhs[1] = mxCreateNumericMatrix(1, srcDims[1], isdouble?mxDOUBLE_CLASS:mxSINGLE_CLASS, mxREAL);
-        if(isdouble) {
+        if(srcPtr) {
+            plhs[1] = mxCreateNumericMatrix(1, srcDims[1], mxDOUBLE_CLASS, mxREAL);
             tmpPtr = (double *)mxGetPr(plhs[1]);
             for (ii = 0; ii < srcDims[1]; ii++) {
                 tmpPtr[ii] = sqDist[ii];
             }	
         } else {
+            plhs[1] = mxCreateNumericMatrix(1, srcDims[1], mxSINGLE_CLASS, mxREAL);
             tmpPtr32 = (float *)mxGetPr(plhs[1]);
             for (ii = 0; ii < srcDims[1]; ii++) {
                 tmpPtr32[ii] = sqDist32[ii];
@@ -365,6 +385,6 @@ extern "C" void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *
     }
 
     mxFree(indices);
-    if(isdouble) mxFree(sqDist);
+    if(srcPtr) mxFree(sqDist);
     else mxFree(sqDist32);
 }

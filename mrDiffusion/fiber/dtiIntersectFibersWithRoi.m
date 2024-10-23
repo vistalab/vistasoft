@@ -128,39 +128,50 @@ for ii=1:nOutFGs
     end
 end
 
-% The following concatenates all fiber coords into one big array so that we
-% can avoid expensive loops when computing the intersection.
-if(endptFlag)
-    %use the same datatype used to store fg.fibers (if empty.. it doesn't really matter)
-    type='single';
-    if(~isempty(fg.fibers)) 
-        type = class(fg.fibers{1});
-    end
-    fc = zeros(length(fg.fibers)*2, 3, type);
+%create keepAll in batch mode
+batch_size = 100000;
+bestSqDist = cell(length(roiCoords),1); 
+empty=true;
+for start=1:batch_size:length(fg.fibers)
+    disp(["dtiIntersectFibersWithRoi batch", start, start+batch_size-1])
+    batch = fg.fibers(start:min(start+batch_size-1, length(fg.fibers)));
+    if(endptFlag)
+        %use the same datatype used to store fg.fibers (if empty.. it doesn't really matter)
+        type='single';
+        if(~isempty(batch)) 
+            type = class(batch{1});
+        end
+        fc = zeros(length(batch)*2, 3, type);
 
-    for(ii=1:length(fg.fibers))
-        fc((ii-1)*2+1,:) = [fg.fibers{ii}(:,1)'];
-        fc((ii-1)*2+2,:) = [fg.fibers{ii}(:,end)'];
+        for(ii=1:length(batch))
+            fc((ii-1)*2+1,:) = [batch{ii}(:,1)'];
+            fc((ii-1)*2+2,:) = [batch{ii}(:,end)'];
+        end
+    else
+        fc = horzcat(batch{:})';
     end
-else
-    % This temporarily double the memory usage.. which often pushes it off
-    % the limit..
-    fc = horzcat(fg.fibers{:})';
+
+   if(~isempty(fc))
+        empty=false;
+        for (ii=1:length(roiCoords))
+            [~, dists] = nearpoints(fc', roiCoords{ii}');
+            bestSqDist{ii} = cat(2, bestSqDist{ii}, dists);
+        end
+    end
 end
 
-if(~isempty(fc))
-    bestSqDist = cell(length(roiCoords),1);
-    keepAll    = cell(length(roiCoords),1);
-    for (ii=1:length(roiCoords))
-        [~, bestSqDist{ii}] = nearpoints(fc', roiCoords{ii}');
-        keepAll{ii}         = bestSqDist{ii}<=minDist^2;
-    end
-else
+if(empty)
     keep = [];
     return;
+else
+    keepAll = cell(length(roiCoords),1);
+    for (ii=1:length(roiCoords))
+        keepAll{ii}         = bestSqDist{ii}<=minDist^2;
+    end    
 end
 
 clear fc;
+
 % All fibers in this group have had the intersection computed 
 % efficiently in one big array. But now 
 % we need to recover the information about which coord belongs to which 
