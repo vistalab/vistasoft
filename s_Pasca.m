@@ -1,95 +1,130 @@
-%{
-MR acquisition parameters:
-fMRI: T2star FID EPI
-      TR/TE = 1000/11.5 ms, 600 repetitions, BW=300 KHz, FOV=18x x13 mm2, matrix 90 x 65 (200 um in-plane resolution), Slice thk=0.5mm, 28 interleaved slices. 
-      2nd order map shim B0 map. 3 FOV Sat bands
+%% s_Pasca - Seed-based correlation analysis of organoid fMRI data
+%
+% This script analyzes fMRI BOLD data from Pasca lab organoid experiments.
+% It computes seed-based correlation maps: selecting a voxel and finding
+% how correlated its time series is with every other voxel.
+%
+% Data types:
+%   - High-res T2w anatomy (100 x 100 x 300 um) - for visualization
+%   - Low-res T2w anatomy  (200 x 200 x 500 um) - matches BOLD resolution
+%   - BOLD fMRI (200 um in-plane, TR=1000ms, 600 timepoints)
+%
+% MR acquisition parameters:
+%   fMRI: T2star FID EPI, TR/TE = 1000/11.5 ms, 600 repetitions
+%         BW=300 KHz, FOV=18x13 mm2, matrix 90x65 (200 um in-plane)
+%         Slice thickness=0.5mm, 28 interleaved slices
+%   DTI:  B=1000 s/mm2, 40 dirs, TR/TE = 3500/21 ms
+%         FOV=18x15 mm2, matrix 120x100 (150 um in-plane)
 
-There is also a resolution matching T2w (200 x 200 x 500 um3) and 
-              a high resolution T2w (100 x 100 x 300 um3) 
-for template co-registration.
+%% Parameters
 
-Re: Gari
-DTI: B=1000 s/mm2, 40 dirs, small delta = 4.5 ms, large delta = 10.3 ms, 5 A0 images, same 2nd order shim as fMRI.
-     TR/TE = 3500/21 ms,  BW250 KHz, FOV=18x x15 mm2, matrix 120 x 100 (150 x 150 in-plane resolution). 4 segment EPI
-
-%}
-
-% From the office
-%{
+% Data directory (adjust path as needed for your system)
 pascaData = '/Users/wandell/Library/CloudStorage/GoogleDrive-wandell@stanford.edu/My Drive/Data/MRI_Pasca/flywheel/pasca/Kaganovsky-Pasca/Apallial_20_R1F/Pasca_Apallial_20_R1F_9-9-24 - 240909094232';
-%}
-% From home
-%{
-pascaData = '/Users/wandell/Library/CloudStorage/GoogleDrive-wandell@stanford.edu/My Drive/Data/MRI_Pasca/flywheel/pasca/Kaganovsky-Pasca/Apallial_20_R1F/Pasca_Apallial_20_R1F_9-9-24 - 240909094232';
-%}
 
-chdir(pascaData)
+% Analysis parameters (all in BOLD/low-res space)
+boldSlice = 7;         % Slice to analyze (in BOLD/low-res coordinates)
+seedRow   = 40;         % Seed voxel row (y) in BOLD/low-res space
+seedCol   = 15;         % Seed voxel column (x) in BOLD/low-res space
 
-% I think the low resc matches the bold (see above).
+%% Load anatomical data (high resolution - for reference)
 
-thisSlice = 10;
-% For an anatomical, look at this
-chdir(fullfile(pascaData,'5_T2w_highres'));
-fname = '1_5_T2w_HR_100x100x300_E4_multiframe_5_T2w_highres_20240909094232_40001.nii.gz';
-high_res_anat = niftiRead(fname);
-high_res_anat.fname = fname;
-niftiView(high_res_anat,'slice',thisSlice);
+highResFile = fullfile(pascaData, '5_T2w_highres', ...
+    '1_5_T2w_HR_100x100x300_E4_multiframe_5_T2w_highres_20240909094232_40001.nii.gz');
+highResAnat = niftiRead(highResFile);
+highResAnat.fname = highResFile;  % Workaround for niftiView bug
+% Note: niftiView slice here won't match boldSlice (different resolutions)
+% niftiView(highResAnat, 'slice', boldSlice);
 
-% Here is the BOLD data
-chdir(fullfile(pascaData,'T2star_FID_EPI_300KHz_200micron'));
-fname = '1_T2star_FID_EPI_300KHz_200micron_E2_multiframe_T2star_FID_EPI_300KHz_200micron_20240909094232_20001.nii.gz';
-boldData = niftiRead(fname);
-[rB,cB,sB,tB] = size(boldData.data);
+%% Load BOLD fMRI data
 
-% The low_res anatomical should match the bold
-chdir(fullfile(pascaData,'4_T2w_lowres'));
+boldFile = fullfile(pascaData, 'T2star_FID_EPI_300KHz_200micron', ...
+    '1_T2star_FID_EPI_300KHz_200micron_E2_multiframe_T2star_FID_EPI_300KHz_200micron_20240909094232_20001.nii.gz');
+boldData = niftiRead(boldFile);
+[nRows, nCols, nSlices, nTimepoints] = size(boldData.data);
 
-fname = '1_4_T2w_200x200x500_E5_multiframe_4_T2w_lowres_20240909094232_50001.nii.gz';
-low_res_anat = niftiRead(fname);
-low_res_anat.fname = fname;
-niftiView(low_res_anat,'slice',thisSlice);
-[rA,cA,sA] = size(low_res_anat.data);
+%% Load anatomical data (low resolution - matches BOLD)
 
-assert(isequal([rA,cA,sA],[rB,cB,sB]))
+lowResFile = fullfile(pascaData, '4_T2w_lowres', ...
+    '1_4_T2w_200x200x500_E5_multiframe_4_T2w_lowres_20240909094232_50001.nii.gz');
+lowResAnat = niftiRead(lowResFile);
+lowResAnat.fname = lowResFile;  % Workaround for niftiView bug
+% niftiView(lowResAnat, 'slice', boldSlice);
 
-%% row is y, column is x
-thisCol = 15; thisRow = 40; 
-M = squeeze(boldData.data(:,:,thisSlice,:));
-T = squeeze(M(thisRow,thisCol,:));
+% Verify that low-res anatomy matches BOLD spatial dimensions
+assert(isequal(size(lowResAnat.data), [nRows, nCols, nSlices]), ...
+    'Low-res anatomy dimensions do not match BOLD data');
 
-C = peakxcorr(T,M);
+%% Compute seed-based correlation map
+%
+% Extract time series from the seed voxel, then compute the peak
+% cross-correlation between this seed and every other voxel in the slice.
+% peakxcorr returns:
+%   C(:,:,1) - peak correlation coefficient [-1, 1]
+%   C(:,:,2) - lag at peak (positive = other voxel leads seed)
 
-mrvNewGraphWin(); tiledlayout(2,2);
-r_new = thisCol; 
-c_new = size(C,1) - thisRow + 1;
+% Extract the slice as (rows x cols x time)
+sliceData = squeeze(boldData.data(:,:,boldSlice,:));
 
+% Get seed voxel time series
+seedTimeSeries = squeeze(sliceData(seedRow, seedCol, :));
+
+% Compute correlation with all voxels
+corrMap = peakxcorr(seedTimeSeries, sliceData);
+
+%% Visualize results
+
+mrvNewGraphWin('Seed Correlation Analysis');
+tiledlayout(2, 2);
+
+% Map seed voxel from BOLD space to high-res anatomy space
+hrCoords = niftiMapCoords(boldData, [seedRow, seedCol, boldSlice], highResAnat);
+hrSlice = round(hrCoords(3));
+hrRow   = round(hrCoords(1));
+hrCol   = round(hrCoords(2));
+
+% Panel 1: High-res anatomical reference with mapped seed location
 nexttile;
-h1 = imagesc(low_res_anat.data(:,:,thisSlice)); axis image
-h1.CData = rot90(h1.CData, -1);
-ax1 = gca; 
-colormap(ax1,"gray"); axis tight
+imagesc(highResAnat.data(:,:,hrSlice)');
+axis image; colormap(gca, 'gray');
+hold on; plot(hrRow, hrCol, 'ro', 'MarkerSize', 10, 'LineWidth', 2);
+title(sprintf('High-res anatomy (slice %d) with seed', hrSlice));
+xlabel('Row'); ylabel('Column');
 
-nexttile; 
-h2 = imagesc(C(:,:,1)); axis image;
-ax2 = gca; colormap(ax2,"parula")
-hold on; 
-plot(c_new,r_new,'o'); colormap(ax2,"default");
-h2.CData = rot90(h2.CData, -1);
-colorbar; axis tight
+% % Panel 1 (original): Low-res anatomical reference
+% nexttile;
+% imagesc(lowResAnat.data(:,:,boldSlice)');
+% axis image; colormap(gca, 'gray');
+% hold on; plot(seedRow, seedCol, 'ro', 'MarkerSize', 10, 'LineWidth', 2);
+% title('Anatomy with seed location');
+% xlabel('Row'); ylabel('Column');
 
-nexttile; 
-h3 = imagesc(C(:,:,2)); axis image;
-ax3 = gca; colormap(ax3,"parula")
-hold on; plot(c_new,r_new,'o');
-h3.CData = rot90(h3.CData, -1);
+% Panel 2: Peak correlation map
+nexttile;
+imagesc(corrMap(:,:,1)');
+axis image; colormap(gca, 'parula');
+hold on; plot(seedRow, seedCol, 'ko', 'MarkerSize', 10, 'LineWidth', 2);
+colorbar; clim([-1 1]);
+title('Peak correlation');
+xlabel('Row'); ylabel('Column');
 
-colormap(ax2,'parula'); colorbar; axis tight
+% Panel 3: Lag map (time shift at peak correlation)
+nexttile;
+imagesc(corrMap(:,:,2)');
+axis image; colormap(gca, 'parula');
+hold on; plot(seedRow, seedCol, 'ko', 'MarkerSize', 10, 'LineWidth', 2);
+colorbar;
+title('Lag at peak (samples)');
+xlabel('Row'); ylabel('Column');
 
-nexttile
-c = C(:,:,1); c = c(:);
-histogram(c)
+% Panel 4: Histogram of correlation values
+nexttile;
+histogram(corrMap(:,:,1), 50);
+xlabel('Correlation'); ylabel('Count');
+title('Distribution of correlations');
+xline(0, 'k--');
 
 %% Make a mask
+%{
 
 lowA = low_res_anat.data;
 mrvNewGraphWin;
@@ -101,4 +136,4 @@ histogram(lowA(:));
 %% Clustering
 
 % k-means on the time series?
-
+%}
