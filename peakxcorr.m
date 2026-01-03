@@ -6,8 +6,11 @@ function C = peakxcorr(T, M)
 %       * Nt x nSeries  (each column is a series)
 %       * nRows x nCols x Nt  (grid of series along 3rd dim)
 %   - C has the same spatial layout as M but with an extra last dim of size 2:
-%       C(...,1) = max cross-correlation (normalized, in [-1,1])
-%       C(...,2) = lag (samples) at max (positive => M leads T)
+%       C(...,1) = correlation at peak |xcorr| (signed, in [-1,1])
+%       C(...,2) = lag (samples) at peak |xcorr| (positive => M leads T)
+%
+%   Note: Finds the lag where |xcorr| is maximum, then reports the signed
+%   correlation at that lag. This captures both positive and negative correlations.
 
 T = T(:);
 NtT = numel(T);
@@ -21,8 +24,8 @@ if ismatrix(M) && size(M,1) == NtT        % Nt x nSeries
         x = M(:,k);
         x = x(:) - mean(x);              % subtract mean for each series
         [r,lg] = xcorr(x, T, 'coeff');   % normalized to [-1,1]
-        [m,idx] = max(r);
-        peaks(k) = m;
+        [~,idx] = max(abs(r));           % find max absolute correlation
+        peaks(k) = r(idx);               % report signed correlation
         lags(k)  = lg(idx);
     end
     C = [peaks, lags];                  % nSeries x 2
@@ -36,8 +39,8 @@ elseif ndims(M) == 3 && size(M,3) == NtT  % nRows x nCols x Nt
             x = squeeze(M(i,j,:));
             x = x(:) - mean(x);          % subtract mean
             [r,lg] = xcorr(x, T, 'coeff');
-            [m,idx] = max(r);
-            peaks(i,j) = m;
+            [~,idx] = max(abs(r));       % find max absolute correlation
+            peaks(i,j) = r(idx);         % report signed correlation
             lags(i,j)  = lg(idx);
         end
     end

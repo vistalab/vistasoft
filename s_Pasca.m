@@ -22,7 +22,7 @@
 pascaData = '/Users/wandell/Library/CloudStorage/GoogleDrive-wandell@stanford.edu/My Drive/Data/MRI_Pasca/flywheel/pasca/Kaganovsky-Pasca/Apallial_20_R1F/Pasca_Apallial_20_R1F_9-9-24 - 240909094232';
 
 % Analysis parameters (all in BOLD/low-res space)
-boldSlice = 7;         % Slice to analyze (in BOLD/low-res coordinates)
+boldSlice = 6;         % Slice to analyze (in BOLD/low-res coordinates)
 seedRow   = 40;         % Seed voxel row (y) in BOLD/low-res space
 seedCol   = 15;         % Seed voxel column (x) in BOLD/low-res space
 
@@ -60,7 +60,8 @@ assert(isequal(size(lowResAnat.data), [nRows, nCols, nSlices]), ...
 % cross-correlation between this seed and every other voxel in the slice.
 % peakxcorr returns:
 %   C(:,:,1) - peak correlation coefficient [-1, 1]
-%   C(:,:,2) - lag at peak (positive = other voxel leads seed)
+%   C(:,:,2) - lag at peak in samples (positive = other voxel leads seed)
+%              With TR=1s, lag is in seconds
 
 % Extract the slice as (rows x cols x time)
 sliceData = squeeze(boldData.data(:,:,boldSlice,:));
@@ -122,6 +123,52 @@ histogram(corrMap(:,:,1), 50);
 xlabel('Correlation'); ylabel('Count');
 title('Distribution of correlations');
 xline(0, 'k--');
+
+%% Overlay correlation on low-res anatomy
+%
+% Overlay the correlation map on the aligned low-res anatomy,
+% showing only voxels with |correlation| > threshold.
+
+corrThreshold = 0.7;
+
+% Get the anatomy slice (same resolution as BOLD/correlation)
+anatSliceData = lowResAnat.data(:,:,boldSlice)';
+
+% Get correlation data
+corrData = corrMap(:,:,1)';
+
+% Create masked overlay (only show |corr| > threshold)
+corrMasked = corrData;
+corrMasked(abs(corrData) < corrThreshold) = NaN;
+
+% Display overlay using two axes
+mrvNewGraphWin('Correlation Overlay on Anatomy');
+clf;
+
+ax1 = axes;
+imagesc(ax1, anatSliceData);
+axis image; colormap(ax1, 'gray');
+hold on;
+
+ax2 = axes;
+h = imagesc(ax2, corrMasked);
+axis image;
+colormap(ax2, 'jet');  % Use jet for correlation overlay
+clim(ax2, [-1 1]);
+set(h, 'AlphaData', ~isnan(corrMasked));
+ax2.Visible = 'off';
+linkaxes([ax1, ax2]);
+
+% Add colorbar for correlation
+cb = colorbar(ax2, 'Position', [0.85 0.15 0.03 0.7]);
+cb.Label.String = 'Correlation';
+
+% Mark seed location (plot on ax2 so it's on top of overlay)
+hold(ax2, 'on');
+plot(ax2, seedRow, seedCol, 'wo', 'MarkerSize', 12, 'LineWidth', 2);
+
+title(ax1, sprintf('Correlations |r| > %.1f on anatomy (slice %d)', corrThreshold, boldSlice));
+xlabel(ax1, 'Row'); ylabel(ax1, 'Column');
 
 %% Make a mask
 %{
