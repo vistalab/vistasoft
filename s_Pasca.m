@@ -124,51 +124,79 @@ xlabel('Correlation'); ylabel('Count');
 title('Distribution of correlations');
 xline(0, 'k--');
 
-%% Overlay correlation on low-res anatomy
+%% Overlay correlation on low-res anatomy - multiple slices
 %
-% Overlay the correlation map on the aligned low-res anatomy,
-% showing only voxels with |correlation| > threshold.
+% Display correlation overlays for multiple slices using a SINGLE seed voxel
+% from boldSlice. Shows how the seed correlates with voxels across different slices.
 
-corrThreshold = 0.7;
+corrThreshold = 0.55;
+sliceRange = 4:9;
+nSlicesShow = numel(sliceRange);
 
-% Get the anatomy slice (same resolution as BOLD/correlation)
-anatSliceData = lowResAnat.data(:,:,boldSlice)';
+% Check if seed slice is in display range
+if ~ismember(boldSlice, sliceRange)
+    warning('Seed slice (%d) is not in display range (%d:%d). Seed marker will not be visible.', ...
+        boldSlice, sliceRange(1), sliceRange(end));
+end
 
-% Get correlation data
-corrData = corrMap(:,:,1)';
+% Get the SINGLE seed time series from the defined seed location
+seedSliceData = squeeze(boldData.data(:,:,boldSlice,:));
+seedTS = squeeze(seedSliceData(seedRow, seedCol, :));
 
-% Create masked overlay (only show |corr| > threshold)
-corrMasked = corrData;
-corrMasked(abs(corrData) < corrThreshold) = NaN;
+mrvNewGraphWin('Correlation Overlay - Multiple Slices');
+tiledlayout(2, ceil(nSlicesShow/2), 'TileSpacing', 'compact');
 
-% Display overlay using two axes
-mrvNewGraphWin('Correlation Overlay on Anatomy');
-clf;
+for ii = 1:nSlicesShow
+    sliceIdx = sliceRange(ii);
+    
+    % Extract slice data for this slice
+    sliceData = squeeze(boldData.data(:,:,sliceIdx,:));
+    
+    % Compute correlation between the SINGLE seed and all voxels in this slice
+    sliceCorrMap = peakxcorr(seedTS, sliceData);
+    
+    % Get the anatomy slice
+    anatSliceData = lowResAnat.data(:,:,sliceIdx)';
+    
+    % Get correlation data
+    corrData = sliceCorrMap(:,:,1)';
+    
+    % Create masked overlay (only show |corr| > threshold)
+    corrMasked = corrData;
+    corrMasked(abs(corrData) < corrThreshold) = NaN;
+    
+    % Create subplot with overlay
+    nexttile;
+    
+    % Show anatomy as grayscale background
+    imagesc(anatSliceData);
+    axis image; hold on;
+    colormap(gca, 'gray');
+    
+    % Overlay correlation as colored transparent layer
+    % Create RGB image for overlay
+    corrRGB = ind2rgb(round((corrMasked + 1) / 2 * 255) + 1, jet(256));
+    hOverlay = image(corrRGB);
+    set(hOverlay, 'AlphaData', ~isnan(corrMasked) * 0.7);
+    
+    % Mark seed location only on the slice where seed is defined
+    if sliceIdx == boldSlice
+        plot(seedRow, seedCol, 'wo', 'MarkerSize', 10, 'LineWidth', 2);
+    end
+    
+    title(sprintf('Slice %d', sliceIdx));
+    if ii == 1
+        xlabel('Row'); ylabel('Column');
+    end
+end
 
-ax1 = axes;
-imagesc(ax1, anatSliceData);
-axis image; colormap(ax1, 'gray');
-hold on;
-
-ax2 = axes;
-h = imagesc(ax2, corrMasked);
-axis image;
-colormap(ax2, 'jet');  % Use jet for correlation overlay
-clim(ax2, [-1 1]);
-set(h, 'AlphaData', ~isnan(corrMasked));
-ax2.Visible = 'off';
-linkaxes([ax1, ax2]);
-
-% Add colorbar for correlation
-cb = colorbar(ax2, 'Position', [0.85 0.15 0.03 0.7]);
+% Add a colorbar showing the jet colormap for correlations
+% Create a hidden axes with jet colormap for the colorbar
+axCB = axes('Position', [0.92 0.15 0.02 0.7], 'Visible', 'off');
+colormap(axCB, jet(256));
+clim(axCB, [-1 1]);
+cb = colorbar(axCB, 'Position', [0.92 0.15 0.02 0.7]);
 cb.Label.String = 'Correlation';
-
-% Mark seed location (plot on ax2 so it's on top of overlay)
-hold(ax2, 'on');
-plot(ax2, seedRow, seedCol, 'wo', 'MarkerSize', 12, 'LineWidth', 2);
-
-title(ax1, sprintf('Correlations |r| > %.1f on anatomy (slice %d)', corrThreshold, boldSlice));
-xlabel(ax1, 'Row'); ylabel(ax1, 'Column');
 
 %% Make a mask
 %{
