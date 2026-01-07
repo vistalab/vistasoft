@@ -66,6 +66,8 @@ which startup
 
 ## 4. Verify Connection
 
+When opening a MATLAB repository and getting started, it is not necessary for MATLAB to be running. When you select an m-file, the MATLAB Extension will start MATLAB and establish the connection. It will be shown in the VS Code pane in the lower left.
+
 1. Open any `.m` file in VS Code
 2. Watch the status bar at the bottom
 3. Should progress: "MATLAB: Starting..." → "MATLAB: Ready"
