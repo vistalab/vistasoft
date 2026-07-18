@@ -93,8 +93,10 @@ for i = 1:length(filename)
                 
                 % Check to see if ROI filename matches the ROI.name. If not, force
                 % ROI.name to be ROI.filename
-                [ROIpathname, ROIfilename] = fileparts(filename{i}); %#ok<ASGLU>
-                
+                [ROIpathname, filename, EXT] = fileparts(filename{i}); %#ok<ASGLU>
+                [~, ROIname, ROIext] = fileparts(ROI.name);
+                EXT = ROIext;
+                ROIfilename = [filename EXT];
                 if (~strcmp(ROI.name, ROIfilename))
                     fprintf(['\nWarning! ROI.name %s does not match the filename ' ...
                         '%s.\nI will make the two match by changing ROI.name ' ...
