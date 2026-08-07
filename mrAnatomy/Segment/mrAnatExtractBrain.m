@@ -71,6 +71,12 @@ else
     end
 end
 
+% JB on 19/08/2016: on some systems, calling a system command outputs some text when running .bashrc or .cshrc
+remain=bet; % so we remove any additional starting lines 
+while ~isempty(remain) %if there are more than 2 lines
+  [bet,remain]=strtok(remain,sprintf('\n')); % isolate first line
+end
+
 bet = strtrim(bet); % The name of the bet funciton on the system
 
 % Set temporary file names for the out file and bet script. These will be
@@ -100,7 +106,7 @@ for ii=1:numel(betLevel)
     betOut = tempname;
     betCmd = [bet ' ' out ' ' betOut ' -mnf ' num2str(betLevel(ii))];
     fid = fopen(betScript,'wt');
-    fprintf(fid,'#!/bin/bash\nexport FSLOUTPUTTYPE=NIFTI_GZ\n%s\n',betCmd);
+    fprintf(fid,'#!/bin/bash\nFSLOUTPUTTYPE=NIFTI_GZ\n%s\n',betCmd);  %JB on 19/08/2016: should not export FSLOUTPUTTYPE: it has to equal NIFTI_GZ inside the script
     fclose(fid);
     unix([bash ' ' betScript]);
     betOut = [betOut '_mask.nii.gz'];
