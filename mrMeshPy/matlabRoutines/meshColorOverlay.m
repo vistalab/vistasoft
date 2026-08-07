@@ -1,4 +1,4 @@
-function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors, dataOverlay] = meshColorOverlay(vw,showData,dataOverlayScale,dataThreshold)
+function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors] = meshColorOverlay(vw,showData,dataOverlayScale,dataThreshold)
 % Compute and possibly show color overlays in the mrMesh Window.
 %
 %  [vw, dataMask,dataMaskIndices,newColors] = ...
@@ -27,6 +27,9 @@ function [vw, dataMask, dataMaskIndices, newColors, msh, roiColors, dataOverlay]
 % 10/2005 SOD: put in switches to handle phase data
 % 2007.08.23 RFD: fixed bug that was causing the connection matrix to be
 % recomputed several times in here. Should be substantially faster now.
+%
+% 2017.09.20 ADG: added tracking of newly computed colors as an additional
+% attribute of the mesh structure for access without calling mrMesh
 %
 % 2010, Stanford VISTA
 
@@ -352,6 +355,13 @@ newColors(1:3,~dataMask) = oldColors(1:3,~dataMask);
 
 % Place the new colors in the rendering
 newColors = uint8(round(newColors));
+
+%%%% For mrMeshPy functionality, save the newly computed ("current") colors
+%%%% to the mesh structure - currently removing alpha channel support TODO
+% ADG YNiC 2017
+msh.currentColors = newColors;
+msh.currentColors(4,:) = 255;
+disp('Assigned new attribute to msh instance - currentColors - for mrMeshPy');
 
 % Sometimes we just want the values.  Usually, we want to show the data.
 if showData

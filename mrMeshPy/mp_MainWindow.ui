@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MrMeshMainWindow</class>
+ <widget class="QMainWindow" name="MrMeshMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>708</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>mrMeshPy v0.1</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>662</width>
+     <height>0</height>
+    </size>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <property name="movable">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>708</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
+   </property>
+   <widget class="QMenu" name="menuMenu">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="actionUnder_development"/>
+   </widget>
+   <widget class="QMenu" name="menuROIs">
+    <property name="title">
+     <string>ROIs</string>
+    </property>
+    <addaction name="actionEnableDraw"/>
+    <addaction name="actionDisableDraw"/>
+    <addaction name="actionCloseAndFill"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionStart_New_ROI"/>
+   </widget>
+   <widget class="QMenu" name="menuTesting">
+    <property name="title">
+     <string>Testing</string>
+    </property>
+    <addaction name="actionSend_10_bytes_TCP"/>
+   </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="actionExport_Surface_to_stl"/>
+   </widget>
+   <addaction name="menuMenu"/>
+   <addaction name="menuROIs"/>
+   <addaction name="menuTesting"/>
+   <addaction name="menuExport"/>
+  </widget>
+  <action name="actionSoon">
+   <property name="text">
+    <string>Soon</string>
+   </property>
+  </action>
+  <action name="actionEnableDraw">
+   <property name="text">
+    <string>Enable drawing</string>
+   </property>
+  </action>
+  <action name="actionDisableDraw">
+   <property name="text">
+    <string>Disable drawing</string>
+   </property>
+  </action>
+  <action name="actionCloseAndFill">
+   <property name="text">
+    <string>Close and Fill</string>
+   </property>
+  </action>
+  <action name="actionSend_10_bytes_TCP">
+   <property name="text">
+    <string>Send 10 bytes TCP</string>
+   </property>
+  </action>
+  <action name="actionStart_New_ROI">
+   <property name="text">
+    <string>Start New ROI</string>
+   </property>
+  </action>
+  <action name="actionExport_Surface_to_stl">
+   <property name="text">
+    <string>Export Surface to .stl</string>
+   </property>
+  </action>
+  <action name="actionUnder_development">
+   <property name="text">
+    <string>Under development</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

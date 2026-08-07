@@ -72,4 +72,13 @@ uimenu(winmenu,'Label','(Re-)open Screen Save Window','Separator','on',...
 uimenu(winmenu, 'Label', 'Open 3D Window', 'Separator', 'on',...
     'CallBack', 'open3DWindow;');
 
+% 3D mrMeshPy submenu. (ADG - Jul2018).
+%
+%% avoiding this for now so we can get debug info in a terminal window
+%%uimenu(winmenu, 'Label', 'Open mrMeshPy 3D Viewer', 'Separator', 'on',...
+%%    'CallBack', 'launchMeshPyViewer;');
+uimenu(winmenu, 'Label', 'Open mrMeshPy Control Window', ...
+    'CallBack', 'gui_3dWindow_MeshPy;');
+
+
 return
