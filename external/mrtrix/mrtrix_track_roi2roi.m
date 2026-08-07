@@ -1,5 +1,5 @@
-function [pdb_file, status, results] = mrtrix_track_roi2roi(files, roi1, roi2, seed, mask, mode, n, n_max, bkgrnd, verbose)
-
+function [pdb_file, status, results] = mrtrix_track_roi2roi(files, roi1, roi2, seed, mask, mode, n, n_max, bkgrnd, verbose, varargin)
+% ,fiber_length,fa_th,fa_th_init,curv_th,
 % Provided a csd estimate, generate estimates of the fibers starting in the
 % seed region, touching both roi1 and roi2.
 %
@@ -19,7 +19,13 @@ function [pdb_file, status, results] = mrtrix_track_roi2roi(files, roi1, roi2, s
 %        defaults (which is 100 x n). 
 % bkgrnd: on unix, whether to perform the operation in another process
 % verbose: whether to display stdout to the command window. 
-% 
+%
+% the next parameters are optional, if not added or empty [], the default is used:
+% fiber_length: maximum fiber length, if not added, set to 200 as in mrtrix default. 
+% fa_th:  fa threshold, if not added, set to .1 as in mrtrix default.
+% fa_th_init:  fa initiation threshold, if not added, set to .2 as in mrtrix default.
+% curv_th: curvature threshold, if not added, set to 1 or 2 as in mrtrix default. 
+%
 % Franco, Bob & Ariel (c) Vistalab Stanford University 2013
 
 if notDefined('verbose'),verbose = true; end
@@ -38,6 +44,44 @@ switch mode
     error('Input "%s" is not a valid tracking mode', mode); 
 end
 
+% define mrtrix default parameters:
+fiber_length=200;
+fa_th=.1;
+fa_th_init=2*.1;
+switch mode_str
+    case {'SD_PROB'}
+        curv_th=2;
+    case {'SD_STREAM','DT_STREAM'}
+        curv_th=1;
+end
+% change mrtrix default if there is an entry:
+if ~isempty(varargin)
+    if length(varargin)>=1 
+        if ~isempty(varargin{1})
+            fiber_length=varargin{1};
+        end
+    end
+    if length(varargin)>=2
+        if ~isempty(varargin{2}),
+            fa_th=varargin{2};
+        end
+    end
+    if length(varargin)>=3
+        if ~isempty(varargin{3}),
+            fa_th_init=varargin{3};
+        end
+    end
+    if length(varargin)>=4
+        if ~isempty(varargin{4})
+            curv_th=varargin{4};
+        end
+    end
+end
+
+% disp parameters
+disp(['tracking parameters: fiber length=' int2str(fiber_length) ', fa th=' num2str(fa_th),...
+    ', fa init th=' num2str(fa_th_init) ', curv th=' num2str(curv_th)])
+
 % Track, using deterministic estimate: 
 tck_file = strcat(strip_ext(files.csd), '_' , strip_ext(roi1), '_', strip_ext(roi2), '_', ...
                             strip_ext(seed) , '_', strip_ext(mask), '_', mode, '.tck'); 
@@ -45,8 +89,10 @@ tck_file = strcat(strip_ext(files.csd), '_' , strip_ext(roi1), '_', strip_ext(ro
 % Generate a UNIX command string.                          
 switch mode_str
   case {'SD_PROB', 'SD_STREAM'}
-    cmd_str = sprintf('streamtrack -seed %s -mask %s -include %s -include %s %s %s %s -number %d -maxnum %d -stop',...
-      seed,mask, roi1, roi2, mode_str, files.csd, tck_file, n, n_max);
+cmd_str = sprintf(['streamtrack -seed %s -mask %s -include %s -include %s %s %s %s -number %d -maxnum %d -stop', ...
+                   ' -length %d -cutoff %g -initcutoff %g -curvature %d'],...
+                    seed,mask, roi1, roi2, mode_str, files.csd, tck_file, n, n_max,...
+                    fiber_length,fa_th,fa_th_init,curv_th);
     % The following lines of code could be intergated here, to allow for
     % tracking between ROIs using a tensor-based deterministic tractography
     %   case {'DT_STREAM'}
