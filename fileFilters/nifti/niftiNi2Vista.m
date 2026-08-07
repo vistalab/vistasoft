@@ -24,7 +24,7 @@ niiv.ndim               = ndims(niiv.data);
 niiv.dim                = size(niiv.data);
 
 % Dime field
-niiv.pixdim             = nii.hdr.dime.pixdim(2:niiv.ndim+1);
+niiv.pixdim             = nii.hdr.dime.pixdim(2:niiv.ndim+2); % The image pixdim and the TR in the end.
 niiv.scl_slope          = nii.hdr.dime.scl_slope;
 niiv.scl_inter          = nii.hdr.dime.scl_inter;
 niiv.cal_min            = nii.hdr.dime.cal_min;
