@@ -12,7 +12,7 @@ function fs_ribbon2itk(subjID, outfile, fillWithCSF, alignTo, resample_type, in_
 %   fillWithCSF:    if true, convert unlabeled voxels to CSF (0s => 1s)
 %                    [default = false]        
 %   alignTo:        optional nifti file which determines bounding box and
-%                    alignment of output segmnentation
+%                    alignment of output segmentation
 %   resample_type:  resampling method for converting the ribbon file to a
 %                    nifti. Options: interpolate, weighted, nearest, 
 %                    sinc, and cubic. (Sinc and cubic do not produce integer
@@ -24,7 +24,7 @@ function fs_ribbon2itk(subjID, outfile, fillWithCSF, alignTo, resample_type, in_
 %                    specify the correct input orientation. For example:
 %                    in_orientation='LIA' The options are L versus R / I
 %                    versus S / and A versus P.  These options can be in
-%                    any position. Cannonical is RAS if the image is
+%                    any position. Canonical is RAS if the image is
 %                    flipped left right then you would do LAS.  The letters
 %                    get reordered if the dimensions are transposed.
 %
@@ -56,7 +56,7 @@ function fs_ribbon2itk(subjID, outfile, fillWithCSF, alignTo, resample_type, in_
 %
 % For description of freesurfer automatic segmentation, see
 %   http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable
-% And for the ribbon file specifcally see:
+% And for the ribbon file specifically see:
 %   http://surfer.nmr.mgh.harvard.edu/fswiki/cortribbon
 %
 % Example 1:
