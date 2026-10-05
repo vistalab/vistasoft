@@ -60,7 +60,7 @@ else
     % clip
     img(img < clip(1)) = clip(1);
     img(img > clip(2)) = clip(2);
-    img = normalize(double(img),0,255);
+    img = rescale(double(img), 0, 255);
     img = uint8(img);
 end
 
