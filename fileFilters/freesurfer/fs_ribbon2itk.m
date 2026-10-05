@@ -180,7 +180,7 @@ if fillWithCSF
 end
 
 % write out the nifti
-writeFileNifti(ni)
+niftiWrite(ni, outfile)
 
 % done.
 return
