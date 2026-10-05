@@ -136,10 +136,10 @@ void mexFunction(int nlhs,   /* number of arguments on lhs */
   double *scaleFac;  /*sampling rates */
   double *rot, *trans; /* rotation matrix and translation vector */
   double badval;  /* bad value to fill out of bounds positions */
-  int dims[3];    /* inplane dimensions, array form */
+  mwSize dims[3];    /* inplane dimensions, array form */
   double *f;      /* pointer to the output matrix data */
   int ndimsvol;   /* number of dimensions of the input volume */
-  const int *dimsvol;   /* dimensions of the vol, array form */
+  const mwSize *dimsvol;   /* dimensions of the vol, array form */
   int NxV, NyV, NzV; /* dimensions of the vol */ 
   double M[16];      /* 4x4 transformation matrix */
   int i, j; /* loop indexes */
