@@ -82,7 +82,7 @@ legendPanel({'Rotation' 'Translation' 'Total'});
 if ~exist(fullfile(pwd, 'Images'), 'dir'), mkdir Images; end
 savePath = fullfile(pwd, 'Images', 'Within_Scan_Motion_Est');
 saveas(h_report, [savePath '.fig']);
-saveas(h_report, [savePath '.jpg']);
+exportapp(h_report, [savePath '.jpg']);
 fprintf('Saved estimated motion figure as %s.fig and %s.jpg. All Done! \n', ...
 	savePath, savePath);
 
