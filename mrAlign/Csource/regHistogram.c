@@ -73,7 +73,7 @@ void mexFunction(int nlhs,   /* number of arguments on lhs */
   register int npoints;      /* number of points in the input array */
   int Nbins;        /* number of bins in the histogram */
   double *NbinsPtr; /* pointer to the number of bins input argument */
-  int Outdims[2];   /* dimensions of the output arrays */
+  mwSize Outdims[2];   /* dimensions of the output arrays */
 
   /* Check for proper number of arguments */
   if (nrhs<1) { /* help */
