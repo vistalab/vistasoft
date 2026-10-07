@@ -4,7 +4,7 @@
 %  GB 05/11/14
 %
 % This is the matlab transcription of the mrGray function that grows gray matter.
-% It is a mex function that needs the auxiliairy files :
+% It is a mex function that needs the auxiliary files :
 %     - gray.h
 %     - gray.cpp
 %     - mrGlobals.h
