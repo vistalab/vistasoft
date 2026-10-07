@@ -21,7 +21,7 @@
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     // Parsing arguments
-    const int *dim;
+    const mwSize *dim;
     int oldSize;
     
     if (nrhs < 2) mexErrMsgTxt("This function should take at least two argument");
